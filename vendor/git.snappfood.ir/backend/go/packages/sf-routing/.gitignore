@@ -1,0 +1,8 @@
+./build
+warmup
+.idea/
+.vscode
+TODO
+bin/*
+*.env
+!.env

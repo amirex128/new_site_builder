@@ -1,0 +1,69 @@
+syntax = "proto3";
+package ecommerce.attribute.get;
+
+service AttributeService {
+  rpc GetProductAttributes (ProductAttributeRequest) returns (ProductAttributeResponse) {
+  }
+  rpc GetAttributesCategories (AttributesCategoriesRequest) returns (AttributesCategoriesResponse) {
+  }
+  rpc GetProductsWithCertainAttributes (ProductsWithCertainAttributesRequest) returns (ProductsWithCertainAttributesResponse) {
+  }
+  rpc GetSearchAttributesCategories (AttributesCategoriesRequest) returns (AttributesCategoriesResponse) {
+  }
+  rpc GetSearchProductsWithCertainAttributes (ProductsWithCertainAttributesRequest) returns (ProductsWithCertainAttributesResponse) {
+  }
+}
+
+message ProductAttributeRequest {
+  int32 product_id = 1;
+}
+
+message ProductAttributeResponse {
+  bool ok = 1;
+  string error = 2;
+  int32 product_id = 3;
+  repeated AttributeWithCategory attributes = 4;
+}
+
+message AttributesCategoriesRequest {
+  repeated int32 product_category_id = 1;
+}
+
+message AttributesCategoriesResponse {
+  bool ok = 1;
+  string error = 2;
+  repeated AttributeCategoryWithAttributes attribute_categories = 3;
+}
+
+message ProductsWithCertainAttributesRequest {
+  repeated int32 product_attributes_id = 1;
+}
+
+message ProductsWithCertainAttributesResponse {
+  bool ok = 1;
+  string error = 2;
+  repeated int32 product_ids = 3;
+}
+
+message AttributeWithoutCategory {
+  int32 id = 1;
+  string title = 2;
+}
+
+message AttributeCategoryWithoutAttributes {
+  int32 id = 1;
+  int32 product_category_id = 2;
+  string title = 3;
+}
+
+message AttributeCategoryWithAttributes {
+  int32 id = 1;
+  int32 product_category_id = 2;
+  string title = 3;
+  repeated AttributeWithoutCategory attributes = 4;
+}
+
+message AttributeWithCategory {
+  string title = 2;
+  AttributeCategoryWithoutAttributes attribute_category = 3;
+}

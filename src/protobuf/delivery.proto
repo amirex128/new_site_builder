@@ -1,0 +1,179 @@
+syntax = "proto3";
+package service;
+option go_package = "./grpc";
+
+import "google/protobuf/timestamp.proto";
+
+service VendorDeliveryService {
+    rpc GetAllVendors (GetAllVendorsQuery) returns (GetAllVendorsResponse) {}
+    rpc GetVendorsByIds (GetVendorsByIdsQuery) returns (GetVendorsByIdsResponse) {}
+    rpc GetDeliveryEstimationTimeByOrder (GetDeliveryEstimationTimeByOrderQuery) returns (GetDeliveryEstimationTimeByOrderResponse) {}
+    rpc GetDeliveryEstimationTimeByBasket (GetDeliveryEstimationTimeByBasketQuery) returns (GetDeliveryEstimationTimeByBasketResponse) {}
+    rpc GetOrderPickupVendors (GetOrderPickupVendorsQuery) returns (GetOrderPickupVendorsResponse) {}
+    rpc GetVendorByMultipleCoordinates (GetVendorByMultipleCoordinatesQuery) returns (GetVendorByMultipleCoordinatesResponse) {}
+    rpc GetEtaVendors (GetEtaVendorsQuery) returns (GetEtaVendorsResponse) {}
+}
+
+message Vendor {
+    int64 id = 1;
+    bool is_express = 2;
+    int64 delivery_fee = 3;
+    bool does_deliver = 4;
+    DeliveryDetail detail = 5;
+    int64 minimum_order_value = 6;
+    string delivery_status = 7;
+    string status = 8;
+}
+
+message OrderPickUpVendor {
+    int64 id = 1;
+    bool does_deliver = 2;
+    int64 delivery_fee = 3;
+    OrderPickupDetail details = 4;
+}
+
+message DeliveryDetail {
+    int64 vendor_id = 1;
+    int64 normal_preparation_time = 2;
+    int64 normal_time_factor = 3;
+    int64 safety_time_factor = 4;
+    int64 drive_time = 5;
+    int64 min_threshold_delivery_time = 6;
+    int64 max_threshold_delivery_time = 7;
+    int64 total_time = 8;
+    int64 delay_time = 9;
+    bool open_at_eta = 10;
+    string action = 11;
+    int64 max_total_time = 12;
+    int64 min_total_time = 13;
+}
+
+message OrderPickupDetail {
+    int64 vendor_id = 1;
+    int64 normal_preparation_time = 2;
+    int64 total_time = 8;
+}
+
+message GetAllVendorsQuery {
+    double longitude = 1;
+    double latitude = 2;
+    bool get_order_pickup_vendors = 3;
+}
+
+message GetAllVendorsResponse {
+    repeated Vendor vendors = 1;
+    repeated OrderPickUpVendor order_pickup_vendors = 2;
+}
+
+message GetVendorsByIdsQuery {
+    double longitude = 1;
+    double latitude = 2;
+    repeated int64 vendor_ids = 3;
+    bool dont_process_detail = 4;
+    google.protobuf.Timestamp time = 5;
+    bool get_order_pickup_vendors = 6;
+    bool dont_process_expectation = 7;
+}
+
+message GetVendorsByIdsResponse {
+    repeated Vendor vendors = 1;
+    repeated OrderPickUpVendor order_pickup_vendors = 2;
+}
+
+message GetDeliveryEstimationTimeByOrderQuery {
+    double longitude = 1;
+    double latitude = 2;
+    int64 order_id = 3;
+    int64 vendor_id = 4;
+    string vendor_type = 5;
+    bool dont_process_expectation = 6;
+}
+
+message GetDeliveryEstimationTimeByOrderResponse {
+    int64 vendor_id = 1;
+    int64 normal_preparation_time = 2;
+    int64 normal_time_factor = 3;
+    int64 safety_time_factor = 4;
+    int64 biker_found = 5;
+    int64 orders_around = 6;
+    int64 drive_time = 7;
+    float availability_index = 8;
+    int64 total_time = 9;
+    float basket_coefficient = 10;
+    float basket_size = 11;
+    int64 delay_time = 12;
+}
+
+
+message GetDeliveryEstimationTimeByBasketQuery {
+    double longitude = 1;
+    double latitude = 2;
+    int64 vendor_id = 3;
+    string vendor_type = 4;
+    repeated int64 product_variation_ids = 5;
+    bool dont_process_expectation = 6;
+}
+
+message GetDeliveryEstimationTimeByBasketResponse {
+    int64 vendor_id = 1;
+    int64 normal_preparation_time = 2;
+    int64 normal_time_factor = 3;
+    int64 safety_time_factor = 4;
+    int64 biker_found = 5;
+    int64 orders_around = 6;
+    int64 drive_time = 7;
+    float availability_index = 8;
+    int64 total_time = 9;
+    float basket_coefficient = 10;
+    float basket_size = 11;
+    int64 delay_time = 12;
+}
+
+message GetOrderPickupVendorsQuery {
+    double longitude = 1;
+    double latitude = 2;
+}
+
+message GetOrderPickupVendorsResponse {
+    repeated OrderPickUpVendor order_pickup_vendors = 1;
+}
+
+message Coordinate {
+    double longitude = 1;
+    double latitude = 2;
+}
+
+message GetVendorByMultipleCoordinatesQuery {
+    repeated Coordinate coordinates = 1;
+    int64 vendor_id = 2;
+    google.protobuf.Timestamp time = 3;
+}
+
+message SimpleVendor {
+    int64 id = 1;
+    bool does_deliver = 2;
+    int64 delivery_fee = 3;
+    bool does_support_order_pickup = 4;
+    bool is_express = 5;
+}
+
+message GetVendorByMultipleCoordinatesResponse {
+    repeated SimpleVendor vendors = 1;
+}
+
+message GetEtaVendorsQuery {
+    double longitude = 1;
+    double latitude = 2;
+    repeated VendorEtaQuery vendors = 3;
+    bool dont_process_detail = 4;
+    bool dont_process_expectation = 5;
+}
+
+message VendorEtaQuery {
+    string vendor_type = 1;
+    int64 vendor_id = 2;
+}
+
+message GetEtaVendorsResponse {
+    repeated DeliveryDetail etas = 1;
+}

@@ -1,0 +1,28 @@
+package serviceprovider
+
+import (
+	"git.snappfood.ir/backend/go/packages/sf-http-request/grpco"
+	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
+	svc "go-boilerplate/src/protobuf/food_story"
+)
+
+func GrpcProvider(logger sflogger.Logger) {
+	grpco.RegisterConnection(
+		// Define the connection details and pass services directly
+		grpco.WithConnectionDetails(
+			"story-service",
+			"story-service.example.com:50051",
+			grpco.WithInsecure(),
+			map[string]grpco.ServiceDefinition{
+				"story": {
+					ClientConstructor: svc.NewStoryServiceClient,
+					Methods: map[string]string{
+						"List": "/service.StoryService/List",
+						"Get":  "/service.StoryService/Get",
+					},
+				},
+			}, // Pass services as an argument
+		),
+		grpco.WithLogger(logger),
+	)
+}

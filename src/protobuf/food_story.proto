@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package = ".;svc";
+
+//import "google/protobuf/wrappers.proto";
+
+package service;
+// The service definition.
+service StoryService {
+  rpc List (ListRequest) returns (ListResponse);
+}
+
+message ListRequest {
+  double UserLatitude = 1;
+  double UserLongitude = 2;
+  string UserSessionID = 3;
+  uint64 VendorSuperTypeID = 4;
+}
+
+message ListResponse {
+  repeated Reel Reels = 100;
+}
+
+message Reel{
+  uint32 VendorID = 1;
+  repeated Stories Stories=10;
+}
+
+message Stories{
+  uint32 VendorID = 1;
+  string ContentUrl = 2;
+  string FileFormat = 3;
+//  google.protobuf.StringValue PublishDate = 4;
+  string PublishDate = 4;
+  string StoryHash = 10;
+  bool Seen = 11;
+}

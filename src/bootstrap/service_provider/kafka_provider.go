@@ -1,0 +1,5 @@
+package serviceprovider
+
+func KafkaProvider() {
+
+}
