@@ -13,6 +13,6 @@ type CreateOrderRequestCommand struct {
 // CreateOrderVerifyCommand represents a command to verify an order
 type CreateOrderVerifyCommand struct {
 	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1,50"`
-	IsSuccess     *bool             `json:"isSuccess" validate:"required"`
+	IsSuccess     *bool             `json:"isSuccess" validate:"required_bool"`
 	OrderData     map[string]string `json:"orderData" validate:"required"`
 }

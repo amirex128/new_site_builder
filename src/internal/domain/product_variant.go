@@ -20,7 +20,7 @@ type ProductVariant struct {
 	DeletedAt  *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
-	Product  *Product  `json:"product" gorm:"foreignKey:ProductID"`
+	Product  *Product  `json:"article" gorm:"foreignKey:ProductID"`
 	User     *User     `json:"user" gorm:"foreignKey:UserID"`
 	Customer *Customer `json:"customer" gorm:"foreignKey:CustomerID"`
 }

@@ -8,9 +8,9 @@ import (
 type CreateOrDirectoryItemCommand struct {
 	File        *multipart.FileHeader   `json:"file,omitempty" validate:"required_if=IsDirectory false"`
 	Name        *string                 `json:"name,omitempty" validate:"required_if=IsDirectory true,optional_text=0,255"`
-	IsDirectory *bool                   `json:"isDirectory" validate:"required"`
+	IsDirectory *bool                   `json:"isDirectory" validate:"required_bool"`
 	Permission  *FileItemPermissionEnum `json:"permission" validate:"required,enum"`
-	ParentID    *int64                  `json:"parentId,omitempty" validate:"optional"`
+	ParentID    *int64                  `json:"parentId,omitempty" validate:"omitempty"`
 }
 
 // DeleteFileItemCommand represents a command to delete a file item
@@ -39,6 +39,6 @@ type FileOperationCommand struct {
 // UpdateFileItemCommand represents a command to update a file item
 type UpdateFileItemCommand struct {
 	ID                 *int64                  `json:"id" validate:"required"`
-	IsChangePermission *bool                   `json:"isChangePermission" validate:"required"`
+	IsChangePermission *bool                   `json:"isChangePermission" validate:"required_bool"`
 	Permission         *FileItemPermissionEnum `json:"permission,omitempty" validate:"required_if=IsChangePermission true,enum_optional"`
 }

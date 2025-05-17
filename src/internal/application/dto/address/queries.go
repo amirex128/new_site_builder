@@ -6,7 +6,7 @@ import (
 
 // GetByIdAddressQuery represents a query to get an address by ID
 type GetByIdAddressQuery struct {
-	ID *int64 `json:"id" validate:"required,gt=0" error:"required=شناسه آدرس الزامی است|gt=شناسه آدرس باید بزرگتر از 0 باشد"`
+	ID *int64 `json:"id" validate:"required,gt=0"`
 }
 
 // GetAllAddressQuery represents a query to get all addresses with pagination

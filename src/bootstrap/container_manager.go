@@ -2,9 +2,10 @@ package bootstrap
 
 import (
 	"context"
-	"git.snappfood.ir/backend/go/packages/sf-logger"
-	"git.snappfood.ir/backend/go/packages/sf-orm"
-	"git.snappfood.ir/backend/go/packages/sf-redis"
+
+	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
+	sform "git.snappfood.ir/backend/go/packages/sf-orm"
+	sfredis "git.snappfood.ir/backend/go/packages/sf-redis"
 	"github.com/amirex128/new_site_builder/src/config"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"github.com/amirex128/new_site_builder/src/internal/infra/repository/mysql"
@@ -12,6 +13,7 @@ import (
 )
 
 func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
+	mainDB := sform.MustDB("main")
 
 	return &Container{
 		Config: cfg,
@@ -25,7 +27,38 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 			return service.NewRedis(sfredis.MustClient(ctx, "stock"))
 		},
 
-		SampleRepo:         mysql.NewSampleRepository(sform.MustDB("search_db")),
-		SampleZoodFoodRepo: mysql.NewSampleRepository(sform.MustDB("zoodfood_db")),
+		// Repositories
+		ArticleRepo:         mysql.NewArticleRepository(mainDB),
+		BasketRepo:          mysql.NewBasketRepository(mainDB),
+		BlogCategoryRepo:    mysql.NewBlogCategoryRepository(mainDB),
+		CustomerRepo:        mysql.NewCustomerRepository(mainDB),
+		DiscountRepo:        mysql.NewDiscountRepository(mainDB),
+		HeaderFooterRepo:    mysql.NewHeaderFooterRepository(mainDB),
+		MediaRepo:           mysql.NewMediaRepository(mainDB),
+		OrderRepo:           mysql.NewOrderRepository(mainDB),
+		PageRepo:            mysql.NewPageRepository(mainDB),
+		PaymentRepo:         mysql.NewPaymentRepository(mainDB),
+		ProductRepo:         mysql.NewProductRepository(mainDB),
+		ProductCategoryRepo: mysql.NewProductCategoryRepository(mainDB),
+		ProductReviewRepo:   mysql.NewProductReviewRepository(mainDB),
+		SettingRepo:         mysql.NewSettingRepository(mainDB),
+		SiteRepo:            mysql.NewSiteRepository(mainDB),
+		TicketRepo:          mysql.NewTicketRepository(mainDB),
+		CustomerTicketRepo:  mysql.NewCustomerTicketRepository(mainDB),
+		UserRepo:            mysql.NewUserRepository(mainDB),
+
+		BasketItemRepo:        mysql.NewBasketItemRepository(mainDB),
+		CreditRepo:            mysql.NewCreditRepository(mainDB),
+		CouponRepo:            mysql.NewCouponRepository(mainDB),
+		DefaultThemeRepo:      mysql.NewDefaultThemeRepository(mainDB),
+		FileItemRepo:          mysql.NewFileItemRepository(mainDB),
+		GatewayRepo:           mysql.NewGatewayRepository(mainDB),
+		OrderItemRepo:         mysql.NewOrderItemRepository(mainDB),
+		ParbadPaymentRepo:     mysql.NewParbadPaymentRepository(mainDB),
+		ParbadTransactionRepo: mysql.NewParbadTransactionRepository(mainDB),
+		ProductAttributeRepo:  mysql.NewProductAttributeRepository(mainDB),
+		ProductVariantRepo:    mysql.NewProductVariantRepository(mainDB),
+		ReturnItemRepo:        mysql.NewReturnItemRepository(mainDB),
+		StorageRepo:           mysql.NewStorageRepository(mainDB),
 	}
 }

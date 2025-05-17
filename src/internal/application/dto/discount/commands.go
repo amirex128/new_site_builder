@@ -8,25 +8,25 @@ import (
 
 // CreateDiscountCommand represents a command to create a new discount
 type CreateDiscountCommand struct {
-	Code       *string                   `json:"code" validate:"required,max=100" error:"required=کد تخفیف الزامی است|max=کد تخفیف نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	Quantity   *int                      `json:"quantity" validate:"required,max=1000" error:"required=تعداد الزامی است|max=تعداد نمی‌تواند بیشتر از 1000 باشد"`
-	Type       *product.DiscountTypeEnum `json:"type" validate:"required" error:"required=نوع تخفیف الزامی است"`
-	Value      *int64                    `json:"value" validate:"required" error:"required=مقدار تخفیف الزامی است"`
-	ExpiryDate *time.Time                `json:"expiryDate" validate:"required,gtfield=time.Now" error:"required=تاریخ انقضا الزامی است|gtfield=تاریخ انقضا باید در آینده باشد"`
-	SiteID     *int64                    `json:"siteId" validate:"required" error:"required=سایت الزامی است"`
+	Code       *string                   `json:"code" validate:"required_text=1,100"`
+	Quantity   *int                      `json:"quantity" validate:"required,max=1000"`
+	Type       *product.DiscountTypeEnum `json:"type" validate:"required,enum"`
+	Value      *int64                    `json:"value" validate:"required"`
+	ExpiryDate *time.Time                `json:"expiryDate" validate:"required,gtfield=time.Now"`
+	SiteID     *int64                    `json:"siteId" validate:"required"`
 }
 
 // UpdateDiscountCommand represents a command to update an existing discount
 type UpdateDiscountCommand struct {
-	ID         *int64                    `json:"id" validate:"required" error:"required=تخفیف الزامی است"`
-	Code       *string                   `json:"code,omitempty" validate:"omitempty,max=100" error:"max=کد تخفیف نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	Quantity   *int                      `json:"quantity,omitempty" validate:"omitempty,gt=0" error:"gt=تعداد باید بزرگتر از 0 باشد"`
-	Type       *product.DiscountTypeEnum `json:"type,omitempty" validate:"omitempty" error:""`
-	Value      *int64                    `json:"value,omitempty" validate:"omitempty,gt=0" error:"gt=مقدار تخفیف باید بزرگتر از 0 باشد"`
-	ExpiryDate *time.Time                `json:"expiryDate,omitempty" validate:"omitempty,gtfield=time.Now" error:"gtfield=تاریخ انقضا باید در آینده باشد"`
+	ID         *int64                    `json:"id" validate:"required"`
+	Code       *string                   `json:"code,omitempty" validate:"optional_text=1,100"`
+	Quantity   *int                      `json:"quantity,omitempty" validate:"omitempty,gt=0"`
+	Type       *product.DiscountTypeEnum `json:"type,omitempty" validate:"enum_optional"`
+	Value      *int64                    `json:"value,omitempty" validate:"omitempty,gt=0"`
+	ExpiryDate *time.Time                `json:"expiryDate,omitempty" validate:"omitempty,gtfield=time.Now"`
 }
 
 // DeleteDiscountCommand represents a command to delete a discount
 type DeleteDiscountCommand struct {
-	ID *int64 `json:"id" validate:"required" error:"required=تخفیف الزامی است"`
+	ID *int64 `json:"id" validate:"required"`
 }

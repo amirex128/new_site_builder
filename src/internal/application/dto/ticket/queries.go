@@ -6,7 +6,7 @@ import (
 
 // GetByIdTicketQuery represents a query to get a ticket by ID
 type GetByIdTicketQuery struct {
-	ID *int64 `json:"id" validate:"required,gt=0" error:"required=شناسه تیکت الزامی است|gt=شناسه تیکت باید بزرگتر از 0 باشد"`
+	ID *int64 `json:"id" validate:"required,gt=0"`
 }
 
 // GetAllTicketQuery represents a query to get all tickets with pagination

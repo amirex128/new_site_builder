@@ -1,33 +1,31 @@
 package page
 
-// PageComponent represents a component within a page column
+import "github.com/amirex128/new_site_builder/src/internal/application/dto/common_dto"
+
 type PageComponent struct {
-	Name    *string                 `json:"name,omitempty" validate:"omitempty" error:""`
-	Filters *map[string][]string    `json:"filters,omitempty" validate:"omitempty" error:""`
-	Sort    *string                 `json:"sort,omitempty" validate:"omitempty" error:""`
-	Title   *string                 `json:"title,omitempty" validate:"omitempty" error:""`
-	Props   *map[string]interface{} `json:"props,omitempty" validate:"omitempty" error:""`
-	Data    *interface{}            `json:"data,omitempty" validate:"omitempty" error:""`
+	Name    string                    `json:"name"`
+	Filters map[string][]string       `json:"filters"`
+	Sort    string                    `json:"sort"`
+	Title   string                    `json:"title"`
+	Props   interface{}               `json:"props"`
+	Data    common_dto.PaginationJson `json:"data"`
 }
 
-// PageColumn represents a column within a page row
 type PageColumn struct {
-	ID         *string                 `json:"id,omitempty" validate:"omitempty" error:""`
-	Style      *map[string]interface{} `json:"style,omitempty" validate:"omitempty" error:""`
-	Props      *map[string]interface{} `json:"props,omitempty" validate:"omitempty" error:""`
-	Components []*PageComponent        `json:"components,omitempty" validate:"omitempty" error:""`
+	Id         string          `json:"id"`
+	Style      interface{}     `json:"style"`
+	Props      interface{}     `json:"props"`
+	Components []PageComponent `json:"components"`
 }
 
-// PageRow represents a row within a page body
 type PageRow struct {
-	ID      *string                 `json:"id,omitempty" validate:"omitempty" error:""`
-	Props   *map[string]interface{} `json:"props,omitempty" validate:"omitempty" error:""`
-	Columns []*PageColumn           `json:"columns,omitempty" validate:"omitempty" error:""`
+	Id      string       `json:"id"`
+	Props   interface{}  `json:"props"`
+	Columns []PageColumn `json:"columns"`
 }
 
-// PageBody represents the body content of a page
 type PageBody struct {
-	ID    *string                 `json:"id,omitempty" validate:"omitempty" error:""`
-	Props *map[string]interface{} `json:"props,omitempty" validate:"omitempty" error:""`
-	Rows  []*PageRow              `json:"rows,omitempty" validate:"omitempty" error:""`
+	Id    string      `json:"id"`
+	Props interface{} `json:"props"`
+	Rows  []PageRow   `json:"rows"`
 }

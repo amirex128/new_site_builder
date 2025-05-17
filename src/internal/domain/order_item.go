@@ -24,7 +24,7 @@ type OrderItem struct {
 
 	// Relations
 	Order          *Order          `json:"order" gorm:"foreignKey:OrderID"`
-	Product        *Product        `json:"product" gorm:"foreignKey:ProductID"`
+	Product        *Product        `json:"article" gorm:"foreignKey:ProductID"`
 	ProductVariant *ProductVariant `json:"product_variant" gorm:"foreignKey:ProductVariantID"`
 	ReturnItem     *ReturnItem     `json:"return_item" gorm:"foreignKey:OrderItemID"`
 }

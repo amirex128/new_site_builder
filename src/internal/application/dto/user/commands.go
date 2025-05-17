@@ -2,76 +2,76 @@ package user
 
 // LoginUserCommand represents a command to log in a user
 type LoginUserCommand struct {
-	Email    *string `json:"email" validate:"required,email" error:"required=ایمیل الزامی است|email=ایمیل باید معتبر باشد"`
-	Password *string `json:"password" validate:"required,min=8,max=100" error:"required=رمز عبور الزامی است|min=رمز عبور باید حداقل 8 کاراکتر باشد|max=رمز عبور نمی‌تواند بیشتر از 100 کاراکتر باشد"`
+	Email    *string `json:"email" validate:"required,email"`
+	Password *string `json:"password" validate:"required_text=8,100"`
 }
 
 // RegisterUserCommand represents a command to register a new user
 type RegisterUserCommand struct {
-	Email    *string `json:"email" validate:"required,email,max=100" error:"required=ایمیل الزامی است|email=ایمیل باید معتبر باشد|max=ایمیل نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	Password *string `json:"password" validate:"required,min=8,max=100" error:"required=رمز عبور الزامی است|min=رمز عبور باید حداقل 8 کاراکتر باشد|max=رمز عبور نمی‌تواند بیشتر از 100 کاراکتر باشد"`
+	Email    *string `json:"email" validate:"required,email"`
+	Password *string `json:"password" validate:"required_text=8,100"`
 }
 
 // RequestVerifyAndForgetUserCommand represents a command to request verification or password reset
 type RequestVerifyAndForgetUserCommand struct {
-	Email *string         `json:"email,omitempty" validate:"required_if=Type 0 Type 2,omitempty,email" error:"required_if=ایمیل الزامی است|email=ایمیل باید معتبر باشد"`
-	Phone *string         `json:"phone,omitempty" validate:"required_if=Type 1 Type 3,omitempty,pattern=^09\\d{9}$" error:"required_if=شماره تلفن الزامی است|pattern=شماره تلفن نامعتبر است"`
-	Type  *VerifyTypeEnum `json:"type" validate:"required" error:"required=نوع تأیید الزامی است"`
+	Email *string         `json:"email,omitempty" validate:"required_if=Type 0 Type 2,omitempty,email"`
+	Phone *string         `json:"phone,omitempty" validate:"required_if=Type 1 Type 3,omitempty,iranian_mobile"`
+	Type  *VerifyTypeEnum `json:"type" validate:"required,enum"`
 }
 
 // SmptSettings represents SMTP settings for user profile
 type SmptSettings struct {
-	Host     string `json:"host" validate:"required,max=100" error:"required=هاست SMTP الزامی است|max=هاست SMTP نباید بیشتر از 100 کاراکتر باشد"`
-	Port     int    `json:"port" validate:"required,min=1,max=65535" error:"required=پورت SMTP الزامی است|min=پورت SMTP باید حداقل 1 باشد|max=پورت SMTP باید حداکثر 65535 باشد"`
-	Username string `json:"username" validate:"required,max=100" error:"required=نام کاربری SMTP الزامی است|max=نام کاربری SMTP نباید بیشتر از 100 کاراکتر باشد"`
-	Password string `json:"password" validate:"required,max=100" error:"required=رمز عبور SMTP الزامی است|max=رمز عبور SMTP نباید بیشتر از 100 کاراکتر باشد"`
+	Host     string `json:"host" validate:"required_text=1,100"`
+	Port     int    `json:"port" validate:"required,min=1,max=65535"`
+	Username string `json:"username" validate:"required_text=1,100"`
+	Password string `json:"password" validate:"required_text=1,100"`
 }
 
 // UpdateProfileUserCommand represents a command to update a user's profile
 type UpdateProfileUserCommand struct {
-	FirstName          *string       `json:"firstName,omitempty" validate:"omitempty,max=100" error:"max=نام نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	LastName           *string       `json:"lastName,omitempty" validate:"omitempty,max=100" error:"max=نام خانوادگی نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	Email              *string       `json:"email,omitempty" validate:"omitempty,email" error:"email=فرمت ایمیل نامعتبر است"`
-	Password           *string       `json:"password,omitempty" validate:"omitempty,min=6,max=100" error:"min=رمز عبور باید حداقل 6 کاراکتر باشد|max=رمز عبور نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	NationalCode       *string       `json:"nationalCode,omitempty" validate:"omitempty,max=100" error:"max=کد ملی نمی‌تواند بیشتر از 100 کاراکتر باشد"`
-	Phone              *string       `json:"phone" validate:"required,pattern=^09\\d{9}$" error:"required=شماره تلفن الزامی است|pattern=شماره تلفن باید یک شماره موبایل ایرانی معتبر باشد"`
-	AddressIDs         []int64       `json:"addressIds,omitempty" validate:"omitempty,dive,gt=0" error:"gt=شناسه‌های آدرس باید بزرگتر از 0 باشند"`
-	AiTypeEnum         *AiTypeEnum   `json:"aiTypeEnum,omitempty" error:""`
-	UseCustomEmailSmtp *StatusEnum   `json:"useCustomEmailSmtp,omitempty" error:""`
-	Smtp               *SmptSettings `json:"smtp,omitempty" validate:"omitempty" error:""`
+	FirstName          *string       `json:"firstName,omitempty" validate:"optional_text=1,100"`
+	LastName           *string       `json:"lastName,omitempty" validate:"optional_text=1,100"`
+	Email              *string       `json:"email,omitempty" validate:"omitempty,email"`
+	Password           *string       `json:"password,omitempty" validate:"optional_text=6,100"`
+	NationalCode       *string       `json:"nationalCode,omitempty" validate:"optional_text=1,100"`
+	Phone              *string       `json:"phone" validate:"required,iranian_mobile"`
+	AddressIDs         []int64       `json:"addressIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	AiTypeEnum         *AiTypeEnum   `json:"aiTypeEnum,omitempty" validate:"enum_optional"`
+	UseCustomEmailSmtp *StatusEnum   `json:"useCustomEmailSmtp,omitempty" validate:"enum_optional"`
+	Smtp               *SmptSettings `json:"smtp,omitempty" validate:"omitempty"`
 }
 
 // UnitPriceQuery represents a nested query for unit price in charge credit request
 type UnitPriceQuery struct {
-	UnitPriceName  *UnitPriceNameEnum `json:"unitPriceName" validate:"required" error:"required=نام واحد قیمت الزامی است"`
-	UnitPriceCount *int               `json:"unitPriceCount" validate:"required,min=1,max=1000" error:"required=تعداد واحد قیمت الزامی است|min=تعداد واحد قیمت باید حداقل 1 باشد|max=تعداد واحد قیمت نمی‌تواند بیشتر از 1000 باشد"`
-	UnitPriceDay   *int               `json:"unitPriceDay,omitempty" validate:"omitempty" error:""`
+	UnitPriceName  *UnitPriceNameEnum `json:"unitPriceName" validate:"required,enum"`
+	UnitPriceCount *int               `json:"unitPriceCount" validate:"required,min=1,max=1000"`
+	UnitPriceDay   *int               `json:"unitPriceDay,omitempty" validate:"omitempty"`
 }
 
 // ChargeCreditRequestUserCommand represents a command to request charging credit
 type ChargeCreditRequestUserCommand struct {
-	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required" error:"required=درگاه پرداخت الزامی است"`
-	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required,max=500,url" error:"required=آدرس بازگشت الزامی است|max=آدرس بازگشت نمی‌تواند بیشتر از 500 کاراکتر باشد|url=آدرس بازگشت باید یک URL معتبر باشد"`
-	UnitPrices          []UnitPriceQuery     `json:"unitPrices" validate:"required,min=1" error:"required=واحدهای قیمت الزامی هستند|min=حداقل یک واحد قیمت باید وجود داشته باشد"`
+	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
+	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
+	UnitPrices          []UnitPriceQuery     `json:"unitPrices" validate:"required,min=1,dive"`
 }
 
 // ChargeCreditVerifyUserCommand represents a command to verify charge credit
 type ChargeCreditVerifyUserCommand struct {
-	PaymentStatus *string           `json:"paymentStatus" validate:"required,max=50" error:"required=وضعیت پرداخت الزامی است|max=وضعیت پرداخت نمی‌تواند بیشتر از 50 کاراکتر باشد"`
-	IsSuccess     *bool             `json:"isSuccess" validate:"required" error:"required=وضعیت موفقیت پرداخت الزامی است"`
-	OrderData     map[string]string `json:"orderData" validate:"required" error:"required=اطلاعات سفارش الزامی است"`
+	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1,50"`
+	IsSuccess     *bool             `json:"isSuccess" validate:"required_bool"`
+	OrderData     map[string]string `json:"orderData" validate:"required"`
 }
 
 // UpgradePlanRequestUserCommand represents a command to request plan upgrade
 type UpgradePlanRequestUserCommand struct {
-	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required" error:"required=درگاه پرداخت الزامی است"`
-	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required,url" error:"required=آدرس بازگشت الزامی است|url=آدرس بازگشت باید یک URL معتبر باشد"`
-	PlanID              *int64               `json:"planId" validate:"required,gt=0" error:"required=پلن الزامی است|gt=شناسه پلن باید بزرگتر از 0 باشد"`
+	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
+	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
+	PlanID              *int64               `json:"planId" validate:"required,gt=0"`
 }
 
 // UpgradePlanVerifyUserCommand represents a command to verify plan upgrade
 type UpgradePlanVerifyUserCommand struct {
-	PaymentStatus *string           `json:"paymentStatus" validate:"required" error:"required=وضعیت پرداخت الزامی است"`
-	IsSuccess     *bool             `json:"isSuccess" validate:"required" error:"required=نتیجه پرداخت الزامی است"`
-	OrderData     map[string]string `json:"orderData" validate:"required" error:"required=اطلاعات سفارش الزامی است"`
+	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1,50"`
+	IsSuccess     *bool             `json:"isSuccess" validate:"required_bool"`
+	OrderData     map[string]string `json:"orderData" validate:"required"`
 }

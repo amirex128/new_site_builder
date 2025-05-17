@@ -8,7 +8,7 @@ const (
 	Value
 )
 
-// ProductAttributeTypeEnum defines types of product attributes
+// ProductAttributeTypeEnum defines types of article attributes
 type ProductAttributeTypeEnum int
 
 const (
@@ -17,7 +17,7 @@ const (
 	Other
 )
 
-// StatusEnum defines product status options
+// StatusEnum defines article status options
 type StatusEnum int
 
 const (
@@ -25,7 +25,7 @@ const (
 	Active
 )
 
-// ProductFilterEnum defines product filter options
+// ProductFilterEnum defines article filter options
 type ProductFilterEnum int
 
 const (
@@ -46,7 +46,7 @@ const (
 	FreeSend
 )
 
-// ProductSortEnum defines product sorting options
+// ProductSortEnum defines article sorting options
 type ProductSortEnum int
 
 const (

@@ -4,28 +4,28 @@ import (
 	producttransformer "github.com/amirex128/new_site_builder/src/internal/api/transformer/product"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
-	productusecase "github.com/amirex128/new_site_builder/src/internal/app/usecase/product"
+	productusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/article"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type ProductHandler struct {
-	usecase *productusecase.ProductUsecase
+type ArticleHandler struct {
+	usecase *productusecase.ArticleUsecase
 }
 
-func NewProductHandler(usc *productusecase.ProductUsecase) *ProductHandler {
-	return &ProductHandler{
+func NewArticleHandler(usc *productusecase.ArticleUsecase) *ArticleHandler {
+	return &ArticleHandler{
 		usecase: usc,
 	}
 }
 
-func (h *ProductHandler) ProductList(c *gin.Context) {
+func (h *ArticleHandler) ArticleList(c *gin.Context) {
 	// initializer generate dto
-	params := producttransformer.NewProductTransformer(c).
+	params := producttransformer.NewArticleTransformer(c).
 		SetSuperType().
 		Build()
 
-	result, err := h.usecase.ProductList(params)
+	result, err := h.usecase.ArticleList(params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.Created().Succeeded)
 		return

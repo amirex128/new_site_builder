@@ -24,7 +24,7 @@ type BasketItem struct {
 
 	// Relations
 	Basket         *Basket         `json:"basket" gorm:"foreignKey:BasketID"`
-	Product        *Product        `json:"product" gorm:"foreignKey:ProductID"`
+	Product        *Product        `json:"article" gorm:"foreignKey:ProductID"`
 	ProductVariant *ProductVariant `json:"product_variant" gorm:"foreignKey:ProductVariantID"`
 }
 

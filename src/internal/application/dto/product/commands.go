@@ -1,45 +1,45 @@
 package product
 
-// CreateProductCommand represents a command to create a new product
+// CreateProductCommand represents a command to create a new article
 type CreateProductCommand struct {
-	Name              *string                   `json:"name" validate:"required,max=200" error:"required=نام محصول الزامی است|max=نام محصول نمی‌تواند بیشتر از 200 کاراکتر باشد"`
-	Description       *string                   `json:"description,omitempty" validate:"omitempty,max=2000" error:"max=توضیحات نمی‌تواند بیشتر از 2000 کاراکتر باشد"`
-	Status            *StatusEnum               `json:"status" validate:"required" error:"required=وضعیت الزامی است"`
-	Weight            *int                      `json:"weight" validate:"required,max=1000" error:"required=وزن الزامی است|max=وزن نمی‌تواند بیشتر از 1000 باشد"`
-	FreeSend          *bool                     `json:"freeSend" validate:"required" error:"required=ارسال رایگان الزامی است"`
-	LongDescription   *string                   `json:"longDescription,omitempty" validate:"omitempty,max=5000" error:"max=توضیحات کامل نمی‌تواند بیشتر از 5000 کاراکتر باشد"`
-	Slug              *string                   `json:"slug" validate:"required" error:"required=نامک الزامی است"`
-	SeoTags           []string                  `json:"seoTags,omitempty" validate:"omitempty" error:""`
-	SiteID            *int64                    `json:"siteId" validate:"required" error:"required=سایت الزامی است"`
-	Coupon            *CouponCommand            `json:"coupon,omitempty" validate:"omitempty,dive" error:""`
-	ProductVariants   []ProductVariantCommand   `json:"productVariants" validate:"required,min=1,dive" error:"required=حداقل یک تنوع محصول الزامی است|min=حداقل یک تنوع محصول الزامی است"`
-	ProductAttributes []ProductAttributeCommand `json:"productAttributes,omitempty" validate:"omitempty,dive" error:""`
-	DiscountIDs       []int64                   `json:"discountIds,omitempty" validate:"omitempty" error:""`
-	CategoryIDs       []int64                   `json:"categoryIds,omitempty" validate:"omitempty" error:""`
-	MediaIDs          []int64                   `json:"mediaIds,omitempty" validate:"omitempty" error:""`
+	Name              *string                   `json:"name" validate:"required_text=1,200"`
+	Description       *string                   `json:"description,omitempty" validate:"optional_text=1,2000"`
+	Status            *StatusEnum               `json:"status" validate:"required,enum"`
+	Weight            *int                      `json:"weight" validate:"required,max=1000"`
+	FreeSend          *bool                     `json:"freeSend" validate:"required_bool"`
+	LongDescription   *string                   `json:"longDescription,omitempty" validate:"optional_text=1,5000"`
+	Slug              *string                   `json:"slug" validate:"required,slug"`
+	SeoTags           []string                  `json:"seoTags,omitempty" validate:"array_string_optional=1,100"`
+	SiteID            *int64                    `json:"siteId" validate:"required"`
+	Coupon            *CouponCommand            `json:"coupon,omitempty" validate:"omitempty,dive"`
+	ProductVariants   []ProductVariantCommand   `json:"productVariants" validate:"required,min=1,dive"`
+	ProductAttributes []ProductAttributeCommand `json:"productAttributes,omitempty" validate:"omitempty,dive"`
+	DiscountIDs       []int64                   `json:"discountIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	CategoryIDs       []int64                   `json:"categoryIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	MediaIDs          []int64                   `json:"mediaIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
 }
 
-// UpdateProductCommand represents a command to update an existing product
+// UpdateProductCommand represents a command to update an existing article
 type UpdateProductCommand struct {
-	ID                *int64                    `json:"id" validate:"required" error:"required=محصول الزامی است"`
-	SiteID            *int64                    `json:"siteId" validate:"required" error:"required=سایت الزامی است"`
-	Name              *string                   `json:"name,omitempty" validate:"omitempty,max=200" error:"max=نام محصول نمی‌تواند بیشتر از 200 کاراکتر باشد"`
-	Description       *string                   `json:"description,omitempty" validate:"omitempty,max=2000" error:"max=توضیحات نمی‌تواند بیشتر از 2000 کاراکتر باشد"`
-	Status            *StatusEnum               `json:"status,omitempty" validate:"omitempty" error:""`
-	Weight            *int                      `json:"weight,omitempty" validate:"omitempty" error:""`
-	FreeSend          *bool                     `json:"freeSend,omitempty" validate:"omitempty" error:""`
-	LongDescription   *string                   `json:"longDescription,omitempty" validate:"omitempty,max=5000" error:"max=توضیحات کامل نمی‌تواند بیشتر از 5000 کاراکتر باشد"`
-	Slug              *string                   `json:"slug,omitempty" validate:"omitempty" error:""`
-	SeoTags           []string                  `json:"seoTags,omitempty" validate:"omitempty" error:""`
-	ProductVariants   []ProductVariantCommand   `json:"productVariants,omitempty" validate:"omitempty,dive" error:""`
-	ProductAttributes []ProductAttributeCommand `json:"productAttributes,omitempty" validate:"omitempty,dive" error:""`
-	Coupon            *CouponCommand            `json:"coupon,omitempty" validate:"omitempty,dive" error:""`
-	DiscountIDs       []int64                   `json:"discountIds,omitempty" validate:"omitempty" error:""`
-	CategoryIDs       []int64                   `json:"categoryIds,omitempty" validate:"omitempty" error:""`
-	MediaIDs          []int64                   `json:"mediaIds,omitempty" validate:"omitempty" error:""`
+	ID                *int64                    `json:"id" validate:"required"`
+	SiteID            *int64                    `json:"siteId" validate:"required"`
+	Name              *string                   `json:"name,omitempty" validate:"optional_text=1,200"`
+	Description       *string                   `json:"description,omitempty" validate:"optional_text=1,2000"`
+	Status            *StatusEnum               `json:"status,omitempty" validate:"enum_optional"`
+	Weight            *int                      `json:"weight,omitempty" validate:"omitempty"`
+	FreeSend          *bool                     `json:"freeSend,omitempty" validate:"optional_bool"`
+	LongDescription   *string                   `json:"longDescription,omitempty" validate:"optional_text=1,5000"`
+	Slug              *string                   `json:"slug,omitempty" validate:"slug_optional"`
+	SeoTags           []string                  `json:"seoTags,omitempty" validate:"array_string_optional=1,100"`
+	ProductVariants   []ProductVariantCommand   `json:"productVariants,omitempty" validate:"omitempty,dive"`
+	ProductAttributes []ProductAttributeCommand `json:"productAttributes,omitempty" validate:"omitempty,dive"`
+	Coupon            *CouponCommand            `json:"coupon,omitempty" validate:"omitempty,dive"`
+	DiscountIDs       []int64                   `json:"discountIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	CategoryIDs       []int64                   `json:"categoryIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	MediaIDs          []int64                   `json:"mediaIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
 }
 
-// DeleteProductCommand represents a command to delete a product
+// DeleteProductCommand represents a command to delete a article
 type DeleteProductCommand struct {
-	ID *int64 `json:"id" validate:"required" error:"required=محصول الزامی است"`
+	ID *int64 `json:"id" validate:"required"`
 }

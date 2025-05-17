@@ -1,7 +1,7 @@
 package producttransformer
 
 import (
-	productdto "github.com/amirex128/new_site_builder/src/internal/app/dto/product"
+	productdto "github.com/amirex128/new_site_builder/src/internal/app/dto/article"
 	"github.com/gin-gonic/gin"
 
 	"strconv"

@@ -30,7 +30,7 @@ type PageProductUsage struct {
 
 	// Relations
 	Page    *Page    `json:"page" gorm:"foreignKey:PageID"`
-	Product *Product `json:"product" gorm:"foreignKey:ProductID"`
+	Product *Product `json:"article" gorm:"foreignKey:ProductID"`
 	Site    *Site    `json:"site" gorm:"foreignKey:SiteID"`
 	User    *User    `json:"user" gorm:"foreignKey:UserID"`
 }

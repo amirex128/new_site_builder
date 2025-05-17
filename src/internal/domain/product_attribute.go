@@ -18,7 +18,7 @@ type ProductAttribute struct {
 	DeletedAt *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
-	Product *Product `json:"product" gorm:"foreignKey:ProductID"`
+	Product *Product `json:"article" gorm:"foreignKey:ProductID"`
 }
 
 // TableName specifies the table name for ProductAttribute

@@ -16,7 +16,7 @@ type GetProfileCustomerQuery struct {
 
 // VerifyCustomerQuery represents a query to verify customer
 type VerifyCustomerQuery struct {
-	Email *string              `json:"email" validate:"required,email" error:"required=ایمیل الزامی است|email=ایمیل باید معتبر باشد"`
-	Code  *int                 `json:"code" validate:"required" error:"required=کد تایید الزامی است"`
-	Type  *user.VerifyTypeEnum `json:"type" validate:"required" error:"required=نوع تایید الزامی است"`
+	Email *string              `json:"email" validate:"required,email"`
+	Code  *int                 `json:"code" validate:"required"`
+	Type  *user.VerifyTypeEnum `json:"type" validate:"required,enum"`
 }

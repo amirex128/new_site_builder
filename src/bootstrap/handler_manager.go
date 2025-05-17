@@ -9,13 +9,10 @@ import (
 func HandlerBootstrap(c contract.IContainer) *HandlerManager {
 
 	return &HandlerManager{
-		ProductHandlerV1: handlermanager.ProductInit(c),
-		VendorHandlerV1:  handlermanager.VendorInit(c),
+		ArticleHandlerV1: handlermanager.ArticleInit(c),
 	}
 }
 
 type HandlerManager struct {
-	ProductHandlerV1 *v1.ProductHandler
-	VendorHandlerV1  *v1.VendorHandler
-	//declare other handlers
+	ArticleHandlerV1 *v1.ArticleHandler
 }
