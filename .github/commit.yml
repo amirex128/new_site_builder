@@ -1,0 +1,363 @@
+name: Notify Telegram on Commit Push
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  send_notification:
+    runs-on: ubuntu-latest
+
+    env:
+      TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Extract commit message and details
+        id: vars
+        run: |
+          COMMIT_SHA="$(git rev-parse HEAD)"
+          COMMIT_MESSAGE="$(git log -1 --pretty=%B)"
+          PUSHED_BRANCH="$(echo "${GITHUB_REF#refs/heads/}")"
+          AUTHOR_NAME="$(git log -1 --pretty=%an)"
+          AUTHOR_EMAIL="$(git log -1 --pretty=%ae)"
+          COMMIT_DATE="$(git log -1 --pretty=%cd --date=format:'%d %b %Y, %H:%M')"
+          
+          # Get list of changed files
+          CHANGED_FILES=$(git diff-tree --no-commit-id --name-status -r $COMMIT_SHA | awk '{print $1 " " $2}')
+          
+          # Get line change statistics
+          LINE_STATS=$(git diff --shortstat HEAD~1 HEAD)
+          LINES_ADDED=$(echo "$LINE_STATS" | grep -o '[0-9]* insertion' | awk '{print $1}')
+          LINES_DELETED=$(echo "$LINE_STATS" | grep -o '[0-9]* deletion' | awk '{print $1}')
+          
+          # Default to 0 if no matches
+          LINES_ADDED=${LINES_ADDED:-0}
+          LINES_DELETED=${LINES_DELETED:-0}
+          
+          echo "commit_sha=${COMMIT_SHA}" >> "$GITHUB_ENV"
+          echo "commit_message<<EOF" >> "$GITHUB_ENV"
+          echo "${COMMIT_MESSAGE}" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+          echo "pushed_branch=${PUSHED_BRANCH}" >> "$GITHUB_ENV"
+          echo "author_name=${AUTHOR_NAME}" >> "$GITHUB_ENV"
+          echo "author_email=${AUTHOR_EMAIL}" >> "$GITHUB_ENV"
+          echo "commit_date=${COMMIT_DATE}" >> "$GITHUB_ENV"
+          echo "changed_files<<EOF" >> "$GITHUB_ENV"
+          echo "${CHANGED_FILES}" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+          echo "lines_added=${LINES_ADDED}" >> "$GITHUB_ENV"
+          echo "lines_deleted=${LINES_DELETED}" >> "$GITHUB_ENV"
+
+      - name: Send notification to Telegram
+        if: success()
+        run: |
+          # Prepare HTML message with proper escaping
+          REPO_LINK="<a href='https://github.com/${{ github.repository }}'>${{ github.repository }}</a>"
+          COMMIT_LINK="<a href='https://github.com/${{ github.repository }}/commit/${{ env.commit_sha }}'>View Commit</a>"
+          
+          # Escape HTML special characters in commit message
+          ESCAPED_MESSAGE=$(echo "${{ env.commit_message }}" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&apos;/g')
+          
+          # Process changed files for display
+          CHANGED_FILES_LIST=""
+          CHANGED_FILES_COUNT=0
+          
+          while IFS= read -r line; do
+            if [ -n "$line" ]; then
+              STATUS=$(echo "$line" | awk '{print $1}')
+              FILE=$(echo "$line" | awk '{print $2}')
+          
+              # Determine file emoji based on status
+              if [ "$STATUS" = "A" ]; then
+                EMOJI="➕"
+                STATUS_TEXT="Added"
+              elif [ "$STATUS" = "M" ]; then
+                EMOJI="🔄"
+                STATUS_TEXT="Modified"
+              elif [ "$STATUS" = "D" ]; then
+                EMOJI="❌"
+                STATUS_TEXT="Deleted"
+              elif [ "$STATUS" = "R" ]; then
+                EMOJI="📋"
+                STATUS_TEXT="Renamed"
+              else
+                EMOJI="📄"
+                STATUS_TEXT="Changed"
+              fi
+          
+              # Get file extension for specific file type emoji
+              FILE_EXT="${FILE##*.}"
+              # JavaScript & TypeScript
+              if [ "$FILE_EXT" = "js" ]; then
+                FILE_EMOJI="📝"
+              elif [ "$FILE_EXT" = "jsx" ]; then
+                FILE_EMOJI="⚛️"
+              elif [ "$FILE_EXT" = "ts" ]; then
+                FILE_EMOJI="🔷"
+              elif [ "$FILE_EXT" = "tsx" ]; then
+                FILE_EMOJI="⚛️"
+              # React & JavaScript ecosystem
+              elif [[ "$FILE" == *"package.json"* ]]; then
+                FILE_EMOJI="📦"
+              elif [[ "$FILE" == *"package-lock.json"* ]] || [[ "$FILE" == *"yarn.lock"* ]]; then
+                FILE_EMOJI="🔒"
+              elif [[ "$FILE" == *".babelrc"* ]] || [ "$FILE_EXT" = "babelrc" ]; then
+                FILE_EMOJI="🔄"
+              elif [[ "$FILE" == *"webpack"* ]] || [ "$FILE_EXT" = "webpack" ]; then
+                FILE_EMOJI="📦"
+              elif [[ "$FILE" == *".eslintrc"* ]] || [ "$FILE_EXT" = "eslintrc" ]; then
+                FILE_EMOJI="🧹"
+              elif [[ "$FILE" == *".prettier"* ]] || [ "$FILE_EXT" = "prettierrc" ]; then
+                FILE_EMOJI="✨"
+              elif [ "$FILE_EXT" = "editorconfig" ]; then
+                FILE_EMOJI="⚙️"
+              # Styles
+              elif [ "$FILE_EXT" = "css" ] || [ "$FILE_EXT" = "scss" ] || [ "$FILE_EXT" = "sass" ] || [ "$FILE_EXT" = "less" ]; then
+                FILE_EMOJI="🎨"
+              # HTML
+              elif [ "$FILE_EXT" = "html" ] || [ "$FILE_EXT" = "htm" ]; then
+                FILE_EMOJI="🌐"
+              # Data formats
+              elif [ "$FILE_EXT" = "json" ]; then
+                FILE_EMOJI="📊"
+              # Documentation
+              elif [ "$FILE_EXT" = "md" ] || [ "$FILE_EXT" = "markdown" ]; then
+                FILE_EMOJI="📚"
+              # Config
+              elif [ "$FILE_EXT" = "yml" ] || [ "$FILE_EXT" = "yaml" ]; then
+                FILE_EMOJI="⚙️"
+              # .NET
+              elif [ "$FILE_EXT" = "cs" ]; then
+                FILE_EMOJI="🔷"
+              elif [ "$FILE_EXT" = "vb" ]; then
+                FILE_EMOJI="🔶"
+              elif [ "$FILE_EXT" = "fs" ]; then
+                FILE_EMOJI="🔹"
+              elif [ "$FILE_EXT" = "csproj" ] || [ "$FILE_EXT" = "vbproj" ] || [ "$FILE_EXT" = "fsproj" ]; then
+                FILE_EMOJI="🧩"
+              elif [ "$FILE_EXT" = "sln" ]; then
+                FILE_EMOJI="📁"
+              elif [ "$FILE_EXT" = "dll" ] || [ "$FILE_EXT" = "exe" ]; then
+                FILE_EMOJI="⚡"
+              elif [ "$FILE_EXT" = "aspx" ] || [ "$FILE_EXT" = "cshtml" ] || [ "$FILE_EXT" = "razor" ]; then
+                FILE_EMOJI="🔪"
+              elif [ "$FILE_EXT" = "config" ] || [ "$FILE_EXT" = "settings" ]; then
+                FILE_EMOJI="⚙️"
+              elif [ "$FILE_EXT" = "resx" ]; then
+                FILE_EMOJI="🌐"
+              elif [ "$FILE_EXT" = "nuspec" ] || [ "$FILE_EXT" = "nupkg" ]; then
+                FILE_EMOJI="📦"
+              elif [ "$FILE_EXT" = "targets" ] || [ "$FILE_EXT" = "props" ]; then
+                FILE_EMOJI="🎯"
+              elif [ "$FILE_EXT" = "cake" ]; then
+                FILE_EMOJI="🍰"
+              elif [ "$FILE_EXT" = "pubxml" ]; then
+                FILE_EMOJI="🚀"
+              elif [ "$FILE_EXT" = "pdb" ]; then
+                FILE_EMOJI="🔍"
+              # Python
+              elif [ "$FILE_EXT" = "py" ]; then
+                FILE_EMOJI="🐍"
+              # Ruby
+              elif [ "$FILE_EXT" = "rb" ]; then
+                FILE_EMOJI="💎"
+              # PHP
+              elif [ "$FILE_EXT" = "php" ]; then
+                FILE_EMOJI="🐘"
+              # Java
+              elif [ "$FILE_EXT" = "java" ]; then
+                FILE_EMOJI="☕"
+              # Go
+              elif [ "$FILE_EXT" = "go" ]; then
+                FILE_EMOJI="🦫"
+              # Rust
+              elif [ "$FILE_EXT" = "rs" ]; then
+                FILE_EMOJI="🦀"
+              # Swift
+              elif [ "$FILE_EXT" = "swift" ]; then
+                FILE_EMOJI="🕊️"
+              # Kotlin
+              elif [ "$FILE_EXT" = "kt" ]; then
+                FILE_EMOJI="💜"
+              # C/C++
+              elif [ "$FILE_EXT" = "c" ] || [ "$FILE_EXT" = "cpp" ] || [ "$FILE_EXT" = "h" ] || [ "$FILE_EXT" = "hpp" ]; then
+                FILE_EMOJI="🧠"
+              # Shell
+              elif [ "$FILE_EXT" = "sh" ] || [ "$FILE_EXT" = "bash" ]; then
+                FILE_EMOJI="🐚"
+              # SQL
+              elif [ "$FILE_EXT" = "sql" ]; then
+                FILE_EMOJI="🗄️"
+              # Vue
+              elif [ "$FILE_EXT" = "vue" ]; then
+                FILE_EMOJI="💚"
+              # XML & XAML
+              elif [ "$FILE_EXT" = "xml" ] || [ "$FILE_EXT" = "xaml" ]; then
+                FILE_EMOJI="📃"
+              # GraphQL
+              elif [ "$FILE_EXT" = "graphql" ] || [ "$FILE_EXT" = "gql" ]; then
+                FILE_EMOJI="🔍"
+              # Terraform
+              elif [ "$FILE_EXT" = "tf" ] || [ "$FILE_EXT" = "tfvars" ]; then
+                FILE_EMOJI="🏗️"
+              # Docker
+              elif [ "$FILE_EXT" = "docker" ] || [ "$FILE_EXT" = "dockerfile" ]; then
+                FILE_EMOJI="🐳"
+              # Environment
+              elif [ "$FILE_EXT" = "env" ]; then
+                FILE_EMOJI="🔐"
+              # Git
+              elif [ "$FILE_EXT" = "gitignore" ]; then
+                FILE_EMOJI="🙈"
+              # Images
+              elif [ "$FILE_EXT" = "png" ] || [ "$FILE_EXT" = "jpg" ] || [ "$FILE_EXT" = "jpeg" ] || [ "$FILE_EXT" = "gif" ] || [ "$FILE_EXT" = "svg" ] || [ "$FILE_EXT" = "webp" ]; then
+                FILE_EMOJI="🖼️"
+              # Default
+              else
+                FILE_EMOJI="📄"
+              fi
+          
+              FILE_LINK="<a href='https://github.com/${{ github.repository }}/blob/${{ env.commit_sha }}/${FILE}'>${FILE}</a>"
+          
+              # Store each file entry individually in an array
+              if [ -z "$CHANGED_FILES_COUNT" ] || [ "$CHANGED_FILES_COUNT" -eq "0" ]; then
+                CHANGED_FILES_ARRAY=("${EMOJI} ${FILE_EMOJI} ${STATUS_TEXT}: ${FILE_LINK} ")
+              else
+                CHANGED_FILES_ARRAY+=("${EMOJI} ${FILE_EMOJI} ${STATUS_TEXT}: ${FILE_LINK} ")
+              fi
+          
+              CHANGED_FILES_COUNT=$((CHANGED_FILES_COUNT + 1))
+            fi
+          done <<< "${{ env.changed_files }}"
+          
+          # Join array elements with HTML <br> tags
+          CHANGED_FILES_LIST=$(printf "%s\n" "${CHANGED_FILES_ARRAY[@]}")
+          # Remove the trailing <br>
+          CHANGED_FILES_LIST=${CHANGED_FILES_LIST%$'\n'}
+          
+          # Create the full message with a beautiful box
+          MESSAGE="🚀 <b>New Commit Detected!</b> 🚀
+
+          🔖 <b>Branch:</b> <code>${{ env.pushed_branch }}</code>
+          📂 <b>Repository:</b> ${REPO_LINK}
+          👨‍💻 <b>Author:</b> ${{ env.author_name }} (${{ env.author_email }})
+          🕒 <b>Date:</b> ${{ env.commit_date }}
+          📊 <b>Changes:</b> <code>+${{ env.lines_added }}</code> | <code>-${{ env.lines_deleted }}</code> lines
+          
+          <b>📝 Commit Message:</b> 
+          <pre>${ESCAPED_MESSAGE}</pre>
+          
+          <b>📊 Files Changed (${CHANGED_FILES_COUNT}):</b>
+          ${CHANGED_FILES_LIST}
+          
+          <a href='https://github.com/${{ github.repository }}/commit/${{ env.commit_sha }}'>🔍 View All Changes</a>"
+          
+          CHAT_IDS=${{ secrets.TELEGRAM_CHAT_IDS }}
+          TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHANNEL_ID=${{ secrets.TELEGRAM_CHANNEL_ID }}
+          
+          # Function to send message to a specific chat ID
+          send_message() {
+            local CHAT_ID="$1"
+            local MSG="$2"
+            local MAX_LENGTH=4096  # Telegram's message length limit
+          
+            if [ ${#MSG} -le $MAX_LENGTH ]; then
+              # Send as single message if within limit
+              curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+                -d "chat_id=${CHAT_ID}" \
+                -d "text=${MSG}" \
+                -d "parse_mode=HTML" \
+                -d "disable_web_page_preview=true"
+            else
+              # Send header information
+              HEADER_MSG="🚀 <b>New Commit Detected!</b> 🚀
+
+              🔖 <b>Branch:</b> <code>${{ env.pushed_branch }}</code>
+              📂 <b>Repository:</b> ${REPO_LINK}
+              👨‍💻 <b>Author:</b> ${{ env.author_name }} (${{ env.author_email }})
+              🕒 <b>Date:</b> ${{ env.commit_date }}
+              📊 <b>Changes:</b> <code>+${{ env.lines_added }}</code> | <code>-${{ env.lines_deleted }}</code> lines
+          
+              <b>📝 Commit Message:</b> 
+              <pre>${ESCAPED_MESSAGE}</pre>"
+
+              curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+                -d "chat_id=${CHAT_ID}" \
+                -d "text=${HEADER_MSG}" \
+                -d "parse_mode=HTML" \
+                -d "disable_web_page_preview=true"
+
+              # Send files list in chunks
+              echo "${CHANGED_FILES_LIST}" | while IFS= read -r line; do
+                if [ -n "$line" ]; then
+                  CHUNK="<b>📊 Changed File:</b>\n${line}"
+                  curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+                    -d "chat_id=${CHAT_ID}" \
+                    -d "text=${CHUNK}" \
+                    -d "parse_mode=HTML" \
+                    -d "disable_web_page_preview=true"
+                fi
+              done
+
+              # Send footer with link
+              FOOTER_MSG="<a href='https://github.com/${{ github.repository }}/commit/${{ env.commit_sha }}'>🔍 View All Changes</a>"
+              curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+                -d "chat_id=${CHAT_ID}" \
+                -d "text=${FOOTER_MSG}" \
+                -d "parse_mode=HTML" \
+                -d "disable_web_page_preview=true"
+            fi
+          }
+
+          # Send to each chat ID
+          for CHAT_ID in $(echo $CHAT_IDS | tr "," "\n")
+          do
+            send_message "${CHAT_ID}" "${MESSAGE}"
+          done
+
+          # Send to channel
+          send_message "${TELEGRAM_CHANNEL_ID}" "${MESSAGE}"
+
+      - name: Send notification to Telegram on failure
+        if: failure()
+        run: |
+          # Prepare HTML message with proper escaping
+          REPO_LINK="<a href='https://github.com/${{ github.repository }}'>${{ github.repository }}</a>"
+          BUILD_LOGS_LINK="<a href='https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'>build logs</a>"
+          
+          # Create the full message
+          MESSAGE="⚠️ <b>Action Failed!</b> ⚠️
+          
+          ❌ The push to <b>'${{ env.pushed_branch }}'</b> in ${REPO_LINK} failed.
+          
+          Please check the ${BUILD_LOGS_LINK} for more details."
+          
+          CHAT_IDS=${{ secrets.TELEGRAM_CHAT_IDS }}
+          TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHANNEL_ID=${{ secrets.TELEGRAM_CHANNEL_ID }}
+          
+          # Send message to each chat ID
+          for CHAT_ID in $(echo $CHAT_IDS | tr "," "\n")
+          do
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+              -d "chat_id=${CHAT_ID}" \
+              -d "text=${MESSAGE}" \
+              -d "parse_mode=HTML" \
+              -d "disable_web_page_preview=true"
+          done
+          
+          # Send message to the channel
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHANNEL_ID}" \
+            -d "text=${MESSAGE}" \
+            -d "parse_mode=HTML" \
+            -d "disable_web_page_preview=true"
