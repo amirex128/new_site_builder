@@ -1,13 +1,13 @@
 package repository
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
 type ISiteRepository interface {
-	GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Site, int64, error)
-	GetAllByUserID(userID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Site, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Site, int64, error)
+	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Site, int64, error)
 	GetByID(id int64) (domain.Site, error)
 	GetByDomain(domain string) (domain.Site, error)
 	Create(site domain.Site) error

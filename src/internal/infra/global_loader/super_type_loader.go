@@ -1,7 +1,7 @@
 package globalloader
 
 import (
-	"go-boilerplate/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"time"
 )
 

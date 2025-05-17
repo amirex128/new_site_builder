@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"context"
-	"go-boilerplate/src/bootstrap/service_provider"
+	"github.com/amirex128/new_site_builder/src/bootstrap/service_provider"
 )
 
 func GrpcBootstrap(ctx context.Context) *Container {

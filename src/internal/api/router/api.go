@@ -2,7 +2,7 @@ package router
 
 import (
 	"context"
-	"go-boilerplate/src/bootstrap"
+	"github.com/amirex128/new_site_builder/src/bootstrap"
 	"net/http"
 	"os"
 	"os/signal"

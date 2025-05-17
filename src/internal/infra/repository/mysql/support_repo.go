@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +18,7 @@ func NewTicketRepository(db *gorm.DB) *TicketRepo {
 	}
 }
 
-func (r *TicketRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Ticket, int64, error) {
+func (r *TicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error) {
 	var tickets []domain.Ticket
 	var count int64
 
@@ -36,7 +36,7 @@ func (r *TicketRepo) GetAll(paginationRequestDto common_contract.PaginationReque
 	return tickets, count, nil
 }
 
-func (r *TicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Ticket, int64, error) {
+func (r *TicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error) {
 	var tickets []domain.Ticket
 	var count int64
 
@@ -54,7 +54,7 @@ func (r *TicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_co
 	return tickets, count, nil
 }
 
-func (r *TicketRepo) GetAllByUserID(userID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Ticket, int64, error) {
+func (r *TicketRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error) {
 	var tickets []domain.Ticket
 	var count int64
 
@@ -107,7 +107,7 @@ func NewCustomerTicketRepository(db *gorm.DB) *CustomerTicketRepo {
 	}
 }
 
-func (r *CustomerTicketRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
+func (r *CustomerTicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
 	var tickets []domain.CustomerTicket
 	var count int64
 
@@ -125,7 +125,7 @@ func (r *CustomerTicketRepo) GetAll(paginationRequestDto common_contract.Paginat
 	return tickets, count, nil
 }
 
-func (r *CustomerTicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
+func (r *CustomerTicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
 	var tickets []domain.CustomerTicket
 	var count int64
 
@@ -143,7 +143,7 @@ func (r *CustomerTicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto c
 	return tickets, count, nil
 }
 
-func (r *CustomerTicketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
+func (r *CustomerTicketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
 	var tickets []domain.CustomerTicket
 	var count int64
 

@@ -1,10 +1,11 @@
 package v1
 
 import (
+	producttransformer "github.com/amirex128/new_site_builder/src/internal/api/transformer/product"
+	"github.com/amirex128/new_site_builder/src/internal/api/utils"
+	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
+	productusecase "github.com/amirex128/new_site_builder/src/internal/app/usecase/product"
 	"github.com/gin-gonic/gin"
-	"go-boilerplate/src/internal/api/helper"
-	producttransformer "go-boilerplate/src/internal/api/transformer/product"
-	productusecase "go-boilerplate/src/internal/app/usecase/product"
 	"net/http"
 )
 
@@ -26,7 +27,7 @@ func (h *ProductHandler) ProductList(c *gin.Context) {
 
 	result, err := h.usecase.ProductList(params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, utils.GenerateBaseResponseWithError(nil, false, 1, err))
+		c.JSON(http.StatusBadRequest, resp.Created().Succeeded)
 		return
 	}
 

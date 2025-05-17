@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewBasketRepository(db *gorm.DB) *BasketRepo {
 	}
 }
 
-func (r *BasketRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Basket, int64, error) {
+func (r *BasketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Basket, int64, error) {
 	var baskets []domain.Basket
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *BasketRepo) GetAll(paginationRequestDto common_contract.PaginationReque
 	return baskets, count, nil
 }
 
-func (r *BasketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Basket, int64, error) {
+func (r *BasketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Basket, int64, error) {
 	var baskets []domain.Basket
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *BasketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_co
 	return baskets, count, nil
 }
 
-func (r *BasketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Basket, int64, error) {
+func (r *BasketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Basket, int64, error) {
 	var baskets []domain.Basket
 	var count int64
 

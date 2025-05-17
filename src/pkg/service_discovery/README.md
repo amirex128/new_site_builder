@@ -33,7 +33,7 @@ The easiest way to use the service registry is to use the `InitAndRegisterServic
 
 ```go
 import (
-    "go-boilerplate/src/pkg/service_discovery"
+    "github.com/amirex128/new_site_builder/src/pkg/service_discovery"
     logger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
@@ -94,7 +94,7 @@ If you need more control, you can use the individual functions:
 
 ```go
 import (
-    "go-boilerplate/src/pkg/service_discovery"
+    "github.com/amirex128/new_site_builder/src/pkg/service_discovery"
     logger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
@@ -143,7 +143,7 @@ To discover a service:
 ```go
 import (
     "fmt"
-    "go-boilerplate/src/pkg/service_discovery"
+    "github.com/amirex128/new_site_builder/src/pkg/service_discovery"
     logger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
@@ -172,7 +172,7 @@ Here's an example of how to make HTTP requests to a discovered service:
 import (
     "fmt"
     "net/http"
-    "go-boilerplate/src/pkg/service_discovery"
+    "github.com/amirex128/new_site_builder/src/pkg/service_discovery"
     logger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 

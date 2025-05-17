@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewProductReviewRepository(db *gorm.DB) *ProductReviewRepo {
 	}
 }
 
-func (r *ProductReviewRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *ProductReviewRepo) GetAll(paginationRequestDto common_contract.Paginati
 	return reviews, count, nil
 }
 
-func (r *ProductReviewRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *ProductReviewRepo) GetAllBySiteID(siteID int64, paginationRequestDto co
 	return reviews, count, nil
 }
 
-func (r *ProductReviewRepo) GetAllByProductID(productID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -71,7 +71,7 @@ func (r *ProductReviewRepo) GetAllByProductID(productID int64, paginationRequest
 	return reviews, count, nil
 }
 
-func (r *ProductReviewRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
 	var reviews []domain.ProductReview
 	var count int64
 

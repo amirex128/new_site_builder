@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	handlermanager "go-boilerplate/src/bootstrap/handler_manager"
-	"go-boilerplate/src/internal/api/handler/http/v1"
-	"go-boilerplate/src/internal/contract"
+	handlermanager "github.com/amirex128/new_site_builder/src/bootstrap/handler_manager"
+	"github.com/amirex128/new_site_builder/src/internal/api/handler/http/v1"
+	"github.com/amirex128/new_site_builder/src/internal/contract"
 )
 
 func HandlerBootstrap(c contract.IContainer) *HandlerManager {

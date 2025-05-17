@@ -1,9 +1,9 @@
 package handlermanager
 
 import (
-	v1 "go-boilerplate/src/internal/api/handler/http/v1"
-	productusecase "go-boilerplate/src/internal/app/usecase/product"
-	"go-boilerplate/src/internal/contract"
+	v1 "github.com/amirex128/new_site_builder/src/internal/api/handler/http/v1"
+	productusecase "github.com/amirex128/new_site_builder/src/internal/app/usecase/product"
+	"github.com/amirex128/new_site_builder/src/internal/contract"
 )
 
 func ProductInit(c contract.IContainer) *v1.ProductHandler {

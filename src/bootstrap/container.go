@@ -2,9 +2,9 @@ package bootstrap
 
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
-	"go-boilerplate/src/internal/contract"
-	"go-boilerplate/src/internal/contract/repository"
-	cache2 "go-boilerplate/src/internal/contract/service/cache"
+	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	cache2 "github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 )
 
 // Container

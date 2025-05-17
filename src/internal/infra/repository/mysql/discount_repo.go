@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewDiscountRepository(db *gorm.DB) *DiscountRepo {
 	}
 }
 
-func (r *DiscountRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Discount, int64, error) {
+func (r *DiscountRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Discount, int64, error) {
 	var discounts []domain.Discount
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *DiscountRepo) GetAll(paginationRequestDto common_contract.PaginationReq
 	return discounts, count, nil
 }
 
-func (r *DiscountRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Discount, int64, error) {
+func (r *DiscountRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Discount, int64, error) {
 	var discounts []domain.Discount
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *DiscountRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_
 	return discounts, count, nil
 }
 
-func (r *DiscountRepo) GetAllByProductID(productID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Discount, int64, error) {
+func (r *DiscountRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Discount, int64, error) {
 	var discounts []domain.Discount
 	var count int64
 

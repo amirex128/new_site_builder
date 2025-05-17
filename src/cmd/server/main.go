@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"go-boilerplate/src/bootstrap"
-	"go-boilerplate/src/internal/api/router"
+	"github.com/amirex128/new_site_builder/src/bootstrap"
+	"github.com/amirex128/new_site_builder/src/internal/api/router"
 )
 
 func main() {

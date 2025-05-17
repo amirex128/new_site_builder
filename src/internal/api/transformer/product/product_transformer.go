@@ -1,8 +1,8 @@
 package producttransformer
 
 import (
+	productdto "github.com/amirex128/new_site_builder/src/internal/app/dto/product"
 	"github.com/gin-gonic/gin"
-	productdto "go-boilerplate/src/internal/app/dto/product"
 
 	"strconv"
 )

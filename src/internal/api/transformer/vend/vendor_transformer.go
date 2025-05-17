@@ -1,9 +1,9 @@
 package vendtransformer
 
 import (
+	vendorrdto "github.com/amirex128/new_site_builder/src/internal/api/dto/vend"
+	vendordto "github.com/amirex128/new_site_builder/src/internal/app/dto/vend"
 	"github.com/gin-gonic/gin"
-	vendorrdto "go-boilerplate/src/internal/api/dto/vend"
-	vendordto "go-boilerplate/src/internal/app/dto/vend"
 	"strconv"
 )
 

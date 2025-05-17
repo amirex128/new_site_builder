@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewSiteRepository(db *gorm.DB) *SiteRepo {
 	}
 }
 
-func (r *SiteRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Site, int64, error) {
+func (r *SiteRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Site, int64, error) {
 	var sites []domain.Site
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *SiteRepo) GetAll(paginationRequestDto common_contract.PaginationRequest
 	return sites, count, nil
 }
 
-func (r *SiteRepo) GetAllByUserID(userID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Site, int64, error) {
+func (r *SiteRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Site, int64, error) {
 	var sites []domain.Site
 	var count int64
 

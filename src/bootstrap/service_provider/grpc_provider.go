@@ -3,7 +3,7 @@ package serviceprovider
 import (
 	"git.snappfood.ir/backend/go/packages/sf-http-request/grpco"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
-	svc "go-boilerplate/src/protobuf/food_story"
+	svc "github.com/amirex128/new_site_builder/src/protobuf/food_story"
 )
 
 func GrpcProvider(logger sflogger.Logger) {

@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewPaymentRepository(db *gorm.DB) *PaymentRepo {
 	}
 }
 
-func (r *PaymentRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *PaymentRepo) GetAll(paginationRequestDto common_contract.PaginationRequ
 	return payments, count, nil
 }
 
-func (r *PaymentRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *PaymentRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_c
 	return payments, count, nil
 }
 
-func (r *PaymentRepo) GetAllByOrderID(orderID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -71,7 +71,7 @@ func (r *PaymentRepo) GetAllByOrderID(orderID int64, paginationRequestDto common
 	return payments, count, nil
 }
 
-func (r *PaymentRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
 	var payments []domain.Payment
 	var count int64
 

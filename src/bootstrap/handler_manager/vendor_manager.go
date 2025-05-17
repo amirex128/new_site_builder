@@ -1,9 +1,9 @@
 package handlermanager
 
 import (
-	v1 "go-boilerplate/src/internal/api/handler/http/v1"
-	vendorusecase "go-boilerplate/src/internal/app/usecase/vend"
-	"go-boilerplate/src/internal/contract"
+	v1 "github.com/amirex128/new_site_builder/src/internal/api/handler/http/v1"
+	vendorusecase "github.com/amirex128/new_site_builder/src/internal/app/usecase/vend"
+	"github.com/amirex128/new_site_builder/src/internal/contract"
 )
 
 func VendorInit(c contract.IContainer) *v1.VendorHandler {

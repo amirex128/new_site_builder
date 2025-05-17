@@ -3,7 +3,7 @@ package serviceprovider
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"git.snappfood.ir/backend/go/packages/sf-memory-loader"
-	globalloader "go-boilerplate/src/internal/infra/global_loader"
+	globalloader "github.com/amirex128/new_site_builder/src/internal/infra/global_loader"
 	"time"
 )
 

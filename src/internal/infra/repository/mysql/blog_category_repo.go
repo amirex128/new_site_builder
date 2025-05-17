@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewBlogCategoryRepository(db *gorm.DB) *BlogCategoryRepo {
 	}
 }
 
-func (r *BlogCategoryRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
+func (r *BlogCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
 	var categories []domain.BlogCategory
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *BlogCategoryRepo) GetAll(paginationRequestDto common_contract.Paginatio
 	return categories, count, nil
 }
 
-func (r *BlogCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
+func (r *BlogCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
 	var categories []domain.BlogCategory
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *BlogCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto com
 	return categories, count, nil
 }
 
-func (r *BlogCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
+func (r *BlogCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
 	var categories []domain.BlogCategory
 	var count int64
 

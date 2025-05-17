@@ -2,8 +2,8 @@ package contract
 
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
-	"go-boilerplate/src/internal/contract/repository"
-	"go-boilerplate/src/internal/contract/service/cache"
+	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 )
 
 type IContainer interface {

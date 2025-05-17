@@ -1,7 +1,7 @@
 package serviceprovider
 
 import (
-	"go-boilerplate/src/config"
+	"github.com/amirex128/new_site_builder/src/config"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 )

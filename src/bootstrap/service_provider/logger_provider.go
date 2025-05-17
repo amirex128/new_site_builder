@@ -41,7 +41,7 @@ func LoggerProvider(ctx context.Context) sflogger.Logger {
 	// Initialize global logger with the same configuration
 	sflogger.InitGlobalLogger(loggerOpts...)
 
-	// Log with category-based logging
+	// Log with product_category-based logging
 	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Application starting", map[string]interface{}{
 		sflogger.ExtraKey.Metadata.AppName: "SnappFood-Search",
 		sflogger.ExtraKey.Network.HostIP:   "127.0.0.1",

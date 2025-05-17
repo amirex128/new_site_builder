@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewMediaRepository(db *gorm.DB) *MediaRepo {
 	}
 }
 
-func (r *MediaRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Media, int64, error) {
+func (r *MediaRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Media, int64, error) {
 	var media []domain.Media
 	var count int64
 

@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewOrderRepository(db *gorm.DB) *OrderRepo {
 	}
 }
 
-func (r *OrderRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Order, int64, error) {
+func (r *OrderRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Order, int64, error) {
 	var orders []domain.Order
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *OrderRepo) GetAll(paginationRequestDto common_contract.PaginationReques
 	return orders, count, nil
 }
 
-func (r *OrderRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Order, int64, error) {
+func (r *OrderRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Order, int64, error) {
 	var orders []domain.Order
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *OrderRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_con
 	return orders, count, nil
 }
 
-func (r *OrderRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.Order, int64, error) {
+func (r *OrderRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Order, int64, error) {
 	var orders []domain.Order
 	var count int64
 

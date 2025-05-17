@@ -1,8 +1,8 @@
 package router
 
 import (
+	"github.com/amirex128/new_site_builder/src/bootstrap"
 	"github.com/gin-gonic/gin"
-	"go-boilerplate/src/bootstrap"
 )
 
 type RouterV2 struct {

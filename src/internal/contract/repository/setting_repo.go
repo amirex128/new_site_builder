@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"go-boilerplate/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
 type ISettingRepository interface {

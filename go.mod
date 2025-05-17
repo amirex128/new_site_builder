@@ -1,4 +1,4 @@
-module go-boilerplate
+module github.com/amirex128/new_site_builder
 
 go 1.24.2
 

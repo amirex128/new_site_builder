@@ -4,9 +4,9 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfrouting "git.snappfood.ir/backend/go/packages/sf-routing"
 	"git.snappfood.ir/backend/go/packages/sf-routing/middlewares"
+	"github.com/amirex128/new_site_builder/src/bootstrap/exporter"
+	"github.com/amirex128/new_site_builder/src/bootstrap/healthcheck"
 	"github.com/gin-gonic/gin"
-	"go-boilerplate/src/bootstrap/exporter"
-	"go-boilerplate/src/bootstrap/healthcheck"
 	"log"
 )
 

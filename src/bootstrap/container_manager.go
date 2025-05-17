@@ -5,10 +5,10 @@ import (
 	"git.snappfood.ir/backend/go/packages/sf-logger"
 	"git.snappfood.ir/backend/go/packages/sf-orm"
 	"git.snappfood.ir/backend/go/packages/sf-redis"
-	"go-boilerplate/src/config"
-	"go-boilerplate/src/internal/contract/service/cache"
-	"go-boilerplate/src/internal/infra/repository/mysql"
-	"go-boilerplate/src/internal/infra/service"
+	"github.com/amirex128/new_site_builder/src/config"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
+	"github.com/amirex128/new_site_builder/src/internal/infra/repository/mysql"
+	"github.com/amirex128/new_site_builder/src/internal/infra/service"
 )
 
 func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.Logger) *Container {

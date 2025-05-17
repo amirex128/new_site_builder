@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	common_contract "go-boilerplate/src/internal/contract/common"
-	"go-boilerplate/src/internal/domain"
+	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func NewProductCategoryRepository(db *gorm.DB) *ProductCategoryRepo {
 	}
 }
 
-func (r *ProductCategoryRepo) GetAll(paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
+func (r *ProductCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
 	var categories []domain.ProductCategory
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *ProductCategoryRepo) GetAll(paginationRequestDto common_contract.Pagina
 	return categories, count, nil
 }
 
-func (r *ProductCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
+func (r *ProductCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
 	var categories []domain.ProductCategory
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *ProductCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto 
 	return categories, count, nil
 }
 
-func (r *ProductCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common_contract.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
+func (r *ProductCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
 	var categories []domain.ProductCategory
 	var count int64
 
