@@ -39,7 +39,6 @@ func InitServer(handlers *bootstrap.HandlerManager) {
 func RegisterRoutes(h *bootstrap.HandlerManager) {
 	// Register user routes in a group
 	sfrouting.RegisterRouterGroup("/api/v1", &RouterV1{h: h})
-	sfrouting.RegisterRouterGroup("/api/v2", &RouterV2{h: h})
 }
 
 func runServer(r *gin.Engine, logger sflogger.Logger) {

@@ -5,30 +5,30 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
-	articleusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/article"
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/page"
+	pageusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/page"
 	"github.com/gin-gonic/gin"
 )
 
-type ArticleHandler struct {
-	usecase   *articleusecase.ArticleUsecase
+type PageHandler struct {
+	usecase   *pageusecase.PageUsecase
 	validator *utils.ValidationHelper
 }
 
-func NewArticleHandler(usc *articleusecase.ArticleUsecase) *ArticleHandler {
-	return &ArticleHandler{
+func NewPageHandler(usc *pageusecase.PageUsecase) *PageHandler {
+	return &PageHandler{
 		usecase:   usc,
 		validator: utils.NewValidationHelper(),
 	}
 }
 
-func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
-	var params article.CreateArticleCommand
+func (h *PageHandler) CreatePage(c *gin.Context) {
+	var params page.CreatePageCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.CreateArticleCommand(&params)
+	result, err := h.usecase.CreatePageCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -37,13 +37,13 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Created().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
-	var params article.UpdateArticleCommand
+func (h *PageHandler) UpdatePage(c *gin.Context) {
+	var params page.UpdatePageCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.UpdateArticleCommand(&params)
+	result, err := h.usecase.UpdatePageCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -52,13 +52,13 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Updated().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
-	var params article.DeleteArticleCommand
+func (h *PageHandler) DeletePage(c *gin.Context) {
+	var params page.DeletePageCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.DeleteArticleCommand(&params)
+	result, err := h.usecase.DeletePageCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -67,13 +67,13 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGet(c *gin.Context) {
-	var params article.GetByIdArticleQuery
+func (h *PageHandler) GetByIdPage(c *gin.Context) {
+	var params page.GetByIdPageQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByIdArticleQuery(&params)
+	result, err := h.usecase.GetByIdPageQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -82,13 +82,13 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
-	var params article.GetAllArticleQuery
+func (h *PageHandler) GetAllPage(c *gin.Context) {
+	var params page.GetAllPageQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetAllArticleQuery(&params)
+	result, err := h.usecase.GetAllPageQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -97,28 +97,13 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
-	var params article.GetByFiltersSortArticleQuery
+func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
+	var params page.AdminGetAllPageQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
-		return
-	}
-
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
-}
-
-func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
-	var params article.AdminGetAllArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
-		return
-	}
-
-	result, err := h.usecase.AdminGetAllArticleQuery(&params)
+	result, err := h.usecase.AdminGetAllPageQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

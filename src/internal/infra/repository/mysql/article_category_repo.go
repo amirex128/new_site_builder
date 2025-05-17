@@ -7,17 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type BlogCategoryRepo struct {
+type ArticleCategoryRepo struct {
 	database *gorm.DB
 }
 
-func NewBlogCategoryRepository(db *gorm.DB) *BlogCategoryRepo {
-	return &BlogCategoryRepo{
+func NewArticleCategoryRepository(db *gorm.DB) *ArticleCategoryRepo {
+	return &ArticleCategoryRepo{
 		database: db,
 	}
 }
 
-func (r *BlogCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
+func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
 	var categories []domain.BlogCategory
 	var count int64
 
@@ -35,7 +35,7 @@ func (r *BlogCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestD
 	return categories, count, nil
 }
 
-func (r *BlogCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
+func (r *ArticleCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
 	var categories []domain.BlogCategory
 	var count int64
 
@@ -53,7 +53,7 @@ func (r *BlogCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto com
 	return categories, count, nil
 }
 
-func (r *BlogCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
+func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
 	var categories []domain.BlogCategory
 	var count int64
 
@@ -71,7 +71,7 @@ func (r *BlogCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto
 	return categories, count, nil
 }
 
-func (r *BlogCategoryRepo) GetByID(id int64) (domain.BlogCategory, error) {
+func (r *ArticleCategoryRepo) GetByID(id int64) (domain.BlogCategory, error) {
 	var category domain.BlogCategory
 	result := r.database.First(&category, id)
 	if result.Error != nil {
@@ -80,7 +80,7 @@ func (r *BlogCategoryRepo) GetByID(id int64) (domain.BlogCategory, error) {
 	return category, nil
 }
 
-func (r *BlogCategoryRepo) GetBySlug(slug string) (domain.BlogCategory, error) {
+func (r *ArticleCategoryRepo) GetBySlug(slug string) (domain.BlogCategory, error) {
 	var category domain.BlogCategory
 	result := r.database.Where("slug = ?", slug).First(&category)
 	if result.Error != nil {
@@ -89,17 +89,17 @@ func (r *BlogCategoryRepo) GetBySlug(slug string) (domain.BlogCategory, error) {
 	return category, nil
 }
 
-func (r *BlogCategoryRepo) Create(category domain.BlogCategory) error {
+func (r *ArticleCategoryRepo) Create(category domain.BlogCategory) error {
 	result := r.database.Create(&category)
 	return result.Error
 }
 
-func (r *BlogCategoryRepo) Update(category domain.BlogCategory) error {
+func (r *ArticleCategoryRepo) Update(category domain.BlogCategory) error {
 	result := r.database.Save(&category)
 	return result.Error
 }
 
-func (r *BlogCategoryRepo) Delete(id int64) error {
+func (r *ArticleCategoryRepo) Delete(id int64) error {
 	result := r.database.Delete(&domain.BlogCategory{}, id)
 	return result.Error
 }

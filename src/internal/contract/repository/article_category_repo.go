@@ -5,7 +5,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
-type IBlogCategoryRepository interface {
+type IArticleCategoryRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error)
 	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error)
 	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error)

@@ -5,30 +5,30 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
-	articleusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/article"
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/header_footer"
+	headerfooterusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/header_footer"
 	"github.com/gin-gonic/gin"
 )
 
-type ArticleHandler struct {
-	usecase   *articleusecase.ArticleUsecase
+type HeaderFooterHandler struct {
+	usecase   *headerfooterusecase.HeaderFooterUsecase
 	validator *utils.ValidationHelper
 }
 
-func NewArticleHandler(usc *articleusecase.ArticleUsecase) *ArticleHandler {
-	return &ArticleHandler{
+func NewHeaderFooterHandler(usc *headerfooterusecase.HeaderFooterUsecase) *HeaderFooterHandler {
+	return &HeaderFooterHandler{
 		usecase:   usc,
 		validator: utils.NewValidationHelper(),
 	}
 }
 
-func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
-	var params article.CreateArticleCommand
+func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
+	var params header_footer.CreateHeaderFooterCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.CreateArticleCommand(&params)
+	result, err := h.usecase.CreateHeaderFooterCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -37,13 +37,13 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Created().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
-	var params article.UpdateArticleCommand
+func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
+	var params header_footer.UpdateHeaderFooterCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.UpdateArticleCommand(&params)
+	result, err := h.usecase.UpdateHeaderFooterCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -52,13 +52,13 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Updated().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
-	var params article.DeleteArticleCommand
+func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
+	var params header_footer.DeleteHeaderFooterCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.DeleteArticleCommand(&params)
+	result, err := h.usecase.DeleteHeaderFooterCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -67,13 +67,13 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGet(c *gin.Context) {
-	var params article.GetByIdArticleQuery
+func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
+	var params header_footer.GetByIdHeaderFooterQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByIdArticleQuery(&params)
+	result, err := h.usecase.GetByIdHeaderFooterQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -82,13 +82,13 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
-	var params article.GetAllArticleQuery
+func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
+	var params header_footer.GetAllHeaderFooterQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetAllArticleQuery(&params)
+	result, err := h.usecase.GetAllHeaderFooterQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -97,28 +97,13 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
-	var params article.GetByFiltersSortArticleQuery
+func (h *HeaderFooterHandler) AdminGetAllHeaderFooter(c *gin.Context) {
+	var params header_footer.AdminGetAllHeaderFooterQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
-		return
-	}
-
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
-}
-
-func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
-	var params article.AdminGetAllArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
-		return
-	}
-
-	result, err := h.usecase.AdminGetAllArticleQuery(&params)
+	result, err := h.usecase.AdminGetAllHeaderFooterQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

@@ -11,3 +11,8 @@ type GetAllPlanQuery struct {
 type GetByIdPlanQuery struct {
 	ID *int64 `json:"id" validate:"required,gt=0"`
 }
+
+// CalculatePlanPriceQuery represents a query to calculate the price of a plan
+type CalculatePlanPriceQuery struct {
+	PlanID *int64 `json:"planId" validate:"required,gt=0"`
+}

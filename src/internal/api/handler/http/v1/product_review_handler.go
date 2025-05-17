@@ -5,30 +5,30 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
-	articleusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/article"
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_review"
+	productreviewusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/product_review"
 	"github.com/gin-gonic/gin"
 )
 
-type ArticleHandler struct {
-	usecase   *articleusecase.ArticleUsecase
+type ProductReviewHandler struct {
+	usecase   *productreviewusecase.ProductReviewUsecase
 	validator *utils.ValidationHelper
 }
 
-func NewArticleHandler(usc *articleusecase.ArticleUsecase) *ArticleHandler {
-	return &ArticleHandler{
+func NewProductReviewHandler(usc *productreviewusecase.ProductReviewUsecase) *ProductReviewHandler {
+	return &ProductReviewHandler{
 		usecase:   usc,
 		validator: utils.NewValidationHelper(),
 	}
 }
 
-func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
-	var params article.CreateArticleCommand
+func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
+	var params product_review.CreateProductReviewCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.CreateArticleCommand(&params)
+	result, err := h.usecase.CreateProductReviewCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -37,13 +37,13 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Created().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
-	var params article.UpdateArticleCommand
+func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
+	var params product_review.UpdateProductReviewCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.UpdateArticleCommand(&params)
+	result, err := h.usecase.UpdateProductReviewCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -52,13 +52,13 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Updated().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
-	var params article.DeleteArticleCommand
+func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
+	var params product_review.DeleteProductReviewCommand
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.DeleteArticleCommand(&params)
+	result, err := h.usecase.DeleteProductReviewCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -67,13 +67,13 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGet(c *gin.Context) {
-	var params article.GetByIdArticleQuery
+func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
+	var params product_review.GetByIdProductReviewQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByIdArticleQuery(&params)
+	result, err := h.usecase.GetByIdProductReviewQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -82,13 +82,13 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
-	var params article.GetAllArticleQuery
+func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
+	var params product_review.GetAllProductReviewQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetAllArticleQuery(&params)
+	result, err := h.usecase.GetAllProductReviewQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -97,28 +97,13 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 
-func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
-	var params article.GetByFiltersSortArticleQuery
+func (h *ProductReviewHandler) AdminGetAllProductReview(c *gin.Context) {
+	var params product_review.AdminGetAllProductReviewQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
-		return
-	}
-
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
-}
-
-func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
-	var params article.AdminGetAllArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
-		return
-	}
-
-	result, err := h.usecase.AdminGetAllArticleQuery(&params)
+	result, err := h.usecase.AdminGetAllProductReviewQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

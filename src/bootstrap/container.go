@@ -19,7 +19,7 @@ type Container struct {
 	ArticleRepo           repository.IArticleRepository
 	BasketRepo            repository.IBasketRepository
 	BasketItemRepo        repository.IBasketItemRepository
-	BlogCategoryRepo      repository.IBlogCategoryRepository
+	ArticleCategoryRepo   repository.IArticleCategoryRepository
 	CreditRepo            repository.ICreditRepository
 	CouponRepo            repository.ICouponRepository
 	CustomerRepo          repository.ICustomerRepository
@@ -65,8 +65,8 @@ func (c *Container) GetBasketItemRepo() repository.IBasketItemRepository {
 	return c.BasketItemRepo
 }
 
-func (c *Container) GetBlogCategoryRepo() repository.IBlogCategoryRepository {
-	return c.BlogCategoryRepo
+func (c *Container) GetArticleCategoryRepo() repository.IArticleCategoryRepository {
+	return c.ArticleCategoryRepo
 }
 
 func (c *Container) GetCreditRepo() repository.ICreditRepository {
