@@ -2,218 +2,683 @@ package fileitemusecase
 
 import (
 	"fmt"
+	"path/filepath"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
 type FileItemUsecase struct {
-	logger sflogger.Logger
-	repo   repository.IFileItemRepository
+	logger         sflogger.Logger
+	repo           repository.IFileItemRepository
+	storageRepo    repository.IStorageRepository
+	storageService storage.IStorageService
+	userID         int64
 }
 
 func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 	return &FileItemUsecase{
-		logger: c.GetLogger(),
-		repo:   c.GetFileItemRepo(),
+		logger:         c.GetLogger(),
+		repo:           c.GetFileItemRepo(),
+		storageRepo:    c.GetStorageRepo(),
+		storageService: c.GetStorageService(),
+		userID:         1, // Placeholder, should come from the user context
 	}
 }
 
+// CreateOrDirectoryItemCommand handles the creation of a new file or directory
 func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOrDirectoryItemCommand) (any, error) {
-	// Implementation for creating a file or directory
-	fmt.Println(params)
-
-	// This is a placeholder implementation
-	var name string
-	if params.Name != nil {
-		name = *params.Name
-	} else {
-		name = "Unnamed"
+	// Get or create user storage
+	storage, err := u.storageRepo.GetByUserID(u.userID)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving storage: %v", err)
 	}
 
-	fileItem := domain.FileItem{
-		Name:        name,
-		IsDirectory: *params.IsDirectory,
-		Permission:  strconv.Itoa(int(*params.Permission)),
-		BucketName:  "default-bucket",           // Placeholder
-		ServerKey:   "default-key",              // Placeholder
-		FilePath:    "/",                        // Placeholder
-		Size:        0,                          // To be set with actual file size
-		MimeType:    "application/octet-stream", // Default mime type
-		UserID:      1,                          // Placeholder, should come from authenticated user
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-		IsDeleted:   false,
+	// Check if storage is expired
+	expired, err := u.storageRepo.CheckHasExpired(storage.ID)
+	if err != nil {
+		return nil, fmt.Errorf("error checking storage expiry: %v", err)
 	}
+	if expired {
+		return nil, fmt.Errorf("storage has expired")
+	}
+
+	// For files, check quota
+	if !*params.IsDirectory && params.File != nil {
+		exceeded, err := u.storageRepo.CheckQuotaExceeded(storage.ID, int64(params.File.Size))
+		if err != nil {
+			return nil, fmt.Errorf("error checking quota: %v", err)
+		}
+		if exceeded {
+			return nil, fmt.Errorf("storage quota exceeded")
+		}
+	}
+
+	// Get parent directory and its path
+	var parentPath string
+	if params.ParentID != nil && *params.ParentID > 0 {
+		parent, err := u.repo.GetByID(*params.ParentID)
+		if err != nil {
+			return nil, fmt.Errorf("parent directory not found: %v", err)
+		}
+		parentPath = getFullPath(&parent)
+	}
+
+	// Generate server info
+	bucketName := fmt.Sprintf("user-%d", u.userID)
+	serverKey := fmt.Sprintf("S%d", u.userID%2+1)
+
+	// Create bucket if not exists
+	if err := u.storageService.CreateBucketIfNotExists(serverKey, bucketName); err != nil {
+		return nil, fmt.Errorf("error creating bucket: %v", err)
+	}
+
+	var fileItem domain.FileItem
+	fileItem.UserID = u.userID
+	fileItem.ServerKey = serverKey
+	fileItem.BucketName = bucketName
+	fileItem.CreatedAt = time.Now()
+	fileItem.UpdatedAt = time.Now()
+	fileItem.IsDeleted = false
+	fileItem.IsDirectory = *params.IsDirectory
+	fileItem.Permission = strconv.Itoa(int(*params.Permission))
 
 	if params.ParentID != nil {
 		fileItem.ParentID = params.ParentID
 	}
 
-	// TODO: Handle file upload if not a directory
+	// Set file path using parent's path
+	fileItem.FilePath = parentPath
 
-	err := u.repo.Create(fileItem)
-	if err != nil {
-		return nil, err
-	}
+	if *params.IsDirectory {
+		// Process directory creation
+		name := *params.Name
+		if !strings.HasSuffix(name, "/") {
+			name += "/"
+		}
+		name = normalizeFileName(name)
 
-	return fileItem, nil
-}
+		// Check if directory already exists and create a unique name if needed
+		fullPath, finalName := u.resolveNameConflict(parentPath, name, "", serverKey, bucketName)
 
-func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (any, error) {
-	// Implementation for deleting a file item
-	fmt.Println(params)
+		fileItem.Name = finalName
+		fileItem.MimeType = "directory"
+		fileItem.Size = 0
 
-	err := u.repo.Delete(*params.ID)
-	if err != nil {
-		return nil, err
-	}
+		// Create directory in storage
+		if err := u.storageService.CreateFileOrDirectoryIfNotExists(serverKey, bucketName, fullPath, int(*params.Permission)); err != nil {
+			return nil, fmt.Errorf("error creating directory in storage: %v", err)
+		}
+	} else {
+		// Process file upload
+		file := params.File
+		if file == nil {
+			return nil, fmt.Errorf("file is required for non-directory items")
+		}
 
-	return map[string]interface{}{
-		"id": params.ID,
-	}, nil
-}
+		// Normalize file name
+		rawFileName := strings.TrimSuffix(file.Filename, filepath.Ext(file.Filename))
+		normalizedName := normalizeFileName(rawFileName)
+		extension := filepath.Ext(file.Filename)
 
-func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (any, error) {
-	// Implementation for force deleting a file item
-	fmt.Println(params)
+		// Check if file already exists and create a unique name if needed
+		fullPath, finalName := u.resolveNameConflict(parentPath, normalizedName, extension, serverKey, bucketName)
 
-	// TODO: Implement permanent deletion logic
-	// This might require custom repository methods beyond the standard interface
+		fileItem.Name = finalName
+		fileItem.MimeType = file.Header.Get("Content-Type")
+		if fileItem.MimeType == "" {
+			fileItem.MimeType = "application/octet-stream"
+		}
+		fileItem.Size = int64(file.Size) / 1024 // Convert bytes to KB
 
-	return map[string]interface{}{
-		"id": params.ID,
-	}, nil
-}
+		// Open the file for reading
+		src, err := file.Open()
+		if err != nil {
+			return nil, fmt.Errorf("error opening uploaded file: %v", err)
+		}
+		defer src.Close()
 
-func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (any, error) {
-	// Implementation for updating a file item
-	fmt.Println(params)
+		// Create file in storage
+		if err := u.storageService.CreateFileOrDirectoryIfNotExists(serverKey, bucketName, fullPath, int(*params.Permission), src); err != nil {
+			return nil, fmt.Errorf("error creating file in storage: %v", err)
+		}
 
-	fileItem, err := u.repo.GetByID(*params.ID)
-	if err != nil {
-		return nil, err
-	}
+		// Update storage usage
+		if err := u.storageRepo.SetIncreaseUsedSpaceKb(storage.ID, fileItem.Size); err != nil {
+			return nil, fmt.Errorf("error updating storage usage: %v", err)
+		}
 
-	if *params.IsChangePermission && params.Permission != nil {
-		fileItem.Permission = strconv.Itoa(int(*params.Permission))
-	}
-
-	err = u.repo.Update(fileItem)
-	if err != nil {
-		return nil, err
-	}
-
-	return fileItem, nil
-}
-
-func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (any, error) {
-	// Implementation for file operations (copy, move, rename)
-	fmt.Println(params)
-
-	fileItem, err := u.repo.GetByID(*params.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	switch params.OperationType {
-	case fileitem.Move:
-		fileItem.ParentID = params.NewParentID
-	case fileitem.Copy:
-		// TODO: Implement copy logic
-		// This might require custom repository methods beyond the standard interface
-	case fileitem.Rename:
-		if params.NewName != nil {
-			fileItem.Name = *params.NewName
+		// Update parent directory size if applicable
+		if params.ParentID != nil && *params.ParentID > 0 {
+			if err := u.repo.UpdateSize(*params.ParentID, fileItem.Size); err != nil {
+				return nil, fmt.Errorf("error updating parent directory size: %v", err)
+			}
 		}
 	}
 
-	err = u.repo.Update(fileItem)
-	if err != nil {
-		return nil, err
+	// Save file item to database
+	if err := u.repo.Create(fileItem); err != nil {
+		return nil, fmt.Errorf("error saving file item: %v", err)
 	}
 
 	return fileItem, nil
 }
 
-func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (any, error) {
-	// Implementation for restoring a deleted file item
-	fmt.Println(params)
+// DeleteFileItemCommand marks a file item as deleted
+func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (any, error) {
+	// Check if file exists
+	fileItem, err := u.repo.GetByID(*params.ID)
+	if err != nil {
+		return nil, fmt.Errorf("file not found: %v", err)
+	}
 
-	// TODO: Implement actual restore logic
-	// This would typically involve getting the file item marked as deleted and removing the deletion flag
+	// Check if user has access
+	if fileItem.UserID != u.userID {
+		return nil, fmt.Errorf("access denied")
+	}
+
+	// Mark as deleted
+	if err := u.repo.SetDelete(*params.ID); err != nil {
+		return nil, fmt.Errorf("error deleting file: %v", err)
+	}
 
 	return map[string]interface{}{
 		"id": params.ID,
 	}, nil
 }
 
-func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (any, error) {
-	// Implementation to get a directory tree
-	fmt.Println(params)
-
-	var parentID int64 = 0
-	if params.ParentFileItemID != nil {
-		parentID = *params.ParentFileItemID
-	}
-
-	// Using a basic pagination request for demonstration
-	paginationRequest := common.PaginationRequestDto{
-		Page:     1,
-		PageSize: 100,
-	}
-
-	result, _, err := u.repo.GetAllByParentID(parentID, paginationRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: In a real implementation, you would recursively fetch all child directories and files
-	// to build a complete tree structure
-
-	return map[string]interface{}{
-		"items": result,
-	}, nil
-}
-
-func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (any, error) {
-	// Implementation to get a tree of deleted directories
-	fmt.Println(params)
-
-	// TODO: Implement actual logic to retrieve deleted items
-	// This would typically involve querying for items with IsDeleted = true
-
-	return map[string]interface{}{
-		"items": []domain.FileItem{}, // Placeholder empty array
-	}, nil
-}
-
-func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (any, error) {
-	// Implementation to download a file by ID
-	fmt.Println(params)
-
+// ForceDeleteFileItemCommand permanently deletes a file item
+func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (any, error) {
+	// Check if file exists
 	fileItem, err := u.repo.GetByID(*params.ID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("file not found: %v", err)
 	}
 
-	// Check if item is a directory (can't download directories)
+	// Check if user has access
+	if fileItem.UserID != u.userID {
+		return nil, fmt.Errorf("access denied")
+	}
+
+	// Delete from storage
+	fullPath := getFullPath(&fileItem)
+	if err := u.storageService.RemoveFileOrDirectoryIfExists(fileItem.ServerKey, fileItem.BucketName, fullPath); err != nil {
+		return nil, fmt.Errorf("error removing from storage: %v", err)
+	}
+
+	// Delete from database (this will also recursively delete children if it's a directory)
+	if err := u.repo.ForceDelete(*params.ID); err != nil {
+		return nil, fmt.Errorf("error permanently deleting file: %v", err)
+	}
+
+	// Decrease storage usage
+	if fileItem.Size > 0 {
+		storage, err := u.storageRepo.GetByUserID(u.userID)
+		if err != nil {
+			return nil, fmt.Errorf("error retrieving storage: %v", err)
+		}
+
+		if err := u.storageRepo.SetIncreaseUsedSpaceKb(storage.ID, -fileItem.Size); err != nil {
+			return nil, fmt.Errorf("error updating storage usage: %v", err)
+		}
+	}
+
+	// Update parent directory size if applicable
+	if fileItem.ParentID != nil && *fileItem.ParentID > 0 {
+		if err := u.repo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
+			return nil, fmt.Errorf("error updating parent directory size: %v", err)
+		}
+	}
+
+	return map[string]interface{}{
+		"id": params.ID,
+	}, nil
+}
+
+// RestoreFileItemCommand restores a deleted file item
+func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (any, error) {
+	// Restore the file
+	result := u.repo.SetRestore(*params.ID)
+	if result != nil {
+		return nil, fmt.Errorf("error restoring file: %v", result)
+	}
+
+	return map[string]interface{}{
+		"id": params.ID,
+	}, nil
+}
+
+// UpdateFileItemCommand updates file item properties
+func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (any, error) {
+	// Check if file exists
+	fileItem, err := u.repo.GetByID(*params.ID)
+	if err != nil {
+		return nil, fmt.Errorf("file not found: %v", err)
+	}
+
+	// Check if user has access
+	if fileItem.UserID != u.userID {
+		return nil, fmt.Errorf("access denied")
+	}
+
+	// Update permission if requested
+	if *params.IsChangePermission && params.Permission != nil {
+		newPermission := strconv.Itoa(int(*params.Permission))
+		fileItem.Permission = newPermission
+
+		// Update permission in storage
+		fullPath := getFullPath(&fileItem)
+		if err := u.storageService.AddOrRemoveOrChangePermission(
+			fileItem.ServerKey,
+			fileItem.BucketName,
+			fullPath,
+			int(*params.Permission)); err != nil {
+			return nil, fmt.Errorf("error updating permission in storage: %v", err)
+		}
+	}
+
+	// Save changes
+	if err := u.repo.Update(fileItem); err != nil {
+		return nil, fmt.Errorf("error updating file: %v", err)
+	}
+
+	return fileItem, nil
+}
+
+// FileOperationCommand handles file operations like copy, move, rename
+func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (any, error) {
+	// Check if file exists
+	fileItem, err := u.repo.GetByID(*params.ID)
+	if err != nil {
+		return nil, fmt.Errorf("file not found: %v", err)
+	}
+
+	// Check if user has access
+	if fileItem.UserID != u.userID {
+		return nil, fmt.Errorf("access denied")
+	}
+
+	// Get source path
+	oldFullPath := getFullPath(&fileItem)
+	var newFullPath string
+
+	switch params.OperationType {
+	case fileitem.Rename:
+		if params.NewName == nil {
+			return nil, fmt.Errorf("new name is required for rename operation")
+		}
+
+		// Get new name with proper formatting
+		newName := *params.NewName
+		if fileItem.IsDirectory && !strings.HasSuffix(newName, "/") {
+			newName += "/"
+		}
+
+		// Rename in storage
+		newPath := filepath.Join(filepath.Dir(oldFullPath), newName)
+		newFullPath = newPath
+
+		permission, _ := strconv.Atoi(fileItem.Permission)
+		if err := u.storageService.RenameOrMoveFileOrDirectory(
+			fileItem.ServerKey,
+			fileItem.BucketName,
+			oldFullPath,
+			newFullPath,
+			permission); err != nil {
+			return nil, fmt.Errorf("error renaming in storage: %v", err)
+		}
+
+		// Update in database
+		fileItem.Name = newName
+		if err := u.repo.Update(fileItem); err != nil {
+			return nil, fmt.Errorf("error updating file name: %v", err)
+		}
+
+		// If it's a directory, update all children paths
+		if fileItem.IsDirectory {
+			// This would require recursive updates to all children
+			// Implementation depends on additional methods to update file paths
+		}
+
+	case fileitem.Move:
+		if params.NewParentID == nil {
+			return nil, fmt.Errorf("new parent ID is required for move operation")
+		}
+
+		// Get the parent directory
+		var newParent domain.FileItem
+		var newParentPath string
+
+		if *params.NewParentID == 0 {
+			// Moving to root
+			newParentPath = ""
+		} else {
+			newParent, err = u.repo.GetByID(*params.NewParentID)
+			if err != nil {
+				return nil, fmt.Errorf("new parent directory not found: %v", err)
+			}
+
+			// Check if new parent is a directory
+			if !newParent.IsDirectory {
+				return nil, fmt.Errorf("destination must be a directory")
+			}
+
+			newParentPath = getFullPath(&newParent)
+		}
+
+		// Set new path
+		newFullPath = filepath.Join(newParentPath, fileItem.Name)
+
+		// Move in storage
+		permission, _ := strconv.Atoi(fileItem.Permission)
+		if err := u.storageService.RenameOrMoveFileOrDirectory(
+			fileItem.ServerKey,
+			fileItem.BucketName,
+			oldFullPath,
+			newFullPath,
+			permission); err != nil {
+			return nil, fmt.Errorf("error moving in storage: %v", err)
+		}
+
+		// Update file path and parent ID in database
+		fileItem.FilePath = newParentPath
+		if *params.NewParentID == 0 {
+			fileItem.ParentID = nil
+		} else {
+			fileItem.ParentID = params.NewParentID
+		}
+
+		if err := u.repo.Update(fileItem); err != nil {
+			return nil, fmt.Errorf("error updating file: %v", err)
+		}
+
+		// Update size for old and new parent
+		if fileItem.ParentID != nil && *fileItem.ParentID > 0 {
+			if err := u.repo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
+				return nil, fmt.Errorf("error updating old parent size: %v", err)
+			}
+		}
+
+		if *params.NewParentID > 0 {
+			if err := u.repo.UpdateSize(*params.NewParentID, fileItem.Size); err != nil {
+				return nil, fmt.Errorf("error updating new parent size: %v", err)
+			}
+		}
+
+		// If it's a directory, update all children paths
+		if fileItem.IsDirectory {
+			// This would require recursive updates to all children
+			// Implementation depends on additional methods to update file paths
+		}
+
+	case fileitem.Copy:
+		if params.NewParentID == nil {
+			return nil, fmt.Errorf("new parent ID is required for copy operation")
+		}
+
+		// Get storage to check quota
+		storage, err := u.storageRepo.GetByUserID(u.userID)
+		if err != nil {
+			return nil, fmt.Errorf("error retrieving storage: %v", err)
+		}
+
+		// Check if storage has enough space
+		exceeded, err := u.storageRepo.CheckQuotaExceeded(storage.ID, fileItem.Size*1024) // Convert KB to bytes
+		if err != nil {
+			return nil, fmt.Errorf("error checking quota: %v", err)
+		}
+		if exceeded {
+			return nil, fmt.Errorf("storage quota exceeded")
+		}
+
+		// Get the parent directory
+		var newParent domain.FileItem
+		var newParentPath string
+
+		if *params.NewParentID == 0 {
+			// Copying to root
+			newParentPath = ""
+		} else {
+			newParent, err = u.repo.GetByID(*params.NewParentID)
+			if err != nil {
+				return nil, fmt.Errorf("new parent directory not found: %v", err)
+			}
+
+			// Check if new parent is a directory
+			if !newParent.IsDirectory {
+				return nil, fmt.Errorf("destination must be a directory")
+			}
+
+			newParentPath = getFullPath(&newParent)
+		}
+
+		// Set new path
+		newFullPath = filepath.Join(newParentPath, fileItem.Name)
+
+		// Copy in storage
+		permission, _ := strconv.Atoi(fileItem.Permission)
+		if err := u.storageService.CopyFileOrDirectory(
+			fileItem.ServerKey,
+			fileItem.BucketName,
+			oldFullPath,
+			newFullPath,
+			permission); err != nil {
+			return nil, fmt.Errorf("error copying in storage: %v", err)
+		}
+
+		// Create new file item
+		newFileItem := fileItem
+		newFileItem.ID = 0 // Clear ID for new record
+		newFileItem.FilePath = newParentPath
+		if *params.NewParentID == 0 {
+			newFileItem.ParentID = nil
+		} else {
+			newFileItem.ParentID = params.NewParentID
+		}
+		newFileItem.CreatedAt = time.Now()
+		newFileItem.UpdatedAt = time.Now()
+
+		if err := u.repo.Create(newFileItem); err != nil {
+			return nil, fmt.Errorf("error creating new file item: %v", err)
+		}
+
+		// Update new parent size
+		if *params.NewParentID > 0 {
+			if err := u.repo.UpdateSize(*params.NewParentID, fileItem.Size); err != nil {
+				return nil, fmt.Errorf("error updating new parent size: %v", err)
+			}
+		}
+
+		// Update storage usage
+		if err := u.storageRepo.SetIncreaseUsedSpaceKb(storage.ID, fileItem.Size); err != nil {
+			return nil, fmt.Errorf("error updating storage usage: %v", err)
+		}
+
+		return newFileItem, nil
+	}
+
+	return fileItem, nil
+}
+
+// GetByIdsQuery retrieves file items by IDs
+func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (any, error) {
+	// Extract IDs from the request
+	var ids []int64
+	for _, item := range params.IdsOrder {
+		if item.ID != nil {
+			ids = append(ids, *item.ID)
+		}
+	}
+
+	// Get file items
+	fileItems, err := u.repo.GetByIDs(ids)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving file items: %v", err)
+	}
+
+	// Create result DTOs with download links
+	var result []map[string]interface{}
+	for _, fileItem := range fileItems {
+		// Check if user has access
+		if fileItem.UserID != u.userID {
+			continue
+		}
+
+		// Generate link based on isTemporary flag
+		var link string
+		var err error
+
+		if *params.IsTemporary {
+			if params.ExpireMinutes == nil {
+				params.ExpireMinutes = new(int)
+				*params.ExpireMinutes = 5 // Default expiry
+			}
+			link, err = u.storageService.GeneratePreSignedUrl(
+				fileItem.ServerKey,
+				fileItem.BucketName,
+				getFullPath(&fileItem),
+				time.Duration(*params.ExpireMinutes)*time.Minute)
+			if err != nil {
+				return nil, fmt.Errorf("error generating presigned URL: %v", err)
+			}
+		} else {
+			link = u.storageService.GenerateUrl(
+				fileItem.ServerKey,
+				fileItem.BucketName,
+				getFullPath(&fileItem))
+		}
+
+		// Find the requested order
+		var order int
+		for _, item := range params.IdsOrder {
+			if item.ID != nil && *item.ID == fileItem.ID && item.Order != nil {
+				order = *item.Order
+				break
+			}
+		}
+
+		// Create DTO
+		fileItemDTO := map[string]interface{}{
+			"id":          fileItem.ID,
+			"name":        fileItem.Name,
+			"filePath":    fileItem.FilePath,
+			"isDirectory": fileItem.IsDirectory,
+			"size":        fileItem.Size,
+			"mimeType":    fileItem.MimeType,
+			"parentId":    fileItem.ParentID,
+			"permission":  fileItem.Permission,
+			"userId":      fileItem.UserID,
+			"createdAt":   fileItem.CreatedAt,
+			"updatedAt":   fileItem.UpdatedAt,
+			"link":        link,
+			"order":       order,
+		}
+
+		result = append(result, fileItemDTO)
+	}
+
+	return result, nil
+}
+
+// GetDeletedTreeDirectoryQuery retrieves deleted file items
+func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (any, error) {
+	// Get deleted items
+	items, err := u.repo.GetDeletedItems(u.userID)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving deleted items: %v", err)
+	}
+
+	// Build a tree structure (simplified for now)
+	return items, nil
+}
+
+// GetDownloadFileItemByIdQuery retrieves a file for download
+func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (any, error) {
+	// Check if file exists
+	fileItem, err := u.repo.GetByID(*params.ID)
+	if err != nil {
+		return nil, fmt.Errorf("file not found: %v", err)
+	}
+
+	// Check if user has access
+	if fileItem.UserID != u.userID {
+		return nil, fmt.Errorf("access denied")
+	}
+
+	// Check if it's a directory (can't download directories)
 	if fileItem.IsDirectory {
 		return nil, fmt.Errorf("cannot download a directory")
 	}
 
-	// TODO: Implement actual file download logic
-	// This would typically involve generating a download URL or stream from your storage system
+	// Get file from storage
+	stream, err := u.storageService.DownloadFileOrDirectory(
+		fileItem.ServerKey,
+		fileItem.BucketName,
+		getFullPath(&fileItem))
+	if err != nil {
+		return nil, fmt.Errorf("error downloading file: %v", err)
+	}
 
 	return map[string]interface{}{
-		"fileItem":     fileItem,
-		"downloadUrl":  "https://example.com/download/" + strconv.FormatInt(fileItem.ID, 10), // Placeholder URL
-		"downloadName": fileItem.Name,
+		"fileItem":       fileItem,
+		"downloadStream": stream,
 	}, nil
+}
+
+// GetTreeDirectoryQuery retrieves a directory tree
+func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (any, error) {
+	// Get tree
+	items, err := u.repo.GetTreeByUserIDAndParentID(u.userID, params.ParentFileItemID)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving directory tree: %v", err)
+	}
+
+	return items, nil
+}
+
+// Helper functions
+
+// normalizeFileName removes invalid characters from a filename
+func normalizeFileName(name string) string {
+	reg := regexp.MustCompile(`[^\w\s/]`)
+	name = reg.ReplaceAllString(name, "")
+	name = strings.ReplaceAll(name, " ", "_")
+	return name
+}
+
+// resolveNameConflict ensures a unique filename by adding a counter suffix if needed
+func (u *FileItemUsecase) resolveNameConflict(parentPath, baseName, suffix, serverKey, bucketName string) (string, string) {
+	fullPath := parentPath + baseName + suffix
+	finalName := baseName + suffix
+	counter := 1
+
+	for {
+		exists, _ := u.storageService.CheckFileOrDirectoryIsExists(serverKey, bucketName, fullPath)
+		if !exists {
+			break
+		}
+
+		newBaseName := fmt.Sprintf("%s_%d", baseName, counter)
+		fullPath = parentPath + newBaseName + suffix
+		finalName = newBaseName + suffix
+		counter++
+	}
+
+	return fullPath, finalName
+}
+
+// getFullPath returns the full path for a file item
+func getFullPath(fileItem *domain.FileItem) string {
+	if fileItem.FilePath == "" {
+		return fileItem.Name
+	}
+	return fileItem.FilePath + fileItem.Name
 }

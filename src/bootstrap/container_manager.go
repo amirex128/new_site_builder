@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"github.com/amirex128/new_site_builder/src/internal/infra/service/auth"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
@@ -19,7 +20,8 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		Config: cfg,
 		Logger: logger,
 
-		MainCache: service.NewRedis(sfredis.MustClient(ctx, "cache")),
+		MainCache:          service.NewRedis(sfredis.MustClient(ctx, "cache")),
+		AuthContextService: auth.NewAuthContextService(),
 
 		// for transient
 		stockCacheTransient: func() cache.ICacheService {

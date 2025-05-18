@@ -4,6 +4,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"gorm.io/gorm"
@@ -56,6 +57,7 @@ type Container struct {
 	PlanRepo              repository.IPlanRepository
 	RoleRepo              repository.IRoleRepository
 	PermissionRepo        repository.IPermissionRepository
+	AuthContextService    common.IAuthContextService
 }
 
 func (c *Container) GetConfig() contract.IConfig {
@@ -212,6 +214,10 @@ func (c *Container) GetRoleRepo() repository.IRoleRepository {
 
 func (c *Container) GetPermissionRepo() repository.IPermissionRepository {
 	return c.PermissionRepo
+}
+
+func (c *Container) GetAuthContextService() common.IAuthContextService {
+	return c.AuthContextService
 }
 
 func (c *Container) GetMainCache() cache.ICacheService {

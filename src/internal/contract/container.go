@@ -2,53 +2,64 @@ package contract
 
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"gorm.io/gorm"
 )
 
+// IContainer provides methods to access all dependencies
 type IContainer interface {
+	GetLogger() sflogger.Logger
+
+	// Auth services
+	GetAuthContextService() common.IAuthContextService
+
+	// Repositories
+	GetAddressRepo() repository.IAddressRepository
 	GetArticleRepo() repository.IArticleRepository
+	GetArticleCategoryRepo() repository.IArticleCategoryRepository
 	GetBasketRepo() repository.IBasketRepository
 	GetBasketItemRepo() repository.IBasketItemRepository
-	GetArticleCategoryRepo() repository.IArticleCategoryRepository
-	GetCreditRepo() repository.ICreditRepository
-	GetCouponRepo() repository.ICouponRepository
 	GetCustomerRepo() repository.ICustomerRepository
+	GetCustomerTicketRepo() repository.ICustomerTicketRepository
 	GetDefaultThemeRepo() repository.IDefaultThemeRepository
 	GetDiscountRepo() repository.IDiscountRepository
 	GetFileItemRepo() repository.IFileItemRepository
-	GetGatewayRepo() repository.IGatewayRepository
 	GetHeaderFooterRepo() repository.IHeaderFooterRepository
-	GetMediaRepo() repository.IMediaRepository
 	GetOrderRepo() repository.IOrderRepository
 	GetOrderItemRepo() repository.IOrderItemRepository
 	GetPageRepo() repository.IPageRepository
-	GetParbadPaymentRepo() repository.IParbadPaymentRepository
-	GetParbadTransactionRepo() repository.IParbadTransactionRepository
+	// GetPageUsageRepo() repository.IPageUsageRepository // Remove or implement later
 	GetPaymentRepo() repository.IPaymentRepository
+	GetPlanRepo() repository.IPlanRepository
 	GetProductRepo() repository.IProductRepository
-	GetProductAttributeRepo() repository.IProductAttributeRepository
 	GetProductCategoryRepo() repository.IProductCategoryRepository
 	GetProductReviewRepo() repository.IProductReviewRepository
+	GetRoleRepo() repository.IRoleRepository
+	GetSiteRepo() repository.ISiteRepository
+	GetTicketRepo() repository.ITicketRepository
+	GetUnitPriceRepo() repository.IUnitPriceRepository
+	GetUserRepo() repository.IUserRepository
+
+	// Additional repositories
+	GetCreditRepo() repository.ICreditRepository
+	GetCouponRepo() repository.ICouponRepository
+	GetGatewayRepo() repository.IGatewayRepository
+	GetMediaRepo() repository.IMediaRepository
+	GetProductAttributeRepo() repository.IProductAttributeRepository
 	GetProductVariantRepo() repository.IProductVariantRepository
 	GetReturnItemRepo() repository.IReturnItemRepository
 	GetSettingRepo() repository.ISettingRepository
-	GetSiteRepo() repository.ISiteRepository
 	GetStorageRepo() repository.IStorageRepository
-	GetTicketRepo() repository.ITicketRepository
-	GetCustomerTicketRepo() repository.ICustomerTicketRepository
-	GetUserRepo() repository.IUserRepository
-	GetUnitPriceRepo() repository.IUnitPriceRepository
-	GetAddressRepo() repository.IAddressRepository
 	GetCityRepo() repository.ICityRepository
 	GetProvinceRepo() repository.IProvinceRepository
-	GetPlanRepo() repository.IPlanRepository
-	GetRoleRepo() repository.IRoleRepository
-	GetPermissionRepo() repository.IPermissionRepository
+	GetParbadPaymentRepo() repository.IParbadPaymentRepository
+	GetParbadTransactionRepo() repository.IParbadTransactionRepository
 	GetConfig() IConfig
 	GetMainCache() cache.ICacheService
 	GetStockCacheTransient() cache.ICacheService
-	GetLogger() sflogger.Logger
 	GetDB() *gorm.DB
+	GetStorageService() storage.IStorageService
 }

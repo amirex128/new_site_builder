@@ -37,6 +37,21 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Updated().WithData(result))
 }
 
+func (h *PaymentHandler) RequestGateway(c *gin.Context) {
+	var params payment.RequestGatewayCommand
+	if !h.validator.ValidateRequest(c, &params) {
+		return
+	}
+
+	result, err := h.usecase.RequestGatewayCommand(&params)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp.Success().WithData(result))
+}
+
 func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 	var params payment.CreateOrUpdateGatewayCommand
 	if !h.validator.ValidateRequest(c, &params) {

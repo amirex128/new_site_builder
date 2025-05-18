@@ -37,6 +37,21 @@ func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Created().WithData(result))
 }
 
+func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
+	var params order.CreateOrderVerifyCommand
+	if !h.validator.ValidateRequest(c, &params) {
+		return
+	}
+
+	result, err := h.usecase.CreateOrderVerifyCommand(&params)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp.Success().WithData(result))
+}
+
 func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 	var params order.GetAllOrderCustomerQuery
 	if !h.validator.ValidateRequest(c, &params) {

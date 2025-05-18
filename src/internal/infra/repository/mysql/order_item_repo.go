@@ -76,3 +76,8 @@ func (r *OrderItemRepo) Delete(id int64) error {
 	result := r.database.Delete(&domain.OrderItem{}, id)
 	return result.Error
 }
+
+func (r *OrderItemRepo) DeleteByOrderID(orderID int64) error {
+	result := r.database.Where("order_id = ?", orderID).Delete(&domain.OrderItem{})
+	return result.Error
+}

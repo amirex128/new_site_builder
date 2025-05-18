@@ -1,80 +1,280 @@
 package basketusecase
 
 import (
-	"fmt"
+	"errors"
+	"time"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/basket"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"gorm.io/gorm"
 )
 
 type BasketUsecase struct {
-	logger sflogger.Logger
-	repo   repository.IBasketRepository
+	logger         sflogger.Logger
+	basketRepo     repository.IBasketRepository
+	basketItemRepo repository.IBasketItemRepository
+	productRepo    repository.IProductRepository
+	discountRepo   repository.IDiscountRepository
+	authContextSvc contract.IAuthContextService
 }
 
 func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	return &BasketUsecase{
-		logger: c.GetLogger(),
-		repo:   c.GetBasketRepo(),
+		logger:         c.GetLogger(),
+		basketRepo:     c.GetBasketRepo(),
+		basketItemRepo: c.GetBasketItemRepo(),
+		productRepo:    c.GetProductRepo(),
+		discountRepo:   c.GetDiscountRepo(),
+		authContextSvc: c.GetAuthContextService(),
 	}
 }
 
 func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (any, error) {
-	// Implementation for updating a basket
-	fmt.Println(params)
+	u.logger.Info("UpdateBasketCommand called")
 
-	// TODO: Implement proper basket update logic
-	// This might involve:
-	// 1. Finding the active basket for the current user/customer
-	// 2. Updating the basket items
-	// 3. Saving the updated basket
+	if params.BasketItems == nil || len(params.BasketItems) == 0 {
+		return nil, errors.New("آیتم‌های سبد خرید الزامی هستند")
+	}
 
-	return map[string]interface{}{
-		"success": true,
-	}, nil
+	customerID, err := u.authContextSvc.GetCustomerID()
+	if err != nil {
+		return nil, err
+	}
+
+	siteID := *params.SiteID
+
+	// Get or create the customer's basket for this site
+	existingBasket, err := u.basketRepo.GetBasketByCustomerIDAndSiteID(customerID, siteID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
+	// Simple add mode just adds/updates the basket items without price calculation
+	if params.SimpleAdd != nil && *params.SimpleAdd {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// Create a new basket
+			newBasket := domain.Basket{
+				SiteID:                       siteID,
+				CustomerID:                   customerID,
+				TotalRawPrice:                0,
+				TotalCouponDiscount:          0,
+				TotalPriceWithCouponDiscount: 0,
+				CreatedAt:                    time.Now(),
+				UpdatedAt:                    time.Now(),
+			}
+
+			if err := u.basketRepo.Create(newBasket); err != nil {
+				return nil, err
+			}
+
+			// Get the newly created basket
+			existingBasket, err = u.basketRepo.GetBasketByCustomerIDAndSiteID(customerID, siteID)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// Handle basket items
+		for _, item := range params.BasketItems {
+			basketItem := domain.BasketItem{
+				BasketID:  existingBasket.ID,
+				ProductID: *item.ProductID,
+				Quantity:  *item.Quantity,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
+
+			if item.ProductVariantID != nil {
+				basketItem.ProductVariantID = *item.ProductVariantID
+			}
+
+			if item.BasketItemID != nil && *item.BasketItemID > 0 {
+				// Update existing item
+				basketItem.ID = *item.BasketItemID
+				if err := u.basketItemRepo.Update(basketItem); err != nil {
+					return nil, err
+				}
+			} else {
+				// Create new item
+				if err := u.basketItemRepo.Create(basketItem); err != nil {
+					return nil, err
+				}
+			}
+		}
+
+		// Get the updated basket with items
+		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID)
+		if err != nil {
+			return nil, err
+		}
+
+		return updatedBasket, nil
+	} else {
+		// Complex mode with price calculation
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("سبد خرید وجود ندارد")
+		}
+
+		// TODO: Implement CalculateProductsPrice logic
+		// For now, we'll implement a simplified calculation
+
+		// Delete existing basket items
+		if err := u.basketRepo.DeleteBasketItems(existingBasket.ID); err != nil {
+			return nil, err
+		}
+
+		var totalRawPrice int64 = 0
+		var totalCouponDiscount int64 = 0
+		var totalPriceWithCouponDiscount int64 = 0
+
+		// Process each basket item
+		for _, item := range params.BasketItems {
+			// Get product and variant to calculate prices
+			product, err := u.productRepo.GetByID(*item.ProductID)
+			if err != nil {
+				return nil, err
+			}
+
+			var variantPrice int64 = 0
+			for _, variant := range product.Variants {
+				if item.ProductVariantID != nil && variant.ID == *item.ProductVariantID {
+					variantPrice = variant.Price
+					break
+				}
+			}
+
+			if variantPrice == 0 {
+				return nil, errors.New("قیمت محصول یا تنوع آن یافت نشد")
+			}
+
+			rawPrice := variantPrice
+			finalRawPrice := rawPrice * int64(*item.Quantity)
+			totalRawPrice += finalRawPrice
+
+			// Apply discount if available
+			var discountID *int64
+			var justCouponPrice int64 = 0
+			var justDiscountPrice int64 = 0
+			var finalPriceWithCouponDiscount int64 = finalRawPrice
+
+			if params.Code != nil && *params.Code != "" {
+				// Get discount by code
+				discount, err := u.discountRepo.GetByCode(*params.Code, siteID)
+				if err == nil && discount.ID > 0 {
+					// Apply discount logic
+					if discount.DiscountType == "percentage" {
+						discountAmount := (finalRawPrice * int64(discount.DiscountValue)) / 100
+						justDiscountPrice = discountAmount
+						finalPriceWithCouponDiscount = finalRawPrice - discountAmount
+					} else if discount.DiscountType == "fixed" {
+						justDiscountPrice = int64(discount.DiscountValue)
+						finalPriceWithCouponDiscount = finalRawPrice - int64(discount.DiscountValue)
+					}
+
+					discountID = &discount.ID
+				}
+			}
+
+			totalCouponDiscount += justCouponPrice + justDiscountPrice
+			totalPriceWithCouponDiscount += finalPriceWithCouponDiscount
+
+			// Create the basket item
+			basketItem := domain.BasketItem{
+				BasketID:                     existingBasket.ID,
+				ProductID:                    *item.ProductID,
+				Quantity:                     *item.Quantity,
+				RawPrice:                     rawPrice,
+				FinalRawPrice:                finalRawPrice,
+				JustCouponPrice:              justCouponPrice,
+				JustDiscountPrice:            justDiscountPrice,
+				FinalPriceWithCouponDiscount: finalPriceWithCouponDiscount,
+				CreatedAt:                    time.Now(),
+				UpdatedAt:                    time.Now(),
+			}
+
+			if item.ProductVariantID != nil {
+				basketItem.ProductVariantID = *item.ProductVariantID
+			}
+
+			if err := u.basketItemRepo.Create(basketItem); err != nil {
+				return nil, err
+			}
+		}
+
+		// Update the basket with calculated values
+		existingBasket.TotalRawPrice = totalRawPrice
+		existingBasket.TotalCouponDiscount = totalCouponDiscount
+		existingBasket.TotalPriceWithCouponDiscount = totalPriceWithCouponDiscount
+		existingBasket.UpdatedAt = time.Now()
+
+		if err := u.basketRepo.Update(existingBasket); err != nil {
+			return nil, err
+		}
+
+		// Get the updated basket with items
+		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID)
+		if err != nil {
+			return nil, err
+		}
+
+		return updatedBasket, nil
+	}
 }
 
 func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, error) {
-	// Implementation to get a basket by site ID
-	fmt.Println(params)
+	u.logger.Info("GetBasketQuery called")
 
-	// TODO: Implement proper basket retrieval logic
-	// This would typically:
-	// 1. Find the customer ID from the authenticated user
-	// 2. Get the active basket for that customer and site
+	customerID, err := u.authContextSvc.GetCustomerID()
+	if err != nil {
+		return nil, err
+	}
 
-	// Placeholder response
-	return map[string]interface{}{
-		"items": []interface{}{},
-		"total": 0,
-	}, nil
+	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, *params.SiteID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// Return an empty basket
+			return map[string]interface{}{
+				"id":                           0,
+				"siteId":                       *params.SiteID,
+				"customerId":                   customerID,
+				"totalRawPrice":                0,
+				"totalCouponDiscount":          0,
+				"totalPriceWithCouponDiscount": 0,
+				"items":                        []interface{}{},
+			}, nil
+		}
+		return nil, err
+	}
+
+	return basket, nil
 }
 
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (any, error) {
-	// Implementation to get all baskets for a user by site ID
-	fmt.Println(params)
+	u.logger.Info("GetAllBasketUserQuery called")
 
-	// TODO: Get user ID from authentication context
-	userID := int64(1) // Placeholder
+	customerID, err := u.authContextSvc.GetCustomerID()
+	if err != nil {
+		return nil, err
+	}
 
-	result, count, err := u.repo.GetAllByCustomerID(userID, params.PaginationRequestDto)
+	baskets, count, err := u.basketRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	return map[string]interface{}{
-		"items": result,
+		"items": baskets,
 		"total": count,
 	}, nil
 }
 
 func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (any, error) {
-	// Implementation to get all baskets for admin
-	fmt.Println(params)
+	u.logger.Info("AdminGetAllBasketUserQuery called")
 
-	result, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	result, count, err := u.basketRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}

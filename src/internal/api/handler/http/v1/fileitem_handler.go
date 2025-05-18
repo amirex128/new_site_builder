@@ -112,6 +112,21 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 	c.JSON(http.StatusOK, resp.Updated().WithData(result))
 }
 
+func (h *FileItemHandler) GetByIds(c *gin.Context) {
+	var params fileitem.GetByIdsQuery
+	if !h.validator.ValidateRequest(c, &params) {
+		return
+	}
+
+	result, err := h.usecase.GetByIdsQuery(&params)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+}
+
 func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 	var params fileitem.GetDeletedTreeDirectoryQuery
 	if !h.validator.ValidateRequest(c, &params) {
