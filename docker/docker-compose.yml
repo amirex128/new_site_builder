@@ -4,6 +4,7 @@ services:
   redis:
     image: bitnami/redis:8.0.0
     container_name: redis
+    restart: unless-stopped
     environment:
       - REDIS_PASSWORD=redis_password
     command: [ "redis-server", "--requirepass", "mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV" ]
@@ -17,6 +18,7 @@ services:
   mongodb:
     image: bitnami/mongodb:8.0.9
     container_name: mongodb
+    restart: unless-stopped
     environment:
       - MONGODB_ROOT_USER=root
       - MONGODB_ROOT_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
@@ -31,8 +33,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/bitnami/mongodb
-      - ./mongodb/mongodb.conf:/bitnami/mongodb/conf/mongodb.conf:ro
+      - mongodb_data:/bitnami/mongodb/data
       - ./mongodb/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
     networks:
       - appnet
@@ -40,23 +41,32 @@ services:
   vault:
     image: bitnami/vault:1.19.3
     container_name: vault
+    restart: always
     environment:
-      - VAULT_DEV_ROOT_TOKEN_ID=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
-      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
-      - HOME=/var/vault
+      - VAULT_ADDR=http://0.0.0.0:8200
+      - VAULT_API_ADDR=http://0.0.0.0:8200
     ports:
       - "8200:8200"
     volumes:
-      - vault_data:/bitnami/vault/data
-      - vault_var:/var/vault
-    command: server -dev -dev-root-token-id=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      - vault_data:/vault/data
+      - ./vault/config:/vault/config
+    cap_add:
+      - IPC_LOCK
+    command: server -config=/vault/config/vault.hcl
     user: root
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8200/v1/sys/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     networks:
       - appnet
 
   mysql:
     image: bitnami/mysql:8.4.5
     container_name: mysql
+    restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
       - MYSQL_USER=amirex128
@@ -72,6 +82,7 @@ services:
   minio:
     image: bitnami/minio:2025.4.22
     container_name: minio
+    restart: unless-stopped
     environment:
       MINIO_ROOT_USER: amirex128
       MINIO_ROOT_PASSWORD: mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
@@ -87,6 +98,7 @@ services:
   openresty:
     image: bitnami/openresty:1.27.1-2
     container_name: openresty
+    restart: unless-stopped
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -102,14 +114,21 @@ services:
 
 volumes:
   redis_data:
+    driver: local
   mongodb_data:
+    driver: local
   vault_data:
-  vault_var:
+    driver: local
   mysql_data:
+    driver: local
   minio_data:
+    driver: local
   openresty_conf:
+    driver: local
   openresty_logs:
+    driver: local
   openresty_html:
+    driver: local
 
 networks:
   appnet:
