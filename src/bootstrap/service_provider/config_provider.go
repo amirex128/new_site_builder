@@ -23,8 +23,8 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 
 		// First try Vault
 		sfconfigmanager.WithVaultOptions(
-			os.Getenv("VAULT_ADDR"),
-			os.Getenv("VAULT_TOKEN"),
+			"http://localhost:8200",
+			"mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV",
 			&sfconfigmanager.VaultOptions{
 				SecretPath:  getVaultSecretPath(),
 				SecretMount: "secret",
@@ -67,7 +67,7 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 func getVaultSecretPath() string {
 	path := os.Getenv("VAULT_SECRET_PATH")
 	if path == "" {
-		return "secret/data/boilerplate" // Default path
+		return "/v1/kv/data/new_site_builder\n" // Default path
 	}
 	return path
 }

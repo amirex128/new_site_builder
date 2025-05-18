@@ -66,6 +66,24 @@ func (r *UserRepo) GetByID(id int64) (domain.User, error) {
 	return user, nil
 }
 
+func (r *UserRepo) GetByEmail(email string) (domain.User, error) {
+	var user domain.User
+	result := r.database.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return user, result.Error
+	}
+	return user, nil
+}
+
+func (r *UserRepo) GetByPhone(phone string) (domain.User, error) {
+	var user domain.User
+	result := r.database.Where("phone = ?", phone).First(&user)
+	if result.Error != nil {
+		return user, result.Error
+	}
+	return user, nil
+}
+
 func (r *UserRepo) Create(user domain.User) error {
 	result := r.database.Create(&user)
 	return result.Error

@@ -257,7 +257,7 @@ func (u *RoleUsecase) GetRolePermissionsQuery(params *role.GetRolePermissionsQue
 
 	// This is a placeholder - in a real implementation you'd query role-permission mappings
 	// For now, return all possible permissions
-	permissions, count, err := u.permissionRepo.GetAll(nil)
+	permissions, count, err := u.permissionRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}

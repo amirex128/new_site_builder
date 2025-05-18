@@ -132,7 +132,7 @@ func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetA
 }
 
 func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer.AdminGetAllHeaderFooterQuery) (any, error) {
-	// Implementation to get all header/footers for admin
+	// Implementation for admin to get all header/footers
 	fmt.Println(params)
 
 	result, count, err := u.repo.GetAll(params.PaginationRequestDto)

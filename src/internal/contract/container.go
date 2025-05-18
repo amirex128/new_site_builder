@@ -4,6 +4,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
+	"gorm.io/gorm"
 )
 
 type IContainer interface {
@@ -38,8 +39,16 @@ type IContainer interface {
 	GetTicketRepo() repository.ITicketRepository
 	GetCustomerTicketRepo() repository.ICustomerTicketRepository
 	GetUserRepo() repository.IUserRepository
+	GetUnitPriceRepo() repository.IUnitPriceRepository
+	GetAddressRepo() repository.IAddressRepository
+	GetCityRepo() repository.ICityRepository
+	GetProvinceRepo() repository.IProvinceRepository
+	GetPlanRepo() repository.IPlanRepository
+	GetRoleRepo() repository.IRoleRepository
+	GetPermissionRepo() repository.IPermissionRepository
 	GetConfig() IConfig
 	GetFoodPartyCash() cache.ICacheService
 	GetStockCacheTransient() cache.ICacheService
 	GetLogger() sflogger.Logger
+	GetDB() *gorm.DB
 }

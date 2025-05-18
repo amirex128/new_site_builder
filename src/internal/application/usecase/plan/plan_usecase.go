@@ -3,10 +3,10 @@ package planusecase
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -58,9 +58,9 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 		emailCredits = *params.EmailCredits
 	}
 
-	var storageCredits int
+	var storageMbCredits int
 	if params.StorageCredits != nil {
-		storageCredits = *params.StorageCredits
+		storageMbCredits = *params.StorageCredits
 	}
 
 	var aiCredits int
@@ -74,21 +74,18 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 	}
 
 	newPlan := domain.Plan{
-		Name:           *params.Name,
-		Description:    description,
-		Price:          *params.Price,
-		DiscountType:   discountType,
-		Discount:       discount,
-		Duration:       *params.Duration,
-		Feature:        feature,
-		SmsCredits:     smsCredits,
-		EmailCredits:   emailCredits,
-		StorageCredits: storageCredits,
-		AiCredits:      aiCredits,
-		AiImageCredits: aiImageCredits,
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
-		IsDeleted:      false,
+		Name:             *params.Name,
+		Description:      description,
+		Price:            *params.Price,
+		DiscountType:     discountType,
+		Discount:         &discount,
+		Duration:         *params.Duration,
+		Feature:          feature,
+		SmsCredits:       smsCredits,
+		EmailCredits:     emailCredits,
+		StorageMbCredits: storageMbCredits,
+		AiCredits:        aiCredits,
+		AiImageCredits:   aiImageCredits,
 	}
 
 	err := u.planRepo.Create(newPlan)
@@ -125,7 +122,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	}
 
 	if params.Discount != nil {
-		existingPlan.Discount = *params.Discount
+		existingPlan.Discount = params.Discount
 	}
 
 	if params.Duration != nil {
@@ -145,7 +142,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	}
 
 	if params.StorageCredits != nil {
-		existingPlan.StorageCredits = *params.StorageCredits
+		existingPlan.StorageMbCredits = *params.StorageCredits
 	}
 
 	if params.AiCredits != nil {
@@ -155,8 +152,6 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	if params.AiImageCredits != nil {
 		existingPlan.AiImageCredits = *params.AiImageCredits
 	}
-
-	existingPlan.UpdatedAt = time.Now()
 
 	err = u.planRepo.Update(existingPlan)
 	if err != nil {
@@ -220,12 +215,12 @@ func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQue
 	var discountAmount int64 = 0
 
 	// Calculate discount based on discount type
-	if plan.Discount > 0 {
-		if plan.DiscountType == strconv.Itoa(int(plan.Fixed)) {
-			discountAmount = plan.Discount
+	if plan.Discount != nil && *plan.Discount > 0 {
+		if plan.DiscountType == strconv.Itoa(int(user.Fixed)) {
+			discountAmount = *plan.Discount
 			finalPrice = plan.Price - discountAmount
-		} else if plan.DiscountType == strconv.Itoa(int(plan.Percentage)) {
-			discountAmount = (plan.Price * plan.Discount) / 100
+		} else if plan.DiscountType == strconv.Itoa(int(user.Percentage)) {
+			discountAmount = (plan.Price * (*plan.Discount)) / 100
 			finalPrice = plan.Price - discountAmount
 		}
 	}

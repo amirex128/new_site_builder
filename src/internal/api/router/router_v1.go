@@ -32,6 +32,7 @@ func (v RouterV1) Routes(route *gin.RouterGroup) {
 	// - UnitPriceHandlerV1
 	// - UserHandlerV1
 	// - CustomerHandlerV1
+	// - ArticleCategoryHandlerV1
 
 	// Article routes
 	articleRoute := route.Group("/article")
@@ -42,6 +43,15 @@ func (v RouterV1) Routes(route *gin.RouterGroup) {
 	articleRoute.GET("/all", v.h.ArticleHandlerV1.ArticleGetAll)
 	articleRoute.POST("/filters-sort", v.h.ArticleHandlerV1.ArticleGetByFiltersSort)
 	articleRoute.GET("/admin/all", v.h.ArticleHandlerV1.AdminArticleGetAll)
+
+	// Article Category routes
+	articleCategoryRoute := route.Group("/article-category")
+	articleCategoryRoute.POST("", v.h.ArticleCategoryHandlerV1.CategoryCreate)
+	articleCategoryRoute.PUT("", v.h.ArticleCategoryHandlerV1.CategoryUpdate)
+	articleCategoryRoute.DELETE("", v.h.ArticleCategoryHandlerV1.CategoryDelete)
+	articleCategoryRoute.GET("", v.h.ArticleCategoryHandlerV1.CategoryGet)
+	articleCategoryRoute.GET("/all", v.h.ArticleCategoryHandlerV1.CategoryGetAll)
+	articleCategoryRoute.GET("/admin/all", v.h.ArticleCategoryHandlerV1.AdminCategoryGetAll)
 
 	// Address routes
 	addressRoute := route.Group("/address")
@@ -214,4 +224,32 @@ func (v RouterV1) Routes(route *gin.RouterGroup) {
 	customerTicketRoute.GET("", v.h.CustomerTicketHandlerV1.GetByIdCustomerTicket)
 	customerTicketRoute.GET("/all", v.h.CustomerTicketHandlerV1.GetAllCustomerTicket)
 	customerTicketRoute.GET("/admin/all", v.h.CustomerTicketHandlerV1.AdminGetAllCustomerTicket)
+
+	// UnitPrice routes
+	unitPriceRoute := route.Group("/unit-price")
+	unitPriceRoute.PUT("", v.h.UnitPriceHandlerV1.UpdateUnitPrice)
+	unitPriceRoute.GET("/calculate", v.h.UnitPriceHandlerV1.CalculateUnitPrice)
+	unitPriceRoute.GET("/all", v.h.UnitPriceHandlerV1.GetAllUnitPrice)
+
+	// User routes
+	userRoute := route.Group("/user")
+	userRoute.POST("/register", v.h.UserHandlerV1.RegisterUser)
+	userRoute.POST("/login", v.h.UserHandlerV1.LoginUser)
+	userRoute.POST("/verify-forget", v.h.UserHandlerV1.RequestVerifyAndForgetUser)
+	userRoute.GET("/verify", v.h.UserHandlerV1.VerifyUser)
+	userRoute.PUT("/profile", v.h.UserHandlerV1.UpdateProfileUser)
+	userRoute.GET("/profile", v.h.UserHandlerV1.GetProfileUser)
+	userRoute.POST("/charge-credit", v.h.UserHandlerV1.ChargeCreditRequestUser)
+	userRoute.POST("/upgrade-plan", v.h.UserHandlerV1.UpgradePlanRequestUser)
+	userRoute.GET("/admin/all", v.h.UserHandlerV1.AdminGetAllUser)
+
+	// Customer routes
+	customerRoute := route.Group("/customer")
+	customerRoute.POST("/register", v.h.CustomerHandlerV1.RegisterCustomer)
+	customerRoute.POST("/login", v.h.CustomerHandlerV1.LoginCustomer)
+	customerRoute.POST("/verify-forget", v.h.CustomerHandlerV1.RequestVerifyAndForgetCustomer)
+	customerRoute.GET("/verify", v.h.CustomerHandlerV1.VerifyCustomer)
+	customerRoute.PUT("/profile", v.h.CustomerHandlerV1.UpdateProfileCustomer)
+	customerRoute.GET("/profile", v.h.CustomerHandlerV1.GetProfileCustomer)
+	customerRoute.GET("/admin/all", v.h.CustomerHandlerV1.AdminGetAllCustomer)
 }

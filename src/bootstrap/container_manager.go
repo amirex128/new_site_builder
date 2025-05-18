@@ -59,5 +59,14 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		ProductVariantRepo:    mysql.NewProductVariantRepository(mainDB),
 		ReturnItemRepo:        mysql.NewReturnItemRepository(mainDB),
 		StorageRepo:           mysql.NewStorageRepository(mainDB),
+
+		// New repositories
+		UnitPriceRepo:  mysql.NewUnitPriceRepository(mainDB),
+		AddressRepo:    mysql.NewAddressRepository(mainDB),
+		CityRepo:       mysql.NewCityRepository(mainDB),
+		ProvinceRepo:   mysql.NewProvinceRepository(mainDB),
+		PlanRepo:       mysql.NewPlanRepository(mainDB),
+		RoleRepo:       mysql.NewRoleRepository(mainDB),
+		PermissionRepo: mysql.NewPermissionRepository(mainDB),
 	}
 }

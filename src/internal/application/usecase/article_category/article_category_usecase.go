@@ -1,7 +1,7 @@
-package blogcategoryusecase
+package articlecategoryusecase
 
 import (
-	"encoding/json"
+	"fmt"
 	"time"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
@@ -16,7 +16,7 @@ type ArticleCategoryUsecase struct {
 	repo   repository.IArticleCategoryRepository
 }
 
-func NewBlogCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
+func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 	return &ArticleCategoryUsecase{
 		logger: c.GetLogger(),
 		repo:   c.GetArticleCategoryRepo(),
@@ -24,30 +24,22 @@ func NewBlogCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 }
 
 func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (any, error) {
-	// Implementation for creating a new category
+	// Implementation for creating a category
+	fmt.Println(params)
+
 	var description string
 	if params.Description != nil {
 		description = *params.Description
 	}
 
-	// Convert slice of strings to a single string for SeoTags
-	seoTags := ""
-	if len(params.SeoTags) > 0 {
-		seoTagsBytes, err := json.Marshal(params.SeoTags)
-		if err == nil {
-			seoTags = string(seoTagsBytes)
-		}
-	}
-
 	category := domain.BlogCategory{
 		Name:             *params.Name,
+		Slug:             *params.Slug,
+		Description:      description,
+		ParentCategoryID: params.ParentCategoryID,
 		SiteID:           *params.SiteID,
 		Order:            *params.Order,
-		ParentCategoryID: params.ParentCategoryID,
-		Description:      description,
-		Slug:             *params.Slug,
-		SeoTags:          seoTags,
-		UserID:           0, // This would need to come from the authenticated user
+		UserID:           1, // Should come from auth context
 		CreatedAt:        time.Now(),
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
@@ -58,43 +50,40 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 		return nil, err
 	}
 
-	// TODO: Handle MediaIDs through a separate join table operation if needed
-
 	return category, nil
 }
 
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (any, error) {
-	// Implementation for updating an existing category
-	// First get the existing category
+	// Implementation for updating a category
+	fmt.Println(params)
+
 	existingCategory, err := u.repo.GetByID(*params.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Update the fields
-	existingCategory.Name = *params.Name
-	existingCategory.SiteID = *params.SiteID
-
-	if params.Order != nil {
-		existingCategory.Order = *params.Order
-	}
-
-	existingCategory.ParentCategoryID = params.ParentCategoryID
-
-	if params.Description != nil {
-		existingCategory.Description = *params.Description
+	if params.Name != nil {
+		existingCategory.Name = *params.Name
 	}
 
 	if params.Slug != nil {
 		existingCategory.Slug = *params.Slug
 	}
 
-	// Convert slice of strings to a single string for SeoTags
-	if len(params.SeoTags) > 0 {
-		seoTagsBytes, err := json.Marshal(params.SeoTags)
-		if err == nil {
-			existingCategory.SeoTags = string(seoTagsBytes)
-		}
+	if params.Description != nil {
+		existingCategory.Description = *params.Description
+	}
+
+	if params.ParentCategoryID != nil {
+		existingCategory.ParentCategoryID = params.ParentCategoryID
+	}
+
+	if params.SiteID != nil {
+		existingCategory.SiteID = *params.SiteID
+	}
+
+	if params.Order != nil {
+		existingCategory.Order = *params.Order
 	}
 
 	existingCategory.UpdatedAt = time.Now()
@@ -104,13 +93,13 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 		return nil, err
 	}
 
-	// TODO: Handle MediaIDs through a separate join table operation if needed
-
 	return existingCategory, nil
 }
 
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (any, error) {
 	// Implementation for deleting a category
+	fmt.Println(params)
+
 	err := u.repo.Delete(*params.ID)
 	if err != nil {
 		return nil, err
@@ -123,6 +112,8 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 
 func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.GetByIdCategoryQuery) (any, error) {
 	// Implementation to get category by ID
+	fmt.Println(params)
+
 	result, err := u.repo.GetByID(*params.ID)
 	if err != nil {
 		return nil, err
@@ -132,7 +123,9 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 }
 
 func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (any, error) {
-	// Implementation to get all categories by site ID
+	// Implementation to get all categories
+	fmt.Println(params)
+
 	result, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
@@ -145,7 +138,9 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (any, error) {
-	// Implementation to get all categories for admin
+	// Implementation for admin to get all categories
+	fmt.Println(params)
+
 	result, count, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err

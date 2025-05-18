@@ -46,9 +46,9 @@ type User struct {
 	DeletedAt                *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
-	Roles     []Role     `json:"roles" gorm:"many2many:role_user;"`
-	Addresses []Address  `json:"addresses" gorm:"many2many:address_user;"`
-	Plan      *Plan      `json:"plan" gorm:"foreignKey:PlanID"`
+	Roles     []Role    `json:"roles" gorm:"many2many:role_user;"`
+	Addresses []Address `json:"addresses" gorm:"many2many:address_user;"`
+	Plan      *Plan     `json:"plan" gorm:"foreignKey:PlanID"`
 }
 
 // TableName specifies the table name for User
@@ -88,130 +88,6 @@ type Customer struct {
 // TableName specifies the table name for Customer
 func (Customer) TableName() string {
 	return "customers"
-}
-
-// Role represents User.Roles table
-type Role struct {
-	ID   int64  `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Name string `json:"name" gorm:"column:name;type:longtext;not null"`
-
-	// Relations
-	Users        []User        `json:"users" gorm:"many2many:role_user;"`
-	Customers    []Customer    `json:"customers" gorm:"many2many:customer_roles;"`
-	Permissions  []Permission  `json:"permissions" gorm:"many2many:permission_roles;"`
-	Plans        []Plan        `json:"plans" gorm:"many2many:role_plan;"`
-}
-
-// TableName specifies the table name for Role
-func (Role) TableName() string {
-	return "roles"
-}
-
-// Permission represents User.Permissions table
-type Permission struct {
-	ID   int64  `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Name string `json:"name" gorm:"column:name;type:longtext;not null"`
-
-	// Relations
-	Roles []Role `json:"roles" gorm:"many2many:permission_roles;"`
-}
-
-// TableName specifies the table name for Permission
-func (Permission) TableName() string {
-	return "permissions"
-}
-
-// Plan represents User.Plans table
-type Plan struct {
-	ID               int64  `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Name             string `json:"name" gorm:"column:name;type:longtext;not null"`
-	ShowStatus       string `json:"show_status" gorm:"column:show_status;type:longtext;not null"`
-	Description      string `json:"description" gorm:"column:description;type:longtext;null"`
-	Price            int64  `json:"price" gorm:"column:price;type:bigint;not null"`
-	DiscountType     string `json:"discount_type" gorm:"column:discount_type;type:longtext;null"`
-	Discount         *int64 `json:"discount" gorm:"column:discount;type:bigint;null"`
-	Duration         int    `json:"duration" gorm:"column:duration;type:int;not null"`
-	Feature          string `json:"feature" gorm:"column:feature;type:longtext;null"`
-	SmsCredits       int    `json:"sms_credits" gorm:"column:sms_credits;type:int;not null"`
-	EmailCredits     int    `json:"email_credits" gorm:"column:email_credits;type:int;not null"`
-	StorageMbCredits int    `json:"storage_mb_credits" gorm:"column:storage_mb_credits;type:int;not null"`
-	AiCredits        int    `json:"ai_credits" gorm:"column:ai_credits;type:int;not null"`
-	AiImageCredits   int    `json:"ai_image_credits" gorm:"column:ai_image_credits;type:int;not null"`
-
-	// Relations
-	Roles []Role `json:"roles" gorm:"many2many:role_plan;"`
-	Users []User `json:"users" gorm:"foreignKey:PlanID"`
-}
-
-// TableName specifies the table name for Plan
-func (Plan) TableName() string {
-	return "plans"
-}
-
-// Address represents User.Addresses table
-type Address struct {
-	ID          int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Title       string     `json:"title" gorm:"column:title;type:longtext;null"`
-	Latitude    *float32   `json:"latitude" gorm:"column:latitude;type:float;null"`
-	Longitude   *float32   `json:"longitude" gorm:"column:longitude;type:float;null"`
-	AddressLine string     `json:"address_line" gorm:"column:address_line;type:longtext;not null"`
-	PostalCode  string     `json:"postal_code" gorm:"column:postal_code;type:longtext;not null"`
-	CityID      int64      `json:"city_id" gorm:"column:city_id;type:bigint;not null;index"`
-	ProvinceID  int64      `json:"province_id" gorm:"column:province_id;type:bigint;not null;index"`
-	UserID      int64      `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
-	CustomerID  int64      `json:"customer_id" gorm:"column:customer_id;type:bigint;not null"`
-	CreatedAt   time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt   time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	Version     time.Time  `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-	IsDeleted   bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt   *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
-
-	// Relations
-	City     *City     `json:"city" gorm:"foreignKey:CityID"`
-	Province *Province `json:"province" gorm:"foreignKey:ProvinceID"`
-	Users    []User    `json:"users" gorm:"many2many:address_user;"`
-	Customers []Customer `json:"customers" gorm:"many2many:address_customer;"`
-}
-
-// TableName specifies the table name for Address
-func (Address) TableName() string {
-	return "addresses"
-}
-
-// City represents User.Cities table
-type City struct {
-	ID         int64     `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Name       string    `json:"name" gorm:"column:name;type:longtext;not null"`
-	Slug       string    `json:"slug" gorm:"column:slug;type:longtext;not null"`
-	Status     string    `json:"status" gorm:"column:status;type:longtext;not null"`
-	ProvinceID int64     `json:"province_id" gorm:"column:province_id;type:bigint;not null;index"`
-	Version    time.Time `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-
-	// Relations
-	Province *Province  `json:"province" gorm:"foreignKey:ProvinceID"`
-	Addresses []Address `json:"addresses" gorm:"foreignKey:CityID"`
-}
-
-// TableName specifies the table name for City
-func (City) TableName() string {
-	return "cities"
-}
-
-// Province represents User.Provinces table
-type Province struct {
-	ID     int64  `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Name   string `json:"name" gorm:"column:name;type:longtext;not null"`
-	Slug   string `json:"slug" gorm:"column:slug;type:longtext;not null"`
-	Status int    `json:"status" gorm:"column:status;type:int;not null"`
-
-	// Relations
-	Cities    []City    `json:"cities" gorm:"foreignKey:ProvinceID"`
-	Addresses []Address `json:"addresses" gorm:"foreignKey:ProvinceID"`
-}
-
-// TableName specifies the table name for Province
-func (Province) TableName() string {
-	return "provinces"
 }
 
 // RoleUser represents User.RoleUser table - a join table
@@ -285,18 +161,3 @@ type AddressCustomer struct {
 func (AddressCustomer) TableName() string {
 	return "address_customer"
 }
-
-// UnitPrice represents User.UnitPrices table
-type UnitPrice struct {
-	ID           int64   `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Name         string  `json:"name" gorm:"column:name;type:longtext;not null"`
-	HasDay       bool    `json:"has_day" gorm:"column:has_day;type:tinyint(1);not null"`
-	Price        int64   `json:"price" gorm:"column:price;type:bigint;not null"`
-	DiscountType string  `json:"discount_type" gorm:"column:discount_type;type:longtext;null"`
-	Discount     *int64  `json:"discount" gorm:"column:discount;type:bigint;null"`
-}
-
-// TableName specifies the table name for UnitPrice
-func (UnitPrice) TableName() string {
-	return "unit_prices"
-} 

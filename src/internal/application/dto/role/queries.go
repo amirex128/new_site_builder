@@ -14,4 +14,5 @@ type GetAllRoleQuery struct {
 
 // GetRolePermissionsQuery represents a query to get role permissions
 type GetRolePermissionsQuery struct {
+	common.PaginationRequestDto
 }

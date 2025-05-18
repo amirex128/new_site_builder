@@ -6,7 +6,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
-	fileitemusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/fileitem"
+	fileitemusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/file_item"
 	"github.com/gin-gonic/gin"
 )
 
@@ -139,7 +139,6 @@ func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 		return
 	}
 
-	// TODO: This would typically return a file download rather than JSON
 	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
 }
 

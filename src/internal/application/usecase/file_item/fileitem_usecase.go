@@ -146,26 +146,56 @@ func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileIte
 	// Implementation for restoring a deleted file item
 	fmt.Println(params)
 
-	// TODO: Implement restore logic
-	// This might require custom repository methods beyond the standard interface
+	// TODO: Implement actual restore logic
+	// This would typically involve getting the file item marked as deleted and removing the deletion flag
 
 	return map[string]interface{}{
 		"id": params.ID,
 	}, nil
 }
 
-func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (any, error) {
-	// Implementation to get deleted tree directory
+func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (any, error) {
+	// Implementation to get a directory tree
 	fmt.Println(params)
 
-	// TODO: Implement deleted tree retrieval logic
-	// This might require custom repository methods beyond the standard interface
+	var parentID int64 = 0
+	if params.ParentFileItemID != nil {
+		parentID = *params.ParentFileItemID
+	}
 
-	return []interface{}{}, nil
+	// Using a basic pagination request for demonstration
+	paginationRequest := common.PaginationRequestDto{
+		Page:     1,
+		PageSize: 100,
+	}
+
+	result, _, err := u.repo.GetAllByParentID(parentID, paginationRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: In a real implementation, you would recursively fetch all child directories and files
+	// to build a complete tree structure
+
+	return map[string]interface{}{
+		"items": result,
+	}, nil
+}
+
+func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (any, error) {
+	// Implementation to get a tree of deleted directories
+	fmt.Println(params)
+
+	// TODO: Implement actual logic to retrieve deleted items
+	// This would typically involve querying for items with IsDeleted = true
+
+	return map[string]interface{}{
+		"items": []domain.FileItem{}, // Placeholder empty array
+	}, nil
 }
 
 func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (any, error) {
-	// Implementation to download a file item by ID
+	// Implementation to download a file by ID
 	fmt.Println(params)
 
 	fileItem, err := u.repo.GetByID(*params.ID)
@@ -173,33 +203,17 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 		return nil, err
 	}
 
-	// TODO: Handle file download logic
-
-	return fileItem, nil
-}
-
-func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (any, error) {
-	// Implementation to get tree directory
-	fmt.Println(params)
-
-	// Empty pagination for now, can be enhanced later
-	pagination := common.PaginationRequestDto{}
-
-	// If parentID is provided, get children of that parent
-	if params.ParentFileItemID != nil {
-		// TODO: Implement proper tree fetching logic
-		result, count, err := u.repo.GetAllByParentID(*params.ParentFileItemID, pagination)
-		if err != nil {
-			return nil, err
-		}
-
-		return map[string]interface{}{
-			"items": result,
-			"total": count,
-		}, nil
+	// Check if item is a directory (can't download directories)
+	if fileItem.IsDirectory {
+		return nil, fmt.Errorf("cannot download a directory")
 	}
 
-	// Get root directories otherwise
-	// TODO: Implement proper root directories fetching logic
-	return []interface{}{}, nil
+	// TODO: Implement actual file download logic
+	// This would typically involve generating a download URL or stream from your storage system
+
+	return map[string]interface{}{
+		"fileItem":     fileItem,
+		"downloadUrl":  "https://example.com/download/" + strconv.FormatInt(fileItem.ID, 10), // Placeholder URL
+		"downloadName": fileItem.Name,
+	}, nil
 }

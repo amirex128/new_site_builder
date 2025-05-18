@@ -1,0 +1,116 @@
+version: "3.8"
+
+services:
+  redis:
+    image: bitnami/redis:8.0.0
+    container_name: redis
+    environment:
+      - REDIS_PASSWORD=redis_password
+    command: [ "redis-server", "--requirepass", "mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV" ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
+    networks:
+      - appnet
+
+  mongodb:
+    image: bitnami/mongodb:8.0.9
+    container_name: mongodb
+    environment:
+      - MONGODB_ROOT_USER=root
+      - MONGODB_ROOT_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      - MONGODB_USERNAME=amirex128
+      - MONGODB_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      - MONGODB_DATABASE=new_site_builder
+      - MONGODB_PORT_NUMBER=27017
+      - MONGODB_ENABLE_MAJORITY_READ=true
+      - MONGODB_ENABLE_JOURNAL=true
+      - MONGODB_INIT_RETRY_ATTEMPTS=7
+      - MONGODB_INIT_RETRY_DELAY=5
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+      - ./mongodb/mongodb.conf:/bitnami/mongodb/conf/mongodb.conf:ro
+      - ./mongodb/init-user.js:/docker-entrypoint-initdb.d/init-user.js:ro
+    networks:
+      - appnet
+
+  vault:
+    image: bitnami/vault:1.19.3
+    container_name: vault
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - HOME=/var/vault
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault_data:/bitnami/vault/data
+      - vault_var:/var/vault
+    command: server -dev -dev-root-token-id=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+    user: root
+    networks:
+      - appnet
+
+  mysql:
+    image: bitnami/mysql:8.4.5
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      - MYSQL_USER=amirex128
+      - MYSQL_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/bitnami/mysql/data
+      - ./mysql:/docker-entrypoint-startdb.d
+    networks:
+      - appnet
+
+  minio:
+    image: bitnami/minio:2025.4.22
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: amirex128
+      MINIO_ROOT_PASSWORD: mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      MINIO_USE_SSL: "false"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/bitnami/minio
+    networks:
+      - appnet
+
+  openresty:
+    image: bitnami/openresty:1.27.1-2
+    container_name: openresty
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - openresty_conf:/opt/bitnami/openresty/conf
+      - openresty_logs:/opt/bitnami/openresty/logs
+      - openresty_html:/app  # Assuming you will serve app files here
+    environment:
+      - OPENRESTY_HTTP_PORT_NUMBER=8080
+      - OPENRESTY_HTTPS_PORT_NUMBER=8443
+    networks:
+      - appnet
+
+volumes:
+  redis_data:
+  mongodb_data:
+  vault_data:
+  vault_var:
+  mysql_data:
+  minio_data:
+  openresty_conf:
+  openresty_logs:
+  openresty_html:
+
+networks:
+  appnet:
+    driver: bridge

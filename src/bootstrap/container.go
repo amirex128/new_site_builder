@@ -2,9 +2,11 @@ package bootstrap
 
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
+	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	cache2 "github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
+	"gorm.io/gorm"
 )
 
 // Container
@@ -47,6 +49,13 @@ type Container struct {
 	TicketRepo            repository.ITicketRepository
 	CustomerTicketRepo    repository.ICustomerTicketRepository
 	UserRepo              repository.IUserRepository
+	UnitPriceRepo         repository.IUnitPriceRepository
+	AddressRepo           repository.IAddressRepository
+	CityRepo              repository.ICityRepository
+	ProvinceRepo          repository.IProvinceRepository
+	PlanRepo              repository.IPlanRepository
+	RoleRepo              repository.IRoleRepository
+	PermissionRepo        repository.IPermissionRepository
 }
 
 func (c *Container) GetConfig() contract.IConfig {
@@ -177,6 +186,34 @@ func (c *Container) GetUserRepo() repository.IUserRepository {
 	return c.UserRepo
 }
 
+func (c *Container) GetUnitPriceRepo() repository.IUnitPriceRepository {
+	return c.UnitPriceRepo
+}
+
+func (c *Container) GetAddressRepo() repository.IAddressRepository {
+	return c.AddressRepo
+}
+
+func (c *Container) GetCityRepo() repository.ICityRepository {
+	return c.CityRepo
+}
+
+func (c *Container) GetProvinceRepo() repository.IProvinceRepository {
+	return c.ProvinceRepo
+}
+
+func (c *Container) GetPlanRepo() repository.IPlanRepository {
+	return c.PlanRepo
+}
+
+func (c *Container) GetRoleRepo() repository.IRoleRepository {
+	return c.RoleRepo
+}
+
+func (c *Container) GetPermissionRepo() repository.IPermissionRepository {
+	return c.PermissionRepo
+}
+
 func (c *Container) GetFoodPartyCash() cache2.ICacheService {
 	return c.FoodPartyCache
 }
@@ -187,4 +224,8 @@ func (c *Container) GetStockCacheTransient() cache2.ICacheService {
 
 func (c *Container) GetLogger() sflogger.Logger {
 	return c.Logger
+}
+
+func (c *Container) GetDB() *gorm.DB {
+	return sform.MustDB("main")
 }

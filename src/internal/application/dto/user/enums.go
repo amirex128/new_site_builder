@@ -74,3 +74,11 @@ const (
 	GPT4
 	Claude
 )
+
+// DiscountType defines discount types
+type DiscountType int
+
+const (
+	Fixed DiscountType = iota
+	Percentage
+)

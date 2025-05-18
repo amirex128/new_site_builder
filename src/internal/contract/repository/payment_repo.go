@@ -15,4 +15,5 @@ type IPaymentRepository interface {
 	Create(payment domain.Payment) error
 	Update(payment domain.Payment) error
 	Delete(id int64) error
+	RequestPayment(amount int64, orderID int64, userID int64, gateway string, orderData map[string]string) (string, error)
 }

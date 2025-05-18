@@ -10,6 +10,7 @@ func HandlerBootstrap(c contract.IContainer) *HandlerManager {
 
 	return &HandlerManager{
 		ArticleHandlerV1:         handlermanager.ArticleInit(c),
+		ArticleCategoryHandlerV1: handlermanager.ArticleCategoryInit(c),
 		AddressHandlerV1:         handlermanager.AddressInit(c),
 		BasketHandlerV1:          handlermanager.BasketInit(c),
 		CustomerHandlerV1:        handlermanager.CustomerInit(c),
@@ -36,6 +37,7 @@ func HandlerBootstrap(c contract.IContainer) *HandlerManager {
 
 type HandlerManager struct {
 	ArticleHandlerV1         *v1.ArticleHandler
+	ArticleCategoryHandlerV1 *v1.ArticleCategoryHandler
 	AddressHandlerV1         *v1.AddressHandler
 	BasketHandlerV1          *v1.BasketHandler
 	CustomerHandlerV1        *v1.CustomerHandler

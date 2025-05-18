@@ -31,12 +31,24 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	// Implementation for creating an address
 	fmt.Println(params)
 
+	var customerID, userID int64
+	if params.CustomerID != nil {
+		customerID = *params.CustomerID
+	}
+	if params.UserID != nil {
+		userID = *params.UserID
+	}
+
+	// Create copies of the float values since we need pointers
+	latitude := *params.Latitude
+	longitude := *params.Longitude
+
 	newAddress := domain.Address{
-		CustomerID:  params.CustomerID,
-		UserID:      params.UserID,
+		CustomerID:  customerID,
+		UserID:      userID,
 		Title:       *params.Title,
-		Latitude:    *params.Latitude,
-		Longitude:   *params.Longitude,
+		Latitude:    &latitude,
+		Longitude:   &longitude,
 		AddressLine: *params.AddressLine,
 		PostalCode:  *params.PostalCode,
 		CityID:      *params.CityID,
@@ -68,11 +80,13 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	}
 
 	if params.Latitude != nil {
-		existingAddress.Latitude = *params.Latitude
+		latitude := *params.Latitude
+		existingAddress.Latitude = &latitude
 	}
 
 	if params.Longitude != nil {
-		existingAddress.Longitude = *params.Longitude
+		longitude := *params.Longitude
+		existingAddress.Longitude = &longitude
 	}
 
 	if params.AddressLine != nil {
