@@ -31,26 +31,13 @@ type Config struct {
 	StorageRegion    string `env:"STORAGE_REGION"`
 	StorageAccessKey string `env:"STORAGE_ACCESS_KEY"`
 	StorageSecretKey string `env:"STORAGE_SECRET_KEY"`
-}
 
-// Storage returns storage configuration as a struct
-func (c Config) Storage() struct {
-	Bucket    string
-	Region    string
-	AccessKey string
-	SecretKey string
-} {
-	return struct {
-		Bucket    string
-		Region    string
-		AccessKey string
-		SecretKey string
-	}{
-		Bucket:    c.StorageBucket,
-		Region:    c.StorageRegion,
-		AccessKey: c.StorageAccessKey,
-		SecretKey: c.StorageSecretKey,
-	}
+	Bucket    string `env:"BUCKET"`
+	Region    string `env:"REGION"`
+	AccessKey string `env:"ACCESS_KEY"`
+	SecretKey string `env:"SECRET_KEY"`
+
+	JwtSecretToken string `env:"JWT_SECRET_TOKEN"`
 }
 
 func (c Config) GetString(key string) string {

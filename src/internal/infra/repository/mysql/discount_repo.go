@@ -4,6 +4,8 @@ import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -106,4 +108,50 @@ func (r *DiscountRepo) Update(discount domain.Discount) error {
 func (r *DiscountRepo) Delete(id int64) error {
 	result := r.database.Delete(&domain.Discount{}, id)
 	return result.Error
+}
+
+func (r *DiscountRepo) DecreaseQuantity(discountID int64) error {
+	// Get the current discount
+	var discount domain.Discount
+	if err := r.database.First(&discount, discountID).Error; err != nil {
+		return err
+	}
+
+	// Check if there are available quantities
+	if discount.Quantity <= 0 {
+		return gorm.ErrInvalidData
+	}
+
+	// Decrease the quantity
+	discount.Quantity -= 1
+	discount.UpdatedAt = time.Now()
+
+	// Update the discount
+	return r.database.Save(&discount).Error
+}
+
+func (r *DiscountRepo) AddCustomerUsage(discountID int64, customerID int64) error {
+	// Create a new customer discount record
+	customerDiscount := domain.CustomerDiscount{
+		DiscountID: discountID,
+		CustomerID: customerID,
+	}
+
+	// Insert the record
+	return r.database.Create(&customerDiscount).Error
+}
+
+func (r *DiscountRepo) HasCustomerUsedDiscount(discountID int64, customerID int64) (bool, error) {
+	var count int64
+
+	// Check if a record exists
+	err := r.database.Model(&domain.CustomerDiscount{}).
+		Where("discount_id = ? AND customer_id = ?", discountID, customerID).
+		Count(&count).Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

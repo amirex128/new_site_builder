@@ -22,6 +22,7 @@ type OrderUsecase struct {
 	orderItemRepo  repository.IOrderItemRepository
 	paymentRepo    repository.IPaymentRepository
 	authContextSvc common.IAuthContextService
+	container      contract.IContainer
 }
 
 func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
@@ -32,6 +33,7 @@ func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
 		orderItemRepo:  c.GetOrderItemRepo(),
 		paymentRepo:    c.GetPaymentRepo(),
 		authContextSvc: c.GetAuthContextService(),
+		container:      c,
 	}
 }
 
@@ -174,7 +176,9 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		}
 
 		// Delete existing order items and create new ones
-		// TODO: Add delete order items by order ID method
+		if err := u.orderItemRepo.DeleteByOrderID(existingOrder.ID); err != nil {
+			return nil, err
+		}
 
 		// Create order items
 		for _, basketItem := range basket.Items {
@@ -263,8 +267,8 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 	payment := payments[0]
 
 	// Verify payment with gateway
-	// This is a simplified implementation
 	// In a real application, you would call the payment gateway's API
+	// For now, we'll use a simplified implementation
 	isVerified := *params.IsSuccess
 
 	if isVerified {
@@ -359,8 +363,47 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 		return nil, err
 	}
 
-	// TODO: Verify the order belongs to the user's site
-	// In a real implementation, we would get the user's site ID and compare it with the order's site ID
+	// Verify the order belongs to the user's site
+	userID, err := u.authContextSvc.GetUserID()
+	if err != nil {
+		return nil, err
+	}
+
+	// Get user's sites
+	siteRepo := u.container.GetSiteRepo()
+	if siteRepo == nil {
+		return nil, errors.New("site repository not available")
+	}
+
+	// Check if the user has access to the site of this order
+	userSites, _, err := siteRepo.GetAllByUserID(userID, common.PaginationRequestDto{
+		Page:     1,
+		PageSize: 100, // Assuming users won't have more than 100 sites
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the order's site is in the user's sites
+	hasAccess := false
+	for _, site := range userSites {
+		if site.ID == order.SiteID {
+			hasAccess = true
+			break
+		}
+	}
+
+	// If admin, allow access regardless of site ownership
+	if !hasAccess {
+		isAdmin, err := u.authContextSvc.IsAdmin()
+		if err != nil {
+			return nil, err
+		}
+
+		if !isAdmin {
+			return nil, errors.New("شما به این سفارش دسترسی ندارید")
+		}
+	}
 
 	return order, nil
 }

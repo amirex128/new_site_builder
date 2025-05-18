@@ -4,6 +4,8 @@ import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -75,4 +77,24 @@ func (r *ProductVariantRepo) Update(variant domain.ProductVariant) error {
 func (r *ProductVariantRepo) Delete(id int64) error {
 	result := r.database.Delete(&domain.ProductVariant{}, id)
 	return result.Error
+}
+
+func (r *ProductVariantRepo) DecreaseStock(variantID int64, quantity int) error {
+	// Get the current variant
+	var variant domain.ProductVariant
+	if err := r.database.First(&variant, variantID).Error; err != nil {
+		return err
+	}
+
+	// Check if there's enough stock
+	if variant.Stock < quantity {
+		return gorm.ErrInvalidData
+	}
+
+	// Decrease the stock
+	variant.Stock -= quantity
+	variant.UpdatedAt = time.Now()
+
+	// Update the variant
+	return r.database.Save(&variant).Error
 }

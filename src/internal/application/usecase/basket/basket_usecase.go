@@ -2,6 +2,7 @@ package basketusecase
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
@@ -123,9 +124,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			return nil, errors.New("سبد خرید وجود ندارد")
 		}
 
-		// TODO: Implement CalculateProductsPrice logic
-		// For now, we'll implement a simplified calculation
-
+		// Implement CalculateProductsPrice logic
 		// Delete existing basket items
 		if err := u.basketRepo.DeleteBasketItems(existingBasket.ID); err != nil {
 			return nil, err
@@ -144,9 +143,10 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			}
 
 			var variantPrice int64 = 0
+			var variant domain.ProductVariant
 			if item.ProductVariantID != nil {
 				// Get the product variant
-				variant, err := u.productVariantRepo.GetByID(*item.ProductVariantID)
+				variant, err = u.productVariantRepo.GetByID(*item.ProductVariantID)
 				if err != nil {
 					return nil, err
 				}
@@ -159,11 +159,17 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				})
 				if err == nil && count > 0 {
 					variantPrice = variants[0].Price
+					variant = variants[0]
 				}
 			}
 
 			if variantPrice == 0 {
 				return nil, errors.New("قیمت محصول یا تنوع آن یافت نشد")
+			}
+
+			// Check if there's enough stock
+			if variant.Stock < *item.Quantity {
+				return nil, errors.New(fmt.Sprintf("موجودی محصول %s با تنوع %s کافی نیست", product.Name, variant.Name))
 			}
 
 			rawPrice := variantPrice
@@ -175,24 +181,39 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			var justDiscountPrice int64 = 0
 			var finalPriceWithCouponDiscount int64 = finalRawPrice
 
+			// Apply discount code if provided
 			if params.Code != nil && *params.Code != "" {
 				// Get discount by code
 				discount, err := u.discountRepo.GetByCode(*params.Code)
 				if err == nil && discount.ID > 0 {
-					// Apply discount logic
-					if discount.Type == "percentage" {
-						discountAmount := (finalRawPrice * discount.Value) / 100
-						justDiscountPrice = discountAmount
-						finalPriceWithCouponDiscount = finalRawPrice - discountAmount
-					} else if discount.Type == "fixed" {
-						justDiscountPrice = discount.Value
-						finalPriceWithCouponDiscount = finalRawPrice - discount.Value
-					}
+					// Check if discount is valid
+					if discount.ExpiryDate.After(time.Now()) && discount.Quantity > 0 {
+						// Apply discount logic
+						if discount.Type == "percentage" {
+							discountAmount := (finalRawPrice * discount.Value) / 100
+							justDiscountPrice = discountAmount
+							finalPriceWithCouponDiscount = finalRawPrice - discountAmount
+						} else if discount.Type == "fixed" {
+							// Ensure discount doesn't exceed the price
+							if discount.Value > finalRawPrice {
+								justDiscountPrice = finalRawPrice
+								finalPriceWithCouponDiscount = 0
+							} else {
+								justDiscountPrice = discount.Value
+								finalPriceWithCouponDiscount = finalRawPrice - discount.Value
+							}
+						}
 
-					// Set discount ID in the basket
-					existingBasket.DiscountID = &discount.ID
+						// Set discount ID in the basket
+						existingBasket.DiscountID = &discount.ID
+					}
 				}
 			}
+
+			// Apply product coupon if available
+			// This would require additional implementation to fetch product coupons
+			// For now, we'll skip this part as it's not clear from the current Go code structure
+			// how product coupons are stored and related to products
 
 			totalCouponDiscount += justCouponPrice + justDiscountPrice
 			totalPriceWithCouponDiscount += finalPriceWithCouponDiscount

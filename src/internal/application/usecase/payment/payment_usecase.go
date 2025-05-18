@@ -21,6 +21,7 @@ type PaymentUsecase struct {
 	paymentRepo    repository.IPaymentRepository
 	gatewayRepo    repository.IGatewayRepository
 	authContextSvc common.IAuthContextService
+	container      contract.IContainer
 }
 
 func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
@@ -29,6 +30,7 @@ func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 		paymentRepo:    c.GetPaymentRepo(),
 		gatewayRepo:    c.GetGatewayRepo(),
 		authContextSvc: c.GetAuthContextService(),
+		container:      c,
 	}
 }
 
@@ -648,11 +650,97 @@ func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSucc
 		return false
 	}
 
-	// In a microservice architecture, this would call a credit service
-	// In our monolithic approach, we can implement it directly here
+	// Get user ID from order data
+	userIDStr, ok := orderData["UserId"]
+	if !ok {
+		return false
+	}
 
-	// TODO: Implement credit charging logic
-	// This could involve updating user credits in the database
+	// Parse user ID
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		return false
+	}
+
+	// In a microservice architecture, this would call the User service
+	// In our monolithic approach, we need to implement it directly
+
+	// Get user repository from container
+	// This is a simplified implementation - in a real app, you'd inject the repository
+	userRepo := u.container.GetUserRepo()
+	if userRepo == nil {
+		return false
+	}
+
+	// Get the user
+	user, err := userRepo.GetByID(userID)
+	if err != nil {
+		return false
+	}
+
+	// Get unit price repository
+	unitPriceRepo := u.container.GetUnitPriceRepo()
+	if unitPriceRepo == nil {
+		return false
+	}
+
+	// Get all unit prices
+	unitPrices, _, err := unitPriceRepo.GetAll(common.PaginationRequestDto{
+		Page:     1,
+		PageSize: 100,
+	})
+	if err != nil {
+		return false
+	}
+
+	// Update user credits based on order data
+	for _, unitPrice := range unitPrices {
+		unitPriceNameKey := fmt.Sprintf("%s_UnitPriceName", unitPrice.Name)
+		unitPriceCountKey := fmt.Sprintf("%s_UnitPriceCount", unitPrice.Name)
+
+		if _, exists := orderData[unitPriceNameKey]; exists {
+			countStr, ok := orderData[unitPriceCountKey]
+			if !ok {
+				continue
+			}
+
+			count, err := strconv.Atoi(countStr)
+			if err != nil {
+				continue
+			}
+
+			switch unitPrice.Name {
+			case "SmsCredits":
+				user.SmsCredits += count
+			case "EmailCredits":
+				user.EmailCredits += count
+			case "AiCredits":
+				user.AiCredits += count
+			case "AiImageCredits":
+				user.AiImageCredits += count
+			case "StorageMbCredits":
+				unitPriceDayKey := fmt.Sprintf("%s_UnitPriceDay", unitPrice.Name)
+				expireDayStr, ok := orderData[unitPriceDayKey]
+				if !ok {
+					continue
+				}
+
+				expireDays, err := strconv.Atoi(expireDayStr)
+				if err != nil {
+					continue
+				}
+
+				user.StorageMbCredits += count
+				expireAt := time.Now().AddDate(0, 0, expireDays)
+				user.StorageMbCreditsExpireAt = &expireAt
+			}
+		}
+	}
+
+	// Update the user
+	if err := userRepo.Update(user); err != nil {
+		return false
+	}
 
 	return true
 }
@@ -669,8 +757,84 @@ func (u *PaymentUsecase) handleUpgradePlanVerify(payment domain.Payment, isSucce
 		return false
 	}
 
-	// TODO: Implement plan upgrade logic
-	// This could involve updating user plan in the database
+	// Get required data from order data
+	userIDStr, ok := orderData["UserId"]
+	if !ok {
+		return false
+	}
+
+	planIDStr, ok := orderData["PlanId"]
+	if !ok {
+		return false
+	}
+
+	durationDaysStr, ok := orderData["DurationDays"]
+	if !ok {
+		return false
+	}
+
+	// Parse the values
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		return false
+	}
+
+	planID, err := strconv.ParseInt(planIDStr, 10, 64)
+	if err != nil {
+		return false
+	}
+
+	durationDays, err := strconv.Atoi(durationDaysStr)
+	if err != nil {
+		return false
+	}
+
+	// Get repositories
+	userRepo := u.container.GetUserRepo()
+	if userRepo == nil {
+		return false
+	}
+
+	planRepo := u.container.GetPlanRepo()
+	if planRepo == nil {
+		return false
+	}
+
+	// Get the user and plan
+	user, err := userRepo.GetByID(userID)
+	if err != nil {
+		return false
+	}
+
+	plan, err := planRepo.GetByID(planID)
+	if err != nil {
+		return false
+	}
+
+	// Update user with plan details
+	user.PlanID = &planID
+	planExpiredAt := time.Now().AddDate(0, 0, durationDays)
+	user.PlanExpiredAt = &planExpiredAt
+	user.EmailCredits = plan.EmailCredits
+	user.SmsCredits = plan.SmsCredits
+	user.AiCredits = plan.AiCredits
+	user.AiImageCredits = plan.AiImageCredits
+
+	// Update storage credits if user doesn't have a plan yet
+	if user.PlanID == nil {
+		user.StorageMbCredits = plan.StorageMbCredits
+		storageExpireAt := time.Now().AddDate(0, 0, durationDays)
+		user.StorageMbCreditsExpireAt = &storageExpireAt
+	}
+
+	// Update user roles based on plan roles
+	// This would require additional implementation to handle roles
+	// For now, we'll skip this part
+
+	// Update the user
+	if err := userRepo.Update(user); err != nil {
+		return false
+	}
 
 	return true
 }
@@ -693,14 +857,176 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 		return false
 	}
 
-	// Parse order ID but don't use it directly since we're in a monolithic implementation
-	_, err = strconv.ParseInt(orderIDStr, 10, 64)
+	// Parse order ID
+	orderID, err := strconv.ParseInt(orderIDStr, 10, 64)
 	if err != nil {
 		return false
 	}
 
-	// TODO: Implement order finalization logic
-	// This could involve updating order status in the database
+	// Get order repository
+	orderRepo := u.container.GetOrderRepo()
+	if orderRepo == nil {
+		return false
+	}
+
+	// Get the order with items
+	order, err := orderRepo.GetByID(orderID)
+	if err != nil {
+		return false
+	}
+
+	// Update order status to paid
+	order.OrderStatus = "Paid"
+	order.UpdatedAt = time.Now()
+
+	// Update the order
+	if err := orderRepo.Update(order); err != nil {
+		return false
+	}
+
+	// Get order items
+	orderItems, _, err := u.container.GetOrderItemRepo().GetAllByOrderID(orderID, common.PaginationRequestDto{
+		Page:     1,
+		PageSize: 1000,
+	})
+	if err != nil {
+		u.logger.Error("Failed to get order items", map[string]interface{}{
+			"error":   err.Error(),
+			"orderID": orderID,
+		})
+		return false
+	}
+
+	// 1. Update product stock quantities
+	productVariantRepo := u.container.GetProductVariantRepo()
+	if productVariantRepo == nil {
+		u.logger.Error("Failed to get product variant repository", nil)
+		return false
+	}
+
+	for _, item := range orderItems {
+		if item.ProductVariantID > 0 {
+			err := productVariantRepo.DecreaseStock(item.ProductVariantID, item.Quantity)
+			if err != nil {
+				u.logger.Error("Failed to decrease product variant stock", map[string]interface{}{
+					"error":            err.Error(),
+					"productVariantID": item.ProductVariantID,
+					"quantity":         item.Quantity,
+				})
+				// Continue with other items even if one fails
+			}
+		}
+	}
+
+	// 2. Decrease discount quantity if used
+	if order.DiscountID != nil && *order.DiscountID > 0 {
+		discountRepo := u.container.GetDiscountRepo()
+		if discountRepo != nil {
+			// Get customer ID
+			customerID := order.CustomerID
+
+			// Check if customer has already used this discount
+			hasUsed, err := discountRepo.HasCustomerUsedDiscount(*order.DiscountID, customerID)
+			if err != nil {
+				u.logger.Error("Failed to check if customer used discount", map[string]interface{}{
+					"error":      err.Error(),
+					"discountID": *order.DiscountID,
+					"customerID": customerID,
+				})
+			} else if !hasUsed {
+				// Decrease discount quantity
+				if err := discountRepo.DecreaseQuantity(*order.DiscountID); err != nil {
+					u.logger.Error("Failed to decrease discount quantity", map[string]interface{}{
+						"error":      err.Error(),
+						"discountID": *order.DiscountID,
+					})
+				}
+
+				// Record that this customer has used the discount
+				if err := discountRepo.AddCustomerUsage(*order.DiscountID, customerID); err != nil {
+					u.logger.Error("Failed to record customer discount usage", map[string]interface{}{
+						"error":      err.Error(),
+						"discountID": *order.DiscountID,
+						"customerID": customerID,
+					})
+				}
+			}
+		}
+	}
+
+	// 3. Decrease coupon quantity if applicable
+	// First, get products associated with order items to check for coupons
+	for _, item := range orderItems {
+		if item.ProductID > 0 {
+			// Get coupon for this product
+			couponRepo := u.container.GetCouponRepo()
+			if couponRepo != nil {
+				coupon, err := couponRepo.GetByProductID(item.ProductID)
+				if err == nil && coupon.ID > 0 && coupon.ExpiryDate.After(time.Now()) {
+					// Coupon exists and is valid, decrease its quantity
+					if err := couponRepo.DecreaseQuantity(coupon.ID); err != nil {
+						u.logger.Error("Failed to decrease coupon quantity", map[string]interface{}{
+							"error":    err.Error(),
+							"couponID": coupon.ID,
+						})
+					}
+				}
+			}
+		}
+	}
+
+	// 4. Send confirmation email/notification
+	// Get customer details
+	customerRepo := u.container.GetCustomerRepo()
+	if customerRepo != nil {
+		customer, err := customerRepo.GetByID(order.CustomerID)
+		if err == nil {
+			// Get site details
+			siteRepo := u.container.GetSiteRepo()
+			if siteRepo != nil {
+				site, err := siteRepo.GetByID(order.SiteID)
+				if err == nil {
+					// Prepare email content
+					emailSubject := fmt.Sprintf("Order Confirmation #%d - %s", order.ID, site.Name)
+					emailBody := fmt.Sprintf("Dear %s,\n\nThank you for your order #%d. Your payment has been successfully processed.\n\nOrder Details:\n",
+						customer.FirstName, order.ID)
+
+					// Add order items to email
+					for _, item := range orderItems {
+						// Get product details
+						productRepo := u.container.GetProductRepo()
+						if productRepo != nil {
+							product, err := productRepo.GetByID(item.ProductID)
+							if err == nil {
+								emailBody += fmt.Sprintf("- %s (Quantity: %d) - %d\n",
+									product.Name, item.Quantity, item.FinalPriceWithCouponDiscount)
+							}
+						}
+					}
+
+					emailBody += fmt.Sprintf("\nTotal: %d\n\nThank you for shopping with us!\n\n%s Team",
+						order.TotalFinalPrice, site.Name)
+
+					// In a real implementation, this would send an email
+					// For now, we'll just log it
+					u.logger.Info("Order confirmation email would be sent", map[string]interface{}{
+						"to":      customer.Email,
+						"subject": emailSubject,
+						"body":    emailBody,
+					})
+				}
+			}
+		}
+	}
+
+	// 5. Generate invoice
+	// This would typically create a PDF invoice and store it
+	// For now, we'll just log that an invoice would be generated
+	u.logger.Info("Invoice would be generated", map[string]interface{}{
+		"orderID": order.ID,
+		"amount":  order.TotalFinalPrice,
+		"date":    time.Now().Format("2006-01-02"),
+	})
 
 	return true
 }

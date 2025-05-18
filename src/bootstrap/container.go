@@ -6,6 +6,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"gorm.io/gorm"
@@ -20,6 +21,7 @@ type Container struct {
 	IdentityService     common.IIdentityService
 	StorageService      storage.IStorageService
 	stockCacheTransient func() cache.ICacheService
+	PaymentService      service.IPaymentService
 
 	Logger                    sflogger.Logger
 	ArticleRepo               repository.IArticleRepository
@@ -279,4 +281,8 @@ func (c *Container) GetLogger() sflogger.Logger {
 
 func (c *Container) GetDB() *gorm.DB {
 	return sform.MustDB("main")
+}
+
+func (c *Container) GetPaymentService() service.IPaymentService {
+	return c.PaymentService
 }

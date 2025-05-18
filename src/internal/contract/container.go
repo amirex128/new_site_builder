@@ -4,6 +4,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"gorm.io/gorm"
@@ -69,4 +70,5 @@ type IContainer interface {
 	GetDB() *gorm.DB
 	GetStorageService() storage.IStorageService
 	GetIdentityService() common.IIdentityService
+	GetPaymentService() service.IPaymentService
 }

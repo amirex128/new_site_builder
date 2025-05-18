@@ -14,4 +14,7 @@ type IDiscountRepository interface {
 	Create(discount domain.Discount) error
 	Update(discount domain.Discount) error
 	Delete(id int64) error
+	DecreaseQuantity(discountID int64) error
+	AddCustomerUsage(discountID int64, customerID int64) error
+	HasCustomerUsedDiscount(discountID int64, customerID int64) (bool, error)
 }

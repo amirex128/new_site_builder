@@ -12,4 +12,5 @@ type ICouponRepository interface {
 	Create(coupon domain.Coupon) error
 	Update(coupon domain.Coupon) error
 	Delete(id int64) error
+	DecreaseQuantity(couponID int64) error
 }

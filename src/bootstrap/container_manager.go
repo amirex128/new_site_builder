@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"github.com/amirex128/new_site_builder/src/internal/infra/service/payment"
 
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/auth"
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/storage"
@@ -20,24 +21,20 @@ import (
 func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
 	mainDB := sform.MustDB("main")
 
-	// Create auth context service
-	authContextService := auth.NewAuthContextService(ctx, mysql.NewUserRepository(mainDB), mysql.NewRoleRepository(mainDB))
-
-	// Create identity service
-	identityService := auth.NewIdentityService("your-jwt-secret", 24*time.Hour)
-
-	// Get storage config
-	storageConfig := cfg.Storage()
+	userRepo := mysql.NewUserRepository(mainDB)
+	roleRepo := mysql.NewRoleRepository(mainDB)
+	paymentRepo := mysql.NewPaymentRepository(mainDB)
+	gatewayRepo := mysql.NewGatewayRepository(mainDB)
 
 	return &Container{
 		Config: cfg,
 		Logger: logger,
 
 		MainCache:          service.NewRedis(sfredis.MustClient(ctx, "cache")),
-		AuthContextService: authContextService,
-		IdentityService:    identityService,
-		StorageService:     storage.NewStorageService(storageConfig.Bucket, storageConfig.Region, storageConfig.AccessKey, storageConfig.SecretKey),
-
+		AuthContextService: auth.NewAuthContextService(ctx, userRepo, roleRepo),
+		IdentityService:    auth.NewIdentityService(cfg.JwtSecretToken, 24*time.Hour),
+		StorageService:     storage.NewStorageService(cfg.Bucket, cfg.Region, cfg.AccessKey, cfg.SecretKey),
+		PaymentService:     payment.NewPaymentService(paymentRepo, gatewayRepo),
 		// for transient
 		stockCacheTransient: func() cache.ICacheService {
 			return service.NewRedis(sfredis.MustClient(ctx, "stock"))
@@ -70,7 +67,7 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		CityRepo:                  mysql.NewCityRepository(mainDB),
 		ProvinceRepo:              mysql.NewProvinceRepository(mainDB),
 		PlanRepo:                  mysql.NewPlanRepository(mainDB),
-		RoleRepo:                  mysql.NewRoleRepository(mainDB),
+		RoleRepo:                  roleRepo,
 		PermissionRepo:            mysql.NewPermissionRepository(mainDB),
 		CommentRepo:               mysql.NewCommentRepository(mainDB),
 		CustomerCommentRepo:       mysql.NewCustomerCommentRepository(mainDB),

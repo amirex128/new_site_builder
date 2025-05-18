@@ -4,6 +4,8 @@ import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -66,4 +68,24 @@ func (r *CouponRepo) Update(coupon domain.Coupon) error {
 func (r *CouponRepo) Delete(id int64) error {
 	result := r.database.Delete(&domain.Coupon{}, id)
 	return result.Error
+}
+
+func (r *CouponRepo) DecreaseQuantity(couponID int64) error {
+	// Get the current coupon
+	var coupon domain.Coupon
+	if err := r.database.First(&coupon, couponID).Error; err != nil {
+		return err
+	}
+
+	// Check if there are available quantities
+	if coupon.Quantity <= 0 {
+		return gorm.ErrInvalidData
+	}
+
+	// Decrease the quantity
+	coupon.Quantity -= 1
+	coupon.UpdatedAt = time.Now()
+
+	// Update the coupon
+	return r.database.Save(&coupon).Error
 }
