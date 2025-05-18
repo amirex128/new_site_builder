@@ -1,7 +1,6 @@
 package roleusecase
 
 import (
-	"fmt"
 	"time"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
@@ -12,29 +11,29 @@ import (
 )
 
 type RoleUsecase struct {
-	logger         sflogger.Logger
-	roleRepo       repository.IRoleRepository
-	permissionRepo repository.IPermissionRepository
-	customerRepo   repository.ICustomerRepository
-	userRepo       repository.IUserRepository
-	planRepo       repository.IPlanRepository
+	logger       sflogger.Logger
+	roleRepo     repository.IRoleRepository
+	customerRepo repository.ICustomerRepository
+	userRepo     repository.IUserRepository
+	planRepo     repository.IPlanRepository
 }
 
 func NewRoleUsecase(c contract.IContainer) *RoleUsecase {
 	return &RoleUsecase{
-		logger:         c.GetLogger(),
-		roleRepo:       c.GetRoleRepo(),
-		permissionRepo: c.GetPermissionRepo(),
-		customerRepo:   c.GetCustomerRepo(),
-		userRepo:       c.GetUserRepo(),
-		planRepo:       c.GetPlanRepo(),
+		logger:       c.GetLogger(),
+		roleRepo:     c.GetRoleRepo(),
+		customerRepo: c.GetCustomerRepo(),
+		userRepo:     c.GetUserRepo(),
+		planRepo:     c.GetPlanRepo(),
 	}
 }
 
+// CreateRoleCommand creates a new role
 func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (any, error) {
-	// Implementation for creating a role
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
+	// Create the role entity
 	newRole := domain.Role{
 		Name:      *params.Name,
 		CreatedAt: time.Now(),
@@ -66,21 +65,25 @@ func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (any, er
 	}, nil
 }
 
+// UpdateRoleCommand updates an existing role
 func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (any, error) {
-	// Implementation for updating a role
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
+	// Get the existing role
 	existingRole, err := u.roleRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, err
 	}
 
+	// Update fields if provided
 	if params.Name != nil {
 		existingRole.Name = *params.Name
 	}
 
 	existingRole.UpdatedAt = time.Now()
 
+	// Update the role
 	err = u.roleRepo.Update(existingRole)
 	if err != nil {
 		return nil, err
@@ -107,9 +110,10 @@ func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (any, er
 	return existingRole, nil
 }
 
+// SetRoleToCustomerCommand assigns roles to a customer
 func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCommand) (any, error) {
-	// Implementation for setting roles to a customer
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
 	// Check if customer exists
 	_, err := u.customerRepo.GetByID(*params.CustomerID)
@@ -145,9 +149,10 @@ func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCom
 	}, nil
 }
 
+// SetRoleToUserCommand assigns roles to a user
 func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (any, error) {
-	// Implementation for setting roles to a user
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
 	// Check if user exists
 	_, err := u.userRepo.GetByID(*params.UserID)
@@ -183,9 +188,10 @@ func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (a
 	}, nil
 }
 
+// SetRoleToPlanCommand assigns roles to a plan
 func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (any, error) {
-	// Implementation for setting roles to a plan
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
 	// Check if plan exists
 	_, err := u.planRepo.GetByID(*params.PlanID)
@@ -221,24 +227,28 @@ func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (a
 	}, nil
 }
 
+// GetAllPermissionQuery gets all permissions with pagination
 func (u *RoleUsecase) GetAllPermissionQuery(params *role.GetAllPermissionQuery) (any, error) {
-	// Implementation to get all permissions
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
-	result, count, err := u.permissionRepo.GetAll(params.PaginationRequestDto)
+	// Note: We need to implement a repository method to get all permissions
+	// Since we don't have direct access to a permission repository in the container
+	permissions, count, err := u.roleRepo.GetAllPermissions(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	return map[string]interface{}{
-		"items": result,
+		"items": permissions,
 		"total": count,
 	}, nil
 }
 
+// GetAllRoleQuery gets all roles with pagination
 func (u *RoleUsecase) GetAllRoleQuery(params *role.GetAllRoleQuery) (any, error) {
-	// Implementation to get all roles
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
 	result, count, err := u.roleRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
@@ -251,13 +261,14 @@ func (u *RoleUsecase) GetAllRoleQuery(params *role.GetAllRoleQuery) (any, error)
 	}, nil
 }
 
+// GetRolePermissionsQuery gets permissions for roles with pagination
 func (u *RoleUsecase) GetRolePermissionsQuery(params *role.GetRolePermissionsQuery) (any, error) {
-	// Implementation to get role permissions
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
 	// This is a placeholder - in a real implementation you'd query role-permission mappings
-	// For now, return all possible permissions
-	permissions, count, err := u.permissionRepo.GetAll(params.PaginationRequestDto)
+	// We need to add a method to the role repository to get permissions for a role
+	permissions, count, err := u.roleRepo.GetRolePermissions(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}

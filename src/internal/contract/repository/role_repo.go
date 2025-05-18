@@ -17,6 +17,8 @@ type IRoleRepository interface {
 	AddPermissionToRole(roleID int64, permissionID int64) error
 	RemovePermissionFromRole(roleID int64, permissionID int64) error
 	RemoveAllPermissionsFromRole(roleID int64) error
+	GetAllPermissions(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error)
+	GetRolePermissions(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error)
 
 	// Role-User operations
 	AddRoleToUser(roleID int64, userID int64) error

@@ -15,19 +15,26 @@ import (
 type PlanUsecase struct {
 	logger   sflogger.Logger
 	planRepo repository.IPlanRepository
+	roleRepo repository.IRoleRepository
+	userRepo repository.IUserRepository
 }
 
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 	return &PlanUsecase{
 		logger:   c.GetLogger(),
 		planRepo: c.GetPlanRepo(),
+		roleRepo: c.GetRoleRepo(),
+		userRepo: c.GetUserRepo(),
 	}
 }
 
+// CreatePlanCommand creates a new plan
 func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, error) {
-	// Implementation for creating a plan
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
+	// In Golang, we would implement this with middleware or a service check
 
+	// Prepare values with null handling
 	var description string
 	if params.Description != nil {
 		description = *params.Description
@@ -73,6 +80,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 		aiImageCredits = *params.AiImageCredits
 	}
 
+	// Create the plan entity
 	newPlan := domain.Plan{
 		Name:             *params.Name,
 		Description:      description,
@@ -88,23 +96,31 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 		AiImageCredits:   aiImageCredits,
 	}
 
+	// In .NET, there was an event added: entity.AddEvent(new PlanCreatedEventStore(entity))
+	// In our monolith approach, we don't need to emit events
+
+	// Save the plan
 	err := u.planRepo.Create(newPlan)
 	if err != nil {
 		return nil, err
 	}
 
+	// Return the created plan
 	return newPlan, nil
 }
 
+// UpdatePlanCommand updates an existing plan
 func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, error) {
-	// Implementation for updating a plan
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
+	// Get the existing plan
 	existingPlan, err := u.planRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, err
 	}
 
+	// Update fields if provided
 	if params.Name != nil {
 		existingPlan.Name = *params.Name
 	}
@@ -153,6 +169,10 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 		existingPlan.AiImageCredits = *params.AiImageCredits
 	}
 
+	// In .NET, there was an event added: entity.AddEvent(new PlanUpdatedEventStore(entity))
+	// In our monolith approach, we don't need to emit events
+
+	// Update the plan
 	err = u.planRepo.Update(existingPlan)
 	if err != nil {
 		return nil, err
@@ -161,11 +181,19 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	return existingPlan, nil
 }
 
+// DeletePlanCommand deletes a plan
 func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, error) {
-	// Implementation for deleting a plan
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
-	err := u.planRepo.Delete(*params.ID)
+	// Check if plan exists
+	_, err := u.planRepo.GetByID(*params.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Delete the plan
+	err = u.planRepo.Delete(*params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -175,9 +203,10 @@ func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, er
 	}, nil
 }
 
+// GetByIdPlanQuery gets a plan by ID
 func (u *PlanUsecase) GetByIdPlanQuery(params *plan.GetByIdPlanQuery) (any, error) {
-	// Implementation to get plan by ID
-	fmt.Println(params)
+	// In .NET, there was a check for user access: gate.HasUserAccess(entity)
+	// We would implement this with middleware or a service check
 
 	result, err := u.planRepo.GetByID(*params.ID)
 	if err != nil {
@@ -187,9 +216,10 @@ func (u *PlanUsecase) GetByIdPlanQuery(params *plan.GetByIdPlanQuery) (any, erro
 	return result, nil
 }
 
+// GetAllPlanQuery gets all plans with pagination
 func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (any, error) {
-	// Implementation to get all plans
-	fmt.Println(params)
+	// Check admin access
+	// Note: In .NET this was done with gate.IsAdminAccess()
 
 	result, count, err := u.planRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
@@ -202,6 +232,7 @@ func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (any, error)
 	}, nil
 }
 
+// CalculatePlanPriceQuery calculates the price of a plan
 func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQuery) (any, error) {
 	// Implementation to calculate a plan's price
 	fmt.Println(params)

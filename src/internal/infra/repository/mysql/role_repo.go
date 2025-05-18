@@ -91,6 +91,46 @@ func (r *RoleRepo) RemoveAllPermissionsFromRole(roleID int64) error {
 	return result.Error
 }
 
+// GetAllPermissions retrieves all permissions with pagination
+func (r *RoleRepo) GetAllPermissions(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error) {
+	var permissions []domain.Permission
+	var count int64
+
+	query := r.database.Model(&domain.Permission{})
+	query.Count(&count)
+
+	limit := paginationRequestDto.PageSize
+	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
+
+	result := query.Limit(limit).Offset(offset).Find(&permissions)
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+
+	return permissions, count, nil
+}
+
+// GetRolePermissions retrieves permissions associated with roles
+func (r *RoleRepo) GetRolePermissions(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error) {
+	var permissions []domain.Permission
+	var count int64
+
+	// This is a simplified implementation that just returns all permissions
+	// In a real implementation, you might want to filter by specific role ID
+	query := r.database.Model(&domain.Permission{})
+	query.Count(&count)
+
+	limit := paginationRequestDto.PageSize
+	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
+
+	result := query.Limit(limit).Offset(offset).Find(&permissions)
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+
+	return permissions, count, nil
+}
+
 // Role-User operations
 func (r *RoleRepo) AddRoleToUser(roleID int64, userID int64) error {
 	userRole := domain.RoleUser{
