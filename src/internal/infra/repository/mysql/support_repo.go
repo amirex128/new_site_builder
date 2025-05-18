@@ -81,6 +81,23 @@ func (r *TicketRepo) GetByID(id int64) (domain.Ticket, error) {
 	return ticket, nil
 }
 
+func (r *TicketRepo) GetByIDWithRelations(id int64) (domain.Ticket, error) {
+	var ticket domain.Ticket
+
+	// Get ticket with preloaded relations
+	result := r.database.
+		Preload("Comments").
+		Preload("Media").
+		Preload("User").
+		First(&ticket, id)
+
+	if result.Error != nil {
+		return ticket, result.Error
+	}
+
+	return ticket, nil
+}
+
 func (r *TicketRepo) Create(ticket domain.Ticket) error {
 	result := r.database.Create(&ticket)
 	return result.Error
@@ -167,6 +184,23 @@ func (r *CustomerTicketRepo) GetByID(id int64) (domain.CustomerTicket, error) {
 	if result.Error != nil {
 		return ticket, result.Error
 	}
+	return ticket, nil
+}
+
+func (r *CustomerTicketRepo) GetByIDWithRelations(id int64) (domain.CustomerTicket, error) {
+	var ticket domain.CustomerTicket
+
+	// Get customer ticket with preloaded relations
+	result := r.database.
+		Preload("Comments").
+		Preload("Media").
+		Preload("Customer").
+		First(&ticket, id)
+
+	if result.Error != nil {
+		return ticket, result.Error
+	}
+
 	return ticket, nil
 }
 

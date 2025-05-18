@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"io"
 	"time"
 )
@@ -26,4 +27,10 @@ type IStorageService interface {
 
 	// Download
 	DownloadFileOrDirectory(serverKey, bucketName, path string) (io.Reader, error)
+
+	// Convenience methods for direct operations on the default bucket
+	Upload(ctx context.Context, path string, content []byte, contentType string) (string, error)
+	Delete(ctx context.Context, path string) error
+	GetSignedURL(ctx context.Context, path string, expiry time.Duration) (string, error)
+	Download(ctx context.Context, path string) ([]byte, error)
 }

@@ -9,6 +9,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/order"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
@@ -20,7 +21,7 @@ type OrderUsecase struct {
 	basketRepo     repository.IBasketRepository
 	orderItemRepo  repository.IOrderItemRepository
 	paymentRepo    repository.IPaymentRepository
-	authContextSvc contract.IAuthContextService
+	authContextSvc common.IAuthContextService
 }
 
 func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
@@ -205,8 +206,6 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 	}
 
 	// Request payment gateway
-	clientIP := "Unknown" // In real implementation, get from context
-
 	paymentURL, err := u.paymentRepo.RequestPayment(
 		newOrder.TotalFinalPrice,
 		newOrder.ID,
@@ -229,7 +228,7 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 	// Extract order ID from order data
 	orderIDStr, ok := params.OrderData["OrderId"]
 	if !ok {
-		return nil, errors.New("شناسه سفارش در اطلاعات سفارش وجود ندارد")
+		return nil, errors.New("شناسه سفارش در داده های پرداخت یافت نشد")
 	}
 
 	orderID, err := strconv.ParseInt(orderIDStr, 10, 64)
@@ -237,46 +236,72 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 		return nil, errors.New("شناسه سفارش نامعتبر است")
 	}
 
-	// Get the order
-	existingOrder, err := u.orderRepo.GetByID(orderID)
+	// Get order details
+	order, err := u.orderRepo.GetByID(orderID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return map[string]interface{}{
-				"responseStatus": map[string]interface{}{
-					"isSuccess": false,
-					"message":   "Verify failed",
-				},
-			}, nil
-		}
 		return nil, err
 	}
 
-	// Update order status based on payment success
-	if !*params.IsSuccess {
-		existingOrder.OrderStatus = "FailedPay"
-		if err := u.orderRepo.Update(existingOrder); err != nil {
+	// Check if order is already paid
+	if order.OrderStatus == "Paid" {
+		return nil, errors.New("سفارش قبلا پرداخت شده است")
+	}
+
+	// Get latest payment for this order
+	payments, count, err := u.paymentRepo.GetAllByOrderID(orderID, common.PaginationRequestDto{
+		Page:     1,
+		PageSize: 1,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if count == 0 {
+		return nil, errors.New("پرداختی برای این سفارش یافت نشد")
+	}
+
+	payment := payments[0]
+
+	// Verify payment with gateway
+	// This is a simplified implementation
+	// In a real application, you would call the payment gateway's API
+	isVerified := *params.IsSuccess
+
+	if isVerified {
+		// Update order status
+		order.OrderStatus = "Paid"
+		order.UpdatedAt = time.Now()
+
+		if err := u.orderRepo.Update(order); err != nil {
+			return nil, err
+		}
+
+		// Update payment status
+		payment.PaymentStatusEnum = "Verified"
+		payment.UpdatedAt = time.Now()
+
+		if err := u.paymentRepo.Update(payment); err != nil {
 			return nil, err
 		}
 
 		return map[string]interface{}{
-			"responseStatus": map[string]interface{}{
-				"isSuccess": false,
-				"message":   "Payment failed",
-			},
+			"success": true,
+			"message": "پرداخت با موفقیت انجام شد",
+			"order":   order,
 		}, nil
 	}
 
-	// Payment was successful
-	existingOrder.OrderStatus = "Paid"
-	if err := u.orderRepo.Update(existingOrder); err != nil {
+	// Payment failed
+	payment.PaymentStatusEnum = "Failed"
+	payment.UpdatedAt = time.Now()
+
+	if err := u.paymentRepo.Update(payment); err != nil {
 		return nil, err
 	}
 
 	return map[string]interface{}{
-		"responseStatus": map[string]interface{}{
-			"isSuccess": true,
-			"message":   "Payment verification successful",
-		},
+		"success": false,
+		"message": "پرداخت ناموفق بود",
 	}, nil
 }
 

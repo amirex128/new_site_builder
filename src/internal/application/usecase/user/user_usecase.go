@@ -8,6 +8,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
@@ -18,6 +19,8 @@ type UserUsecase struct {
 	planRepo    repository.IPlanRepository
 	addressRepo repository.IAddressRepository
 	paymentRepo repository.IPaymentRepository
+	identitySvc common.IIdentityService
+	authContext common.IAuthContextService
 }
 
 func NewUserUsecase(c contract.IContainer) *UserUsecase {
@@ -27,6 +30,8 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 		planRepo:    c.GetPlanRepo(),
 		addressRepo: c.GetAddressRepo(),
 		paymentRepo: c.GetPaymentRepo(),
+		identitySvc: c.GetIdentityService(),
+		authContext: c.GetAuthContextService(),
 	}
 }
 
@@ -135,12 +140,175 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (any
 	}, nil
 }
 
-func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (any, error) {
-	// Implementation for requesting a credit charge
-	fmt.Println(params)
+func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (any, error) {
+	// Check if user already exists
+	_, err := u.userRepo.GetByEmail(*params.Email)
+	if err == nil {
+		return nil, fmt.Errorf("user with email %s already exists", *params.Email)
+	}
 
-	// In a real implementation, get the user ID from the auth context
-	userID := int64(1)
+	// Generate salt and hash password
+	hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
+
+	// Create new user
+	newUser := domain.User{
+		Email:     *params.Email,
+		Password:  hashedPassword,
+		Salt:      salt,
+		IsActive:  "0", // Not active until verification
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		IsDeleted: false,
+	}
+
+	// Generate verification code
+	verificationCode := "123456" // In a real implementation, generate a random code
+	newUser.VerifyEmail = verificationCode
+
+	err = u.userRepo.Create(newUser)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: Send verification email
+
+	return map[string]interface{}{
+		"success": true,
+		"message": "Registration successful. Please verify your account.",
+	}, nil
+}
+
+func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (any, error) {
+	// Get user by email
+	existingUser, err := u.userRepo.GetByEmail(*params.Email)
+	if err != nil {
+		return nil, fmt.Errorf("invalid email or password")
+	}
+
+	// Check if user is active
+	if existingUser.IsActive != "1" {
+		return nil, fmt.Errorf("account is not active")
+	}
+
+	// Verify password
+	if !u.identitySvc.VerifyPassword(*params.Password, existingUser.Password, existingUser.Salt) {
+		return nil, fmt.Errorf("invalid email or password")
+	}
+
+	// Generate JWT token
+	token := u.identitySvc.TokenForUser(existingUser).Make()
+
+	return map[string]interface{}{
+		"token": token,
+		"user":  existingUser,
+	}, nil
+}
+
+func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVerifyAndForgetUserCommand) (any, error) {
+	var existingUser domain.User
+	var err error
+
+	// Get user by email or phone based on the verification type
+	if params.Type != nil && (*params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail) {
+		if params.Email == nil {
+			return nil, fmt.Errorf("email is required for email verification")
+		}
+		existingUser, err = u.userRepo.GetByEmail(*params.Email)
+	} else if params.Type != nil && (*params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone) {
+		if params.Phone == nil {
+			return nil, fmt.Errorf("phone is required for phone verification")
+		}
+		existingUser, err = u.userRepo.GetByPhone(*params.Phone)
+	} else {
+		return nil, fmt.Errorf("invalid verification type")
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	// Generate verification code
+	verificationCode := "123456" // Example code, in a real implementation generate a random code
+
+	// Store verification code based on type
+	if params.Type != nil && (*params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail) {
+		existingUser.VerifyEmail = verificationCode
+	} else if params.Type != nil && (*params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone) {
+		existingUser.VerifyPhone = verificationCode
+	}
+
+	err = u.userRepo.Update(existingUser)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: Send verification code via email or SMS
+
+	return map[string]interface{}{
+		"success": true,
+		"message": "Verification code sent. Please check your email or phone.",
+	}, nil
+}
+
+func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error) {
+	// Get user by email
+	existingUser, err := u.userRepo.GetByEmail(*params.Email)
+	if err != nil {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	// Convert code to string for comparison
+	codeStr := strconv.Itoa(*params.Code)
+
+	// Check verification code based on type
+	if params.Type != nil && *params.Type == user.VerifyEmail {
+		if existingUser.VerifyEmail != codeStr {
+			return nil, fmt.Errorf("invalid verification code")
+		}
+		existingUser.IsActive = "1" // Activate the user
+		existingUser.VerifyEmail = ""
+	} else if params.Type != nil && *params.Type == user.VerifyPhone {
+		if existingUser.VerifyPhone != codeStr {
+			return nil, fmt.Errorf("invalid verification code")
+		}
+		existingUser.IsActive = "1" // Activate the user
+		existingUser.VerifyPhone = ""
+	} else if params.Type != nil && *params.Type == user.ForgetPasswordEmail {
+		if existingUser.VerifyEmail != codeStr {
+			return nil, fmt.Errorf("invalid verification code")
+		}
+		// In a real implementation, provide a token for password reset instead
+		existingUser.VerifyEmail = ""
+	} else if params.Type != nil && *params.Type == user.ForgetPasswordPhone {
+		if existingUser.VerifyPhone != codeStr {
+			return nil, fmt.Errorf("invalid verification code")
+		}
+		// In a real implementation, provide a token for password reset instead
+		existingUser.VerifyPhone = ""
+	} else {
+		return nil, fmt.Errorf("invalid verification type")
+	}
+
+	err = u.userRepo.Update(existingUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"success": true,
+		"message": "Verification successful.",
+	}, nil
+}
+
+func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (any, error) {
+	// Get the current user ID
+	userID, err := u.authContext.GetUserID()
+	if err != nil {
+		return nil, err
+	}
+	if userID == 0 {
+		return nil, fmt.Errorf("user not authenticated")
+	}
 
 	// Calculate total amount
 	var totalAmount int64 = 0
@@ -187,11 +355,14 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 }
 
 func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (any, error) {
-	// Implementation for requesting a plan upgrade
-	fmt.Println(params)
-
-	// In a real implementation, get the user ID from the auth context
-	userID := int64(1)
+	// Get the current user ID
+	userID, err := u.authContext.GetUserID()
+	if err != nil {
+		return nil, err
+	}
+	if userID == 0 {
+		return nil, fmt.Errorf("user not authenticated")
+	}
 
 	// Get the plan
 	plan, err := u.planRepo.GetByID(*params.PlanID)
@@ -241,183 +412,6 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 		"paymentUrl": paymentUrl,
 		"orderId":    orderID,
 		"plan":       plan,
-	}, nil
-}
-
-func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (any, error) {
-	// Implementation for user registration
-	fmt.Println(params)
-
-	// Check if user already exists
-	_, err := u.userRepo.GetByEmail(*params.Email)
-	if err == nil {
-		return nil, fmt.Errorf("user with email %s already exists", *params.Email)
-	}
-
-	// Generate salt and hash password
-	salt := "random_salt" // In a real implementation, generate a secure random salt
-	// In a real implementation, hash the password with the salt
-	hashedPassword := *params.Password + salt
-
-	// Create new user
-	newUser := domain.User{
-		Email:     *params.Email,
-		Password:  hashedPassword,
-		Salt:      salt,
-		IsActive:  "1", // Activate after verification
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		IsDeleted: false,
-	}
-
-	// In a real implementation, generate and store verification code
-	verificationCode := "123456" // Example code
-	// Save verification code in VerifyEmail field
-	newUser.VerifyEmail = verificationCode
-
-	err = u.userRepo.Create(newUser)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: Send verification email or SMS
-
-	return map[string]interface{}{
-		"success": true,
-		"message": "Registration successful. Please verify your account.",
-	}, nil
-}
-
-func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (any, error) {
-	// Implementation for user login
-	fmt.Println(params)
-
-	// Get user by email
-	existingUser, err := u.userRepo.GetByEmail(*params.Email)
-	if err != nil {
-		return nil, fmt.Errorf("invalid email or password")
-	}
-
-	// Check if user is active
-	if existingUser.IsActive != "1" {
-		return nil, fmt.Errorf("account is not active")
-	}
-
-	// In a real implementation, hash the provided password with the stored salt
-	// and compare with the stored hashed password
-	hashedPassword := *params.Password + existingUser.Salt
-	if hashedPassword != existingUser.Password {
-		return nil, fmt.Errorf("invalid email or password")
-	}
-
-	// Generate JWT token
-	token := "dummy_jwt_token" // In a real implementation, generate a proper JWT token
-
-	return map[string]interface{}{
-		"token": token,
-		"user":  existingUser,
-	}, nil
-}
-
-func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVerifyAndForgetUserCommand) (any, error) {
-	// Implementation for requesting verification or password reset
-	fmt.Println(params)
-
-	var existingUser domain.User
-	var err error
-
-	// Get user by email or phone based on the verification type
-	if params.Type != nil && (*params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail) {
-		if params.Email == nil {
-			return nil, fmt.Errorf("email is required for email verification")
-		}
-		existingUser, err = u.userRepo.GetByEmail(*params.Email)
-	} else if params.Type != nil && (*params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone) {
-		if params.Phone == nil {
-			return nil, fmt.Errorf("phone is required for phone verification")
-		}
-		existingUser, err = u.userRepo.GetByPhone(*params.Phone)
-	} else {
-		return nil, fmt.Errorf("invalid verification type")
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("user not found")
-	}
-
-	// Generate verification code
-	verificationCode := "123456" // Example code, in a real implementation generate a random code
-
-	// Store verification code based on type
-	if params.Type != nil && (*params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail) {
-		existingUser.VerifyEmail = verificationCode
-	} else if params.Type != nil && (*params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone) {
-		existingUser.VerifyPhone = verificationCode
-	}
-
-	err = u.userRepo.Update(existingUser)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: Send verification code via email or SMS
-
-	return map[string]interface{}{
-		"success": true,
-		"message": "Verification code sent. Please check your email or phone.",
-	}, nil
-}
-
-func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error) {
-	// Implementation for user verification
-	fmt.Println(params)
-
-	// Get user by email
-	existingUser, err := u.userRepo.GetByEmail(*params.Email)
-	if err != nil {
-		return nil, fmt.Errorf("user not found")
-	}
-
-	// Convert code to string for comparison
-	codeStr := strconv.Itoa(*params.Code)
-
-	// Check verification code based on type
-	if params.Type != nil && *params.Type == user.VerifyEmail {
-		if existingUser.VerifyEmail != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
-		}
-		existingUser.IsActive = "1" // Activate the user
-		existingUser.VerifyEmail = ""
-	} else if params.Type != nil && *params.Type == user.VerifyPhone {
-		if existingUser.VerifyPhone != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
-		}
-		existingUser.IsActive = "1" // Activate the user
-		existingUser.VerifyPhone = ""
-	} else if params.Type != nil && *params.Type == user.ForgetPasswordEmail {
-		if existingUser.VerifyEmail != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
-		}
-		// In a real implementation, provide a token for password reset instead
-		existingUser.VerifyEmail = ""
-	} else if params.Type != nil && *params.Type == user.ForgetPasswordPhone {
-		if existingUser.VerifyPhone != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
-		}
-		// In a real implementation, provide a token for password reset instead
-		existingUser.VerifyPhone = ""
-	} else {
-		return nil, fmt.Errorf("invalid verification type")
-	}
-
-	err = u.userRepo.Update(existingUser)
-	if err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{
-		"success": true,
-		"message": "Verification successful.",
 	}, nil
 }
 

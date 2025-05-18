@@ -7,33 +7,38 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/basket"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type BasketUsecase struct {
-	logger         sflogger.Logger
-	basketRepo     repository.IBasketRepository
-	basketItemRepo repository.IBasketItemRepository
-	productRepo    repository.IProductRepository
-	discountRepo   repository.IDiscountRepository
-	authContextSvc contract.IAuthContextService
+	logger             sflogger.Logger
+	basketRepo         repository.IBasketRepository
+	basketItemRepo     repository.IBasketItemRepository
+	productRepo        repository.IProductRepository
+	productVariantRepo repository.IProductVariantRepository
+	discountRepo       repository.IDiscountRepository
+	authContextSvc     common.IAuthContextService
 }
 
 func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	return &BasketUsecase{
-		logger:         c.GetLogger(),
-		basketRepo:     c.GetBasketRepo(),
-		basketItemRepo: c.GetBasketItemRepo(),
-		productRepo:    c.GetProductRepo(),
-		discountRepo:   c.GetDiscountRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		logger:             c.GetLogger(),
+		basketRepo:         c.GetBasketRepo(),
+		basketItemRepo:     c.GetBasketItemRepo(),
+		productRepo:        c.GetProductRepo(),
+		productVariantRepo: c.GetProductVariantRepo(),
+		discountRepo:       c.GetDiscountRepo(),
+		authContextSvc:     c.GetAuthContextService(),
 	}
 }
 
 func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (any, error) {
-	u.logger.Info("UpdateBasketCommand called")
+	u.logger.Info("UpdateBasketCommand called", map[string]interface{}{
+		"params": params,
+	})
 
 	if params.BasketItems == nil || len(params.BasketItems) == 0 {
 		return nil, errors.New("آیتم‌های سبد خرید الزامی هستند")
@@ -139,10 +144,21 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			}
 
 			var variantPrice int64 = 0
-			for _, variant := range product.Variants {
-				if item.ProductVariantID != nil && variant.ID == *item.ProductVariantID {
-					variantPrice = variant.Price
-					break
+			if item.ProductVariantID != nil {
+				// Get the product variant
+				variant, err := u.productVariantRepo.GetByID(*item.ProductVariantID)
+				if err != nil {
+					return nil, err
+				}
+				variantPrice = variant.Price
+			} else {
+				// If no variant is specified, try to get the first variant for this product
+				variants, count, err := u.productVariantRepo.GetAllByProductID(product.ID, common.PaginationRequestDto{
+					Page:     1,
+					PageSize: 1,
+				})
+				if err == nil && count > 0 {
+					variantPrice = variants[0].Price
 				}
 			}
 
@@ -155,26 +171,26 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			totalRawPrice += finalRawPrice
 
 			// Apply discount if available
-			var discountID *int64
 			var justCouponPrice int64 = 0
 			var justDiscountPrice int64 = 0
 			var finalPriceWithCouponDiscount int64 = finalRawPrice
 
 			if params.Code != nil && *params.Code != "" {
 				// Get discount by code
-				discount, err := u.discountRepo.GetByCode(*params.Code, siteID)
+				discount, err := u.discountRepo.GetByCode(*params.Code)
 				if err == nil && discount.ID > 0 {
 					// Apply discount logic
-					if discount.DiscountType == "percentage" {
-						discountAmount := (finalRawPrice * int64(discount.DiscountValue)) / 100
+					if discount.Type == "percentage" {
+						discountAmount := (finalRawPrice * discount.Value) / 100
 						justDiscountPrice = discountAmount
 						finalPriceWithCouponDiscount = finalRawPrice - discountAmount
-					} else if discount.DiscountType == "fixed" {
-						justDiscountPrice = int64(discount.DiscountValue)
-						finalPriceWithCouponDiscount = finalRawPrice - int64(discount.DiscountValue)
+					} else if discount.Type == "fixed" {
+						justDiscountPrice = discount.Value
+						finalPriceWithCouponDiscount = finalRawPrice - discount.Value
 					}
 
-					discountID = &discount.ID
+					// Set discount ID in the basket
+					existingBasket.DiscountID = &discount.ID
 				}
 			}
 
@@ -225,7 +241,9 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 }
 
 func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, error) {
-	u.logger.Info("GetBasketQuery called")
+	u.logger.Info("GetBasketQuery called", map[string]interface{}{
+		"params": params,
+	})
 
 	customerID, err := u.authContextSvc.GetCustomerID()
 	if err != nil {
@@ -253,7 +271,9 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, erro
 }
 
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (any, error) {
-	u.logger.Info("GetAllBasketUserQuery called")
+	u.logger.Info("GetAllBasketUserQuery called", map[string]interface{}{
+		"params": params,
+	})
 
 	customerID, err := u.authContextSvc.GetCustomerID()
 	if err != nil {
@@ -272,7 +292,9 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 }
 
 func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (any, error) {
-	u.logger.Info("AdminGetAllBasketUserQuery called")
+	u.logger.Info("AdminGetAllBasketUserQuery called", map[string]interface{}{
+		"params": params,
+	})
 
 	result, count, err := u.basketRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {

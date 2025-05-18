@@ -25,6 +25,32 @@ type Config struct {
 	RedisHost     string `env:"REDIS_HOST"`
 	RedisPassword string `env:"REDIS_PASSWORD"`
 	RedisPort     string `env:"REDIS_PORT"`
+
+	// Storage configuration
+	StorageBucket    string `env:"STORAGE_BUCKET"`
+	StorageRegion    string `env:"STORAGE_REGION"`
+	StorageAccessKey string `env:"STORAGE_ACCESS_KEY"`
+	StorageSecretKey string `env:"STORAGE_SECRET_KEY"`
+}
+
+// Storage returns storage configuration as a struct
+func (c Config) Storage() struct {
+	Bucket    string
+	Region    string
+	AccessKey string
+	SecretKey string
+} {
+	return struct {
+		Bucket    string
+		Region    string
+		AccessKey string
+		SecretKey string
+	}{
+		Bucket:    c.StorageBucket,
+		Region:    c.StorageRegion,
+		AccessKey: c.StorageAccessKey,
+		SecretKey: c.StorageSecretKey,
+	}
 }
 
 func (c Config) GetString(key string) string {

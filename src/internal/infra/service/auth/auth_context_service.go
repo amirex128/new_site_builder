@@ -1,94 +1,103 @@
 package auth
 
 import (
+	"context"
 	"errors"
+	"strconv"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
-	"github.com/gin-gonic/gin"
+	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 )
 
 // AuthContextService implements the IAuthContextService interface
 type AuthContextService struct {
-	logger        sflogger.Logger
-	contextGetter func() (*gin.Context, bool)
+	ctx      context.Context
+	userRepo repository.IUserRepository
+	roleRepo repository.IRoleRepository
 }
 
 // NewAuthContextService creates a new instance of AuthContextService
-func NewAuthContextService(logger sflogger.Logger, contextGetter func() (*gin.Context, bool)) *AuthContextService {
+func NewAuthContextService(ctx context.Context, userRepo repository.IUserRepository, roleRepo repository.IRoleRepository) *AuthContextService {
 	return &AuthContextService{
-		logger:        logger,
-		contextGetter: contextGetter,
+		ctx:      ctx,
+		userRepo: userRepo,
+		roleRepo: roleRepo,
 	}
 }
 
 // GetCustomerID returns the current authenticated customer ID
 func (s *AuthContextService) GetCustomerID() (int64, error) {
-	ctx, exists := s.contextGetter()
-	if !exists {
-		return 0, errors.New("context not found")
+	// Get customer ID from context if available
+	if s.ctx == nil {
+		return 0, errors.New("context is nil")
 	}
 
-	// Get the customer ID from the context
-	// The actual implementation would depend on your authentication middleware
-	// This is just a placeholder
-	customerID, exists := ctx.Get("customer_id")
-	if !exists {
-		return 0, errors.New("customer ID not found in context")
-	}
-
-	// Convert to int64
-	id, ok := customerID.(int64)
+	customerID, ok := s.ctx.Value("customer_id").(int64)
 	if !ok {
-		return 0, errors.New("customer ID is not of type int64")
+		// Try to get it as a string
+		customerIDStr, ok := s.ctx.Value("customer_id").(string)
+		if !ok {
+			return 0, errors.New("customer ID not found in context")
+		}
+
+		// Convert string to int64
+		var err error
+		customerID, err = strconv.ParseInt(customerIDStr, 10, 64)
+		if err != nil {
+			return 0, errors.New("invalid customer ID format")
+		}
 	}
 
-	return id, nil
+	return customerID, nil
 }
 
 // GetUserID returns the current authenticated user ID
 func (s *AuthContextService) GetUserID() (int64, error) {
-	ctx, exists := s.contextGetter()
-	if !exists {
-		return 0, errors.New("context not found")
+	// Get user ID from context if available
+	if s.ctx == nil {
+		return 0, errors.New("context is nil")
 	}
 
-	// Get the user ID from the context
-	// The actual implementation would depend on your authentication middleware
-	// This is just a placeholder
-	userID, exists := ctx.Get("user_id")
-	if !exists {
-		return 0, errors.New("user ID not found in context")
-	}
-
-	// Convert to int64
-	id, ok := userID.(int64)
+	userID, ok := s.ctx.Value("user_id").(int64)
 	if !ok {
-		return 0, errors.New("user ID is not of type int64")
+		// Try to get it as a string
+		userIDStr, ok := s.ctx.Value("user_id").(string)
+		if !ok {
+			return 0, errors.New("user ID not found in context")
+		}
+
+		// Convert string to int64
+		var err error
+		userID, err = strconv.ParseInt(userIDStr, 10, 64)
+		if err != nil {
+			return 0, errors.New("invalid user ID format")
+		}
 	}
 
-	return id, nil
+	return userID, nil
 }
 
 // IsAdmin checks if the current user has admin privileges
 func (s *AuthContextService) IsAdmin() (bool, error) {
-	ctx, exists := s.contextGetter()
-	if !exists {
-		return false, errors.New("context not found")
+	// Check if admin flag is set in context
+	isAdmin, ok := s.ctx.Value("is_admin").(bool)
+	if ok && isAdmin {
+		return true, nil
 	}
 
-	// Check if the user is an admin
-	// The actual implementation would depend on your authentication middleware
-	// This is just a placeholder
-	isAdmin, exists := ctx.Get("is_admin")
-	if !exists {
-		return false, errors.New("admin status not found in context")
+	// Get user ID
+	userID, err := s.GetUserID()
+	if err != nil {
+		return false, err
 	}
 
-	// Convert to bool
-	admin, ok := isAdmin.(bool)
-	if !ok {
-		return false, errors.New("admin status is not of type bool")
+	// Get user
+	_, err = s.userRepo.GetByID(userID)
+	if err != nil {
+		return false, err
 	}
 
-	return admin, nil
+	// Check if user has admin role
+	// Since GetAllByUserID is missing, we'll use a direct check for admin status from context
+	// This should be replaced with proper role checking once the method is implemented
+	return isAdmin, nil
 }

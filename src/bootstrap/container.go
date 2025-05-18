@@ -7,57 +7,102 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"gorm.io/gorm"
 )
 
 // Container
 type Container struct {
-	Config       contract.IConfig
-	MemoryLoader cache.IMemoryLoader
-	MainCache    cache.ICacheService
-
+	Config              contract.IConfig
+	MemoryLoader        cache.IMemoryLoader
+	MainCache           cache.ICacheService
+	AuthContextService  common.IAuthContextService
+	IdentityService     common.IIdentityService
+	StorageService      storage.IStorageService
 	stockCacheTransient func() cache.ICacheService
 
-	Logger                sflogger.Logger
-	ArticleRepo           repository.IArticleRepository
-	BasketRepo            repository.IBasketRepository
-	BasketItemRepo        repository.IBasketItemRepository
-	ArticleCategoryRepo   repository.IArticleCategoryRepository
-	CreditRepo            repository.ICreditRepository
-	CouponRepo            repository.ICouponRepository
-	CustomerRepo          repository.ICustomerRepository
-	DefaultThemeRepo      repository.IDefaultThemeRepository
-	DiscountRepo          repository.IDiscountRepository
-	FileItemRepo          repository.IFileItemRepository
-	GatewayRepo           repository.IGatewayRepository
-	HeaderFooterRepo      repository.IHeaderFooterRepository
-	MediaRepo             repository.IMediaRepository
-	OrderRepo             repository.IOrderRepository
-	OrderItemRepo         repository.IOrderItemRepository
-	PageRepo              repository.IPageRepository
-	ParbadPaymentRepo     repository.IParbadPaymentRepository
-	ParbadTransactionRepo repository.IParbadTransactionRepository
-	PaymentRepo           repository.IPaymentRepository
-	ProductRepo           repository.IProductRepository
-	ProductAttributeRepo  repository.IProductAttributeRepository
-	ProductCategoryRepo   repository.IProductCategoryRepository
-	ProductReviewRepo     repository.IProductReviewRepository
-	ProductVariantRepo    repository.IProductVariantRepository
-	ReturnItemRepo        repository.IReturnItemRepository
-	SettingRepo           repository.ISettingRepository
-	SiteRepo              repository.ISiteRepository
-	StorageRepo           repository.IStorageRepository
-	TicketRepo            repository.ITicketRepository
-	CustomerTicketRepo    repository.ICustomerTicketRepository
-	UserRepo              repository.IUserRepository
-	UnitPriceRepo         repository.IUnitPriceRepository
-	AddressRepo           repository.IAddressRepository
-	CityRepo              repository.ICityRepository
-	ProvinceRepo          repository.IProvinceRepository
-	PlanRepo              repository.IPlanRepository
-	RoleRepo              repository.IRoleRepository
-	PermissionRepo        repository.IPermissionRepository
-	AuthContextService    common.IAuthContextService
+	Logger                    sflogger.Logger
+	ArticleRepo               repository.IArticleRepository
+	BasketRepo                repository.IBasketRepository
+	BasketItemRepo            repository.IBasketItemRepository
+	ArticleCategoryRepo       repository.IArticleCategoryRepository
+	CreditRepo                repository.ICreditRepository
+	CouponRepo                repository.ICouponRepository
+	CustomerRepo              repository.ICustomerRepository
+	DefaultThemeRepo          repository.IDefaultThemeRepository
+	DiscountRepo              repository.IDiscountRepository
+	FileItemRepo              repository.IFileItemRepository
+	GatewayRepo               repository.IGatewayRepository
+	HeaderFooterRepo          repository.IHeaderFooterRepository
+	MediaRepo                 repository.IMediaRepository
+	OrderRepo                 repository.IOrderRepository
+	OrderItemRepo             repository.IOrderItemRepository
+	PageRepo                  repository.IPageRepository
+	ParbadPaymentRepo         repository.IParbadPaymentRepository
+	ParbadTransactionRepo     repository.IParbadTransactionRepository
+	PaymentRepo               repository.IPaymentRepository
+	ProductRepo               repository.IProductRepository
+	ProductAttributeRepo      repository.IProductAttributeRepository
+	ProductCategoryRepo       repository.IProductCategoryRepository
+	ProductReviewRepo         repository.IProductReviewRepository
+	ProductVariantRepo        repository.IProductVariantRepository
+	ReturnItemRepo            repository.IReturnItemRepository
+	SettingRepo               repository.ISettingRepository
+	SiteRepo                  repository.ISiteRepository
+	StorageRepo               repository.IStorageRepository
+	TicketRepo                repository.ITicketRepository
+	CustomerTicketRepo        repository.ICustomerTicketRepository
+	UserRepo                  repository.IUserRepository
+	UnitPriceRepo             repository.IUnitPriceRepository
+	AddressRepo               repository.IAddressRepository
+	CityRepo                  repository.ICityRepository
+	ProvinceRepo              repository.IProvinceRepository
+	PlanRepo                  repository.IPlanRepository
+	RoleRepo                  repository.IRoleRepository
+	PermissionRepo            repository.IPermissionRepository
+	CommentRepo               repository.ICommentRepository
+	CustomerCommentRepo       repository.ICustomerCommentRepository
+	TicketMediaRepo           repository.ITicketMediaRepository
+	CustomerTicketMediaRepo   repository.ICustomerTicketMediaRepository
+	PageArticleUsageRepo      repository.IPageArticleUsageRepository
+	PageProductUsageRepo      repository.IPageProductUsageRepository
+	PageHeaderFooterUsageRepo repository.IPageHeaderFooterUsageRepository
+}
+
+func (c *Container) GetCommentRepo() repository.ICommentRepository {
+	return c.CommentRepo
+}
+
+func (c *Container) GetCustomerCommentRepo() repository.ICustomerCommentRepository {
+	return c.CustomerCommentRepo
+}
+
+func (c *Container) GetTicketMediaRepo() repository.ITicketMediaRepository {
+	return c.TicketMediaRepo
+}
+
+func (c *Container) GetCustomerTicketMediaRepo() repository.ICustomerTicketMediaRepository {
+	return c.CustomerTicketMediaRepo
+}
+
+func (c *Container) GetPageArticleUsageRepo() repository.IPageArticleUsageRepository {
+	return c.PageArticleUsageRepo
+}
+
+func (c *Container) GetPageProductUsageRepo() repository.IPageProductUsageRepository {
+	return c.PageProductUsageRepo
+}
+
+func (c *Container) GetPageHeaderFooterUsageRepo() repository.IPageHeaderFooterUsageRepository {
+	return c.PageHeaderFooterUsageRepo
+}
+
+func (c *Container) GetStorageService() storage.IStorageService {
+	return c.StorageService
+}
+
+func (c *Container) GetIdentityService() common.IIdentityService {
+	return c.IdentityService
 }
 
 func (c *Container) GetConfig() contract.IConfig {

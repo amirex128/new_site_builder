@@ -68,4 +68,5 @@ type IContainer interface {
 	GetStockCacheTransient() cache.ICacheService
 	GetDB() *gorm.DB
 	GetStorageService() storage.IStorageService
+	GetIdentityService() common.IIdentityService
 }

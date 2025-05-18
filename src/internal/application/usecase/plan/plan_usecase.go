@@ -8,111 +8,85 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
 type PlanUsecase struct {
-	logger   sflogger.Logger
-	planRepo repository.IPlanRepository
-	roleRepo repository.IRoleRepository
-	userRepo repository.IUserRepository
+	logger      sflogger.Logger
+	planRepo    repository.IPlanRepository
+	userRepo    repository.IUserRepository
+	authContext common.IAuthContextService
 }
 
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 	return &PlanUsecase{
-		logger:   c.GetLogger(),
-		planRepo: c.GetPlanRepo(),
-		roleRepo: c.GetRoleRepo(),
-		userRepo: c.GetUserRepo(),
+		logger:      c.GetLogger(),
+		planRepo:    c.GetPlanRepo(),
+		userRepo:    c.GetUserRepo(),
+		authContext: c.GetAuthContextService(),
 	}
 }
 
 // CreatePlanCommand creates a new plan
 func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, error) {
 	// Check admin access
-	// Note: In .NET this was done with gate.IsAdminAccess()
-	// In Golang, we would implement this with middleware or a service check
-
-	// Prepare values with null handling
-	var description string
-	if params.Description != nil {
-		description = *params.Description
+	isAdmin, err := u.authContext.IsAdmin()
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin {
+		return nil, fmt.Errorf("only admins can create plans")
 	}
 
-	var feature string
-	if params.Feature != nil {
-		feature = *params.Feature
-	}
-
-	var discount int64
-	if params.Discount != nil {
-		discount = *params.Discount
-	}
-
-	var discountType string
-	if params.DiscountType != nil {
-		discountType = strconv.Itoa(int(*params.DiscountType))
-	}
-
-	var smsCredits int
-	if params.SmsCredits != nil {
-		smsCredits = *params.SmsCredits
-	}
-
-	var emailCredits int
-	if params.EmailCredits != nil {
-		emailCredits = *params.EmailCredits
-	}
-
-	var storageMbCredits int
-	if params.StorageCredits != nil {
-		storageMbCredits = *params.StorageCredits
-	}
-
-	var aiCredits int
-	if params.AiCredits != nil {
-		aiCredits = *params.AiCredits
-	}
-
-	var aiImageCredits int
-	if params.AiImageCredits != nil {
-		aiImageCredits = *params.AiImageCredits
-	}
-
-	// Create the plan entity
+	// Create new plan
 	newPlan := domain.Plan{
 		Name:             *params.Name,
-		Description:      description,
-		Price:            *params.Price,
-		DiscountType:     discountType,
-		Discount:         &discount,
+		ShowStatus:       *params.ShowStatus,
+		Description:      *params.Description,
+		Price:            int64(*params.Price),
 		Duration:         *params.Duration,
-		Feature:          feature,
-		SmsCredits:       smsCredits,
-		EmailCredits:     emailCredits,
-		StorageMbCredits: storageMbCredits,
-		AiCredits:        aiCredits,
-		AiImageCredits:   aiImageCredits,
+		SmsCredits:       *params.SmsCredits,
+		EmailCredits:     *params.EmailCredits,
+		StorageMbCredits: *params.StorageMbCredits,
+		AiCredits:        *params.AiCredits,
+		AiImageCredits:   *params.AiImageCredits,
 	}
 
-	// In .NET, there was an event added: entity.AddEvent(new PlanCreatedEventStore(entity))
-	// In our monolith approach, we don't need to emit events
+	// Set optional fields if provided
+	if params.DiscountType != nil {
+		newPlan.DiscountType = strconv.Itoa(int(*params.DiscountType))
+	}
 
-	// Save the plan
-	err := u.planRepo.Create(newPlan)
+	if params.Discount != nil {
+		discount := int64(*params.Discount)
+		newPlan.Discount = &discount
+	}
+
+	if params.Feature != nil {
+		newPlan.Feature = *params.Feature
+	}
+
+	// Create the plan
+	err = u.planRepo.Create(newPlan)
 	if err != nil {
 		return nil, err
 	}
 
-	// Return the created plan
 	return newPlan, nil
 }
 
 // UpdatePlanCommand updates an existing plan
 func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, error) {
 	// Check admin access
-	// Note: In .NET this was done with gate.IsAdminAccess()
+	isAdmin, err := u.authContext.IsAdmin()
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin {
+		return nil, fmt.Errorf("only admins can update plans")
+	}
 
 	// Get the existing plan
 	existingPlan, err := u.planRepo.GetByID(*params.ID)
@@ -125,12 +99,16 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 		existingPlan.Name = *params.Name
 	}
 
+	if params.ShowStatus != nil {
+		existingPlan.ShowStatus = *params.ShowStatus
+	}
+
 	if params.Description != nil {
 		existingPlan.Description = *params.Description
 	}
 
 	if params.Price != nil {
-		existingPlan.Price = *params.Price
+		existingPlan.Price = int64(*params.Price)
 	}
 
 	if params.DiscountType != nil {
@@ -138,7 +116,8 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	}
 
 	if params.Discount != nil {
-		existingPlan.Discount = params.Discount
+		discount := int64(*params.Discount)
+		existingPlan.Discount = &discount
 	}
 
 	if params.Duration != nil {
@@ -157,8 +136,8 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 		existingPlan.EmailCredits = *params.EmailCredits
 	}
 
-	if params.StorageCredits != nil {
-		existingPlan.StorageMbCredits = *params.StorageCredits
+	if params.StorageMbCredits != nil {
+		existingPlan.StorageMbCredits = *params.StorageMbCredits
 	}
 
 	if params.AiCredits != nil {
@@ -168,9 +147,6 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	if params.AiImageCredits != nil {
 		existingPlan.AiImageCredits = *params.AiImageCredits
 	}
-
-	// In .NET, there was an event added: entity.AddEvent(new PlanUpdatedEventStore(entity))
-	// In our monolith approach, we don't need to emit events
 
 	// Update the plan
 	err = u.planRepo.Update(existingPlan)
@@ -184,10 +160,16 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 // DeletePlanCommand deletes a plan
 func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, error) {
 	// Check admin access
-	// Note: In .NET this was done with gate.IsAdminAccess()
+	isAdmin, err := u.authContext.IsAdmin()
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin {
+		return nil, fmt.Errorf("only admins can delete plans")
+	}
 
-	// Check if plan exists
-	_, err := u.planRepo.GetByID(*params.ID)
+	// Check if the plan exists
+	_, err = u.planRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -199,44 +181,39 @@ func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, er
 	}
 
 	return map[string]interface{}{
-		"id": params.ID,
+		"success": true,
+		"message": "Plan deleted successfully",
 	}, nil
-}
-
-// GetByIdPlanQuery gets a plan by ID
-func (u *PlanUsecase) GetByIdPlanQuery(params *plan.GetByIdPlanQuery) (any, error) {
-	// In .NET, there was a check for user access: gate.HasUserAccess(entity)
-	// We would implement this with middleware or a service check
-
-	result, err := u.planRepo.GetByID(*params.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
 }
 
 // GetAllPlanQuery gets all plans with pagination
 func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (any, error) {
-	// Check admin access
-	// Note: In .NET this was done with gate.IsAdminAccess()
-
-	result, count, err := u.planRepo.GetAll(params.PaginationRequestDto)
+	// Get all plans
+	plans, count, err := u.planRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	return map[string]interface{}{
-		"items": result,
+		"items": plans,
 		"total": count,
 	}, nil
 }
 
-// CalculatePlanPriceQuery calculates the price of a plan
-func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQuery) (any, error) {
-	// Implementation to calculate a plan's price
-	fmt.Println(params)
+// GetByIDPlanQuery gets a plan by ID
+func (u *PlanUsecase) GetByIDPlanQuery(params *plan.GetByIDPlanQuery) (any, error) {
+	// Get the plan
+	plan, err := u.planRepo.GetByID(*params.ID)
+	if err != nil {
+		return nil, err
+	}
 
+	return plan, nil
+}
+
+// CalculatePlanPriceQuery calculates a plan's price with discounts
+func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQuery) (any, error) {
+	// Get the plan
 	plan, err := u.planRepo.GetByID(*params.PlanID)
 	if err != nil {
 		return nil, err

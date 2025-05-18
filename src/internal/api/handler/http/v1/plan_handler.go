@@ -68,12 +68,12 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 }
 
 func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
-	var params plan.GetByIdPlanQuery
+	var params plan.GetByIDPlanQuery
 	if !h.validator.ValidateRequest(c, &params) {
 		return
 	}
 
-	result, err := h.usecase.GetByIdPlanQuery(&params)
+	result, err := h.usecase.GetByIDPlanQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
