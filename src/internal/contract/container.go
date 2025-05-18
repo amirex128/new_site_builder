@@ -24,6 +24,10 @@ type IContainer interface {
 	GetBasketItemRepo() repository.IBasketItemRepository
 	GetCustomerRepo() repository.ICustomerRepository
 	GetCustomerTicketRepo() repository.ICustomerTicketRepository
+	GetCommentRepo() repository.ICommentRepository
+	GetCustomerCommentRepo() repository.ICustomerCommentRepository
+	GetTicketMediaRepo() repository.ITicketMediaRepository
+	GetCustomerTicketMediaRepo() repository.ICustomerTicketMediaRepository
 	GetDefaultThemeRepo() repository.IDefaultThemeRepository
 	GetDiscountRepo() repository.IDiscountRepository
 	GetFileItemRepo() repository.IFileItemRepository
@@ -31,7 +35,9 @@ type IContainer interface {
 	GetOrderRepo() repository.IOrderRepository
 	GetOrderItemRepo() repository.IOrderItemRepository
 	GetPageRepo() repository.IPageRepository
-	// GetPageUsageRepo() repository.IPageUsageRepository // Remove or implement later
+	GetPageArticleUsageRepo() repository.IPageArticleUsageRepository
+	GetPageProductUsageRepo() repository.IPageProductUsageRepository
+	GetPageHeaderFooterUsageRepo() repository.IPageHeaderFooterUsageRepository
 	GetPaymentRepo() repository.IPaymentRepository
 	GetPlanRepo() repository.IPlanRepository
 	GetProductRepo() repository.IProductRepository
