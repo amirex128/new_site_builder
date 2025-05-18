@@ -2,7 +2,9 @@ package router
 
 import (
 	"context"
+	"fmt"
 	"github.com/amirex128/new_site_builder/src/bootstrap"
+	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,23 +18,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitServer(handlers *bootstrap.HandlerManager) {
+func InitServer(handlers *bootstrap.HandlerManager, logger sflogger.Logger, cnf contract.IConfig) {
 
 	RegisterRoutes(handlers)
 
-	//RegisterValidators()
-	//RegisterPrometheus()
-
-	/////////////  bind global middleware ////////////
-	//r.Use(middleware.Cors(cfg))
-	//////////////       *****             /////////////
-	//
-	///////////////  register rout groups   ////////////
-	//RegisterRouter(r, cfg)
-	//RegisterSwagger(r, cfg)
-	///////////////   *****                 ///////////
-	//
-	//runServer(r, logger)
+	err := sfrouting.StartServer(fmt.Sprintf(":%s", cnf.GetString("app_port")))
+	if err != nil {
+		logger.Errorf("Failed to start server: %s", err.Error())
+		return
+	}
 }
 
 // RegisterRoutes registers all routes
@@ -78,18 +72,3 @@ func runServer(r *gin.Engine, logger sflogger.Logger) {
 
 	logger.InfoWithCategory(sflogger.Category.System.Shutdown, sflogger.SubCategory.Status.Success, "Server exiting", nil)
 }
-
-//// RegisterValidators register validation functions
-//func RegisterValidators() {
-//
-//}
-//
-//// RegisterSwagger register Swagger
-//func RegisterSwagger(r *gin.Engine, cfg *config.Config) {
-//
-//}
-//
-//// RegisterPrometheus register prometheus
-//func RegisterPrometheus() {
-//
-//}

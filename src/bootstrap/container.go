@@ -5,17 +5,17 @@ import (
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	cache2 "github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"gorm.io/gorm"
 )
 
 // Container
 type Container struct {
-	Config         contract.IConfig
-	MemoryLoader   cache2.IMemoryLoader
-	FoodPartyCache cache2.ICacheService
+	Config       contract.IConfig
+	MemoryLoader cache.IMemoryLoader
+	MainCache    cache.ICacheService
 
-	stockCacheTransient func() cache2.ICacheService
+	stockCacheTransient func() cache.ICacheService
 
 	Logger                sflogger.Logger
 	ArticleRepo           repository.IArticleRepository
@@ -214,11 +214,11 @@ func (c *Container) GetPermissionRepo() repository.IPermissionRepository {
 	return c.PermissionRepo
 }
 
-func (c *Container) GetFoodPartyCash() cache2.ICacheService {
-	return c.FoodPartyCache
+func (c *Container) GetMainCache() cache.ICacheService {
+	return c.MainCache
 }
 
-func (c *Container) GetStockCacheTransient() cache2.ICacheService {
+func (c *Container) GetStockCacheTransient() cache.ICacheService {
 	return c.stockCacheTransient()
 }
 

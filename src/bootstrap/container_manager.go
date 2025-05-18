@@ -19,8 +19,7 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		Config: cfg,
 		Logger: logger,
 
-		//todo: create name constant
-		FoodPartyCache: service.NewRedis(sfredis.MustClient(ctx, "foodparty")),
+		MainCache: service.NewRedis(sfredis.MustClient(ctx, "cache")),
 
 		// for transient
 		stockCacheTransient: func() cache.ICacheService {

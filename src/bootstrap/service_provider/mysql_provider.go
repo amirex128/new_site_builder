@@ -3,12 +3,14 @@ package serviceprovider
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
+	"github.com/amirex128/new_site_builder/src/config"
 	"gorm.io/gorm"
 	"log"
+	"strconv"
 	"time"
 )
 
-func MysqlProvider(logger sflogger.Logger) {
+func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 	// Create MySQL configuration directly as a struct
 	// Register your database connections with meaningful names and options
 	err := sform.RegisterConnection(
@@ -17,24 +19,17 @@ func MysqlProvider(logger sflogger.Logger) {
 			db.Debug()
 		}),
 		sform.WithConnectionDetails("main", &sform.MySQLConfig{
-			Username:     "user",
-			Password:     "password",
-			Host:         "127.0.0.1",
-			Port:         3306,
-			Database:     "dbname",
-			Charset:      "utf8mb4",
-			ParseTime:    true,
-			Loc:          "Local",
-			MaxOpenConns: 10,
-			MaxIdleConns: 5,
-			MaxLifetime:  5 * time.Minute,
-		}),
-		sform.WithConnectionDetails("read", &sform.MySQLConfig{
-			Username:     "user",
-			Password:     "password",
-			Host:         "127.0.0.1",
-			Port:         3306,
-			Database:     "dbname",
+			Username: cfg.MysqlUsername,
+			Password: cfg.MysqlPassword,
+			Host:     cfg.MysqlHost,
+			Port: func() int {
+				port, err := strconv.Atoi(cfg.MysqlPort)
+				if err != nil {
+					log.Fatalf("Failed to convert MySQL port to int: %v", err)
+				}
+				return port
+			}(),
+			Database:     cfg.MysqlDatabase,
 			Charset:      "utf8mb4",
 			ParseTime:    true,
 			Loc:          "Local",

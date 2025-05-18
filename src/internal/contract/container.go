@@ -47,7 +47,7 @@ type IContainer interface {
 	GetRoleRepo() repository.IRoleRepository
 	GetPermissionRepo() repository.IPermissionRepository
 	GetConfig() IConfig
-	GetFoodPartyCash() cache.ICacheService
+	GetMainCache() cache.ICacheService
 	GetStockCacheTransient() cache.ICacheService
 	GetLogger() sflogger.Logger
 	GetDB() *gorm.DB

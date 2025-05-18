@@ -67,7 +67,7 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 func getVaultSecretPath() string {
 	path := os.Getenv("VAULT_SECRET_PATH")
 	if path == "" {
-		return "/v1/kv/data/new_site_builder\n" // Default path
+		return "kv/data/new_site_builder" // Default path
 	}
 	return path
 }
