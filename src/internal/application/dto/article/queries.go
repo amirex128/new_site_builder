@@ -23,6 +23,17 @@ const (
 // ArticleFilterEnum matches the .NET ArticleFilterEnum
 type ArticleFilterEnum int
 
+const (
+	RateRange ArticleFilterEnum = iota
+	ReviewRange
+	VisitedRange
+	AddedRange
+	UpdatedRange
+	CategoryIds
+	ArticleIds
+	Badges
+)
+
 // GetByIdArticleQuery for retrieving a single article by ID
 type GetByIdArticleQuery struct {
 	ID *int64 `json:"id" validate:"required"`

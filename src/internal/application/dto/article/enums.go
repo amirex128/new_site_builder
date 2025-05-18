@@ -1,12 +1,3 @@
 package article
 
-const (
-	RateRange ArticleFilterEnum = iota
-	ReviewRange
-	VisitedRange
-	AddedRange
-	UpdatedRange
-	CategoryIds
-	ArticleIds
-	Badges
-)
+// The enum definitions are moved to queries.go file
