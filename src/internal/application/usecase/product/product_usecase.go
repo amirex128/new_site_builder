@@ -2,6 +2,7 @@ package productusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"sort"
 	"strconv"
@@ -20,9 +21,8 @@ import (
 )
 
 type ProductUsecase struct {
-	ctx                  *gin.Context
-	logger               sflogger.Logger
-	repo                 repository.IProductRepository
+	*usecase.BaseUsecase
+	productRepo          repository.IProductRepository
 	productCategoryRepo  repository.IProductCategoryRepository
 	discountRepo         repository.IDiscountRepository
 	mediaRepo            repository.IMediaRepository
@@ -34,8 +34,10 @@ type ProductUsecase struct {
 
 func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 	return &ProductUsecase{
-		logger:               c.GetLogger(),
-		repo:                 c.GetProductRepo(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
+		productRepo:          c.GetProductRepo(),
 		productCategoryRepo:  c.GetProductCategoryRepo(),
 		discountRepo:         c.GetDiscountRepo(),
 		mediaRepo:            c.GetMediaRepo(),
@@ -46,19 +48,14 @@ func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 	}
 }
 
-func (u *ProductUsecase) SetContext(c *gin.Context) *ProductUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductCommand) (any, error) {
-	u.logger.Info("CreateProductCommand called", map[string]interface{}{
+	u.Logger.Info("CreateProductCommand called", map[string]interface{}{
 		"name":   *params.Name,
 		"siteId": *params.SiteID,
 	})
 
 	// Validate slug uniqueness
-	existingProductBySlug, err := u.repo.GetBySlug(*params.Slug)
+	existingProductBySlug, err := u.productRepo.GetBySlug(*params.Slug)
 	if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
 		if err == nil && existingProductBySlug.SiteID == *params.SiteID {
 			return nil, errors.New("نامک تکراری است")
@@ -66,7 +63,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +99,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 
 	// Create the product in the database
-	err = u.repo.Create(newProduct)
+	err = u.productRepo.Create(newProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +117,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 			}
 			err = u.productVariantRepo.Create(variant)
 			if err != nil {
-				u.logger.Error("Failed to create product variant", map[string]interface{}{
+				u.Logger.Error("Failed to create product variant", map[string]interface{}{
 					"productId":   newProduct.ID,
 					"variantName": *variantDTO.Name,
 					"error":       err.Error(),
@@ -142,7 +139,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 			}
 			err = u.productAttributeRepo.Create(attr)
 			if err != nil {
-				u.logger.Error("Failed to create product attribute", map[string]interface{}{
+				u.Logger.Error("Failed to create product attribute", map[string]interface{}{
 					"productId": newProduct.ID,
 					"attrName":  *attrDTO.Name,
 					"error":     err.Error(),
@@ -164,7 +161,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 		}
 		err = u.couponRepo.Create(coupon)
 		if err != nil {
-			u.logger.Error("Failed to create coupon", map[string]interface{}{
+			u.Logger.Error("Failed to create coupon", map[string]interface{}{
 				"productId": newProduct.ID,
 				"error":     err.Error(),
 			})
@@ -177,7 +174,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 		for _, categoryID := range params.CategoryIDs {
 			// Add relationship to category_product table
 			// This would be implemented in a real repository method
-			u.logger.Info("Adding product to category", map[string]interface{}{
+			u.Logger.Info("Adding product to category", map[string]interface{}{
 				"productId":  newProduct.ID,
 				"categoryId": categoryID,
 			})
@@ -188,7 +185,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	if params.DiscountIDs != nil && len(params.DiscountIDs) > 0 {
 		// Similar to categories, add to discount_product table
 		for _, discountID := range params.DiscountIDs {
-			u.logger.Info("Adding discount to product", map[string]interface{}{
+			u.Logger.Info("Adding discount to product", map[string]interface{}{
 				"productId":  newProduct.ID,
 				"discountId": discountID,
 			})
@@ -198,7 +195,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	// Handle media associations
 	if params.MediaIDs != nil && len(params.MediaIDs) > 0 {
 		for _, mediaID := range params.MediaIDs {
-			u.logger.Info("Adding media to product", map[string]interface{}{
+			u.Logger.Info("Adding media to product", map[string]interface{}{
 				"productId": newProduct.ID,
 				"mediaId":   mediaID,
 			})
@@ -206,7 +203,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 
 	// Fetch the product with related data
-	createdProduct, err := u.repo.GetByID(newProduct.ID)
+	createdProduct, err := u.productRepo.GetByID(newProduct.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -215,13 +212,13 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 }
 
 func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductCommand) (any, error) {
-	u.logger.Info("UpdateProductCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateProductCommand called", map[string]interface{}{
 		"id":     *params.ID,
 		"siteId": *params.SiteID,
 	})
 
 	// Get existing product
-	existingProduct, err := u.repo.GetByID(*params.ID)
+	existingProduct, err := u.productRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("محصول یافت نشد")
@@ -230,13 +227,13 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// In our monolithic approach, we check directly
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -247,7 +244,7 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 
 	// Validate slug uniqueness if changed
 	if params.Slug != nil && *params.Slug != existingProduct.Slug {
-		existingProductBySlug, err := u.repo.GetBySlug(*params.Slug)
+		existingProductBySlug, err := u.productRepo.GetBySlug(*params.Slug)
 		if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
 			if err == nil && existingProductBySlug.SiteID == *params.SiteID && existingProductBySlug.ID != *params.ID {
 				return nil, errors.New("نامک تکراری است")
@@ -294,7 +291,7 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	existingProduct.UserID = userID // Update with current user ID
 
 	// Update the product
-	err = u.repo.Update(existingProduct)
+	err = u.productRepo.Update(existingProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -356,7 +353,7 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	}
 
 	// Fetch the updated product with related data
-	updatedProduct, err := u.repo.GetByID(existingProduct.ID)
+	updatedProduct, err := u.productRepo.GetByID(existingProduct.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -365,12 +362,12 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 }
 
 func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductCommand) (any, error) {
-	u.logger.Info("DeleteProductCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteProductCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get existing product
-	existingProduct, err := u.repo.GetByID(*params.ID)
+	existingProduct, err := u.productRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("محصول یافت نشد")
@@ -379,13 +376,13 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if user has access to this product
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -395,7 +392,7 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 	}
 
 	// Delete the product
-	err = u.repo.Delete(*params.ID)
+	err = u.productRepo.Delete(*params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -406,12 +403,12 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 }
 
 func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery) (any, error) {
-	u.logger.Info("GetByIdProductQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdProductQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get product by ID
-	product, err := u.repo.GetByID(*params.ID)
+	product, err := u.productRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("محصول یافت نشد")
@@ -421,9 +418,9 @@ func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery
 
 	// Check user access - typically products are visible to all
 	// But we might want to log access
-	userID, _ := u.authContext(u.ctx).GetUserID()
+	userID, _ := u.authContext(u.Ctx).GetUserID()
 	if userID > 0 {
-		u.logger.Info("Product accessed by user", map[string]interface{}{
+		u.Logger.Info("Product accessed by user", map[string]interface{}{
 			"productId": product.ID,
 			"userId":    userID,
 		})
@@ -437,7 +434,7 @@ func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery
 }
 
 func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) (any, error) {
-	u.logger.Info("GetAllProductQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllProductQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -447,7 +444,7 @@ func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) 
 	// In a real implementation, we would check if the user has access to this site
 
 	// Get all products for the site
-	products, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	products, count, err := u.productRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +460,7 @@ func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) 
 }
 
 func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFiltersSortProductQuery) (any, error) {
-	u.logger.Info("GetByFiltersSortProductQuery called", map[string]interface{}{
+	u.Logger.Info("GetByFiltersSortProductQuery called", map[string]interface{}{
 		"siteId":       *params.SiteID,
 		"page":         params.Page,
 		"pageSize":     params.PageSize,
@@ -474,7 +471,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 	// Build query filters based on selected filters
 	queryBuilder := &filterQueryBuilder{
 		siteID: *params.SiteID,
-		logger: u.logger,
+		logger: u.Logger,
 	}
 
 	// Apply filters if any are provided
@@ -590,7 +587,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 
 	// In a real implementation, we would use the query builder to construct a complex SQL query
 	// For now, we'll query the repository and then filter/sort in memory for demonstration
-	products, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	products, count, err := u.productRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
@@ -770,7 +767,7 @@ func (qb *filterQueryBuilder) addSorting(sortType product.ProductSortEnum) {
 }
 
 func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByCategoryQuery) (any, error) {
-	u.logger.Info("GetProductByCategoryQuery called", map[string]interface{}{
+	u.Logger.Info("GetProductByCategoryQuery called", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteId": *params.SiteID,
 	})
@@ -790,7 +787,7 @@ func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByC
 	}
 
 	// Get products for the category
-	products, count, err := u.repo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
+	products, count, err := u.productRepo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
@@ -806,13 +803,13 @@ func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByC
 }
 
 func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQuery) (any, error) {
-	u.logger.Info("GetSingleProductQuery called", map[string]interface{}{
+	u.Logger.Info("GetSingleProductQuery called", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteId": *params.SiteID,
 	})
 
 	// Get product by slug
-	product, err := u.repo.GetBySlug(*params.Slug)
+	product, err := u.productRepo.GetBySlug(*params.Slug)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("محصول یافت نشد")
@@ -865,7 +862,7 @@ func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQ
 	go func() {
 		if product.ID > 0 {
 			product.VisitedCount++
-			_ = u.repo.Update(product) // Ignore error as this is a background operation
+			_ = u.productRepo.Update(product) // Ignore error as this is a background operation
 		}
 	}()
 
@@ -873,7 +870,7 @@ func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQ
 }
 
 func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculateProductsPriceQuery) (any, error) {
-	u.logger.Info("CalculateProductsPriceQuery called", map[string]interface{}{
+	u.Logger.Info("CalculateProductsPriceQuery called", map[string]interface{}{
 		"customerId": *params.CustomerID,
 		"siteId":     *params.SiteID,
 		"code":       params.Code,
@@ -979,10 +976,10 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 	}
 
 	// Get all products
-	// Note: In an actual implementation, we would need a repo method to get products with variants in a single query
+	// Note: In an actual implementation, we would need a productRepo method to get products with variants in a single query
 	// For now, we'll get each product individually
 	for _, productID := range productIDs {
-		product, err := u.repo.GetByID(productID)
+		product, err := u.productRepo.GetByID(productID)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				response.ResponseStatus.IsSuccess = false
@@ -1105,13 +1102,13 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 }
 
 func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProductQuery) (any, error) {
-	u.logger.Info("AdminGetAllProductQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllProductQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -1121,7 +1118,7 @@ func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProd
 	}
 
 	// Get all products across all sites for admin
-	products, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	products, count, err := u.productRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}

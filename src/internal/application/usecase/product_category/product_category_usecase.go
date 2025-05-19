@@ -2,6 +2,7 @@ package productcategoryusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
@@ -18,7 +19,7 @@ import (
 )
 
 type ProductCategoryUsecase struct {
-	ctx         *gin.Context
+	*usecase.BaseUsecase
 	logger      sflogger.Logger
 	repo        repository.IProductCategoryRepository
 	mediaRepo   repository.IMediaRepository
@@ -27,20 +28,17 @@ type ProductCategoryUsecase struct {
 
 func NewProductCategoryUsecase(c contract.IContainer) *ProductCategoryUsecase {
 	return &ProductCategoryUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:        c.GetProductCategoryRepo(),
 		mediaRepo:   c.GetMediaRepo(),
 		authContext: c.GetAuthTransientService(),
 	}
 }
 
-func (u *ProductCategoryUsecase) SetContext(c *gin.Context) *ProductCategoryUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.CreateCategoryCommand) (any, error) {
-	u.logger.Info("CreateCategoryCommand called", map[string]interface{}{
+	u.Logger.Info("CreateCategoryCommand called", map[string]interface{}{
 		"name":   *params.Name,
 		"siteId": *params.SiteID,
 	})
@@ -54,7 +52,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +88,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 	if params.MediaIDs != nil && len(params.MediaIDs) > 0 {
 		err = u.attachMediaToCategory(category.ID, params.MediaIDs)
 		if err != nil {
-			u.logger.Error("Failed to attach media to category", map[string]interface{}{
+			u.Logger.Error("Failed to attach media to category", map[string]interface{}{
 				"categoryId": category.ID,
 				"error":      err.Error(),
 			})
@@ -108,7 +106,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 }
 
 func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.UpdateCategoryCommand) (any, error) {
-	u.logger.Info("UpdateCategoryCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateCategoryCommand called", map[string]interface{}{
 		"id":     *params.ID,
 		"siteId": *params.SiteID,
 	})
@@ -123,13 +121,13 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// In our monolithic approach, we check directly
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +180,7 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 	if params.MediaIDs != nil {
 		err = u.updateCategoryMedia(existingCategory.ID, params.MediaIDs)
 		if err != nil {
-			u.logger.Error("Failed to update media for category", map[string]interface{}{
+			u.Logger.Error("Failed to update media for category", map[string]interface{}{
 				"categoryId": existingCategory.ID,
 				"error":      err.Error(),
 			})
@@ -200,7 +198,7 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 }
 
 func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.DeleteCategoryCommand) (any, error) {
-	u.logger.Info("DeleteCategoryCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteCategoryCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -214,12 +212,12 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 	}
 
 	// Check user access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +238,7 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 }
 
 func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.GetByIdCategoryQuery) (any, error) {
-	u.logger.Info("GetByIdCategoryQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdCategoryQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -254,9 +252,9 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 	}
 
 	// Check user access - anyone can view categories but logging for audit
-	userID, _ := u.authContext(u.ctx).GetUserID()
+	userID, _ := u.authContext(u.Ctx).GetUserID()
 	if userID > 0 {
-		u.logger.Info("Category accessed by user", map[string]interface{}{
+		u.Logger.Info("Category accessed by user", map[string]interface{}{
 			"categoryId": category.ID,
 			"userId":     userID,
 		})
@@ -300,7 +298,7 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 }
 
 func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.GetAllCategoryQuery) (any, error) {
-	u.logger.Info("GetAllCategoryQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllCategoryQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -363,13 +361,13 @@ func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.Ge
 }
 
 func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_category.AdminGetAllCategoryQuery) (any, error) {
-	u.logger.Info("AdminGetAllCategoryQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllCategoryQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -447,7 +445,7 @@ func (u *ProductCategoryUsecase) attachMediaToCategory(categoryID int64, mediaID
 		// This would normally be handled by a specific repository method
 		// For simplicity, we're assuming the database handle could create this directly
 		// We're just logging it instead of actually creating it for now
-		u.logger.Info("Attaching media to category", map[string]interface{}{
+		u.Logger.Info("Attaching media to category", map[string]interface{}{
 			"categoryId": categoryID,
 			"mediaId":    mediaID,
 		})
@@ -460,7 +458,7 @@ func (u *ProductCategoryUsecase) updateCategoryMedia(categoryID int64, mediaIDs 
 	// In a real implementation, we would first delete all existing associations
 	// and then create new ones
 	// For simplicity, we're just logging it
-	u.logger.Info("Updating media for category", map[string]interface{}{
+	u.Logger.Info("Updating media for category", map[string]interface{}{
 		"categoryId": categoryID,
 		"mediaIds":   mediaIDs,
 	})

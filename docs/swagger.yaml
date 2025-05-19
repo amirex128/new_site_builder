@@ -1,4 +1,79 @@
+definitions:
+  address.CreateAddressCommand:
+    properties:
+      addressLine:
+        type: string
+      cityId:
+        type: integer
+      customerId:
+        type: integer
+      latitude:
+        maximum: 90
+        minimum: -90
+        type: number
+      longitude:
+        maximum: 180
+        minimum: -180
+        type: number
+      postalCode:
+        type: string
+      provinceId:
+        type: integer
+      title:
+        type: string
+      userId:
+        type: integer
+    required:
+    - cityId
+    - latitude
+    - longitude
+    - provinceId
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /users/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update an existing user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/address.CreateAddressCommand'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/address.CreateAddressCommand'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a user
+      tags:
+      - users
 swagger: "2.0"

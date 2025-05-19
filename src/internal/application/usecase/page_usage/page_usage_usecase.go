@@ -2,6 +2,7 @@ package pageusageusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,7 @@ import (
 )
 
 type PageUsageUsecase struct {
-	ctx                       *gin.Context
-	logger                    sflogger.Logger
+	*usecase.BaseUsecase
 	pageRepo                  repository.IPageRepository
 	pageArticleUsageRepo      repository.IPageArticleUsageRepository
 	pageProductUsageRepo      repository.IPageProductUsageRepository
@@ -30,7 +30,9 @@ type PageUsageUsecase struct {
 
 func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 	return &PageUsageUsecase{
-		logger:                    c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		pageRepo:                  c.GetPageRepo(),
 		pageArticleUsageRepo:      c.GetPageArticleUsageRepo(),
 		pageProductUsageRepo:      c.GetPageProductUsageRepo(),
@@ -43,13 +45,8 @@ func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 	}
 }
 
-func (u *PageUsageUsecase) SetContext(c *gin.Context) *PageUsageUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsageCommand) (any, error) {
-	u.logger.Info("SyncPageUsageCommand called", map[string]interface{}{
+	u.Logger.Info("SyncPageUsageCommand called", map[string]interface{}{
 		"pageId":    *params.PageID,
 		"siteId":    *params.SiteID,
 		"type":      *params.Type,
@@ -75,13 +72,13 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check user access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +198,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 }
 
 func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsagesQuery) (any, error) {
-	u.logger.Info("FindPageUsagesQuery called", map[string]interface{}{
+	u.Logger.Info("FindPageUsagesQuery called", map[string]interface{}{
 		"entityIds": params.EntityIDs,
 		"siteId":    *params.SiteID,
 		"type":      *params.Type,

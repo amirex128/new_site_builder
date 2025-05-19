@@ -2,76 +2,44 @@ package resp
 
 import (
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Result represents a standardized API response
 type Result struct {
-	Succeeded         bool        `json:"succeeded"`
-	Messages          []string    `json:"messages,omitempty"`
-	SystemMessages    []string    `json:"systemMessages,omitempty"`
-	Data              interface{} `json:"data,omitempty"`
-	StatusCode        int         `json:"statusCode"`
-	Type              string      `json:"type,omitempty"`
-	SystemRedirectURL string      `json:"systemRedirectUrl,omitempty"`
+	Success    bool        `json:"success"`
+	Message    string      `json:"message,omitempty"`
+	Data       interface{} `json:"data,omitempty"`
+	Errors     []string    `json:"errors,omitempty"`
+	StatusCode int         `json:"statusCode"`
 }
 
-// newSuccessResult creates a new successful Result
-func newSuccessResult(messages ...string) *Result {
-	result := &Result{
-		Succeeded:  true,
-		StatusCode: http.StatusOK,
-	}
-	result.Messages = append(result.Messages, messages...)
-	return result
-}
+// Standard messages for API responses
+const (
+	MsgSuccess         = "Operation completed successfully"
+	MsgCreated         = "Resource created successfully"
+	MsgUpdated         = "Resource updated successfully"
+	MsgDeleted         = "Resource deleted successfully"
+	MsgRetrieved       = "Data retrieved successfully"
+	MsgValidationError = "Validation error"
+	MsgInternalError   = "Internal server error"
+	MsgNotFound        = "Resource not found"
+	MsgUnauthorized    = "Authentication required"
+	MsgForbidden       = "Insufficient permissions"
+	MsgBadRequest      = "Invalid request"
+	MsgConflict        = "Resource conflict"
+)
 
-// newFailureResult creates a new failure Result
-func newFailureResult(messages ...string) *Result {
-	result := &Result{
-		Succeeded:  false,
-		StatusCode: http.StatusInternalServerError,
-	}
-	result.Messages = append(result.Messages, messages...)
-	return result
-}
+// Response builders
 
-// newRedirectResult creates a new redirect Result
-func newRedirectResult(redirectURL string, queryParams map[string]string) *Result {
-	if len(queryParams) > 0 {
-		values := url.Values{}
-		for k, v := range queryParams {
-			values.Add(k, v)
-		}
-
-		// Append query parameters to URL
-		if strings.Contains(redirectURL, "?") {
-			redirectURL = redirectURL + "&" + values.Encode()
-		} else {
-			redirectURL = redirectURL + "?" + values.Encode()
-		}
-	}
-
+// NewResponse creates a new Result with the given parameters
+func NewResponse(success bool, message string, statusCode int) *Result {
 	return &Result{
-		Succeeded:         true,
-		SystemRedirectURL: redirectURL,
-		Type:              "Redirect",
+		Success:    success,
+		Message:    message,
+		StatusCode: statusCode,
 	}
-}
-
-// WithMessage adds message(s) to the Result
-func (r *Result) WithMessage(messages ...string) *Result {
-	r.Messages = append(r.Messages, messages...)
-	return r
-}
-
-// WithSystemMessage adds system message(s) to the Result
-func (r *Result) WithSystemMessage(messages ...string) *Result {
-	r.SystemMessages = append(r.SystemMessages, messages...)
-	return r
 }
 
 // WithData adds data to the Result
@@ -80,171 +48,145 @@ func (r *Result) WithData(data interface{}) *Result {
 	return r
 }
 
-// WithStatusCode sets the status code for the Result
-func (r *Result) WithStatusCode(statusCode int) *Result {
-	r.StatusCode = statusCode
+// WithErrors adds error messages to the Result
+func (r *Result) WithErrors(errors ...string) *Result {
+	r.Errors = append(r.Errors, errors...)
 	return r
 }
 
-// WithType sets the type for the Result
-func (r *Result) WithType(resultType string) *Result {
-	r.Type = resultType
-	return r
+// Send sends the Result as a JSON response with the appropriate status code
+func (r *Result) Send(c *gin.Context) {
+	c.JSON(r.StatusCode, r)
 }
 
-// GetAllMessages returns all messages (system and user-facing)
-func (r *Result) GetAllMessages() []string {
-	allMessages := make([]string, 0, len(r.SystemMessages)+len(r.Messages))
-	allMessages = append(allMessages, r.SystemMessages...)
-	allMessages = append(allMessages, r.Messages...)
-	return allMessages
+// SendAndAbort sends the Result as a JSON response and aborts the request
+func (r *Result) SendAndAbort(c *gin.Context) {
+	c.AbortWithStatusJSON(r.StatusCode, r)
 }
 
-// resultMessages contains standard response messages
-var resultMessages = struct {
-	Success           string
-	Created           string
-	Updated           string
-	Deleted           string
-	Retrieved         string
-	VerifySuccess     string
-	FailedCreate      string
-	FailedUpdate      string
-	FailedDelete      string
-	FailedRetrieve    string
-	ValidationError   string
-	InternalError     string
-	NotFoundError     string
-	AuthenticateError string
-	AuthorizeError    string
-	VerifyError       string
-	OperationError    string
-}{
-	Success:           "Operation completed successfully",
-	Created:           "Record created successfully",
-	Updated:           "Record updated successfully",
-	Deleted:           "Record deleted successfully",
-	Retrieved:         "Data retrieved successfully",
-	VerifySuccess:     "Verification successful",
-	FailedCreate:      "Failed to create record",
-	FailedUpdate:      "Failed to update record",
-	FailedDelete:      "Failed to delete record",
-	FailedRetrieve:    "Failed to retrieve data",
-	ValidationError:   "Validation error",
-	InternalError:     "Internal server error",
-	NotFoundError:     "Resource not found",
-	AuthenticateError: "Authentication error",
-	AuthorizeError:    "You do not have permission for this operation",
-	VerifyError:       "Verification failed",
-	OperationError:    "An error occurred during the operation",
+// Success responses
+
+// OK creates a 200 OK response
+func OK(c *gin.Context, data interface{}) {
+	NewResponse(true, MsgSuccess, http.StatusOK).
+		WithData(data).
+		Send(c)
 }
 
-// Factory functions for common response types
-
-// Success creates a standard success response
-func Success() *Result {
-	return newSuccessResult().
-		WithSystemMessage(resultMessages.Success).
-		WithStatusCode(http.StatusOK).
-		WithType("Success")
+// Created creates a 201 Created response
+func Created(c *gin.Context, data interface{}) {
+	NewResponse(true, MsgCreated, http.StatusCreated).
+		WithData(data).
+		Send(c)
 }
 
-// Created creates a response for successful resource creation
-func Created() *Result {
-	return newSuccessResult().
-		WithSystemMessage(resultMessages.Created).
-		WithStatusCode(http.StatusCreated).
-		WithType("Success")
+// Updated creates a 200 OK response for updates
+func Updated(c *gin.Context, data interface{}) {
+	NewResponse(true, MsgUpdated, http.StatusOK).
+		WithData(data).
+		Send(c)
 }
 
-// Updated creates a response for successful resource update
-func Updated() *Result {
-	return newSuccessResult().
-		WithSystemMessage(resultMessages.Updated).
-		WithStatusCode(http.StatusOK).
-		WithType("Success")
+// Deleted creates a 200 OK response for deletions
+func Deleted(c *gin.Context) {
+	NewResponse(true, MsgDeleted, http.StatusOK).
+		Send(c)
 }
 
-// Deleted creates a response for successful resource deletion
-func Deleted() *Result {
-	return newSuccessResult().
-		WithSystemMessage(resultMessages.Deleted).
-		WithStatusCode(http.StatusOK).
-		WithType("Success")
+// Retrieved creates a 200 OK response for data retrieval
+func Retrieved(c *gin.Context, data interface{}) {
+	NewResponse(true, MsgRetrieved, http.StatusOK).
+		WithData(data).
+		Send(c)
 }
 
-// Retrieved creates a response for successful data retrieval
-func Retrieved() *Result {
-	return newSuccessResult().
-		WithSystemMessage(resultMessages.Retrieved).
-		WithStatusCode(http.StatusOK).
-		WithType("Success")
+// NoContent creates a 204 No Content response
+func NoContent(c *gin.Context) {
+	c.Status(http.StatusNoContent)
 }
 
-// ValidationError creates a response for validation errors
-func ValidationFailed() *Result {
-	return newFailureResult().
-		WithSystemMessage(resultMessages.ValidationError).
-		WithStatusCode(http.StatusBadRequest).
-		WithType("ValidationError")
+// Error responses
+
+// BadRequest creates a 400 Bad Request response
+func BadRequest(c *gin.Context, errors ...string) {
+	NewResponse(false, MsgBadRequest, http.StatusBadRequest).
+		WithErrors(errors...).
+		SendAndAbort(c)
 }
 
-// NotFoundError creates a response for resource not found
-func NotFoundError() *Result {
-	return newFailureResult().
-		WithSystemMessage(resultMessages.NotFoundError).
-		WithStatusCode(http.StatusNotFound).
-		WithType("NotFound")
+// ValidationError creates a 400 Bad Request response for validation errors
+func ValidationError(c *gin.Context, errors ...string) {
+	NewResponse(false, MsgValidationError, http.StatusBadRequest).
+		WithErrors(errors...).
+		SendAndAbort(c)
 }
 
-// InternalError creates a response for internal server errors
-func InternalError() *Result {
-	return newFailureResult().
-		WithSystemMessage(resultMessages.InternalError).
-		WithStatusCode(http.StatusInternalServerError).
-		WithType("Error")
+// Unauthorized creates a 401 Unauthorized response
+func Unauthorized(c *gin.Context, errors ...string) {
+	NewResponse(false, MsgUnauthorized, http.StatusUnauthorized).
+		WithErrors(errors...).
+		SendAndAbort(c)
 }
 
-// AuthenticateError creates a response for authentication failures
-func AuthenticateError() *Result {
-	return newFailureResult().
-		WithSystemMessage(resultMessages.AuthenticateError).
-		WithStatusCode(http.StatusUnauthorized).
-		WithType("Error")
+// Forbidden creates a 403 Forbidden response
+func Forbidden(c *gin.Context, errors ...string) {
+	NewResponse(false, MsgForbidden, http.StatusForbidden).
+		WithErrors(errors...).
+		SendAndAbort(c)
 }
 
-// AuthorizeError creates a response for authorization failures
-func AuthorizeError() *Result {
-	return newFailureResult().
-		WithSystemMessage(resultMessages.AuthorizeError).
-		WithStatusCode(http.StatusUnauthorized).
-		WithType("Error")
+// NotFound creates a 404 Not Found response
+func NotFound(c *gin.Context, errors ...string) {
+	NewResponse(false, MsgNotFound, http.StatusNotFound).
+		WithErrors(errors...).
+		SendAndAbort(c)
 }
 
-// Redirect creates a redirect response
-func Redirect(redirectURL string, queryParams map[string]string) *Result {
-	return newRedirectResult(redirectURL, queryParams)
+// Conflict creates a 409 Conflict response
+func Conflict(c *gin.Context, errors ...string) {
+	NewResponse(false, MsgConflict, http.StatusConflict).
+		WithErrors(errors...).
+		SendAndAbort(c)
 }
 
-// ErrorUnauthorized sends an unauthorized error response
+// InternalError creates a 500 Internal Server Error response
+func InternalError(c *gin.Context, errors ...string) {
+	if len(errors) == 0 {
+		errors = []string{MsgInternalError}
+	}
+	NewResponse(false, MsgInternalError, http.StatusInternalServerError).
+		WithErrors(errors...).
+		SendAndAbort(c)
+}
+
+// Error handling helpers
+
+// HandleError is a convenience function to handle errors with appropriate responses
+func HandleError(c *gin.Context, err error, statusCode int, message string) {
+	if err == nil {
+		return
+	}
+
+	errMsg := err.Error()
+	NewResponse(false, message, statusCode).
+		WithErrors(errMsg).
+		SendAndAbort(c)
+}
+
+// ErrorUnauthorized handles unauthorized errors (for backward compatibility)
 func ErrorUnauthorized(c *gin.Context, err error) {
-	result := AuthenticateError()
+	errMsgs := []string{}
 	if err != nil {
-		result.WithSystemMessage(err.Error())
+		errMsgs = append(errMsgs, err.Error())
 	}
-	c.AbortWithStatusJSON(http.StatusUnauthorized, result)
+	Unauthorized(c, errMsgs...)
 }
 
-// ErrorForbidden sends a forbidden error response
+// ErrorForbidden handles forbidden errors (for backward compatibility)
 func ErrorForbidden(c *gin.Context, err error) {
-	result := newFailureResult().
-		WithSystemMessage(resultMessages.AuthorizeError).
-		WithStatusCode(http.StatusForbidden).
-		WithType("Error")
-
+	errMsgs := []string{}
 	if err != nil {
-		result.WithSystemMessage(err.Error())
+		errMsgs = append(errMsgs, err.Error())
 	}
-
-	c.AbortWithStatusJSON(http.StatusForbidden, result)
+	Forbidden(c, errMsgs...)
 }

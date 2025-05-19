@@ -3,6 +3,7 @@ package pageusecase
 import (
 	"encoding/json"
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/page"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -19,8 +19,7 @@ import (
 )
 
 type PageUsecase struct {
-	ctx              *gin.Context
-	logger           sflogger.Logger
+	*usecase.BaseUsecase
 	repo             repository.IPageRepository
 	siteRepo         repository.ISiteRepository
 	headerFooterRepo repository.IHeaderFooterRepository
@@ -30,7 +29,9 @@ type PageUsecase struct {
 
 func NewPageUsecase(c contract.IContainer) *PageUsecase {
 	return &PageUsecase{
-		logger:           c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:             c.GetPageRepo(),
 		siteRepo:         c.GetSiteRepo(),
 		headerFooterRepo: c.GetHeaderFooterRepo(),
@@ -39,13 +40,8 @@ func NewPageUsecase(c contract.IContainer) *PageUsecase {
 	}
 }
 
-func (u *PageUsecase) SetContext(c *gin.Context) *PageUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, error) {
-	u.logger.Info("CreatePageCommand called", map[string]interface{}{
+	u.Logger.Info("CreatePageCommand called", map[string]interface{}{
 		"siteId": *params.SiteID,
 		"title":  *params.Title,
 		"slug":   *params.Slug,
@@ -87,7 +83,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, er
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +126,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, er
 	if params.MediaIDs != nil && len(params.MediaIDs) > 0 {
 		err = u.repo.AddMediaToPage(page.ID, params.MediaIDs)
 		if err != nil {
-			u.logger.Error("Failed to add media to page", map[string]interface{}{
+			u.Logger.Error("Failed to add media to page", map[string]interface{}{
 				"pageId": page.ID,
 				"error":  err.Error(),
 			})
@@ -148,7 +144,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, er
 }
 
 func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, error) {
-	u.logger.Info("UpdatePageCommand called", map[string]interface{}{
+	u.Logger.Info("UpdatePageCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -162,12 +158,12 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +264,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, er
 		// Remove existing media
 		err = u.repo.RemoveAllMediaFromPage(existingPage.ID)
 		if err != nil {
-			u.logger.Error("Failed to remove existing media from page", map[string]interface{}{
+			u.Logger.Error("Failed to remove existing media from page", map[string]interface{}{
 				"pageId": existingPage.ID,
 				"error":  err.Error(),
 			})
@@ -279,7 +275,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, er
 		if len(params.MediaIDs) > 0 {
 			err = u.repo.AddMediaToPage(existingPage.ID, params.MediaIDs)
 			if err != nil {
-				u.logger.Error("Failed to add media to page", map[string]interface{}{
+				u.Logger.Error("Failed to add media to page", map[string]interface{}{
 					"pageId": existingPage.ID,
 					"error":  err.Error(),
 				})
@@ -298,7 +294,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, er
 }
 
 func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (any, error) {
-	u.logger.Info("DeletePageCommand called", map[string]interface{}{
+	u.Logger.Info("DeletePageCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -312,12 +308,12 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +334,7 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (any, er
 }
 
 func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (any, error) {
-	u.logger.Info("GetByIdPageQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdPageQuery called", map[string]interface{}{
 		"id":     params.ID,
 		"ids":    params.IDs,
 		"siteId": *params.SiteID,
@@ -376,7 +372,7 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (any, erro
 }
 
 func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (any, error) {
-	u.logger.Info("GetAllPageQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllPageQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -404,13 +400,13 @@ func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (any, error)
 }
 
 func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (any, error) {
-	u.logger.Info("AdminGetAllPageQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllPageQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -441,7 +437,7 @@ func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (a
 }
 
 func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (any, error) {
-	u.logger.Info("GetByPathPageQuery called", map[string]interface{}{
+	u.Logger.Info("GetByPathPageQuery called", map[string]interface{}{
 		"paths":  params.Paths,
 		"siteId": *params.SiteID,
 	})

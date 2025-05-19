@@ -22,6 +22,20 @@ func NewAddressHandler(usc *addressusecase.AddressUsecase) *AddressHandler {
 	}
 }
 
+// CreateAddress godoc
+// @Summary      Update a user
+// @Description  update an existing user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string  true  "User ID"
+// @Param        user  body      address.CreateAddressCommand    true  "User object"
+// @Success      200   {object}  address.CreateAddressCommand
+// @Failure      400   {object}  map[string]interface{}
+// @Failure      404   {object}  map[string]interface{}
+// @Failure      500   {object}  map[string]interface{}
+// @Router       /users/{id} [put]
+// @Security     BearerAuth
 func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	var params address.CreateAddressCommand
 	if !h.validator.ValidateRequest(c, &params) {

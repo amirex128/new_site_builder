@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
@@ -20,17 +21,21 @@ import (
 )
 
 type PaymentUsecase struct {
-	ctx         *gin.Context
+	*usecase.BaseUsecase
 	logger      sflogger.Logger
 	paymentRepo repository.IPaymentRepository
 	gatewayRepo repository.IGatewayRepository
 	authContext func(c *gin.Context) service.IAuthService
 	container   contract.IContainer
+	siteRepo    repository.ISiteRepository
 }
 
 func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 	return &PaymentUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
+		siteRepo:    c.GetSiteRepo(),
 		paymentRepo: c.GetPaymentRepo(),
 		gatewayRepo: c.GetGatewayRepo(),
 		authContext: c.GetAuthTransientService(),
@@ -38,13 +43,8 @@ func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 	}
 }
 
-func (u *PaymentUsecase) SetContext(c *gin.Context) *PaymentUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentCommand) (any, error) {
-	u.logger.Info("VerifyPaymentCommand called", map[string]interface{}{
+	u.Logger.Info("VerifyPaymentCommand called", map[string]interface{}{
 		"transactionCode": *params.TransactionCode,
 	})
 
@@ -121,7 +121,7 @@ func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentComma
 }
 
 func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUpdateGatewayCommand) (any, error) {
-	u.logger.Info("CreateOrUpdateGatewayCommand called", map[string]interface{}{
+	u.Logger.Info("CreateOrUpdateGatewayCommand called", map[string]interface{}{
 		"siteId": *params.SiteID,
 	})
 
@@ -139,7 +139,7 @@ func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUp
 	}
 
 	// Get current user ID
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +370,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 }
 
 func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery) (any, error) {
-	u.logger.Info("GetByIdGatewayQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdGatewayQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -383,7 +383,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -391,7 +391,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 	// Assuming site owners should be able to see their gateway
 	// This logic might need adjustment based on your authorization requirements
 	if gateway.UserID != userID {
-		isAdmin, err := u.authContext(u.ctx).IsAdmin()
+		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, errors.New("شما به این درگاه پرداخت دسترسی ندارید")
 		}
@@ -401,13 +401,13 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 }
 
 func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (any, error) {
-	u.logger.Info("AdminGetAllGatewayQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllGatewayQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Verify admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -429,7 +429,7 @@ func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGate
 }
 
 func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCommand) (any, error) {
-	u.logger.Info("RequestGatewayCommand called", map[string]interface{}{
+	u.Logger.Info("RequestGatewayCommand called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"orderId":  *params.OrderID,
 		"amount":   *params.Amount,
@@ -520,13 +520,13 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 }
 
 func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (any, error) {
-	u.logger.Info("AdminGetAllPaymentQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllPaymentQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Verify admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -899,7 +899,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 		PageSize: 1000,
 	})
 	if err != nil {
-		u.logger.Error("Failed to get order items", map[string]interface{}{
+		u.Logger.Error("Failed to get order items", map[string]interface{}{
 			"error":   err.Error(),
 			"orderID": orderID,
 		})
@@ -909,7 +909,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 	// 1. Update product stock quantities
 	productVariantRepo := u.container.GetProductVariantRepo()
 	if productVariantRepo == nil {
-		u.logger.Error("Failed to get product variant repository", nil)
+		u.Logger.Error("Failed to get product variant repository", nil)
 		return false
 	}
 
@@ -917,7 +917,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 		if item.ProductVariantID > 0 {
 			err := productVariantRepo.DecreaseStock(item.ProductVariantID, item.Quantity)
 			if err != nil {
-				u.logger.Error("Failed to decrease product variant stock", map[string]interface{}{
+				u.Logger.Error("Failed to decrease product variant stock", map[string]interface{}{
 					"error":            err.Error(),
 					"productVariantID": item.ProductVariantID,
 					"quantity":         item.Quantity,
@@ -937,7 +937,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 			// Check if customer has already used this discount
 			hasUsed, err := discountRepo.HasCustomerUsedDiscount(*order.DiscountID, customerID)
 			if err != nil {
-				u.logger.Error("Failed to check if customer used discount", map[string]interface{}{
+				u.Logger.Error("Failed to check if customer used discount", map[string]interface{}{
 					"error":      err.Error(),
 					"discountID": *order.DiscountID,
 					"customerID": customerID,
@@ -945,7 +945,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 			} else if !hasUsed {
 				// Decrease discount quantity
 				if err := discountRepo.DecreaseQuantity(*order.DiscountID); err != nil {
-					u.logger.Error("Failed to decrease discount quantity", map[string]interface{}{
+					u.Logger.Error("Failed to decrease discount quantity", map[string]interface{}{
 						"error":      err.Error(),
 						"discountID": *order.DiscountID,
 					})
@@ -953,7 +953,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 
 				// Record that this customer has used the discount
 				if err := discountRepo.AddCustomerUsage(*order.DiscountID, customerID); err != nil {
-					u.logger.Error("Failed to record customer discount usage", map[string]interface{}{
+					u.Logger.Error("Failed to record customer discount usage", map[string]interface{}{
 						"error":      err.Error(),
 						"discountID": *order.DiscountID,
 						"customerID": customerID,
@@ -974,7 +974,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 				if err == nil && coupon.ID > 0 && coupon.ExpiryDate.After(time.Now()) {
 					// Coupon exists and is valid, decrease its quantity
 					if err := couponRepo.DecreaseQuantity(coupon.ID); err != nil {
-						u.logger.Error("Failed to decrease coupon quantity", map[string]interface{}{
+						u.Logger.Error("Failed to decrease coupon quantity", map[string]interface{}{
 							"error":    err.Error(),
 							"couponID": coupon.ID,
 						})
@@ -1018,7 +1018,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 
 					// In a real implementation, this would send an email
 					// For now, we'll just log it
-					u.logger.Info("Order confirmation email would be sent", map[string]interface{}{
+					u.Logger.Info("Order confirmation email would be sent", map[string]interface{}{
 						"to":      customer.Email,
 						"subject": emailSubject,
 						"body":    emailBody,
@@ -1031,7 +1031,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 	// 5. Generate invoice
 	// This would typically create a PDF invoice and store it
 	// For now, we'll just log that an invoice would be generated
-	u.logger.Info("Invoice would be generated", map[string]interface{}{
+	u.Logger.Info("Invoice would be generated", map[string]interface{}{
 		"orderID": order.ID,
 		"amount":  order.TotalFinalPrice,
 		"date":    time.Now().Format("2006-01-02"),

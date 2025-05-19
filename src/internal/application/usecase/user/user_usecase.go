@@ -2,13 +2,13 @@ package userusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -16,19 +16,22 @@ import (
 )
 
 type UserUsecase struct {
-	ctx         *gin.Context
-	logger      sflogger.Logger
+	*usecase.BaseUsecase
 	userRepo    repository.IUserRepository
 	planRepo    repository.IPlanRepository
 	addressRepo repository.IAddressRepository
 	paymentRepo repository.IPaymentRepository
 	identitySvc service.IIdentityService
 	authContext func(c *gin.Context) service.IAuthService
+	siteRepo    repository.ISiteRepository
 }
 
 func NewUserUsecase(c contract.IContainer) *UserUsecase {
 	return &UserUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
+		siteRepo:    c.GetSiteRepo(),
 		userRepo:    c.GetUserRepo(),
 		planRepo:    c.GetPlanRepo(),
 		addressRepo: c.GetAddressRepo(),
@@ -36,11 +39,6 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 		identitySvc: c.GetIdentityService(),
 		authContext: c.GetAuthTransientService(),
 	}
-}
-
-func (u *UserUsecase) SetContext(c *gin.Context) *UserUsecase {
-	u.ctx = c
-	return u
 }
 
 func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (any, error) {
@@ -116,7 +114,7 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 			err = u.addressRepo.AddAddressToUser(addressID, userID)
 			if err != nil {
 				// Log error but continue
-				u.logger.Errorf("Failed to assign address %d to user %d: %v", addressID, userID, err)
+				u.Logger.Errorf("Failed to assign address %d to user %d: %v", addressID, userID, err)
 			}
 		}
 	}
@@ -139,7 +137,7 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (any
 	// Get user addresses
 	addresses, err := u.addressRepo.GetAllByUserID(userID)
 	if err != nil {
-		u.logger.Errorf("Failed to get addresses for user %d: %v", userID, err)
+		u.Logger.Errorf("Failed to get addresses for user %d: %v", userID, err)
 	}
 
 	return map[string]interface{}{
@@ -310,7 +308,7 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error)
 
 func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (any, error) {
 	// Get the current user ID
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +362,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 
 func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (any, error) {
 	// Get the current user ID
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}

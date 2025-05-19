@@ -3,6 +3,7 @@ package basketusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
 
@@ -18,8 +19,7 @@ import (
 )
 
 type BasketUsecase struct {
-	ctx                *gin.Context
-	logger             sflogger.Logger
+	*usecase.BaseUsecase
 	basketRepo         repository.IBasketRepository
 	basketItemRepo     repository.IBasketItemRepository
 	productRepo        repository.IProductRepository
@@ -30,8 +30,9 @@ type BasketUsecase struct {
 
 func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	return &BasketUsecase{
-		logger:             c.GetLogger(),
-		basketRepo:         c.GetBasketRepo(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		}, basketRepo: c.GetBasketRepo(),
 		basketItemRepo:     c.GetBasketItemRepo(),
 		productRepo:        c.GetProductRepo(),
 		productVariantRepo: c.GetProductVariantRepo(),
@@ -40,13 +41,8 @@ func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	}
 }
 
-func (u *BasketUsecase) SetContext(c *gin.Context) *BasketUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (any, error) {
-	u.logger.Info("UpdateBasketCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateBasketCommand called", map[string]interface{}{
 		"params": params,
 	})
 
@@ -54,7 +50,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 		return nil, errors.New("آیتم‌های سبد خرید الزامی هستند")
 	}
 
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -271,11 +267,11 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 }
 
 func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, error) {
-	u.logger.Info("GetBasketQuery called", map[string]interface{}{
+	u.Logger.Info("GetBasketQuery called", map[string]interface{}{
 		"params": params,
 	})
 
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -301,11 +297,11 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, erro
 }
 
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (any, error) {
-	u.logger.Info("GetAllBasketUserQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllBasketUserQuery called", map[string]interface{}{
 		"params": params,
 	})
 
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +318,7 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 }
 
 func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (any, error) {
-	u.logger.Info("AdminGetAllBasketUserQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllBasketUserQuery called", map[string]interface{}{
 		"params": params,
 	})
 

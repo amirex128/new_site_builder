@@ -2,22 +2,20 @@ package siteusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
+	"github.com/gin-gonic/gin"
 	"time"
 
-	"github.com/gin-gonic/gin"
-
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/site"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type SiteUsecase struct {
-	ctx         *gin.Context
-	logger      sflogger.Logger
+	*usecase.BaseUsecase
 	repo        repository.ISiteRepository
 	settingRepo repository.ISettingRepository
 	authContext func(c *gin.Context) service.IAuthService
@@ -25,20 +23,17 @@ type SiteUsecase struct {
 
 func NewSiteUsecase(c contract.IContainer) *SiteUsecase {
 	return &SiteUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:        c.GetSiteRepo(),
 		settingRepo: c.GetSettingRepo(),
 		authContext: c.GetAuthTransientService(),
 	}
 }
 
-func (u *SiteUsecase) SetContext(c *gin.Context) *SiteUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, error) {
-	u.logger.Info("CreateSiteCommand called", map[string]interface{}{
+	u.Logger.Info("CreateSiteCommand called", map[string]interface{}{
 		"domain": *params.Domain,
 		"name":   *params.Name,
 	})
@@ -52,7 +47,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +88,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 
 	err = u.settingRepo.Create(setting)
 	if err != nil {
-		u.logger.Error("Failed to create settings for site", map[string]interface{}{
+		u.Logger.Error("Failed to create settings for site", map[string]interface{}{
 			"siteId": site.ID,
 			"error":  err.Error(),
 		})
@@ -111,7 +106,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 }
 
 func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, error) {
-	u.logger.Info("UpdateSiteCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateSiteCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -125,12 +120,12 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +185,7 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 }
 
 func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (any, error) {
-	u.logger.Info("DeleteSiteCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteSiteCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -204,12 +199,12 @@ func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +225,7 @@ func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (any, er
 }
 
 func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (any, error) {
-	u.logger.Info("GetByIdSiteQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdSiteQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -247,7 +242,7 @@ func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (any, erro
 }
 
 func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (any, error) {
-	u.logger.Info("GetByDomainSiteQuery called", map[string]interface{}{
+	u.Logger.Info("GetByDomainSiteQuery called", map[string]interface{}{
 		"domain": *params.Domain,
 	})
 
@@ -264,13 +259,13 @@ func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (a
 }
 
 func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (any, error) {
-	u.logger.Info("GetAllSiteQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllSiteQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Get user ID
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -297,13 +292,13 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (any, error)
 }
 
 func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (any, error) {
-	u.logger.Info("AdminGetAllSiteQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllSiteQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

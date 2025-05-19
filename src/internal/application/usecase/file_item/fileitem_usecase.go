@@ -2,6 +2,7 @@ package fileitemusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"path/filepath"
 	"regexp"
@@ -9,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -17,8 +17,8 @@ import (
 )
 
 type FileItemUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IFileItemRepository
+	*usecase.BaseUsecase
+	FileItemRepo   repository.IFileItemRepository
 	storageRepo    repository.IStorageRepository
 	storageService contractStorage.IStorageService
 	userID         int64
@@ -26,8 +26,10 @@ type FileItemUsecase struct {
 
 func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 	return &FileItemUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetFileItemRepo(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
+		FileItemRepo:   c.GetFileItemRepo(),
 		storageRepo:    c.GetStorageRepo(),
 		storageService: c.GetStorageService(),
 		userID:         1, // Placeholder, should come from the user context
@@ -65,7 +67,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 	// Get parent directory and its path
 	var parentPath string
 	if params.ParentID != nil && *params.ParentID > 0 {
-		parent, err := u.repo.GetByID(*params.ParentID)
+		parent, err := u.FileItemRepo.GetByID(*params.ParentID)
 		if err != nil {
 			return nil, fmt.Errorf("parent directory not found: %v", err)
 		}
@@ -171,14 +173,14 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 
 		// Update parent directory size if applicable
 		if params.ParentID != nil && *params.ParentID > 0 {
-			if err := u.repo.UpdateSize(*params.ParentID, fileItem.Size); err != nil {
+			if err := u.FileItemRepo.UpdateSize(*params.ParentID, fileItem.Size); err != nil {
 				return nil, fmt.Errorf("error updating parent directory size: %v", err)
 			}
 		}
 	}
 
 	// Save file item to database
-	if err := u.repo.Create(fileItem); err != nil {
+	if err := u.FileItemRepo.Create(fileItem); err != nil {
 		return nil, fmt.Errorf("error saving file item: %v", err)
 	}
 
@@ -188,7 +190,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 // DeleteFileItemCommand marks a file item as deleted
 func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (any, error) {
 	// Check if file exists
-	fileItem, err := u.repo.GetByID(*params.ID)
+	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, fmt.Errorf("file not found: %v", err)
 	}
@@ -199,7 +201,7 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 	}
 
 	// Mark as deleted
-	if err := u.repo.SetDelete(*params.ID); err != nil {
+	if err := u.FileItemRepo.SetDelete(*params.ID); err != nil {
 		return nil, fmt.Errorf("error deleting file: %v", err)
 	}
 
@@ -211,7 +213,7 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 // ForceDeleteFileItemCommand permanently deletes a file item
 func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (any, error) {
 	// Check if file exists
-	fileItem, err := u.repo.GetByID(*params.ID)
+	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, fmt.Errorf("file not found: %v", err)
 	}
@@ -229,14 +231,14 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 	}
 
 	if !success {
-		u.logger.Warn("File not found in storage but will be removed from database", map[string]interface{}{
+		u.Logger.Warn("File not found in storage but will be removed from database", map[string]interface{}{
 			"fileId": fileItem.ID,
 			"path":   fullPath,
 		})
 	}
 
 	// Delete from database (this will also recursively delete children if it's a directory)
-	if err := u.repo.ForceDelete(*params.ID); err != nil {
+	if err := u.FileItemRepo.ForceDelete(*params.ID); err != nil {
 		return nil, fmt.Errorf("error permanently deleting file: %v", err)
 	}
 
@@ -254,7 +256,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 
 	// Update parent directory size if applicable
 	if fileItem.ParentID != nil && *fileItem.ParentID > 0 {
-		if err := u.repo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
+		if err := u.FileItemRepo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
 			return nil, fmt.Errorf("error updating parent directory size: %v", err)
 		}
 	}
@@ -267,7 +269,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 // RestoreFileItemCommand restores a deleted file item
 func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (any, error) {
 	// Restore the file
-	result := u.repo.SetRestore(*params.ID)
+	result := u.FileItemRepo.SetRestore(*params.ID)
 	if result != nil {
 		return nil, fmt.Errorf("error restoring file: %v", result)
 	}
@@ -280,7 +282,7 @@ func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileIte
 // UpdateFileItemCommand updates file item properties
 func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (any, error) {
 	// Check if file exists
-	fileItem, err := u.repo.GetByID(*params.ID)
+	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, fmt.Errorf("file not found: %v", err)
 	}
@@ -308,7 +310,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 	}
 
 	// Save changes
-	if err := u.repo.Update(fileItem); err != nil {
+	if err := u.FileItemRepo.Update(fileItem); err != nil {
 		return nil, fmt.Errorf("error updating file: %v", err)
 	}
 
@@ -318,7 +320,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 // FileOperationCommand handles file operations like copy, move, rename
 func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (any, error) {
 	// Check if file exists
-	fileItem, err := u.repo.GetByID(*params.ID)
+	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, fmt.Errorf("file not found: %v", err)
 	}
@@ -361,7 +363,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 		// Update in database
 		fileItem.Name = newName
-		if err := u.repo.Update(fileItem); err != nil {
+		if err := u.FileItemRepo.Update(fileItem); err != nil {
 			return nil, fmt.Errorf("error updating file name: %v", err)
 		}
 
@@ -384,7 +386,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			// Moving to root
 			newParentPath = ""
 		} else {
-			newParent, err = u.repo.GetByID(*params.NewParentID)
+			newParent, err = u.FileItemRepo.GetByID(*params.NewParentID)
 			if err != nil {
 				return nil, fmt.Errorf("new parent directory not found: %v", err)
 			}
@@ -420,19 +422,19 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			fileItem.ParentID = params.NewParentID
 		}
 
-		if err := u.repo.Update(fileItem); err != nil {
+		if err := u.FileItemRepo.Update(fileItem); err != nil {
 			return nil, fmt.Errorf("error updating file: %v", err)
 		}
 
 		// Update size for old and new parent
 		if fileItem.ParentID != nil && *fileItem.ParentID > 0 {
-			if err := u.repo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
+			if err := u.FileItemRepo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
 				return nil, fmt.Errorf("error updating old parent size: %v", err)
 			}
 		}
 
 		if *params.NewParentID > 0 {
-			if err := u.repo.UpdateSize(*params.NewParentID, fileItem.Size); err != nil {
+			if err := u.FileItemRepo.UpdateSize(*params.NewParentID, fileItem.Size); err != nil {
 				return nil, fmt.Errorf("error updating new parent size: %v", err)
 			}
 		}
@@ -471,7 +473,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			// Copying to root
 			newParentPath = ""
 		} else {
-			newParent, err = u.repo.GetByID(*params.NewParentID)
+			newParent, err = u.FileItemRepo.GetByID(*params.NewParentID)
 			if err != nil {
 				return nil, fmt.Errorf("new parent directory not found: %v", err)
 			}
@@ -515,13 +517,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		newFileItem.CreatedAt = time.Now()
 		newFileItem.UpdatedAt = time.Now()
 
-		if err := u.repo.Create(newFileItem); err != nil {
+		if err := u.FileItemRepo.Create(newFileItem); err != nil {
 			return nil, fmt.Errorf("error creating new file item: %v", err)
 		}
 
 		// Update new parent size
 		if *params.NewParentID > 0 {
-			if err := u.repo.UpdateSize(*params.NewParentID, fileItem.Size); err != nil {
+			if err := u.FileItemRepo.UpdateSize(*params.NewParentID, fileItem.Size); err != nil {
 				return nil, fmt.Errorf("error updating new parent size: %v", err)
 			}
 		}
@@ -548,7 +550,7 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (any, er
 	}
 
 	// Get file items
-	fileItems, err := u.repo.GetByIDs(ids)
+	fileItems, err := u.FileItemRepo.GetByIDs(ids)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving file items: %v", err)
 	}
@@ -620,7 +622,7 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (any, er
 // GetDeletedTreeDirectoryQuery retrieves deleted file items
 func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (any, error) {
 	// Get deleted items
-	items, err := u.repo.GetDeletedItems(u.userID)
+	items, err := u.FileItemRepo.GetDeletedItems(u.userID)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving deleted items: %v", err)
 	}
@@ -632,7 +634,7 @@ func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDelet
 // GetDownloadFileItemByIdQuery retrieves a file for download
 func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (any, error) {
 	// Check if file exists
-	fileItem, err := u.repo.GetByID(*params.ID)
+	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, fmt.Errorf("file not found: %v", err)
 	}
@@ -665,7 +667,7 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 // GetTreeDirectoryQuery retrieves a directory tree
 func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (any, error) {
 	// Get tree
-	items, err := u.repo.GetTreeByUserIDAndParentID(u.userID, params.ParentFileItemID)
+	items, err := u.FileItemRepo.GetTreeByUserIDAndParentID(u.userID, params.ParentFileItemID)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving directory tree: %v", err)
 	}

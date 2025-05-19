@@ -2,15 +2,15 @@ package websiteusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/website"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 )
 
 type WebsiteUsecase struct {
-	logger              sflogger.Logger
+	*usecase.BaseUsecase
 	articleRepo         repository.IArticleRepository
 	articleCategoryRepo repository.IArticleCategoryRepository
 	productRepo         repository.IProductRepository
@@ -22,7 +22,9 @@ type WebsiteUsecase struct {
 
 func NewWebsiteUsecase(c contract.IContainer) *WebsiteUsecase {
 	return &WebsiteUsecase{
-		logger:              c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		articleRepo:         c.GetArticleRepo(),
 		articleCategoryRepo: c.GetArticleCategoryRepo(),
 		productRepo:         c.GetProductRepo(),

@@ -1,6 +1,7 @@
 package articleusecase
 
 import (
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"strings"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 )
 
 type ArticleUsecase struct {
-	logger       sflogger.Logger
+	*usecase.BaseUsecase
 	articleRepo  repository.IArticleRepository
 	categoryRepo repository.IArticleCategoryRepository
 	mediaRepo    repository.IMediaRepository
@@ -20,7 +21,9 @@ type ArticleUsecase struct {
 
 func NewArticleUsecase(c contract.IContainer) *ArticleUsecase {
 	return &ArticleUsecase{
-		logger:       c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		articleRepo:  c.GetArticleRepo(),
 		categoryRepo: c.GetArticleCategoryRepo(),
 		mediaRepo:    c.GetMediaRepo(),
@@ -29,7 +32,7 @@ func NewArticleUsecase(c contract.IContainer) *ArticleUsecase {
 
 func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleCommand) (any, error) {
 	// Implementation for creating an article based on .NET CreateArticleCommand
-	u.logger.Info("Creating new article", map[string]interface{}{"title": *params.Title})
+	u.Logger.Info("Creating new article", map[string]interface{}{"title": *params.Title})
 
 	// Convert SeoTags slice to string (comma-separated)
 	var seoTags string
@@ -65,7 +68,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 		for _, mediaID := range params.MediaIDs {
 			err = u.articleRepo.AddMediaToArticle(newArticle.ID, mediaID)
 			if err != nil {
-				u.logger.Errorf("Failed to add media %d to article %d: %v", mediaID, newArticle.ID, err)
+				u.Logger.Errorf("Failed to add media %d to article %d: %v", mediaID, newArticle.ID, err)
 				// Continue with other media instead of failing completely
 			}
 		}
@@ -76,7 +79,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 		for _, categoryID := range params.CategoryIDs {
 			err = u.articleRepo.AddCategoryToArticle(newArticle.ID, categoryID)
 			if err != nil {
-				u.logger.Errorf("Failed to add category %d to article %d: %v", categoryID, newArticle.ID, err)
+				u.Logger.Errorf("Failed to add category %d to article %d: %v", categoryID, newArticle.ID, err)
 				// Continue with other categories instead of failing completely
 			}
 		}
@@ -88,7 +91,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 
 func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (any, error) {
 	// Implementation for updating an article based on .NET UpdateArticleCommand
-	u.logger.Info("Updating article", map[string]interface{}{"id": *params.ID})
+	u.Logger.Info("Updating article", map[string]interface{}{"id": *params.ID})
 
 	// Get existing article
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
@@ -135,14 +138,14 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 		// First remove all existing media associations
 		err = u.articleRepo.RemoveAllMediaFromArticle(existingArticle.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to remove media from article %d: %v", existingArticle.ID, err)
+			u.Logger.Errorf("Failed to remove media from article %d: %v", existingArticle.ID, err)
 		}
 
 		// Then add the new ones
 		for _, mediaID := range params.MediaIDs {
 			err = u.articleRepo.AddMediaToArticle(existingArticle.ID, mediaID)
 			if err != nil {
-				u.logger.Errorf("Failed to add media %d to article %d: %v", mediaID, existingArticle.ID, err)
+				u.Logger.Errorf("Failed to add media %d to article %d: %v", mediaID, existingArticle.ID, err)
 			}
 		}
 	}
@@ -152,14 +155,14 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 		// First remove all existing category associations
 		err = u.articleRepo.RemoveAllCategoriesFromArticle(existingArticle.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to remove categories from article %d: %v", existingArticle.ID, err)
+			u.Logger.Errorf("Failed to remove categories from article %d: %v", existingArticle.ID, err)
 		}
 
 		// Then add the new ones
 		for _, categoryID := range params.CategoryIDs {
 			err = u.articleRepo.AddCategoryToArticle(existingArticle.ID, categoryID)
 			if err != nil {
-				u.logger.Errorf("Failed to add category %d to article %d: %v", categoryID, existingArticle.ID, err)
+				u.Logger.Errorf("Failed to add category %d to article %d: %v", categoryID, existingArticle.ID, err)
 			}
 		}
 	}
@@ -169,7 +172,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 
 func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (any, error) {
 	// Implementation for deleting an article based on .NET DeleteArticleCommand
-	u.logger.Info("Deleting article", map[string]interface{}{"id": *params.ID})
+	u.Logger.Info("Deleting article", map[string]interface{}{"id": *params.ID})
 
 	// Get the article first to ensure it exists
 	_, err := u.articleRepo.GetByID(*params.ID)
@@ -195,7 +198,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 
 func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery) (any, error) {
 	// Implementation to get article by ID based on .NET GetByIdArticleQuery
-	u.logger.Info("Getting article by ID", map[string]interface{}{"id": *params.ID})
+	u.Logger.Info("Getting article by ID", map[string]interface{}{"id": *params.ID})
 
 	// Get the article
 	result, err := u.articleRepo.GetByID(*params.ID)
@@ -210,7 +213,7 @@ func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery
 	// Get media information
 	mediaItems, err := u.articleRepo.GetArticleMedia(result.ID)
 	if err != nil {
-		u.logger.Errorf("Failed to get media for article %d: %v", result.ID, err)
+		u.Logger.Errorf("Failed to get media for article %d: %v", result.ID, err)
 	}
 
 	return map[string]interface{}{
@@ -221,7 +224,7 @@ func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery
 
 func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQuery) (any, error) {
 	// Implementation to get article by slug based on .NET GetSingleArticleQuery
-	u.logger.Info("Getting article by slug", map[string]interface{}{
+	u.Logger.Info("Getting article by slug", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteID": *params.SiteID,
 	})
@@ -235,7 +238,7 @@ func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQ
 	// Get media information
 	mediaItems, err := u.articleRepo.GetArticleMedia(result.ID)
 	if err != nil {
-		u.logger.Errorf("Failed to get media for article %d: %v", result.ID, err)
+		u.Logger.Errorf("Failed to get media for article %d: %v", result.ID, err)
 	}
 
 	return map[string]interface{}{
@@ -246,7 +249,7 @@ func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQ
 
 func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) (any, error) {
 	// Implementation to get all articles by site ID, based on .NET GetAllArticleQuery
-	u.logger.Info("Getting all articles by site ID", map[string]interface{}{"siteID": *params.SiteID})
+	u.Logger.Info("Getting all articles by site ID", map[string]interface{}{"siteID": *params.SiteID})
 
 	// Check if user has access to this site
 	// In a real implementation, check if the current user has rights to view articles for this site
@@ -263,7 +266,7 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 	for i, article := range result {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
+			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
 			media = []domain.Media{}
 		}
 
@@ -281,7 +284,7 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 
 func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (any, error) {
 	// Implementation to get articles by category, based on .NET GetArticleByCategoryQuery
-	u.logger.Info("Getting articles by category slug", map[string]interface{}{
+	u.Logger.Info("Getting articles by category slug", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteID": *params.SiteID,
 	})
@@ -303,7 +306,7 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 	for i, article := range result {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
+			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
 			media = []domain.Media{}
 		}
 
@@ -322,7 +325,7 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 
 func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFiltersSortArticleQuery) (any, error) {
 	// Implementation to get articles with filtering and sorting, based on .NET GetByFiltersSortArticleQuery
-	u.logger.Info("Getting articles with filters and sorting", map[string]interface{}{"siteID": *params.SiteID})
+	u.Logger.Info("Getting articles with filters and sorting", map[string]interface{}{"siteID": *params.SiteID})
 
 	// This is a more complex query that would need special handling
 	// For now, we'll implement a basic version that just calls through to a repository method
@@ -342,7 +345,7 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 	for i, article := range result {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
+			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
 			media = []domain.Media{}
 		}
 
@@ -360,7 +363,7 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 
 func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (any, error) {
 	// Implementation to get all articles for admin, based on .NET AdminGetAllArticleQuery
-	u.logger.Info("Admin getting all articles", map[string]interface{}{})
+	u.Logger.Info("Admin getting all articles", map[string]interface{}{})
 
 	// Check if user has admin access
 	// In a real implementation, check if the current user has admin rights
@@ -376,7 +379,7 @@ func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArti
 	for i, article := range result {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
+			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
 			media = []domain.Media{}
 		}
 

@@ -2,6 +2,7 @@ package planusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 
@@ -16,7 +17,7 @@ import (
 )
 
 type PlanUsecase struct {
-	ctx         *gin.Context
+	*usecase.BaseUsecase
 	logger      sflogger.Logger
 	planRepo    repository.IPlanRepository
 	userRepo    repository.IUserRepository
@@ -25,22 +26,19 @@ type PlanUsecase struct {
 
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 	return &PlanUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		planRepo:    c.GetPlanRepo(),
 		userRepo:    c.GetUserRepo(),
 		authContext: c.GetAuthTransientService(),
 	}
 }
 
-func (u *PlanUsecase) SetContext(c *gin.Context) *PlanUsecase {
-	u.ctx = c
-	return u
-}
-
 // CreatePlanCommand creates a new plan
 func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +86,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 // UpdatePlanCommand updates an existing plan
 func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +166,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 // DeletePlanCommand deletes a plan
 func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

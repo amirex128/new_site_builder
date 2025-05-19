@@ -10,7 +10,7 @@ DOCKER_TAG=latest
 
 # Generate API documentation
 docs:
-	swag init -g */**/*.go -o ./docs
+	swag init -g src/internal/api/handler/http/**/*.go -o ./docs
 
 # Build the application
 build:

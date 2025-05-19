@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"errors"
+	"strings"
 
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -25,8 +25,7 @@ func (a *Authenticator) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			resp.ErrorUnauthorized(c, err)
-			c.Abort()
+			resp.Unauthorized(c, err.Error())
 			return
 		}
 
@@ -39,16 +38,14 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			resp.ErrorUnauthorized(c, err)
-			c.Abort()
+			resp.Unauthorized(c, err.Error())
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			resp.ErrorUnauthorized(c, err)
-			c.Abort()
+			resp.Unauthorized(c, err.Error())
 			return
 		}
 
@@ -69,8 +66,7 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 				}
 			}
 			if !hasRole {
-				resp.ErrorForbidden(c, errors.New("insufficient permissions"))
-				c.Abort()
+				resp.Forbidden(c, "Insufficient permissions for role: "+requiredRole)
 				return
 			}
 		}
@@ -79,21 +75,24 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 	}
 }
 
+// Must is an alias for MustRole for backward compatibility
+func (a *Authenticator) Must(roles ...string) gin.HandlerFunc {
+	return a.MustRole(roles...)
+}
+
 // ShouldRole requires the user to have AT LEAST ONE of the specified roles (OR logic)
 func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			resp.ErrorUnauthorized(c, err)
-			c.Abort()
+			resp.Unauthorized(c, err.Error())
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			resp.ErrorUnauthorized(c, err)
-			c.Abort()
+			resp.Unauthorized(c, err.Error())
 			return
 		}
 
@@ -120,12 +119,16 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 			}
 
 			if !hasAnyRole {
-				resp.ErrorForbidden(c, errors.New("insufficient permissions"))
-				c.Abort()
+				resp.Forbidden(c, "Insufficient permissions, requires one of: "+strings.Join(roles, ", "))
 				return
 			}
 		}
 
 		c.Next()
 	}
+}
+
+// Should is an alias for ShouldRole for backward compatibility
+func (a *Authenticator) Should(roles ...string) gin.HandlerFunc {
+	return a.ShouldRole(roles...)
 }

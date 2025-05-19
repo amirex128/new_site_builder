@@ -2,6 +2,7 @@ package productreviewusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 )
 
 type ProductReviewUsecase struct {
-	ctx         *gin.Context
+	*usecase.BaseUsecase
 	logger      sflogger.Logger
 	repo        repository.IProductReviewRepository
 	productRepo repository.IProductRepository
@@ -25,20 +26,17 @@ type ProductReviewUsecase struct {
 
 func NewProductReviewUsecase(c contract.IContainer) *ProductReviewUsecase {
 	return &ProductReviewUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:        c.GetProductReviewRepo(),
 		productRepo: c.GetProductRepo(),
 		authContext: c.GetAuthTransientService(),
 	}
 }
 
-func (u *ProductReviewUsecase) SetContext(c *gin.Context) *ProductReviewUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review.CreateProductReviewCommand) (any, error) {
-	u.logger.Info("CreateProductReviewCommand called", map[string]interface{}{
+	u.Logger.Info("CreateProductReviewCommand called", map[string]interface{}{
 		"rating":    *params.Rating,
 		"productId": *params.ProductID,
 		"siteId":    *params.SiteID,
@@ -54,13 +52,13 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Get customer ID if available (in this monolithic app, we may have a customer context too)
-	customerID, _ := u.authContext(u.ctx).GetCustomerID()
+	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
 	if customerID == 0 {
 		// If no customer ID available, use a default or generate one
 		customerID = 1 // Default value, in a real app this would need proper handling
@@ -98,7 +96,7 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 }
 
 func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review.UpdateProductReviewCommand) (any, error) {
-	u.logger.Info("UpdateProductReviewCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateProductReviewCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -112,13 +110,13 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if user has access to this review
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +170,7 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 }
 
 func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review.DeleteProductReviewCommand) (any, error) {
-	u.logger.Info("DeleteProductReviewCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteProductReviewCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -186,13 +184,13 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if user has access to this review
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +211,7 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 }
 
 func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.GetByIdProductReviewQuery) (any, error) {
-	u.logger.Info("GetByIdProductReviewQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdProductReviewQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -228,8 +226,8 @@ func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.
 
 	// Check user access - anyone can view approved reviews
 	if !review.Approved {
-		userID, _ := u.authContext(u.ctx).GetUserID()
-		isAdmin, _ := u.authContext(u.ctx).IsAdmin()
+		userID, _ := u.authContext(u.Ctx).GetUserID()
+		isAdmin, _ := u.authContext(u.Ctx).IsAdmin()
 
 		if review.UserID != userID && !isAdmin {
 			return nil, errors.New("شما به این نظر دسترسی ندارید")
@@ -240,7 +238,7 @@ func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.
 }
 
 func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.GetAllProductReviewQuery) (any, error) {
-	u.logger.Info("GetAllProductReviewQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllProductReviewQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -267,13 +265,13 @@ func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.G
 }
 
 func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_review.AdminGetAllProductReviewQuery) (any, error) {
-	u.logger.Info("AdminGetAllProductReviewQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllProductReviewQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

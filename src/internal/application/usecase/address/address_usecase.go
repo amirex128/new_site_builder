@@ -2,6 +2,7 @@ package addressusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
 
@@ -16,8 +17,7 @@ import (
 )
 
 type AddressUsecase struct {
-	ctx          *gin.Context
-	logger       sflogger.Logger
+	*usecase.BaseUsecase
 	repo         repository.IAddressRepository
 	cityRepo     repository.ICityRepository
 	provinceRepo repository.IProvinceRepository
@@ -26,7 +26,9 @@ type AddressUsecase struct {
 
 func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 	return &AddressUsecase{
-		logger:       c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:         c.GetAddressRepo(),
 		cityRepo:     c.GetCityRepo(),
 		provinceRepo: c.GetProvinceRepo(),
@@ -34,14 +36,9 @@ func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 	}
 }
 
-func (u *AddressUsecase) SetContext(c *gin.Context) *AddressUsecase {
-	u.ctx = c
-	return u
-}
-
 // CreateAddressCommand handles the creation of a new address
 func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressCommand) (any, error) {
-	u.logger.Info("CreateAddressCommand called", map[string]interface{}{
+	u.Logger.Info("CreateAddressCommand called", map[string]interface{}{
 		"title": *params.Title,
 	})
 
@@ -53,9 +50,9 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		customerID = *params.CustomerID
 	} else {
 		// Otherwise try to get from auth context
-		customerID, err = u.authContext(u.ctx).GetCustomerID()
+		customerID, err = u.authContext(u.Ctx).GetCustomerID()
 		if err != nil {
-			u.logger.Info("No customer ID in auth context, trying user ID", nil)
+			u.Logger.Info("No customer ID in auth context, trying user ID", nil)
 			// Not a customer, try as a user
 			customerID = 0
 		}
@@ -66,7 +63,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		userID = *params.UserID
 	} else if customerID == 0 {
 		// If no customer ID, try to get user ID from auth context
-		userID, err = u.authContext(u.ctx).GetUserID()
+		userID, err = u.authContext(u.Ctx).GetUserID()
 		if err != nil {
 			return nil, errors.New("خطا در احراز هویت کاربر")
 		}
@@ -108,7 +105,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	// Save to repository
 	err = u.repo.Create(newAddress)
 	if err != nil {
-		u.logger.Error("Error creating address", map[string]interface{}{
+		u.Logger.Error("Error creating address", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, errors.New("خطا در ایجاد آدرس")
@@ -118,14 +115,14 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	if customerID > 0 {
 		// This would typically involve updating a many-to-many relationship
 		// For simplicity, we'll just log that this would happen
-		u.logger.Info("Would add address to customer", map[string]interface{}{
+		u.Logger.Info("Would add address to customer", map[string]interface{}{
 			"addressId":  newAddress.ID,
 			"customerId": customerID,
 		})
 	} else if userID > 0 {
 		err = u.repo.AddAddressToUser(newAddress.ID, userID)
 		if err != nil {
-			u.logger.Error("Error adding address to user", map[string]interface{}{
+			u.Logger.Error("Error adding address to user", map[string]interface{}{
 				"error":     err.Error(),
 				"addressId": newAddress.ID,
 				"userId":    userID,
@@ -145,7 +142,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 
 // UpdateAddressCommand handles updating an existing address
 func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressCommand) (any, error) {
-	u.logger.Info("UpdateAddressCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateAddressCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -159,10 +156,10 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	}
 
 	// Check ownership
-	customerID, _ := u.authContext(u.ctx).GetCustomerID()
-	userID, _ := u.authContext(u.ctx).GetUserID()
+	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
+	userID, _ := u.authContext(u.Ctx).GetUserID()
 
-	isAdmin, _ := u.authContext(u.ctx).IsAdmin()
+	isAdmin, _ := u.authContext(u.Ctx).IsAdmin()
 
 	// Check if user has access to this address
 	if !isAdmin && existingAddress.CustomerID != customerID && existingAddress.UserID != userID {
@@ -214,7 +211,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	// Update in repository
 	err = u.repo.Update(existingAddress)
 	if err != nil {
-		u.logger.Error("Error updating address", map[string]interface{}{
+		u.Logger.Error("Error updating address", map[string]interface{}{
 			"error": err.Error(),
 			"id":    *params.ID,
 		})
@@ -232,7 +229,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 
 // DeleteAddressCommand handles deleting an address
 func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressCommand) (any, error) {
-	u.logger.Info("DeleteAddressCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteAddressCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -246,10 +243,10 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 	}
 
 	// Check ownership
-	customerID, _ := u.authContext(u.ctx).GetCustomerID()
-	userID, _ := u.authContext(u.ctx).GetUserID()
+	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
+	userID, _ := u.authContext(u.Ctx).GetUserID()
 
-	isAdmin, _ := u.authContext(u.ctx).IsAdmin()
+	isAdmin, _ := u.authContext(u.Ctx).IsAdmin()
 
 	// Check if user has access to this address
 	if !isAdmin && existingAddress.CustomerID != customerID && existingAddress.UserID != userID {
@@ -259,7 +256,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 	// Delete address
 	err = u.repo.Delete(*params.ID)
 	if err != nil {
-		u.logger.Error("Error deleting address", map[string]interface{}{
+		u.Logger.Error("Error deleting address", map[string]interface{}{
 			"error": err.Error(),
 			"id":    *params.ID,
 		})
@@ -274,7 +271,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 
 // GetByIdAddressQuery handles retrieving an address by ID
 func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery) (any, error) {
-	u.logger.Info("GetByIdAddressQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdAddressQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -288,10 +285,10 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 	}
 
 	// Check ownership
-	customerID, _ := u.authContext(u.ctx).GetCustomerID()
-	userID, _ := u.authContext(u.ctx).GetUserID()
+	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
+	userID, _ := u.authContext(u.Ctx).GetUserID()
 
-	isAdmin, _ := u.authContext(u.ctx).IsAdmin()
+	isAdmin, _ := u.authContext(u.Ctx).IsAdmin()
 
 	// Check if user has access to this address
 	if !isAdmin && result.CustomerID != customerID && result.UserID != userID {
@@ -303,7 +300,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 
 // GetAllAddressQuery handles retrieving all addresses for the current user/customer
 func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) (any, error) {
-	u.logger.Info("GetAllAddressQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllAddressQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
@@ -313,7 +310,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 	var err error
 
 	// Try to get customer ID first
-	customerID, customerErr := u.authContext(u.ctx).GetCustomerID()
+	customerID, customerErr := u.authContext(u.Ctx).GetCustomerID()
 	if customerErr == nil && customerID > 0 {
 		// Get addresses for customer
 		results, err = u.repo.GetAllByCustomerID(customerID)
@@ -323,7 +320,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 		count = int64(len(results))
 	} else {
 		// Try user ID
-		userID, userErr := u.authContext(u.ctx).GetUserID()
+		userID, userErr := u.authContext(u.Ctx).GetUserID()
 		if userErr != nil {
 			return nil, errors.New("خطا در احراز هویت کاربر")
 		}
@@ -353,13 +350,13 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 
 // AdminGetAllAddressQuery handles retrieving all addresses for admin
 func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddressQuery) (any, error) {
-	u.logger.Info("AdminGetAllAddressQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllAddressQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
@@ -371,7 +368,7 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 	// Get all addresses with pagination
 	results, count, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		u.logger.Error("Error getting all addresses", map[string]interface{}{
+		u.Logger.Error("Error getting all addresses", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, errors.New("خطا در دریافت آدرس ها")
@@ -394,7 +391,7 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 
 // GetAllCityQuery handles retrieving all cities
 func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (any, error) {
-	u.logger.Info("GetAllCityQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllCityQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
@@ -402,7 +399,7 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (any, 
 	// Get all cities with pagination
 	results, count, err := u.cityRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		u.logger.Error("Error getting all cities", map[string]interface{}{
+		u.Logger.Error("Error getting all cities", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, errors.New("خطا در دریافت شهرها")
@@ -441,7 +438,7 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (any, 
 
 // GetAllProvinceQuery handles retrieving all provinces
 func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery) (any, error) {
-	u.logger.Info("GetAllProvinceQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllProvinceQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
@@ -449,7 +446,7 @@ func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery
 	// Get all provinces with pagination
 	results, count, err := u.provinceRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		u.logger.Error("Error getting all provinces", map[string]interface{}{
+		u.Logger.Error("Error getting all provinces", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, errors.New("خطا در دریافت استان ها")

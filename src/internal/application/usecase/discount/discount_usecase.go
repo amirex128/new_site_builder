@@ -2,13 +2,13 @@ package discountusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -17,33 +17,29 @@ import (
 )
 
 type DiscountUsecase struct {
-	ctx         *gin.Context
-	logger      sflogger.Logger
-	repo        repository.IDiscountRepository
-	authContext func(c *gin.Context) service.IAuthService
+	*usecase.BaseUsecase
+	discountRepo repository.IDiscountRepository
+	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 	return &DiscountUsecase{
-		logger:      c.GetLogger(),
-		repo:        c.GetDiscountRepo(),
-		authContext: c.GetAuthTransientService(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
+		discountRepo: c.GetDiscountRepo(),
+		authContext:  c.GetAuthTransientService(),
 	}
 }
 
-func (u *DiscountUsecase) SetContext(c *gin.Context) *DiscountUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (any, error) {
-	u.logger.Info("CreateDiscountCommand called", map[string]interface{}{
+	u.Logger.Info("CreateDiscountCommand called", map[string]interface{}{
 		"code":   *params.Code,
 		"siteId": *params.SiteID,
 	})
 
 	// Check for existing discount code in the same site
-	existingDiscount, err := u.repo.GetByCode(*params.Code)
+	existingDiscount, err := u.discountRepo.GetByCode(*params.Code)
 	if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
 		if err == nil && existingDiscount.SiteID == *params.SiteID {
 			return nil, errors.New("کد تخفیف تکراری است")
@@ -56,7 +52,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -76,13 +72,13 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	}
 
 	// Create the discount in the database
-	err = u.repo.Create(newDiscount)
+	err = u.discountRepo.Create(newDiscount)
 	if err != nil {
 		return nil, err
 	}
 
 	// Fetch the created discount
-	createdDiscount, err := u.repo.GetByID(newDiscount.ID)
+	createdDiscount, err := u.discountRepo.GetByID(newDiscount.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -91,12 +87,12 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 }
 
 func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (any, error) {
-	u.logger.Info("UpdateDiscountCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateDiscountCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get existing discount
-	existingDiscount, err := u.repo.GetByID(*params.ID)
+	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("تخفیف یافت نشد")
@@ -105,12 +101,12 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	}
 
 	// Check user access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +117,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 
 	// Validate code uniqueness if changed
 	if params.Code != nil && *params.Code != existingDiscount.Code {
-		codeDiscount, err := u.repo.GetByCode(*params.Code)
+		codeDiscount, err := u.discountRepo.GetByCode(*params.Code)
 		if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
 			if err == nil && codeDiscount.ID != *params.ID {
 				return nil, errors.New("کد تخفیف تکراری است")
@@ -157,13 +153,13 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	existingDiscount.UpdatedAt = time.Now()
 
 	// Update the discount
-	err = u.repo.Update(existingDiscount)
+	err = u.discountRepo.Update(existingDiscount)
 	if err != nil {
 		return nil, err
 	}
 
 	// Fetch the updated discount
-	updatedDiscount, err := u.repo.GetByID(existingDiscount.ID)
+	updatedDiscount, err := u.discountRepo.GetByID(existingDiscount.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -172,12 +168,12 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 }
 
 func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (any, error) {
-	u.logger.Info("DeleteDiscountCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteDiscountCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get existing discount
-	existingDiscount, err := u.repo.GetByID(*params.ID)
+	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("تخفیف یافت نشد")
@@ -186,12 +182,12 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 	}
 
 	// Check user access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +197,7 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 	}
 
 	// Delete the discount
-	err = u.repo.Delete(*params.ID)
+	err = u.discountRepo.Delete(*params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -212,12 +208,12 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 }
 
 func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQuery) (any, error) {
-	u.logger.Info("GetByIdDiscountQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdDiscountQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get discount by ID
-	discount, err := u.repo.GetByID(*params.ID)
+	discount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("تخفیف یافت نشد")
@@ -226,9 +222,9 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 	}
 
 	// Check user access - anyone can view discounts but logging for audit
-	userID, _ := u.authContext(u.ctx).GetUserID()
+	userID, _ := u.authContext(u.Ctx).GetUserID()
 	if userID > 0 {
-		u.logger.Info("Discount accessed by user", map[string]interface{}{
+		u.Logger.Info("Discount accessed by user", map[string]interface{}{
 			"discountId": discount.ID,
 			"userId":     userID,
 		})
@@ -254,7 +250,7 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 }
 
 func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQuery) (any, error) {
-	u.logger.Info("GetAllDiscountQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllDiscountQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -264,7 +260,7 @@ func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQue
 	// In a real implementation, we would check if the user has access to this site
 
 	// Get all discounts for the site
-	discounts, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	discounts, count, err := u.discountRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
@@ -301,13 +297,13 @@ func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQue
 }
 
 func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllDiscountQuery) (any, error) {
-	u.logger.Info("AdminGetAllDiscountQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllDiscountQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -317,7 +313,7 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 	}
 
 	// Get all discounts across all sites for admin
-	discounts, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	discounts, count, err := u.discountRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}

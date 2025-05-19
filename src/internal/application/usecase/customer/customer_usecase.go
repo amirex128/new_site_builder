@@ -3,6 +3,7 @@ package customerusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"net/url"
 	"os"
@@ -20,8 +21,7 @@ import (
 )
 
 type CustomerUsecase struct {
-	ctx          *gin.Context
-	logger       sflogger.Logger
+	*usecase.BaseUsecase
 	repo         repository.ICustomerRepository
 	fileItemRepo repository.IFileItemRepository
 	addressRepo  repository.IAddressRepository
@@ -32,7 +32,9 @@ type CustomerUsecase struct {
 
 func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
 	return &CustomerUsecase{
-		logger:       c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:         c.GetCustomerRepo(),
 		fileItemRepo: c.GetFileItemRepo(),
 		addressRepo:  c.GetAddressRepo(),
@@ -42,14 +44,9 @@ func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
 	}
 }
 
-func (u *CustomerUsecase) SetContext(c *gin.Context) *CustomerUsecase {
-	u.ctx = c
-	return u
-}
-
 // LoginCustomerCommand handles customer login
 func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCommand) (any, error) {
-	u.logger.Info("LoginCustomerCommand called", map[string]interface{}{
+	u.Logger.Info("LoginCustomerCommand called", map[string]interface{}{
 		"email": *params.Email,
 	})
 
@@ -86,7 +83,7 @@ func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCom
 
 // RegisterCustomerCommand handles customer registration
 func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCustomerCommand) (any, error) {
-	u.logger.Info("RegisterCustomerCommand called", map[string]interface{}{
+	u.Logger.Info("RegisterCustomerCommand called", map[string]interface{}{
 		"email":  *params.Email,
 		"siteId": *params.SiteID,
 	})
@@ -115,7 +112,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 	// Save customer
 	err = u.repo.Create(newCustomer)
 	if err != nil {
-		u.logger.Error("Error creating customer", map[string]interface{}{
+		u.Logger.Error("Error creating customer", map[string]interface{}{
 			"error": err.Error(),
 			"email": *params.Email,
 		})
@@ -140,7 +137,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 
 // RequestVerifyAndForgetCustomerCommand handles verification and password reset requests
 func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer.RequestVerifyAndForgetCustomerCommand) (any, error) {
-	u.logger.Info("RequestVerifyAndForgetCustomerCommand called", map[string]interface{}{
+	u.Logger.Info("RequestVerifyAndForgetCustomerCommand called", map[string]interface{}{
 		"email": *params.Email,
 		"phone": *params.Phone,
 		"type":  *params.Type,
@@ -172,7 +169,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 
 		// In a real implementation, we would send an SMS here
 		// For now, we'll just log the code
-		u.logger.Info("SMS verification code generated", map[string]interface{}{
+		u.Logger.Info("SMS verification code generated", map[string]interface{}{
 			"phone": *params.Phone,
 			"code":  verifyCode,
 			"type":  *params.Type,
@@ -215,7 +212,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 
 		// In a real implementation, we would send an email here
 		// For now, we'll just log the link
-		u.logger.Info("Email verification link generated", map[string]interface{}{
+		u.Logger.Info("Email verification link generated", map[string]interface{}{
 			"email": *params.Email,
 			"code":  verifyCode,
 			"link":  resetLink,
@@ -230,13 +227,13 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 
 // UpdateProfileCustomerCommand handles updating customer profile
 func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdateProfileCustomerCommand) (any, error) {
-	u.logger.Info("UpdateProfileCustomerCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateProfileCustomerCommand called", map[string]interface{}{
 		"firstName": params.FirstName,
 		"lastName":  params.LastName,
 	})
 
 	// Get customer ID from auth context
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
@@ -290,7 +287,7 @@ func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdatePr
 	if len(params.AddressIDs) > 0 {
 		// This would typically involve updating the many-to-many relationship
 		// For simplicity, we'll just log the addresses
-		u.logger.Info("Updating customer addresses", map[string]interface{}{
+		u.Logger.Info("Updating customer addresses", map[string]interface{}{
 			"customerId": customerID,
 			"addressIds": params.AddressIDs,
 		})
@@ -302,7 +299,7 @@ func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdatePr
 
 // VerifyCustomerQuery handles customer verification
 func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQuery) (any, error) {
-	u.logger.Info("VerifyCustomerQuery called", map[string]interface{}{
+	u.Logger.Info("VerifyCustomerQuery called", map[string]interface{}{
 		"email": *params.Email,
 		"code":  *params.Code,
 		"type":  *params.Type,
@@ -381,10 +378,10 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 
 // GetProfileCustomerQuery handles getting customer profile
 func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCustomerQuery) (any, error) {
-	u.logger.Info("GetProfileCustomerQuery called", nil)
+	u.Logger.Info("GetProfileCustomerQuery called", nil)
 
 	// Get customer ID from auth context
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
@@ -413,13 +410,13 @@ func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCus
 
 // AdminGetAllCustomerQuery handles admin getting all customers
 func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllCustomerQuery) (any, error) {
-	u.logger.Info("AdminGetAllCustomerQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllCustomerQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

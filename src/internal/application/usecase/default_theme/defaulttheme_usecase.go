@@ -2,12 +2,12 @@ package defaultthemeusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/defaulttheme"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -16,34 +16,30 @@ import (
 )
 
 type DefaultThemeUsecase struct {
-	ctx         *gin.Context
-	logger      sflogger.Logger
-	repo        repository.IDefaultThemeRepository
-	mediaRepo   repository.IMediaRepository
-	authContext func(c *gin.Context) service.IAuthService
+	*usecase.BaseUsecase
+	defaultThemeRepo repository.IDefaultThemeRepository
+	mediaRepo        repository.IMediaRepository
+	authContext      func(c *gin.Context) service.IAuthService
 }
 
 func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
 	return &DefaultThemeUsecase{
-		logger:      c.GetLogger(),
-		repo:        c.GetDefaultThemeRepo(),
-		mediaRepo:   c.GetMediaRepo(),
-		authContext: c.GetAuthTransientService(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
+		defaultThemeRepo: c.GetDefaultThemeRepo(),
+		mediaRepo:        c.GetMediaRepo(),
+		authContext:      c.GetAuthTransientService(),
 	}
 }
 
-func (u *DefaultThemeUsecase) SetContext(c *gin.Context) *DefaultThemeUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.CreateDefaultThemeCommand) (any, error) {
-	u.logger.Info("CreateDefaultThemeCommand called", map[string]interface{}{
+	u.Logger.Info("CreateDefaultThemeCommand called", map[string]interface{}{
 		"name": *params.Name,
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -83,13 +79,13 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 	}
 
 	// Create in repository
-	err = u.repo.Create(theme)
+	err = u.defaultThemeRepo.Create(theme)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get created theme with media relation
-	createdTheme, err := u.repo.GetByID(theme.ID)
+	createdTheme, err := u.defaultThemeRepo.GetByID(theme.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,12 +94,12 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 }
 
 func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.UpdateDefaultThemeCommand) (any, error) {
-	u.logger.Info("UpdateDefaultThemeCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateDefaultThemeCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +108,7 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 	}
 
 	// Get existing theme
-	existingTheme, err := u.repo.GetByID(*params.ID)
+	existingTheme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("قالب پیش‌فرض مورد نظر یافت نشد")
@@ -152,13 +148,13 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 	existingTheme.UpdatedAt = time.Now()
 
 	// Update in repository
-	err = u.repo.Update(existingTheme)
+	err = u.defaultThemeRepo.Update(existingTheme)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get updated theme with media relation
-	updatedTheme, err := u.repo.GetByID(existingTheme.ID)
+	updatedTheme, err := u.defaultThemeRepo.GetByID(existingTheme.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -167,12 +163,12 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 }
 
 func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.DeleteDefaultThemeCommand) (any, error) {
-	u.logger.Info("DeleteDefaultThemeCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteDefaultThemeCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +177,7 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 	}
 
 	// Check if theme exists
-	existingTheme, err := u.repo.GetByID(*params.ID)
+	existingTheme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("قالب پیش‌فرض مورد نظر یافت نشد")
@@ -190,7 +186,7 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 	}
 
 	// Delete theme
-	err = u.repo.Delete(*params.ID)
+	err = u.defaultThemeRepo.Delete(*params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -201,12 +197,12 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 }
 
 func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetByIdDefaultThemeQuery) (any, error) {
-	u.logger.Info("GetByIdDefaultThemeQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdDefaultThemeQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get theme by ID
-	theme, err := u.repo.GetByID(*params.ID)
+	theme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("قالب پیش‌فرض مورد نظر یافت نشد")
@@ -218,13 +214,13 @@ func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetB
 }
 
 func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAllDefaultThemeQuery) (any, error) {
-	u.logger.Info("GetAllDefaultThemeQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllDefaultThemeQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Get paginated list of themes
-	themes, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	themes, count, err := u.defaultThemeRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}

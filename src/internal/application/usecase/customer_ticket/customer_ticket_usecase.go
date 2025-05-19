@@ -2,6 +2,7 @@ package customerticketusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
@@ -17,8 +18,7 @@ import (
 )
 
 type CustomerTicketUsecase struct {
-	ctx                     *gin.Context
-	logger                  sflogger.Logger
+	*usecase.BaseUsecase
 	repo                    repository.ICustomerTicketRepository
 	customerCommentRepo     repository.ICustomerCommentRepository
 	customerTicketMediaRepo repository.ICustomerTicketMediaRepository
@@ -28,7 +28,9 @@ type CustomerTicketUsecase struct {
 
 func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 	return &CustomerTicketUsecase{
-		logger:                  c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:                    c.GetCustomerTicketRepo(),
 		customerCommentRepo:     c.GetCustomerCommentRepo(),
 		customerTicketMediaRepo: c.GetCustomerTicketMediaRepo(),
@@ -37,20 +39,15 @@ func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 	}
 }
 
-func (u *CustomerTicketUsecase) SetContext(c *gin.Context) *CustomerTicketUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (any, error) {
-	u.logger.Info("CreateCustomerTicketCommand called", map[string]interface{}{
+	u.Logger.Info("CreateCustomerTicketCommand called", map[string]interface{}{
 		"title":    *params.Title,
 		"category": *params.Category,
 		"priority": *params.Priority,
 	})
 
 	// Get current user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -71,7 +68,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	// Save ticket to repository
 	err = u.repo.Create(newTicket)
 	if err != nil {
-		u.logger.Error("Error creating customer ticket", map[string]interface{}{
+		u.Logger.Error("Error creating customer ticket", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, errors.New("خطا در ایجاد تیکت مشتری")
@@ -90,7 +87,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	// Save comment
 	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
-		u.logger.Error("Error creating comment for customer ticket", map[string]interface{}{
+		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
 			"error":    err.Error(),
 			"ticketId": newTicket.ID,
 		})
@@ -101,7 +98,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(newTicket.ID, params.MediaIDs)
 		if err != nil {
-			u.logger.Error("Error adding media to customer ticket", map[string]interface{}{
+			u.Logger.Error("Error adding media to customer ticket", map[string]interface{}{
 				"error":    err.Error(),
 				"ticketId": newTicket.ID,
 			})
@@ -119,14 +116,14 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 }
 
 func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (any, error) {
-	u.logger.Info("ReplayCustomerTicketCommand called", map[string]interface{}{
+	u.Logger.Info("ReplayCustomerTicketCommand called", map[string]interface{}{
 		"id":      *params.ID,
 		"status":  *params.Status,
 		"content": *params.Comment.Content,
 	})
 
 	// Get customer ID from auth context
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
@@ -163,7 +160,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	// Update ticket in repository
 	err = u.repo.Update(existingTicket)
 	if err != nil {
-		u.logger.Error("Error updating customer ticket", map[string]interface{}{
+		u.Logger.Error("Error updating customer ticket", map[string]interface{}{
 			"error":    err.Error(),
 			"ticketId": existingTicket.ID,
 		})
@@ -183,7 +180,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	// Save comment
 	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
-		u.logger.Error("Error creating comment for customer ticket", map[string]interface{}{
+		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
 			"error":    err.Error(),
 			"ticketId": existingTicket.ID,
 		})
@@ -194,7 +191,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(existingTicket.ID, params.MediaIDs)
 		if err != nil {
-			u.logger.Error("Error adding media to customer ticket", map[string]interface{}{
+			u.Logger.Error("Error adding media to customer ticket", map[string]interface{}{
 				"error":    err.Error(),
 				"ticketId": existingTicket.ID,
 			})
@@ -212,14 +209,14 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 }
 
 func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *customer_ticket.AdminReplayCustomerTicketCommand) (any, error) {
-	u.logger.Info("AdminReplayCustomerTicketCommand called", map[string]interface{}{
+	u.Logger.Info("AdminReplayCustomerTicketCommand called", map[string]interface{}{
 		"id":      *params.ID,
 		"status":  *params.Status,
 		"content": *params.Comment.Content,
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
@@ -229,7 +226,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	}
 
 	// Get current user ID
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -260,7 +257,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	// Update ticket in repository
 	err = u.repo.Update(existingTicket)
 	if err != nil {
-		u.logger.Error("Error updating customer ticket", map[string]interface{}{
+		u.Logger.Error("Error updating customer ticket", map[string]interface{}{
 			"error":    err.Error(),
 			"ticketId": existingTicket.ID,
 		})
@@ -280,7 +277,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	// Save comment
 	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
-		u.logger.Error("Error creating comment for customer ticket", map[string]interface{}{
+		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
 			"error":    err.Error(),
 			"ticketId": existingTicket.ID,
 		})
@@ -291,7 +288,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(existingTicket.ID, params.MediaIDs)
 		if err != nil {
-			u.logger.Error("Error adding media to customer ticket", map[string]interface{}{
+			u.Logger.Error("Error adding media to customer ticket", map[string]interface{}{
 				"error":    err.Error(),
 				"ticketId": existingTicket.ID,
 			})
@@ -309,23 +306,23 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 }
 
 func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (any, error) {
-	u.logger.Info("GetByIdCustomerTicketQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdCustomerTicketQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
 	// Get user ID and determine if admin
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	// Get customer ID if available
-	customerID, _ := u.authContext(u.ctx).GetCustomerID()
+	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
 
 	// Get ticket by ID with relations
 	result, err := u.repo.GetByIDWithRelations(*params.ID)
@@ -345,13 +342,13 @@ func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_tick
 }
 
 func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticket.GetAllCustomerTicketQuery) (any, error) {
-	u.logger.Info("GetAllCustomerTicketQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllCustomerTicketQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Get customer ID from auth context
-	customerID, err := u.authContext(u.ctx).GetCustomerID()
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
@@ -359,7 +356,7 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 	// Get all tickets for the current customer with pagination
 	tickets, count, err := u.repo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
 	if err != nil {
-		u.logger.Error("Error getting all tickets for customer", map[string]interface{}{
+		u.Logger.Error("Error getting all tickets for customer", map[string]interface{}{
 			"error":      err.Error(),
 			"customerId": customerID,
 		})
@@ -382,13 +379,13 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 }
 
 func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_ticket.AdminGetAllCustomerTicketQuery) (any, error) {
-	u.logger.Info("AdminGetAllCustomerTicketQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllCustomerTicketQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
@@ -400,7 +397,7 @@ func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_
 	// Get all tickets with pagination
 	tickets, count, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		u.logger.Error("Error getting all customer tickets for admin", map[string]interface{}{
+		u.Logger.Error("Error getting all customer tickets for admin", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, errors.New("خطا در دریافت تیکت های مشتری")

@@ -3,6 +3,7 @@ package headerfooterusecase
 import (
 	"encoding/json"
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 )
 
 type HeaderFooterUsecase struct {
-	ctx         *gin.Context
+	*usecase.BaseUsecase
 	logger      sflogger.Logger
 	repo        repository.IHeaderFooterRepository
 	siteRepo    repository.ISiteRepository
@@ -27,20 +28,17 @@ type HeaderFooterUsecase struct {
 
 func NewHeaderFooterUsecase(c contract.IContainer) *HeaderFooterUsecase {
 	return &HeaderFooterUsecase{
-		logger:      c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		repo:        c.GetHeaderFooterRepo(),
 		siteRepo:    c.GetSiteRepo(),
 		authContext: c.GetAuthTransientService(),
 	}
 }
 
-func (u *HeaderFooterUsecase) SetContext(c *gin.Context) *HeaderFooterUsecase {
-	u.ctx = c
-	return u
-}
-
 func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.CreateHeaderFooterCommand) (any, error) {
-	u.logger.Info("CreateHeaderFooterCommand called", map[string]interface{}{
+	u.Logger.Info("CreateHeaderFooterCommand called", map[string]interface{}{
 		"siteId": *params.SiteID,
 		"title":  *params.Title,
 		"type":   *params.Type,
@@ -56,7 +54,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +93,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 }
 
 func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.UpdateHeaderFooterCommand) (any, error) {
-	u.logger.Info("UpdateHeaderFooterCommand called", map[string]interface{}{
+	u.Logger.Info("UpdateHeaderFooterCommand called", map[string]interface{}{
 		"id":     *params.ID,
 		"siteId": *params.SiteID,
 		"type":   *params.Type,
@@ -111,12 +109,12 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +167,7 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 }
 
 func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.DeleteHeaderFooterCommand) (any, error) {
-	u.logger.Info("DeleteHeaderFooterCommand called", map[string]interface{}{
+	u.Logger.Info("DeleteHeaderFooterCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
 
@@ -183,12 +181,12 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +207,7 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 }
 
 func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.GetByIdHeaderFooterQuery) (any, error) {
-	u.logger.Info("GetByIdHeaderFooterQuery called", map[string]interface{}{
+	u.Logger.Info("GetByIdHeaderFooterQuery called", map[string]interface{}{
 		"id":     params.ID,
 		"siteId": *params.SiteID,
 	})
@@ -253,7 +251,7 @@ func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.Get
 }
 
 func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetAllHeaderFooterQuery) (any, error) {
-	u.logger.Info("GetAllHeaderFooterQuery called", map[string]interface{}{
+	u.Logger.Info("GetAllHeaderFooterQuery called", map[string]interface{}{
 		"siteId": *params.SiteID,
 		"type":   params.Type,
 	})
@@ -289,13 +287,13 @@ func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetA
 }
 
 func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer.AdminGetAllHeaderFooterQuery) (any, error) {
-	u.logger.Info("AdminGetAllHeaderFooterQuery called", map[string]interface{}{
+	u.Logger.Info("AdminGetAllHeaderFooterQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +318,7 @@ func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer
 }
 
 func (u *HeaderFooterUsecase) GetHeaderFooterByDomainOrSiteIdQuery(params *header_footer.GetHeaderFooterByDomainOrSiteIdQuery) (any, error) {
-	u.logger.Info("GetHeaderFooterByDomainOrSiteIdQuery called", map[string]interface{}{
+	u.Logger.Info("GetHeaderFooterByDomainOrSiteIdQuery called", map[string]interface{}{
 		"siteId": params.SiteID,
 		"domain": params.Domain,
 	})

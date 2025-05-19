@@ -1,9 +1,9 @@
 package roleusecase
 
 import (
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"time"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/role"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -11,7 +11,7 @@ import (
 )
 
 type RoleUsecase struct {
-	logger       sflogger.Logger
+	*usecase.BaseUsecase
 	roleRepo     repository.IRoleRepository
 	customerRepo repository.ICustomerRepository
 	userRepo     repository.IUserRepository
@@ -20,7 +20,9 @@ type RoleUsecase struct {
 
 func NewRoleUsecase(c contract.IContainer) *RoleUsecase {
 	return &RoleUsecase{
-		logger:       c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		roleRepo:     c.GetRoleRepo(),
 		customerRepo: c.GetCustomerRepo(),
 		userRepo:     c.GetUserRepo(),
@@ -54,7 +56,7 @@ func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (any, er
 			if err != nil {
 				// Consider what to do if permission assignment fails
 				// For now, we'll continue and try to assign the rest
-				u.logger.Errorf("Failed to assign permission %d to role %d: %v", permissionID, roleID, err)
+				u.Logger.Errorf("Failed to assign permission %d to role %d: %v", permissionID, roleID, err)
 			}
 		}
 	}
@@ -102,7 +104,7 @@ func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (any, er
 			err = u.roleRepo.AddPermissionToRole(*params.ID, permissionID)
 			if err != nil {
 				// Log error but continue
-				u.logger.Errorf("Failed to assign permission %d to role %d: %v", permissionID, *params.ID, err)
+				u.Logger.Errorf("Failed to assign permission %d to role %d: %v", permissionID, *params.ID, err)
 			}
 		}
 	}
@@ -132,14 +134,14 @@ func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCom
 		role, err := u.roleRepo.GetByName(roleName)
 		if err != nil {
 			// Log error and continue
-			u.logger.Errorf("Failed to find role with name %s: %v", roleName, err)
+			u.Logger.Errorf("Failed to find role with name %s: %v", roleName, err)
 			continue
 		}
 
 		err = u.roleRepo.AddRoleToCustomer(role.ID, *params.CustomerID)
 		if err != nil {
 			// Log error and continue
-			u.logger.Errorf("Failed to assign role %s to customer %d: %v", roleName, *params.CustomerID, err)
+			u.Logger.Errorf("Failed to assign role %s to customer %d: %v", roleName, *params.CustomerID, err)
 		}
 	}
 
@@ -171,14 +173,14 @@ func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (a
 		role, err := u.roleRepo.GetByName(roleName)
 		if err != nil {
 			// Log error and continue
-			u.logger.Errorf("Failed to find role with name %s: %v", roleName, err)
+			u.Logger.Errorf("Failed to find role with name %s: %v", roleName, err)
 			continue
 		}
 
 		err = u.roleRepo.AddRoleToUser(role.ID, *params.UserID)
 		if err != nil {
 			// Log error and continue
-			u.logger.Errorf("Failed to assign role %s to user %d: %v", roleName, *params.UserID, err)
+			u.Logger.Errorf("Failed to assign role %s to user %d: %v", roleName, *params.UserID, err)
 		}
 	}
 
@@ -210,14 +212,14 @@ func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (a
 		role, err := u.roleRepo.GetByName(roleName)
 		if err != nil {
 			// Log error and continue
-			u.logger.Errorf("Failed to find role with name %s: %v", roleName, err)
+			u.Logger.Errorf("Failed to find role with name %s: %v", roleName, err)
 			continue
 		}
 
 		err = u.roleRepo.AddRoleToPlan(role.ID, *params.PlanID)
 		if err != nil {
 			// Log error and continue
-			u.logger.Errorf("Failed to assign role %s to plan %d: %v", roleName, *params.PlanID, err)
+			u.Logger.Errorf("Failed to assign role %s to plan %d: %v", roleName, *params.PlanID, err)
 		}
 	}
 

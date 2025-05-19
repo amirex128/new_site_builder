@@ -1,10 +1,10 @@
 package articlecategoryusecase
 
 import (
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"strings"
 	"time"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article_category"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -12,14 +12,16 @@ import (
 )
 
 type ArticleCategoryUsecase struct {
-	logger       sflogger.Logger
+	*usecase.BaseUsecase
 	categoryRepo repository.IArticleCategoryRepository
 	mediaRepo    repository.IMediaRepository
 }
 
 func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 	return &ArticleCategoryUsecase{
-		logger:       c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		categoryRepo: c.GetArticleCategoryRepo(),
 		mediaRepo:    c.GetMediaRepo(),
 	}
@@ -27,7 +29,7 @@ func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 
 func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (any, error) {
 	// Implementation for creating a category based on .NET CreateCategoryCommand
-	u.logger.Info("Creating new category", map[string]interface{}{"name": *params.Name})
+	u.Logger.Info("Creating new category", map[string]interface{}{"name": *params.Name})
 
 	// Convert SeoTags slice to string (comma-separated)
 	var seoTags string
@@ -66,7 +68,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 		for _, mediaID := range params.MediaIDs {
 			err = u.categoryRepo.AddMediaToCategory(newCategory.ID, mediaID)
 			if err != nil {
-				u.logger.Errorf("Failed to add media %d to category %d: %v", mediaID, newCategory.ID, err)
+				u.Logger.Errorf("Failed to add media %d to category %d: %v", mediaID, newCategory.ID, err)
 				// Continue with other media instead of failing completely
 			}
 		}
@@ -78,7 +80,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (any, error) {
 	// Implementation for updating a category based on .NET UpdateCategoryCommand
-	u.logger.Info("Updating category", map[string]interface{}{"id": *params.ID})
+	u.Logger.Info("Updating category", map[string]interface{}{"id": *params.ID})
 
 	// Get existing category
 	existingCategory, err := u.categoryRepo.GetByID(*params.ID)
@@ -129,14 +131,14 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 		// First remove all existing media associations
 		err = u.categoryRepo.RemoveAllMediaFromCategory(existingCategory.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to remove media from category %d: %v", existingCategory.ID, err)
+			u.Logger.Errorf("Failed to remove media from category %d: %v", existingCategory.ID, err)
 		}
 
 		// Then add the new ones
 		for _, mediaID := range params.MediaIDs {
 			err = u.categoryRepo.AddMediaToCategory(existingCategory.ID, mediaID)
 			if err != nil {
-				u.logger.Errorf("Failed to add media %d to category %d: %v", mediaID, existingCategory.ID, err)
+				u.Logger.Errorf("Failed to add media %d to category %d: %v", mediaID, existingCategory.ID, err)
 			}
 		}
 	}
@@ -146,7 +148,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (any, error) {
 	// Implementation for deleting a category based on .NET DeleteCategoryCommand
-	u.logger.Info("Deleting category", map[string]interface{}{"id": *params.ID})
+	u.Logger.Info("Deleting category", map[string]interface{}{"id": *params.ID})
 
 	// Get the category first to ensure it exists
 	_, err := u.categoryRepo.GetByID(*params.ID)
@@ -172,7 +174,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 
 func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.GetByIdCategoryQuery) (any, error) {
 	// Implementation to get category by ID based on .NET GetByIdCategoryQuery
-	u.logger.Info("Getting category by ID", map[string]interface{}{"id": *params.ID})
+	u.Logger.Info("Getting category by ID", map[string]interface{}{"id": *params.ID})
 
 	// Get the category
 	result, err := u.categoryRepo.GetByID(*params.ID)
@@ -187,7 +189,7 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 	// Get media information
 	mediaItems, err := u.categoryRepo.GetCategoryMedia(result.ID)
 	if err != nil {
-		u.logger.Errorf("Failed to get media for category %d: %v", result.ID, err)
+		u.Logger.Errorf("Failed to get media for category %d: %v", result.ID, err)
 	}
 
 	return map[string]interface{}{
@@ -198,7 +200,7 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 
 func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (any, error) {
 	// Implementation to get all categories by site ID, based on .NET GetAllCategoryQuery
-	u.logger.Info("Getting all categories by site ID", map[string]interface{}{"siteID": *params.SiteID})
+	u.Logger.Info("Getting all categories by site ID", map[string]interface{}{"siteID": *params.SiteID})
 
 	// Check if user has access to this site
 	// In a real implementation, check if the current user has rights to view categories for this site
@@ -215,7 +217,7 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 	for i, category := range result {
 		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
+			u.Logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
 			media = []domain.Media{}
 		}
 
@@ -233,7 +235,7 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (any, error) {
 	// Implementation to get all categories for admin, based on .NET AdminGetAllCategoryQuery
-	u.logger.Info("Admin getting all categories", map[string]interface{}{})
+	u.Logger.Info("Admin getting all categories", map[string]interface{}{})
 
 	// Check if user has admin access
 	// In a real implementation, check if the current user has admin rights
@@ -249,7 +251,7 @@ func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_catego
 	for i, category := range result {
 		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
 		if err != nil {
-			u.logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
+			u.Logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
 			media = []domain.Media{}
 		}
 

@@ -2,12 +2,12 @@ package unitpriceusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/unit_price"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
@@ -15,8 +15,7 @@ import (
 )
 
 type UnitPriceUsecase struct {
-	ctx           *gin.Context
-	logger        sflogger.Logger
+	*usecase.BaseUsecase
 	unitPriceRepo repository.IUnitPriceRepository
 	userRepo      repository.IUserRepository
 	authContext   func(c *gin.Context) service.IAuthService
@@ -24,22 +23,20 @@ type UnitPriceUsecase struct {
 
 func NewUnitPriceUsecase(c contract.IContainer) *UnitPriceUsecase {
 	return &UnitPriceUsecase{
-		logger:        c.GetLogger(),
+		BaseUsecase: &usecase.BaseUsecase{
+			Logger: c.GetLogger(),
+		},
 		unitPriceRepo: c.GetUnitPriceRepo(),
 		userRepo:      c.GetUserRepo(),
 		authContext:   c.GetAuthTransientService(),
 	}
-}
-func (u *UnitPriceUsecase) SetContext(c *gin.Context) *UnitPriceUsecase {
-	u.ctx = c
-	return u
 }
 
 // UpdateUnitPriceCommand updates a unit price
 // Based on UpdateUnitPriceCommand.cs
 func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitPriceCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +85,7 @@ func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitP
 // Based on CalculateUnitPriceQuery.cs
 func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateUnitPriceQuery) (any, error) {
 	// Get the current user ID
-	userID, err := u.authContext(u.ctx).GetUserID()
+	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +198,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 // Based on GetAllUnitPriceQuery.cs
 func (u *UnitPriceUsecase) GetAllUnitPriceQuery(params *unit_price.GetAllUnitPriceQuery) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext(u.ctx).IsAdmin()
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
