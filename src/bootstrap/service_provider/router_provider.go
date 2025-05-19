@@ -25,7 +25,6 @@ func RouterProvider(logger sflogger.Logger) {
 			Version:  "1.0",
 			BasePath: "/api/v1",
 			Schemes:  []string{"http", "https"},
-			UIType:   "redoc", // Use ReDoc UI
 		}),
 		sfrouting.WithErrorHandler(sfrouting.DefaultErrorHandler),
 		sfrouting.WithGlobalMiddleware(middlewares.LoggedinMiddle),

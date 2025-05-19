@@ -332,9 +332,8 @@ func RegisterConnection(opts ...Option) error {
 
 	// Register Swagger if enabled
 	if globalRegistry.SwaggerEnabled {
-		// Default to Swagger UI
-		url := ginSwagger.URL("/swagger/doc.json") // The URL pointing to API definition
-		globalRegistry.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+
+		globalRegistry.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 		if globalRegistry.logger != nil {
 			extraMap := map[string]interface{}{

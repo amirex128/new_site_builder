@@ -12,8 +12,8 @@ git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3 h1:f2EI8CxoZfluCRfpECr5C
 git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3/go.mod h1:qbryl/YWUahq5Pwe/FEFb0ROoxBsJve/Akqziie2jzE=
 git.snappfood.ir/backend/go/packages/sf-redis v0.0.4 h1:XzwLrPKb7JhG/hS7PFMS+DWMGSkkmN0YZYCD/rcWQnU=
 git.snappfood.ir/backend/go/packages/sf-redis v0.0.4/go.mod h1:nFqNy8m1xroSDSJcSBd5gGgyyhQFON8EI8aVcqmkadA=
-git.snappfood.ir/backend/go/packages/sf-routing v0.0.7 h1:jtGgDtfw6RlNGj1F091vyeTS5B/R5GFY0+ngbAa5iss=
-git.snappfood.ir/backend/go/packages/sf-routing v0.0.7/go.mod h1:OEV7B6qS7lVH44QppJIDQtPOUk2SYGAjdauf25Em3gA=
+git.snappfood.ir/backend/go/packages/sf-routing v0.0.9 h1:IonUjObgsgGKC4CWCLNSrfOLKoCzh+HvtIiGXiq8n1k=
+git.snappfood.ir/backend/go/packages/sf-routing v0.0.9/go.mod h1:OEV7B6qS7lVH44QppJIDQtPOUk2SYGAjdauf25Em3gA=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v1.7.0/go.mod h1:bjGvMhVMb+EEm3VRNQawDMUyMMjo+S5ewNjflkep/0Q=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v1.7.1/go.mod h1:bjGvMhVMb+EEm3VRNQawDMUyMMjo+S5ewNjflkep/0Q=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v1.9.1 h1:lGlwhPtrX6EVml1hO0ivjkUxsSyl4dsiw9qcA1k/3IQ=

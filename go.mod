@@ -10,7 +10,7 @@ require (
 	git.snappfood.ir/backend/go/packages/sf-orm v0.0.4
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3
 	git.snappfood.ir/backend/go/packages/sf-redis v0.0.4
-	git.snappfood.ir/backend/go/packages/sf-routing v0.0.7
+	git.snappfood.ir/backend/go/packages/sf-routing v0.0.9
 	github.com/elastic/go-elasticsearch/v8 v8.17.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.26.0

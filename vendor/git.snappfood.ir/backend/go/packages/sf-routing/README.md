@@ -97,6 +97,7 @@ swag init -g path/to/api.go -o ./docs
 
 echo "Documentation generated successfully!"
 echo "You can access the Swagger UI at: http://localhost:8080/swagger/index.html"
+echo "The Swagger JSON documentation is available at: http://localhost:8080/swagger/doc.json"
 ```
 
 ## Complete Example

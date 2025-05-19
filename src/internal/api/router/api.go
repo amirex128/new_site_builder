@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"fmt"
+	"github.com/amirex128/new_site_builder/docs"
 	"github.com/amirex128/new_site_builder/src/bootstrap"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"net/http"
@@ -21,7 +22,7 @@ import (
 func InitServer(handlers *bootstrap.HandlerManager, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
 
 	RegisterRoutes(handlers, container)
-
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	err := sfrouting.StartServer(fmt.Sprintf(":%s", cnf.GetString("app_port")))
 	if err != nil {
 		logger.Errorf("Failed to start server: %s", err.Error())
