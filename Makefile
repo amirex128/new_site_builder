@@ -49,3 +49,13 @@ docker-compose-stage-up:
 docker-compose-stage-down:
 	docker-compose -f ./docker/docker-compose.stage.yml down
 
+move-all-vendor:
+	@echo "📦 Moving all vendor packages to GOPATH/src..."
+	@find vendor -type d -name '.git' -prune -o -type d -print | tail -n +2 | while read dir; do \
+		relpath=$${dir#vendor/}; \
+		dest="$(GOPATH)/src/$$relpath"; \
+		echo "➡️  Moving $$dir to $$dest"; \
+		mkdir -p "$$dest"; \
+		cp -r $$dir/* "$$dest/" 2>/dev/null || true; \
+	done
+	@echo "✅ All vendor packages moved."
