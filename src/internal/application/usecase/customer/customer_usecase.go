@@ -34,7 +34,7 @@ func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
 		fileItemRepo:   c.GetFileItemRepo(),
 		addressRepo:    c.GetAddressRepo(),
 		roleRepo:       c.GetRoleRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 		identitySvc:    getIdentityService(c),
 	}
 }

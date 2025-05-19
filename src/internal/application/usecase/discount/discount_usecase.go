@@ -24,7 +24,7 @@ func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 	return &DiscountUsecase{
 		logger:         c.GetLogger(),
 		repo:           c.GetDiscountRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 	}
 }
 

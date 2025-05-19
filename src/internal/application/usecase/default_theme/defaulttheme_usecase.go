@@ -25,7 +25,7 @@ func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
 		logger:         c.GetLogger(),
 		repo:           c.GetDefaultThemeRepo(),
 		mediaRepo:      c.GetMediaRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 	}
 }
 

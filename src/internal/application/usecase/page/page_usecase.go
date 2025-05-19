@@ -32,7 +32,7 @@ func NewPageUsecase(c contract.IContainer) *PageUsecase {
 		siteRepo:         c.GetSiteRepo(),
 		headerFooterRepo: c.GetHeaderFooterRepo(),
 		mediaRepo:        c.GetMediaRepo(),
-		authContextSvc:   c.GetAuthContextService(),
+		authContextSvc:   c.GetAuthContextTransientService(),
 	}
 }
 

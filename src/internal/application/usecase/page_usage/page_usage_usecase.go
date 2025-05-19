@@ -36,7 +36,7 @@ func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 		productRepo:               c.GetProductRepo(),
 		headerFooterRepo:          c.GetHeaderFooterRepo(),
 		siteRepo:                  c.GetSiteRepo(),
-		authContextSvc:            c.GetAuthContextService(),
+		authContextSvc:            c.GetAuthContextTransientService(),
 	}
 }
 

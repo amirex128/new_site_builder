@@ -9,19 +9,20 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // Container
 type Container struct {
-	Config              contract.IConfig
-	MemoryLoader        cache.IMemoryLoader
-	MainCache           cache.ICacheService
-	AuthContextService  common.IAuthContextService
-	IdentityService     common.IIdentityService
-	StorageService      storage.IStorageService
-	stockCacheTransient func() cache.ICacheService
-	PaymentService      service.IPaymentService
+	Config                      contract.IConfig
+	MemoryLoader                cache.IMemoryLoader
+	MainCache                   cache.ICacheService
+	AuthContextTransientService func(c *gin.Context) common.IAuthContextService
+	IdentityService             common.IIdentityService
+	StorageService              storage.IStorageService
+	stockCacheTransient         func() cache.ICacheService
+	PaymentService              service.IPaymentService
 
 	Logger                    sflogger.Logger
 	ArticleRepo               repository.IArticleRepository
@@ -263,8 +264,8 @@ func (c *Container) GetPermissionRepo() repository.IPermissionRepository {
 	return c.PermissionRepo
 }
 
-func (c *Container) GetAuthContextService() common.IAuthContextService {
-	return c.AuthContextService
+func (c *Container) GetAuthContextTransientService() func(c *gin.Context) common.IAuthContextService {
+	return c.AuthContextTransientService
 }
 
 func (c *Container) GetMainCache() cache.ICacheService {

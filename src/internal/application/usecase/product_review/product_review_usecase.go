@@ -25,7 +25,7 @@ func NewProductReviewUsecase(c contract.IContainer) *ProductReviewUsecase {
 		logger:         c.GetLogger(),
 		repo:           c.GetProductReviewRepo(),
 		productRepo:    c.GetProductRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 	}
 }
 

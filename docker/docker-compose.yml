@@ -54,12 +54,6 @@ services:
       - IPC_LOCK
     command: server -config=/vault/config/vault.hcl
     user: root
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8200/v1/sys/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
     networks:
       - appnet
 

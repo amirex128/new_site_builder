@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
+
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
@@ -14,10 +16,11 @@ import (
 )
 
 type PlanUsecase struct {
+	ctx         *gin.Context
 	logger      sflogger.Logger
 	planRepo    repository.IPlanRepository
 	userRepo    repository.IUserRepository
-	authContext common.IAuthContextService
+	authContext func(c *gin.Context) common.IAuthContextService
 }
 
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
@@ -25,14 +28,19 @@ func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 		logger:      c.GetLogger(),
 		planRepo:    c.GetPlanRepo(),
 		userRepo:    c.GetUserRepo(),
-		authContext: c.GetAuthContextService(),
+		authContext: c.GetAuthContextTransientService(),
 	}
+}
+
+func (u *PlanUsecase) SetContext(c *gin.Context) *PlanUsecase {
+	u.ctx = c
+	return u
 }
 
 // CreatePlanCommand creates a new plan
 func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +88,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 // UpdatePlanCommand updates an existing plan
 func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +168,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 // DeletePlanCommand deletes a plan
 func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, error) {
 	// Check admin access
-	isAdmin, err := u.authContext.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

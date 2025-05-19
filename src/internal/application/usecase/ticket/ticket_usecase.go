@@ -30,7 +30,7 @@ func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
 		commentRepo:     c.GetCommentRepo(),
 		ticketMediaRepo: c.GetTicketMediaRepo(),
 		mediaRepo:       c.GetMediaRepo(),
-		authContextSvc:  c.GetAuthContextService(),
+		authContextSvc:  c.GetAuthContextTransientService(),
 	}
 }
 

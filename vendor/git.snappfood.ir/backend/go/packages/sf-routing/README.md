@@ -9,17 +9,343 @@ SF-Routing is a Golang library that wraps the Gin framework to make it easy to u
 - **Router Groups**: Organize routes into groups for better structure.
 - **Middleware Management**: Add global and per-route middleware.
 - **Error Handling**: Set a custom error handler for all routes.
-- **Swagger Documentation**: Generate Swagger documentation for all routes.
+- **API Documentation**: Generate OpenAPI documentation with support for both Swagger UI and ReDoc.
 - **Custom Logger**: Use a custom logger that implements the `Logger` interface.
 - **Direct Gin Configuration**: Configure the Gin engine directly with custom settings.
 - **CORS Configuration**: Easily set up Cross-Origin Resource Sharing (CORS) for your API.
-- **Swagger Configuration**: Configure all Swagger settings in one place.
 - **Prometheus Integration**: Expose Prometheus metrics by implementing the `PrometheusExporter` interface.
 
 ## Installation
 
 ```bash
 go get git.snappfood.ir/backend/go/packages/sf-routing
+```
+
+# OpenAPI Documentation
+
+SF-Routing supports OpenAPI documentation using both Swagger UI and ReDoc. You can choose which UI to use when configuring your application.
+
+## Prerequisites
+
+To use the OpenAPI documentation features, you need to install the following packages:
+
+```bash
+go get -u github.com/swaggo/swag/cmd/swag
+go get -u github.com/swaggo/gin-swagger
+go get -u github.com/swaggo/files
+go get -u github.com/mvrilo/go-redoc
+```
+
+## Using Swagger UI
+
+To use Swagger UI in your application:
+
+```go
+err := sfrouting.RegisterConnection(
+	sfrouting.WithSwagger(sfrouting.SwaggerConfig{
+		Enabled:  true,
+		Title:    "SF-Routing API",
+		Version:  "1.0",
+		Host:     "localhost:8080",
+		BasePath: "/api/v1",
+		Schemes:  []string{"http", "https"},
+		UIType:   "swagger", // Use Swagger UI (default)
+	}),
+)
+```
+
+## Using ReDoc UI
+
+To use ReDoc UI instead of Swagger UI:
+
+```go
+err := sfrouting.RegisterConnection(
+	sfrouting.WithSwagger(sfrouting.SwaggerConfig{
+		Enabled:  true,
+		Title:    "SF-Routing API",
+		Version:  "1.0",
+		Host:     "localhost:8080",
+		BasePath: "/api/v1",
+		Schemes:  []string{"http", "https"},
+		UIType:   "redoc", // Use ReDoc UI
+	}),
+)
+```
+
+## Documenting Your API
+
+Add Swagger annotations to your handler functions:
+
+```go
+// CreateUser godoc
+// @Summary      Create a user
+// @Description  create a new user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      User  true  "User object"
+// @Success      201   {object}  User
+// @Failure      400   {object}  map[string]interface{}
+// @Failure      500   {object}  map[string]interface{}
+// @Router       /users [post]
+// @Security     BearerAuth
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	// Implementation
+}
+```
+
+## Generating Documentation
+
+Generate the documentation using the `swag` command:
+
+```bash
+# Exit on error
+set -e
+
+# Check if swag is installed
+if ! command -v swag &> /dev/null; then
+    echo "swag is not installed. Installing..."
+    go install github.com/swaggo/swag/cmd/swag@latest
+fi
+
+# Create docs directory if it doesn't exist
+mkdir -p docs
+
+# Generate Swagger documentation
+echo "Generating Swagger documentation..."
+swag init -g path/to/api.go -o ./docs
+
+echo "Documentation generated successfully!"
+echo "You can access the Swagger UI at: http://localhost:8080/swagger/index.html"
+echo "You can access the ReDoc UI at: http://localhost:8080/redoc/index.html"
+```
+
+## Complete Example
+
+### API Handler with Swagger Annotations
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+// UserHandler is a sample API handler
+type UserHandler struct{}
+
+// User represents a user in the system
+type User struct {
+	ID       string `json:"id" example:"1"`
+	Username string `json:"username" example:"johndoe"`
+	Email    string `json:"email" example:"john@example.com"`
+	Age      int    `json:"age" example:"25"`
+}
+
+// NewUserHandler creates a new user handler
+func NewUserHandler() *UserHandler {
+	return &UserHandler{}
+}
+
+// Routes registers the routes for the user handler
+func (h *UserHandler) Routes(router *gin.RouterGroup) {
+	userGroup := router.Group("/users")
+	{
+		userGroup.GET("", h.ListUsers)
+		userGroup.GET("/:id", h.GetUser)
+		userGroup.POST("", h.CreateUser)
+		userGroup.PUT("/:id", h.UpdateUser)
+		userGroup.DELETE("/:id", h.DeleteUser)
+	}
+}
+
+// ListUsers godoc
+// @Summary      List users
+// @Description  get all users
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   User
+// @Failure      500  {object}  map[string]interface{}
+// @Router       /users [get]
+// @Security     BearerAuth
+func (h *UserHandler) ListUsers(c *gin.Context) {
+	users := []User{
+		{ID: "1", Username: "johndoe", Email: "john@example.com", Age: 25},
+		{ID: "2", Username: "janedoe", Email: "jane@example.com", Age: 30},
+	}
+	c.JSON(http.StatusOK, users)
+}
+
+// GetUser godoc
+// @Summary      Get a user
+// @Description  get user by ID
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID"
+// @Success      200  {object}  User
+// @Failure      400  {object}  map[string]interface{}
+// @Failure      404  {object}  map[string]interface{}
+// @Failure      500  {object}  map[string]interface{}
+// @Router       /users/{id} [get]
+// @Security     BearerAuth
+func (h *UserHandler) GetUser(c *gin.Context) {
+	id := c.Param("id")
+	user := User{ID: id, Username: "johndoe", Email: "john@example.com", Age: 25}
+	c.JSON(http.StatusOK, user)
+}
+
+// CreateUser godoc
+// @Summary      Create a user
+// @Description  create a new user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      User  true  "User object"
+// @Success      201   {object}  User
+// @Failure      400   {object}  map[string]interface{}
+// @Failure      500   {object}  map[string]interface{}
+// @Router       /users [post]
+// @Security     BearerAuth
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	var user User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	user.ID = "3" // In a real app, this would be generated
+	c.JSON(http.StatusCreated, user)
+}
+
+// UpdateUser godoc
+// @Summary      Update a user
+// @Description  update an existing user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string  true  "User ID"
+// @Param        user  body      User    true  "User object"
+// @Success      200   {object}  User
+// @Failure      400   {object}  map[string]interface{}
+// @Failure      404   {object}  map[string]interface{}
+// @Failure      500   {object}  map[string]interface{}
+// @Router       /users/{id} [put]
+// @Security     BearerAuth
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	id := c.Param("id")
+	var user User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	user.ID = id
+	c.JSON(http.StatusOK, user)
+}
+
+// DeleteUser godoc
+// @Summary      Delete a user
+// @Description  delete an existing user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "User ID"
+// @Success      204  {object}  nil
+// @Failure      400  {object}  map[string]interface{}
+// @Failure      404  {object}  map[string]interface{}
+// @Failure      500  {object}  map[string]interface{}
+// @Router       /users/{id} [delete]
+// @Security     BearerAuth
+func (h *UserHandler) DeleteUser(c *gin.Context) {
+	c.Status(http.StatusNoContent)
+}
+```
+
+### Main Application with Swagger and ReDoc
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	sfrouting "git.snappfood.ir/backend/go/packages/sf-routing"
+	_ "path/to/your/docs" // Import docs for swagger
+)
+
+// HealthChecker is a simple health checker
+type HealthChecker struct{}
+
+// Health implements the Healthy interface
+func (h *HealthChecker) Health(ctx context.Context) error {
+	return nil
+}
+
+func main() {
+	// Create a new user handler
+	userHandler := NewUserHandler()
+
+	// Configure Swagger with Swagger UI
+	err := sfrouting.RegisterConnection(
+		sfrouting.WithSwagger(sfrouting.SwaggerConfig{
+			Enabled:  true,
+			Title:    "SF Routing API",
+			Version:  "1.0",
+			Host:     "localhost:8080",
+			BasePath: "/api/v1",
+			Schemes:  []string{"http", "https"},
+			UIType:   "swagger", // Use Swagger UI
+		}),
+		sfrouting.WithHealthChecks(&HealthChecker{}),
+	)
+	if err != nil {
+		log.Fatalf("Failed to register connection: %v", err)
+	}
+
+	// Register API routes
+	sfrouting.RegisterRouterGroup("/api/v1", userHandler)
+
+	// Start the server
+	log.Println("Starting server on :8080")
+	if err := sfrouting.StartServer(":8080"); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+// Example of using ReDoc instead of Swagger UI:
+func mainWithRedoc() {
+	// Create a new user handler
+	userHandler := NewUserHandler()
+
+	// Configure Swagger with ReDoc UI
+	err := sfrouting.RegisterConnection(
+		sfrouting.WithSwagger(sfrouting.SwaggerConfig{
+			Enabled:  true,
+			Title:    "SF Routing API",
+			Version:  "1.0",
+			Host:     "localhost:8080",
+			BasePath: "/api/v1",
+			Schemes:  []string{"http", "https"},
+			UIType:   "redoc", // Use ReDoc UI
+		}),
+		sfrouting.WithHealthChecks(&HealthChecker{}),
+	)
+	if err != nil {
+		log.Fatalf("Failed to register connection: %v", err)
+	}
+
+	// Register API routes
+	sfrouting.RegisterRouterGroup("/api/v1", userHandler)
+
+	// Start the server
+	log.Println("Starting server on :8080")
+	if err := sfrouting.StartServer(":8080"); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
 ```
 
 ## Usage
@@ -645,8 +971,8 @@ sfrouting.RegisterHealthCheck(&MyHealthCheck{})
 
 // New way through RegisterConnection
 sfrouting.RegisterConnection(
-    sfrouting.WithHealthChecks(&MyHealthCheck{}, &AnotherHealthCheck{}),
-    // Other options...
+	sfrouting.WithHealthChecks(&MyHealthCheck{}, &AnotherHealthCheck{}),
+	// Other options...
 )
 ```
 
@@ -657,50 +983,50 @@ To expose Prometheus metrics for your application, implement the `PrometheusExpo
 ```go
 // PrometheusExporter defines the interface for Prometheus exporter
 type PrometheusExporter interface {
-    // Handler returns an http.Handler that will handle Prometheus metrics requests
-    Handler() http.Handler
+	// Handler returns an http.Handler that will handle Prometheus metrics requests
+	Handler() http.Handler
 }
 
 // Implement your custom Prometheus exporter
 type MyPrometheusExporter struct{}
 
 func (p *MyPrometheusExporter) Handler() http.Handler {
-    // In a real implementation, you would use the Prometheus client library
-    // For example, with github.com/prometheus/client_golang/prometheus:
-    
-    // Create a registry
-    registry := prometheus.NewRegistry()
-    
-    // Register your metrics with the registry
-    counter := prometheus.NewCounter(prometheus.CounterOpts{
-        Name: "my_counter",
-        Help: "This is my counter",
-    })
-    registry.MustRegister(counter)
-    
-    // Increment counter in your application code
-    counter.Inc()
-    
-    // Return the HTTP handler that serves the metrics
-    return promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
-    
-    // Or for a simple implementation:
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Content-Type", "text/plain; version=0.0.4")
-        w.WriteHeader(http.StatusOK)
-        w.Write([]byte(`# HELP example_metric Example metric
+	// In a real implementation, you would use the Prometheus client library
+	// For example, with github.com/prometheus/client_golang/prometheus:
+	
+	// Create a registry
+	registry := prometheus.NewRegistry()
+	
+	// Register your metrics with the registry
+	counter := prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "my_counter",
+		Help: "This is my counter",
+	})
+	registry.MustRegister(counter)
+	
+	// Increment counter in your application code
+	counter.Inc()
+	
+	// Return the HTTP handler that serves the metrics
+	return promhttp.HandlerFor(registry, promhttp.HandlerOpts{})
+	
+	// Or for a simple implementation:
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain; version=0.0.4")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`# HELP example_metric Example metric
 # TYPE example_metric gauge
 example_metric 42`))
-    })
+	})
 }
 
 // Register the exporter with the registry
 sfrouting.RegisterConnection(
-    sfrouting.WithPrometheusExporter(&MyPrometheusExporter{}, sfrouting.PrometheusConfig{
-        Enabled: true,
-        Path:    "/metrics",
-    }),
-    // Other options...
+	sfrouting.WithPrometheusExporter(&MyPrometheusExporter{}, sfrouting.PrometheusConfig{
+		Enabled: true,
+		Path:    "/metrics",
+	}),
+	// Other options...
 )
 ```
 
@@ -718,7 +1044,7 @@ config.Path = "/custom-metrics"
 
 // Configure the server with modified Prometheus settings
 sfrouting.RegisterConnection(
-    sfrouting.WithPrometheusExporter(&MyPrometheusExporter{}, config),
-    // Other options...
+	sfrouting.WithPrometheusExporter(&MyPrometheusExporter{}, config),
+	// Other options...
 )
 ```

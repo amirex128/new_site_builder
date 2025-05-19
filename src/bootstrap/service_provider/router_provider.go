@@ -21,12 +21,11 @@ func RouterProvider(logger sflogger.Logger) {
 		}),
 		sfrouting.WithSwagger(sfrouting.SwaggerConfig{
 			Enabled:  true,
-			Title:    "SF-Routing Example API",
+			Title:    "SF-Routing API",
 			Version:  "1.0",
-			Host:     "localhost:8080",
-			BasePath: "/",
-			Path:     "/swagger/*any",
+			BasePath: "/api/v1",
 			Schemes:  []string{"http", "https"},
+			UIType:   "redoc", // Use ReDoc UI
 		}),
 		sfrouting.WithErrorHandler(sfrouting.DefaultErrorHandler),
 		sfrouting.WithGlobalMiddleware(middlewares.LoggedinMiddle),

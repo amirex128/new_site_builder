@@ -28,7 +28,7 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.UpdateUnitPriceCommand(&params)
+	result, err := h.usecase.SetContext(c).UpdateUnitPriceCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -43,7 +43,7 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.CalculateUnitPriceQuery(&params)
+	result, err := h.usecase.SetContext(c).CalculateUnitPriceQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -58,7 +58,7 @@ func (h *UnitPriceHandler) GetAllUnitPrice(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetAllUnitPriceQuery(&params)
+	result, err := h.usecase.SetContext(c).GetAllUnitPriceQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

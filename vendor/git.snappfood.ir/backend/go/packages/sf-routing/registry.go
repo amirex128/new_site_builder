@@ -10,6 +10,9 @@ import (
 
 	"git.snappfood.ir/backend/go/packages/sf-routing/middlewares"
 	"github.com/gin-gonic/gin"
+	"github.com/mvrilo/go-redoc"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.elastic.co/apm/module/apmgin/v2"
 )
 
@@ -75,24 +78,24 @@ func DefaultPrometheusConfig() PrometheusConfig {
 // SwaggerConfig holds all Swagger configuration settings
 type SwaggerConfig struct {
 	Enabled  bool
-	Path     string
 	Title    string
 	Version  string
 	Host     string
 	BasePath string
 	Schemes  []string
+	UIType   string // "swagger" or "redoc"
 }
 
 // DefaultSwaggerConfig returns the default Swagger configuration
 func DefaultSwaggerConfig() SwaggerConfig {
 	return SwaggerConfig{
 		Enabled:  false,
-		Path:     "/swagger/*any",
 		Title:    "API Documentation",
 		Version:  "1.0",
 		Host:     "",
 		BasePath: "/",
 		Schemes:  []string{"http", "https"},
+		UIType:   "swagger", // Default to Swagger UI
 	}
 }
 
@@ -112,12 +115,12 @@ type Registry struct {
 	errorHandler       ErrorHandler
 	logger             Logger
 	SwaggerEnabled     bool
-	SwaggerPath        string
 	SwaggerTitle       string
 	SwaggerVersion     string
 	SwaggerHost        string
 	SwaggerBasePath    string
 	SwaggerSchemes     []string
+	SwaggerUIType      string
 	corsConfig         CorsConfig
 	corsApplied        bool
 	prometheusExporter PrometheusExporter
@@ -132,12 +135,12 @@ var globalRegistry = &Registry{
 	logger:            nil,
 	errorHandler:      nil,
 	SwaggerEnabled:    false,
-	SwaggerPath:       "/swagger/*any",
 	SwaggerTitle:      "API Documentation",
 	SwaggerVersion:    "1.0",
 	SwaggerHost:       "",
 	SwaggerBasePath:   "/",
 	SwaggerSchemes:    []string{"http", "https"},
+	SwaggerUIType:     "swagger", // Default to Swagger UI
 	corsConfig:        CorsConfig{},
 	prometheusConfig:  PrometheusConfig{Enabled: false, Path: "/metrics"},
 }
@@ -172,12 +175,12 @@ func WithLogger(logger Logger) Option {
 func WithSwagger(config SwaggerConfig) Option {
 	return func(r *Registry) {
 		r.SwaggerEnabled = config.Enabled
-		r.SwaggerPath = config.Path
 		r.SwaggerTitle = config.Title
 		r.SwaggerVersion = config.Version
 		r.SwaggerHost = config.Host
 		r.SwaggerBasePath = config.BasePath
 		r.SwaggerSchemes = config.Schemes
+		r.SwaggerUIType = config.UIType
 	}
 }
 
@@ -335,11 +338,56 @@ func RegisterConnection(opts ...Option) error {
 
 	// Register Swagger if enabled
 	if globalRegistry.SwaggerEnabled {
-		// Swagger is disabled in this version to fix linter errors
-		// In a real implementation, you would use the swagger packages
-		globalRegistry.engine.GET(globalRegistry.SwaggerPath, func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"message": "Swagger documentation is disabled in this version"})
-		})
+		// Configure Swagger docs
+		if globalRegistry.SwaggerUIType == "redoc" {
+			// Setup ReDoc
+			doc := redoc.Redoc{
+				Title:       globalRegistry.SwaggerTitle,
+				Description: "API Documentation using ReDoc",
+				SpecFile:    "./docs/swagger.json",
+				SpecPath:    "/swagger/doc.json",
+			}
+
+			// Register ReDoc handler
+			globalRegistry.engine.GET("/redoc/*any", func(c *gin.Context) {
+				doc.Handler().ServeHTTP(c.Writer, c.Request)
+			})
+
+			// Register the swagger.json endpoint
+			globalRegistry.engine.GET("/swagger/doc.json", func(c *gin.Context) {
+				c.File("./docs/swagger.json")
+			})
+
+			if globalRegistry.logger != nil {
+				extraMap := map[string]interface{}{
+					ExtraKey.HTTP.Path: "/redoc/",
+				}
+
+				globalRegistry.logger.InfoWithCategory(
+					Category.API.Documentation,
+					SubCategory.Operation.Configuration,
+					"ReDoc API documentation endpoint registered",
+					extraMap,
+				)
+			}
+		} else {
+			// Default to Swagger UI
+			url := ginSwagger.URL("/swagger/doc.json") // The URL pointing to API definition
+			globalRegistry.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+
+			if globalRegistry.logger != nil {
+				extraMap := map[string]interface{}{
+					ExtraKey.HTTP.Path: "/swagger/*any",
+				}
+
+				globalRegistry.logger.InfoWithCategory(
+					Category.API.Documentation,
+					SubCategory.Operation.Configuration,
+					"Swagger API documentation endpoint registered",
+					extraMap,
+				)
+			}
+		}
 	}
 
 	// Set custom error handler if provided

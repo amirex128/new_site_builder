@@ -3,99 +3,131 @@ package storage
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
-	"net/url"
+	"path/filepath"
+	"strings"
 	"time"
 
+	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-// StorageService implements IStorageService
-type StorageService struct {
-	client     *minio.Client
-	bucketName string
+// StorageClient represents an S3-compatible storage client
+type StorageClient struct {
+	client *minio.Client
+	host   string
 }
 
-// NewStorageService creates a new instance of StorageService
-func NewStorageService(bucketName, region, accessKey, secretKey string) *StorageService {
+// NewStorageClient creates a new storage client
+func NewStorageClient(host, accessKey, secretKey string) *StorageClient {
 	// Initialize MinIO client
-	endpoint := "s3.amazonaws.com" // Default S3 endpoint
-	client, err := minio.New(endpoint, &minio.Options{
+	client, err := minio.New(host, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
 		Secure: true,
-		Region: region,
 	})
 	if err != nil {
 		panic(fmt.Sprintf("Failed to initialize storage client: %v", err))
 	}
 
-	return &StorageService{
-		client:     client,
-		bucketName: bucketName,
+	return &StorageClient{
+		client: client,
+		host:   host,
 	}
 }
 
-// CreateBucketIfNotExists creates a bucket if it doesn't exist
-func (s *StorageService) CreateBucketIfNotExists(serverKey, bucketName string) error {
-	ctx := context.Background()
-	exists, err := s.client.BucketExists(ctx, bucketName)
-	if err != nil {
-		return err
+// StorageService implements IStorageService
+type StorageService struct {
+	clients map[string]*StorageClient
+}
+
+// NewStorageService creates a new instance of StorageService with multiple clients
+func NewStorageService(s1Client, s2Client, s3Client *StorageClient) *StorageService {
+	clients := make(map[string]*StorageClient)
+	clients["S1"] = s1Client
+	clients["S2"] = s2Client
+	clients["S3"] = s3Client
+
+	return &StorageService{
+		clients: clients,
 	}
-	if !exists {
-		return s.client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{
-			Region: serverKey,
-		})
+}
+
+// getClient returns the client for the given key
+func (s *StorageService) getClient(key string) (*StorageClient, error) {
+	client, ok := s.clients[key]
+	if !ok {
+		return nil, fmt.Errorf("client with key %s not found", key)
 	}
-	return nil
+	return client, nil
 }
 
 // CreateFileOrDirectoryIfNotExists creates a file or directory if it doesn't exist
-func (s *StorageService) CreateFileOrDirectoryIfNotExists(serverKey, bucketName, path string, permission int, content ...io.Reader) error {
-	ctx := context.Background()
-	exists, err := s.CheckFileOrDirectoryIsExists(serverKey, bucketName, path)
+func (s *StorageService) CreateFileOrDirectoryIfNotExists(serverKey, bucketName, key string, permission contractStorage.FileItemPermissionEnum, fileStream ...io.Reader) (string, error) {
+	client, err := s.getClient(serverKey)
 	if err != nil {
-		return err
+		return "", err
 	}
-	if !exists {
-		var reader io.Reader
-		if len(content) > 0 && content[0] != nil {
-			reader = content[0]
-		} else {
-			reader = bytes.NewReader([]byte{})
-		}
 
-		// Determine content size
-		var size int64
+	ctx := context.Background()
+	var reader io.Reader
+	var size int64
+
+	if len(fileStream) > 0 && fileStream[0] != nil {
+		reader = fileStream[0]
+
+		// Try to determine content size if reader supports it
 		if seeker, ok := reader.(io.Seeker); ok {
 			currentPos, err := seeker.Seek(0, io.SeekCurrent)
 			if err != nil {
-				return err
+				return "", err
 			}
 			endPos, err := seeker.Seek(0, io.SeekEnd)
 			if err != nil {
-				return err
+				return "", err
 			}
 			_, err = seeker.Seek(currentPos, io.SeekStart)
 			if err != nil {
-				return err
+				return "", err
 			}
 			size = endPos - currentPos
 		}
-
-		_, err = s.client.PutObject(ctx, bucketName, path, reader, size, minio.PutObjectOptions{})
-		return err
+	} else {
+		// For directories, create an empty object with trailing slash
+		if !strings.HasSuffix(key, "/") {
+			key += "/"
+		}
+		reader = bytes.NewReader([]byte{})
+		size = 0
 	}
-	return nil
+
+	_, err = client.client.PutObject(ctx, bucketName, key, reader, size, minio.PutObjectOptions{})
+	if err != nil {
+		return "", err
+	}
+
+	// Set permissions
+	err = s.AddOrRemoveOrChangePermission(serverKey, bucketName, key, permission, false)
+	if err != nil {
+		return "", err
+	}
+
+	return s.GenerateUrl(serverKey, bucketName, key), nil
 }
 
 // CheckFileOrDirectoryIsExists checks if a file or directory exists
-func (s *StorageService) CheckFileOrDirectoryIsExists(serverKey, bucketName, path string) (bool, error) {
-	ctx := context.Background()
-	_, err := s.client.StatObject(ctx, bucketName, path, minio.StatObjectOptions{})
+func (s *StorageService) CheckFileOrDirectoryIsExists(serverKey, bucketName, key string) (bool, error) {
+	client, err := s.getClient(serverKey)
 	if err != nil {
+		return false, err
+	}
+
+	ctx := context.Background()
+	_, err = client.client.StatObject(ctx, bucketName, key, minio.StatObjectOptions{})
+	if err != nil {
+		// Check if error is "not found"
 		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
 			return false, nil
 		}
@@ -104,116 +136,96 @@ func (s *StorageService) CheckFileOrDirectoryIsExists(serverKey, bucketName, pat
 	return true, nil
 }
 
-// RenameOrMoveFileOrDirectory renames or moves a file or directory
-func (s *StorageService) RenameOrMoveFileOrDirectory(serverKey, bucketName, sourcePath, destinationPath string, permission int) error {
-	ctx := context.Background()
-
-	// Copy the object to the new location
-	src := minio.CopySrcOptions{
-		Bucket: bucketName,
-		Object: sourcePath,
-	}
-	dst := minio.CopyDestOptions{
-		Bucket: bucketName,
-		Object: destinationPath,
-	}
-	_, err := s.client.CopyObject(ctx, dst, src)
-	if err != nil {
-		return err
-	}
-
-	// Delete the original object
-	return s.client.RemoveObject(ctx, bucketName, sourcePath, minio.RemoveObjectOptions{})
-}
-
-// CopyFileOrDirectory copies a file or directory
-func (s *StorageService) CopyFileOrDirectory(serverKey, bucketName, sourcePath, destinationPath string, permission int) error {
-	ctx := context.Background()
-
-	// Copy the object to the new location
-	src := minio.CopySrcOptions{
-		Bucket: bucketName,
-		Object: sourcePath,
-	}
-	dst := minio.CopyDestOptions{
-		Bucket: bucketName,
-		Object: destinationPath,
-	}
-	_, err := s.client.CopyObject(ctx, dst, src)
-	return err
-}
-
 // RemoveFileOrDirectoryIfExists removes a file or directory if it exists
-func (s *StorageService) RemoveFileOrDirectoryIfExists(serverKey, bucketName, path string) error {
+func (s *StorageService) RemoveFileOrDirectoryIfExists(serverKey, bucketName, key string) (bool, error) {
+	client, err := s.getClient(serverKey)
+	if err != nil {
+		return false, err
+	}
+
 	ctx := context.Background()
-	exists, err := s.CheckFileOrDirectoryIsExists(serverKey, bucketName, path)
+	exists, err := s.CheckFileOrDirectoryIsExists(serverKey, bucketName, key)
+	if err != nil {
+		return false, err
+	}
+
+	if !exists {
+		return false, nil
+	}
+
+	err = client.client.RemoveObject(ctx, bucketName, key, minio.RemoveObjectOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// CreateBucketIfNotExists creates a bucket if it doesn't exist
+func (s *StorageService) CreateBucketIfNotExists(serverKey, bucketName string) error {
+	client, err := s.getClient(serverKey)
 	if err != nil {
 		return err
 	}
-	if exists {
-		return s.client.RemoveObject(ctx, bucketName, path, minio.RemoveObjectOptions{})
-	}
-	return nil
-}
 
-// AddOrRemoveOrChangePermission adds, removes, or changes permissions on a file or directory
-func (s *StorageService) AddOrRemoveOrChangePermission(serverKey, bucketName, path string, permission int) error {
-	// MinIO doesn't directly support Unix-style permissions
-	// This is a placeholder implementation
-	return nil
-}
-
-// GenerateUrl generates a URL for a file or directory
-func (s *StorageService) GenerateUrl(serverKey, bucketName, path string) string {
-	return fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucketName, path)
-}
-
-// GeneratePreSignedUrl generates a pre-signed URL for a file or directory
-func (s *StorageService) GeneratePreSignedUrl(serverKey, bucketName, path string, expiry time.Duration) (string, error) {
 	ctx := context.Background()
-	reqParams := make(url.Values)
-	presignedURL, err := s.client.PresignedGetObject(ctx, bucketName, path, expiry, reqParams)
+	exists, err := client.client.BucketExists(ctx, bucketName)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return presignedURL.String(), nil
+
+	if !exists {
+		return client.client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{})
+	}
+
+	return nil
+}
+
+// DeleteBucketIfExists deletes a bucket if it exists
+func (s *StorageService) DeleteBucketIfExists(serverKey, bucketName string) error {
+	client, err := s.getClient(serverKey)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+	exists, err := client.client.BucketExists(ctx, bucketName)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return client.client.RemoveBucket(ctx, bucketName)
+	}
+
+	return nil
 }
 
 // DownloadFileOrDirectory downloads a file or directory
-func (s *StorageService) DownloadFileOrDirectory(serverKey, bucketName, path string) (io.Reader, error) {
-	ctx := context.Background()
-	object, err := s.client.GetObject(ctx, bucketName, path, minio.GetObjectOptions{})
+func (s *StorageService) DownloadFileOrDirectory(serverKey, bucketName, key string) (io.ReadCloser, error) {
+	client, err := s.getClient(serverKey)
 	if err != nil {
 		return nil, err
 	}
-	return object, nil
+
+	ctx := context.Background()
+	obj, err := client.client.GetObject(ctx, bucketName, key, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return obj, nil
 }
 
-// Upload uploads a file to storage (convenience method)
-func (s *StorageService) Upload(ctx context.Context, path string, content []byte, contentType string) (string, error) {
-	reader := bytes.NewReader(content)
-	_, err := s.client.PutObject(ctx, s.bucketName, path, reader, int64(len(content)), minio.PutObjectOptions{
-		ContentType: contentType,
-	})
+// GeneratePreSignedUrl generates a pre-signed URL for a file or directory
+func (s *StorageService) GeneratePreSignedUrl(serverKey, bucketName, key string, expiry time.Duration) (string, error) {
+	client, err := s.getClient(serverKey)
 	if err != nil {
 		return "", err
 	}
 
-	// Generate URL for the uploaded file
-	fileURL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", s.bucketName, path)
-	return fileURL, nil
-}
-
-// Delete deletes a file from storage (convenience method)
-func (s *StorageService) Delete(ctx context.Context, path string) error {
-	return s.client.RemoveObject(ctx, s.bucketName, path, minio.RemoveObjectOptions{})
-}
-
-// GetSignedURL generates a pre-signed URL for the given path (convenience method)
-func (s *StorageService) GetSignedURL(ctx context.Context, path string, expiry time.Duration) (string, error) {
-	// Get presigned URL for object download
-	reqParams := make(url.Values)
-	presignedURL, err := s.client.PresignedGetObject(ctx, s.bucketName, path, expiry, reqParams)
+	ctx := context.Background()
+	presignedURL, err := client.client.PresignedGetObject(ctx, bucketName, key, expiry, nil)
 	if err != nil {
 		return "", err
 	}
@@ -221,20 +233,426 @@ func (s *StorageService) GetSignedURL(ctx context.Context, path string, expiry t
 	return presignedURL.String(), nil
 }
 
-// Download downloads a file from storage (convenience method)
-func (s *StorageService) Download(ctx context.Context, path string) ([]byte, error) {
-	// Get object
-	object, err := s.client.GetObject(ctx, s.bucketName, path, minio.GetObjectOptions{})
+// GenerateUrl generates a URL for a file or directory
+func (s *StorageService) GenerateUrl(serverKey, bucketName, key string) string {
+	client, err := s.getClient(serverKey)
 	if err != nil {
-		return nil, err
-	}
-	defer object.Close()
-
-	// Read the object content
-	content, err := io.ReadAll(object)
-	if err != nil {
-		return nil, err
+		return ""
 	}
 
-	return content, nil
+	return fmt.Sprintf("https://%s/%s/%s", client.host, bucketName, key)
+}
+
+// RenameOrMoveFileOrDirectory renames or moves a file or directory
+func (s *StorageService) RenameOrMoveFileOrDirectory(serverKey, bucketName, oldKey, newKey string, currentPolicy contractStorage.FileItemPermissionEnum) (string, error) {
+	client, err := s.getClient(serverKey)
+	if err != nil {
+		return "", err
+	}
+
+	ctx := context.Background()
+
+	// Check if source exists
+	exists, err := s.CheckFileOrDirectoryIsExists(serverKey, bucketName, oldKey)
+	if err != nil {
+		return "", err
+	}
+	if !exists {
+		return "", fmt.Errorf("old file or directory does not exist")
+	}
+
+	// Check if destination already exists
+	exists, err = s.CheckFileOrDirectoryIsExists(serverKey, bucketName, newKey)
+	if err != nil {
+		return "", err
+	}
+	if exists {
+		return "", fmt.Errorf("new file or directory already exists")
+	}
+
+	// If it's a directory (ends with '/')
+	if strings.HasSuffix(oldKey, "/") {
+		// List all objects with the prefix
+		objectCh := client.client.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+			Prefix:    oldKey,
+			Recursive: true,
+		})
+
+		for object := range objectCh {
+			if object.Err != nil {
+				return "", object.Err
+			}
+
+			// Create the new key by replacing the old prefix with the new one
+			destKey := strings.Replace(object.Key, oldKey, newKey, 1)
+
+			// Copy the object
+			_, err := client.client.CopyObject(ctx, minio.CopyDestOptions{
+				Bucket: bucketName,
+				Object: destKey,
+			}, minio.CopySrcOptions{
+				Bucket: bucketName,
+				Object: object.Key,
+			})
+			if err != nil {
+				return "", err
+			}
+
+			// Update permissions for the new object
+			err = s.AddOrRemoveOrChangePermission(serverKey, bucketName, destKey, currentPolicy, false)
+			if err != nil {
+				return "", err
+			}
+
+			// Remove the old object
+			err = client.client.RemoveObject(ctx, bucketName, object.Key, minio.RemoveObjectOptions{})
+			if err != nil {
+				return "", err
+			}
+		}
+	} else {
+		// Copy the object
+		_, err := client.client.CopyObject(ctx, minio.CopyDestOptions{
+			Bucket: bucketName,
+			Object: newKey,
+		}, minio.CopySrcOptions{
+			Bucket: bucketName,
+			Object: oldKey,
+		})
+		if err != nil {
+			return "", err
+		}
+
+		// Update permissions
+		err = s.AddOrRemoveOrChangePermission(serverKey, bucketName, oldKey, currentPolicy, true)
+		if err != nil {
+			return "", err
+		}
+
+		err = s.AddOrRemoveOrChangePermission(serverKey, bucketName, newKey, currentPolicy, false)
+		if err != nil {
+			return "", err
+		}
+
+		// Remove the old object
+		err = client.client.RemoveObject(ctx, bucketName, oldKey, minio.RemoveObjectOptions{})
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return s.GenerateUrl(serverKey, bucketName, newKey), nil
+}
+
+// CopyFileOrDirectory copies a file or directory
+func (s *StorageService) CopyFileOrDirectory(serverKey, bucketName, sourceKey, destinationDirectory string, currentPolicy contractStorage.FileItemPermissionEnum) (bool, error) {
+	client, err := s.getClient(serverKey)
+	if err != nil {
+		return false, err
+	}
+
+	ctx := context.Background()
+
+	// Check if source exists
+	exists, err := s.CheckFileOrDirectoryIsExists(serverKey, bucketName, sourceKey)
+	if err != nil {
+		return false, err
+	}
+	if !exists {
+		return false, fmt.Errorf("source file or directory does not exist")
+	}
+
+	// Check if destination already exists
+	exists, err = s.CheckFileOrDirectoryIsExists(serverKey, bucketName, destinationDirectory)
+	if err != nil {
+		return false, err
+	}
+	if exists {
+		return false, fmt.Errorf("destination directory already exists")
+	}
+
+	// Construct the new key
+	fileName := filepath.Base(sourceKey)
+	newKey := strings.TrimSuffix(destinationDirectory, "/") + "/" + fileName
+
+	// If it's a directory (ends with '/')
+	if strings.HasSuffix(sourceKey, "/") {
+		// List all objects with the prefix
+		objectCh := client.client.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+			Prefix:    sourceKey,
+			Recursive: true,
+		})
+
+		for object := range objectCh {
+			if object.Err != nil {
+				return false, object.Err
+			}
+
+			// Create the new key by replacing the old prefix with the new one
+			destKey := strings.Replace(object.Key, sourceKey, newKey, 1)
+
+			// Copy the object
+			_, err := client.client.CopyObject(ctx, minio.CopyDestOptions{
+				Bucket: bucketName,
+				Object: destKey,
+			}, minio.CopySrcOptions{
+				Bucket: bucketName,
+				Object: object.Key,
+			})
+			if err != nil {
+				return false, err
+			}
+
+			// Update permissions for the new object
+			err = s.AddOrRemoveOrChangePermission(serverKey, bucketName, destKey, currentPolicy, false)
+			if err != nil {
+				return false, err
+			}
+		}
+	} else {
+		// Copy the object
+		_, err := client.client.CopyObject(ctx, minio.CopyDestOptions{
+			Bucket: bucketName,
+			Object: newKey,
+		}, minio.CopySrcOptions{
+			Bucket: bucketName,
+			Object: sourceKey,
+		})
+		if err != nil {
+			return false, err
+		}
+
+		// Update permissions
+		err = s.AddOrRemoveOrChangePermission(serverKey, bucketName, newKey, currentPolicy, false)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
+}
+
+// AddOrRemoveOrChangePermission adds, removes, or changes permissions on a file or directory
+func (s *StorageService) AddOrRemoveOrChangePermission(serverKey, bucketName, key string, permission contractStorage.FileItemPermissionEnum, justRemove bool) error {
+	client, err := s.getClient(serverKey)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+
+	// Resource ARN
+	resourceArn := fmt.Sprintf("arn:aws:s3:::%s/%s", bucketName, key)
+
+	// Get current bucket policy
+	var policyJSON string
+	policyJSON, err = client.client.GetBucketPolicy(ctx, bucketName)
+	if err != nil {
+		// If error is "policy not found", create a new one
+		if minio.ToErrorResponse(err).Code == "NoSuchBucketPolicy" {
+			policyJSON = `{"Version":"2012-10-17","Statement":[]}`
+		} else {
+			return err
+		}
+	}
+
+	// Parse policy JSON
+	var policy map[string]interface{}
+	if err := json.Unmarshal([]byte(policyJSON), &policy); err != nil {
+		return err
+	}
+
+	// Initialize statements if not exists
+	if _, ok := policy["Statement"]; !ok {
+		policy["Statement"] = []interface{}{}
+	}
+
+	statements := policy["Statement"].([]interface{})
+
+	// Find public and private statements
+	var publicStatement map[string]interface{}
+	var privateStatement map[string]interface{}
+	var publicIndex, privateIndex int
+	var publicResources, privateResources []interface{}
+
+	for i, stmt := range statements {
+		statement := stmt.(map[string]interface{})
+		if sid, ok := statement["Sid"].(string); ok {
+			if sid == "PublicRead" {
+				publicStatement = statement
+				publicIndex = i
+				if resources, ok := statement["Resource"].([]interface{}); ok {
+					publicResources = resources
+				} else {
+					publicResources = []interface{}{}
+				}
+			} else if sid == "DenyAllExceptOwner" {
+				privateStatement = statement
+				privateIndex = i
+				if resources, ok := statement["Resource"].([]interface{}); ok {
+					privateResources = resources
+				} else {
+					privateResources = []interface{}{}
+				}
+			}
+		}
+	}
+
+	// If just removing, remove from both lists
+	if justRemove {
+		// Remove from public resources
+		if publicStatement != nil {
+			newPublicResources := []interface{}{}
+			for _, res := range publicResources {
+				if res.(string) != resourceArn {
+					newPublicResources = append(newPublicResources, res)
+				}
+			}
+			publicResources = newPublicResources
+			publicStatement["Resource"] = publicResources
+
+			// If no resources left, remove the statement
+			if len(publicResources) == 0 {
+				statements = append(statements[:publicIndex], statements[publicIndex+1:]...)
+				// Adjust privateIndex if needed
+				if privateIndex > publicIndex {
+					privateIndex--
+				}
+			}
+		}
+
+		// Remove from private resources
+		if privateStatement != nil {
+			newPrivateResources := []interface{}{}
+			for _, res := range privateResources {
+				if res.(string) != resourceArn {
+					newPrivateResources = append(newPrivateResources, res)
+				}
+			}
+			privateResources = newPrivateResources
+			privateStatement["Resource"] = privateResources
+
+			// If no resources left, remove the statement
+			if len(privateResources) == 0 {
+				if privateIndex < len(statements) {
+					statements = append(statements[:privateIndex], statements[privateIndex+1:]...)
+				}
+			}
+		}
+	} else {
+		// Add to appropriate list based on permission
+		if permission == contractStorage.Public {
+			// Add to public, remove from private
+
+			// Create public statement if it doesn't exist
+			if publicStatement == nil {
+				publicStatement = map[string]interface{}{
+					"Sid":       "PublicRead",
+					"Effect":    "Allow",
+					"Principal": map[string]string{"AWS": "*"},
+					"Action":    []string{"s3:GetObject"},
+					"Resource":  []interface{}{},
+				}
+				publicResources = []interface{}{}
+				statements = append(statements, publicStatement)
+			}
+
+			// Add to public resources if not already there
+			found := false
+			for _, res := range publicResources {
+				if res.(string) == resourceArn {
+					found = true
+					break
+				}
+			}
+			if !found {
+				publicResources = append(publicResources, resourceArn)
+			}
+			publicStatement["Resource"] = publicResources
+
+			// Remove from private resources
+			if privateStatement != nil {
+				newPrivateResources := []interface{}{}
+				for _, res := range privateResources {
+					if res.(string) != resourceArn {
+						newPrivateResources = append(newPrivateResources, res)
+					}
+				}
+				privateResources = newPrivateResources
+				privateStatement["Resource"] = privateResources
+
+				// If no resources left, remove the statement
+				if len(privateResources) == 0 {
+					for i, stmt := range statements {
+						if stmt.(map[string]interface{})["Sid"].(string) == "DenyAllExceptOwner" {
+							statements = append(statements[:i], statements[i+1:]...)
+							break
+						}
+					}
+				}
+			}
+		} else {
+			// Add to private, remove from public
+
+			// Create private statement if it doesn't exist
+			if privateStatement == nil {
+				privateStatement = map[string]interface{}{
+					"Sid":       "DenyAllExceptOwner",
+					"Effect":    "Deny",
+					"Principal": map[string]string{"AWS": "*"},
+					"Action":    []string{"s3:GetObject"},
+					"Resource":  []interface{}{},
+				}
+				privateResources = []interface{}{}
+				statements = append(statements, privateStatement)
+			}
+
+			// Add to private resources if not already there
+			found := false
+			for _, res := range privateResources {
+				if res.(string) == resourceArn {
+					found = true
+					break
+				}
+			}
+			if !found {
+				privateResources = append(privateResources, resourceArn)
+			}
+			privateStatement["Resource"] = privateResources
+
+			// Remove from public resources
+			if publicStatement != nil {
+				newPublicResources := []interface{}{}
+				for _, res := range publicResources {
+					if res.(string) != resourceArn {
+						newPublicResources = append(newPublicResources, res)
+					}
+				}
+				publicResources = newPublicResources
+				publicStatement["Resource"] = publicResources
+
+				// If no resources left, remove the statement
+				if len(publicResources) == 0 {
+					for i, stmt := range statements {
+						if stmt.(map[string]interface{})["Sid"].(string) == "PublicRead" {
+							statements = append(statements[:i], statements[i+1:]...)
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Update policy with modified statements
+	policy["Statement"] = statements
+
+	// Convert policy back to JSON
+	updatedPolicyJSON, err := json.Marshal(policy)
+	if err != nil {
+		return err
+	}
+
+	// Set the updated bucket policy
+	return client.client.SetBucketPolicy(ctx, bucketName, string(updatedPolicyJSON))
 }

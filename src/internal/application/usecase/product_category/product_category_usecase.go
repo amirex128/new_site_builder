@@ -27,7 +27,7 @@ func NewProductCategoryUsecase(c contract.IContainer) *ProductCategoryUsecase {
 		logger:         c.GetLogger(),
 		repo:           c.GetProductCategoryRepo(),
 		mediaRepo:      c.GetMediaRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 	}
 }
 

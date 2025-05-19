@@ -2,7 +2,9 @@ package bootstrap
 
 import (
 	"context"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/payment"
+	"net/http"
 
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/auth"
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/storage"
@@ -30,12 +32,18 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		Config: cfg,
 		Logger: logger,
 
-		MainCache:          service.NewRedis(sfredis.MustClient(ctx, "cache")),
-		AuthContextService: auth.NewAuthContextService(ctx, userRepo, roleRepo),
-		IdentityService:    auth.NewIdentityService(cfg.JwtSecretToken, 24*time.Hour),
-		StorageService:     storage.NewStorageService(cfg.Bucket, cfg.Region, cfg.AccessKey, cfg.SecretKey),
-		PaymentService:     payment.NewPaymentService(paymentRepo, gatewayRepo),
+		MainCache:       service.NewRedis(sfredis.MustClient(ctx, "cache")),
+		IdentityService: auth.NewIdentityService(cfg.JwtSecretToken, cfg.JwtIssuer, cfg.JwtAudience, 24*time.Hour),
+		StorageService: storage.NewStorageService(
+			storage.NewStorageClient(cfg.StorageS1Host, cfg.StorageS1AccessKey, cfg.StorageS1SecretKey),
+			storage.NewStorageClient(cfg.StorageS2Host, cfg.StorageS2AccessKey, cfg.StorageS2SecretKey),
+			storage.NewStorageClient(cfg.StorageS3Host, cfg.StorageS3AccessKey, cfg.StorageS3SecretKey),
+		),
+		PaymentService: payment.NewPaymentService(paymentRepo, gatewayRepo),
 		// for transient
+		AuthContextTransientService: func(c *gin.Context) common.IAuthContextService {
+			return auth.NewAuthContextService(ctx, request, userRepo, roleRepo)
+		},
 		stockCacheTransient: func() cache.ICacheService {
 			return service.NewRedis(sfredis.MustClient(ctx, "stock"))
 		},

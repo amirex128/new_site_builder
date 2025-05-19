@@ -187,6 +187,23 @@ func WithElasticsearchSink(url string, indexName string, username, password stri
 	}
 }
 
+// WithMongoDBSink adds a MongoDB sink to the logger
+func WithMongoDBSink(host string, port int, database string, collection string, username string, password string, batchSize int) Option {
+	return func(c *Config) {
+		var mongoURL string
+		if username != "" && password != "" {
+			mongoURL = fmt.Sprintf("mongodb://%s:%s@%s:%d/%s?collection=%s", username, password, host, port, database, collection)
+		} else {
+			mongoURL = fmt.Sprintf("mongodb://%s:%d/%s?collection=%s", host, port, database, collection)
+		}
+
+		if batchSize > 0 {
+			mongoURL += fmt.Sprintf("&batchSize=%d", batchSize)
+		}
+		c.SinkURLs = append(c.SinkURLs, mongoURL)
+	}
+}
+
 // WithMultiSink adds a multi-sink configuration with multiple destinations
 func WithMultiSink(sinkURLs []string, failSafe bool) Option {
 	return func(c *Config) {

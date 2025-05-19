@@ -25,7 +25,7 @@ func NewSiteUsecase(c contract.IContainer) *SiteUsecase {
 		logger:         c.GetLogger(),
 		repo:           c.GetSiteRepo(),
 		settingRepo:    c.GetSettingRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 	}
 }
 

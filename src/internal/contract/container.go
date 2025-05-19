@@ -7,6 +7,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +16,7 @@ type IContainer interface {
 	GetLogger() sflogger.Logger
 
 	// Auth services
-	GetAuthContextService() common.IAuthContextService
+	GetAuthContextTransientService() func(c *gin.Context) common.IAuthContextService
 
 	// Repositories
 	GetAddressRepo() repository.IAddressRepository

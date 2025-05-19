@@ -10,29 +10,6 @@ type RouterV1 struct {
 }
 
 func (v RouterV1) Routes(route *gin.RouterGroup) {
-	// NOTE: HandlerManager in bootstrap/handler_manager.go needs to be updated with the following fields:
-	// - FileItemHandlerV1
-	// - BasketHandlerV1
-	// - OrderHandlerV1
-	// - PaymentHandlerV1
-	// - ProductCategoryHandlerV1
-	// - ProductHandlerV1
-	// - WebsiteHandlerV1
-	// - DefaultThemeHandlerV1
-	// - PageHandlerV1
-	// - HeaderFooterHandlerV1
-	// - SiteHandlerV1
-	// - TicketHandlerV1
-	// - CustomerTicketHandlerV1
-	// - DiscountHandlerV1
-	// - ProductReviewHandlerV1
-	// - AddressHandlerV1
-	// - PlanHandlerV1
-	// - RoleHandlerV1
-	// - UnitPriceHandlerV1
-	// - UserHandlerV1
-	// - CustomerHandlerV1
-	// - ArticleCategoryHandlerV1
 
 	// Article routes
 	articleRoute := route.Group("/article")

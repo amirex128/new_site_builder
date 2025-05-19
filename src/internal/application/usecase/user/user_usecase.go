@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -14,13 +16,14 @@ import (
 )
 
 type UserUsecase struct {
+	ctx         *gin.Context
 	logger      sflogger.Logger
 	userRepo    repository.IUserRepository
 	planRepo    repository.IPlanRepository
 	addressRepo repository.IAddressRepository
 	paymentRepo repository.IPaymentRepository
 	identitySvc common.IIdentityService
-	authContext common.IAuthContextService
+	authContext func(c *gin.Context) common.IAuthContextService
 }
 
 func NewUserUsecase(c contract.IContainer) *UserUsecase {
@@ -31,8 +34,13 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 		addressRepo: c.GetAddressRepo(),
 		paymentRepo: c.GetPaymentRepo(),
 		identitySvc: c.GetIdentityService(),
-		authContext: c.GetAuthContextService(),
+		authContext: c.GetAuthContextTransientService(),
 	}
+}
+
+func (u *UserUsecase) SetContext(c *gin.Context) *UserUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (any, error) {
@@ -302,7 +310,7 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error)
 
 func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (any, error) {
 	// Get the current user ID
-	userID, err := u.authContext.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -356,7 +364,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 
 func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (any, error) {
 	// Get the current user ID
-	userID, err := u.authContext.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}

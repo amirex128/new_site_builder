@@ -12,7 +12,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
+	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
@@ -20,7 +20,7 @@ type FileItemUsecase struct {
 	logger         sflogger.Logger
 	repo           repository.IFileItemRepository
 	storageRepo    repository.IStorageRepository
-	storageService storage.IStorageService
+	storageService contractStorage.IStorageService
 	userID         int64
 }
 
@@ -114,7 +114,13 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 		fileItem.Size = 0
 
 		// Create directory in storage
-		if err := u.storageService.CreateFileOrDirectoryIfNotExists(serverKey, bucketName, fullPath, int(*params.Permission)); err != nil {
+		_, err := u.storageService.CreateFileOrDirectoryIfNotExists(
+			serverKey,
+			bucketName,
+			fullPath,
+			contractStorage.FileItemPermissionEnum(int(*params.Permission)),
+		)
+		if err != nil {
 			return nil, fmt.Errorf("error creating directory in storage: %v", err)
 		}
 	} else {
@@ -147,7 +153,14 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 		defer src.Close()
 
 		// Create file in storage
-		if err := u.storageService.CreateFileOrDirectoryIfNotExists(serverKey, bucketName, fullPath, int(*params.Permission), src); err != nil {
+		_, err = u.storageService.CreateFileOrDirectoryIfNotExists(
+			serverKey,
+			bucketName,
+			fullPath,
+			contractStorage.FileItemPermissionEnum(*params.Permission),
+			src,
+		)
+		if err != nil {
 			return nil, fmt.Errorf("error creating file in storage: %v", err)
 		}
 
@@ -210,8 +223,16 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 
 	// Delete from storage
 	fullPath := getFullPath(&fileItem)
-	if err := u.storageService.RemoveFileOrDirectoryIfExists(fileItem.ServerKey, fileItem.BucketName, fullPath); err != nil {
+	success, err := u.storageService.RemoveFileOrDirectoryIfExists(fileItem.ServerKey, fileItem.BucketName, fullPath)
+	if err != nil {
 		return nil, fmt.Errorf("error removing from storage: %v", err)
+	}
+
+	if !success {
+		u.logger.Warn("File not found in storage but will be removed from database", map[string]interface{}{
+			"fileId": fileItem.ID,
+			"path":   fullPath,
+		})
 	}
 
 	// Delete from database (this will also recursively delete children if it's a directory)
@@ -280,7 +301,8 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			fullPath,
-			int(*params.Permission)); err != nil {
+			contractStorage.FileItemPermissionEnum(*params.Permission),
+			false); err != nil {
 			return nil, fmt.Errorf("error updating permission in storage: %v", err)
 		}
 	}
@@ -327,12 +349,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		newFullPath = newPath
 
 		permission, _ := strconv.Atoi(fileItem.Permission)
-		if err := u.storageService.RenameOrMoveFileOrDirectory(
+		_, err := u.storageService.RenameOrMoveFileOrDirectory(
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			permission); err != nil {
+			contractStorage.FileItemPermissionEnum(permission))
+		if err != nil {
 			return nil, fmt.Errorf("error renaming in storage: %v", err)
 		}
 
@@ -379,12 +402,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 		// Move in storage
 		permission, _ := strconv.Atoi(fileItem.Permission)
-		if err := u.storageService.RenameOrMoveFileOrDirectory(
+		_, err := u.storageService.RenameOrMoveFileOrDirectory(
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			permission); err != nil {
+			contractStorage.FileItemPermissionEnum(permission))
+		if err != nil {
 			return nil, fmt.Errorf("error moving in storage: %v", err)
 		}
 
@@ -465,13 +489,18 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 		// Copy in storage
 		permission, _ := strconv.Atoi(fileItem.Permission)
-		if err := u.storageService.CopyFileOrDirectory(
+		success, err := u.storageService.CopyFileOrDirectory(
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			permission); err != nil {
+			contractStorage.FileItemPermissionEnum(permission))
+		if err != nil {
 			return nil, fmt.Errorf("error copying in storage: %v", err)
+		}
+
+		if !success {
+			return nil, fmt.Errorf("failed to copy file in storage")
 		}
 
 		// Create new file item

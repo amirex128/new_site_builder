@@ -28,7 +28,7 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.UpdateProfileUserCommand(&params)
+	result, err := h.usecase.SetContext(c).UpdateProfileUserCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -43,7 +43,7 @@ func (h *UserHandler) GetProfileUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetProfileUserQuery(&params)
+	result, err := h.usecase.SetContext(c).GetProfileUserQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -58,7 +58,7 @@ func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.ChargeCreditRequestUserCommand(&params)
+	result, err := h.usecase.SetContext(c).ChargeCreditRequestUserCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -73,7 +73,7 @@ func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.UpgradePlanRequestUserCommand(&params)
+	result, err := h.usecase.SetContext(c).UpgradePlanRequestUserCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -88,7 +88,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.RegisterUserCommand(&params)
+	result, err := h.usecase.SetContext(c).RegisterUserCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -103,7 +103,7 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.LoginUserCommand(&params)
+	result, err := h.usecase.SetContext(c).LoginUserCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -118,7 +118,7 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.RequestVerifyAndForgetUserCommand(&params)
+	result, err := h.usecase.SetContext(c).RequestVerifyAndForgetUserCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -133,7 +133,7 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.VerifyUserQuery(&params)
+	result, err := h.usecase.SetContext(c).VerifyUserQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -148,7 +148,7 @@ func (h *UserHandler) AdminGetAllUser(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.AdminGetAllUserQuery(&params)
+	result, err := h.usecase.SetContext(c).AdminGetAllUserQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

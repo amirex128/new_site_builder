@@ -32,7 +32,7 @@ func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
 		basketRepo:     c.GetBasketRepo(),
 		orderItemRepo:  c.GetOrderItemRepo(),
 		paymentRepo:    c.GetPaymentRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 		container:      c,
 	}
 }

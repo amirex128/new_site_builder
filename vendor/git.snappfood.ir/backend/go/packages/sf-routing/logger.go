@@ -69,13 +69,14 @@ type Categories struct {
 
 	// API category group
 	API struct {
-		API       string
-		HTTP      string
-		GRPC      string
-		REST      string
-		GraphQL   string
-		WebSocket string
-		Messaging string
+		API           string
+		HTTP          string
+		GRPC          string
+		REST          string
+		GraphQL       string
+		WebSocket     string
+		Messaging     string
+		Documentation string
 	}
 
 	// Security category group
@@ -407,6 +408,7 @@ func initCategories() Categories {
 	c.API.GraphQL = "GraphQL"
 	c.API.WebSocket = "WebSocket"
 	c.API.Messaging = "Messaging"
+	c.API.Documentation = "Documentation"
 
 	// Security
 	c.Security.Security = "Security"

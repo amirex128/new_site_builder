@@ -38,7 +38,7 @@ func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 		productVariantRepo:   c.GetProductVariantRepo(),
 		productAttributeRepo: c.GetProductAttributeRepo(),
 		couponRepo:           c.GetCouponRepo(),
-		authContextSvc:       c.GetAuthContextService(),
+		authContextSvc:       c.GetAuthContextTransientService(),
 	}
 }
 

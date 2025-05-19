@@ -32,7 +32,7 @@ func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 		productRepo:        c.GetProductRepo(),
 		productVariantRepo: c.GetProductVariantRepo(),
 		discountRepo:       c.GetDiscountRepo(),
-		authContextSvc:     c.GetAuthContextService(),
+		authContextSvc:     c.GetAuthContextTransientService(),
 	}
 }
 

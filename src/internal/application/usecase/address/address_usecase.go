@@ -27,7 +27,7 @@ func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 		repo:           c.GetAddressRepo(),
 		cityRepo:       c.GetCityRepo(),
 		provinceRepo:   c.GetProvinceRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService()(),
 	}
 }
 

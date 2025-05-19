@@ -26,18 +26,21 @@ type Config struct {
 	RedisPassword string `env:"REDIS_PASSWORD"`
 	RedisPort     string `env:"REDIS_PORT"`
 
-	// Storage configuration
-	StorageBucket    string `env:"STORAGE_BUCKET"`
-	StorageRegion    string `env:"STORAGE_REGION"`
-	StorageAccessKey string `env:"STORAGE_ACCESS_KEY"`
-	StorageSecretKey string `env:"STORAGE_SECRET_KEY"`
+	StorageS1Host      string `env:"STORAGE_S1_BUCKET"`
+	StorageS1AccessKey string `env:"STORAGE_S1_ACCESS_KEY"`
+	StorageS1SecretKey string `env:"STORAGE_S1_SECRET_KEY"`
 
-	Bucket    string `env:"BUCKET"`
-	Region    string `env:"REGION"`
-	AccessKey string `env:"ACCESS_KEY"`
-	SecretKey string `env:"SECRET_KEY"`
+	StorageS2Host      string `env:"STORAGE_S2_BUCKET"`
+	StorageS2AccessKey string `env:"STORAGE_S2_ACCESS_KEY"`
+	StorageS2SecretKey string `env:"STORAGE_S2_SECRET_KEY"`
+
+	StorageS3Host      string `env:"STORAGE_S3_BUCKET"`
+	StorageS3AccessKey string `env:"STORAGE_S3_ACCESS_KEY"`
+	StorageS3SecretKey string `env:"STORAGE_S3_SECRET_KEY"`
 
 	JwtSecretToken string `env:"JWT_SECRET_TOKEN"`
+	JwtIssuer      string `env:"JWT_ISSUER"`
+	JwtAudience    string `env:"JWT_AUDIENCE"`
 }
 
 func (c Config) GetString(key string) string {

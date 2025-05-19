@@ -26,7 +26,7 @@ func NewHeaderFooterUsecase(c contract.IContainer) *HeaderFooterUsecase {
 		logger:         c.GetLogger(),
 		repo:           c.GetHeaderFooterRepo(),
 		siteRepo:       c.GetSiteRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransiantService(),
 	}
 }
 

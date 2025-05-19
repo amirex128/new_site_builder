@@ -27,6 +27,9 @@ const (
 
 	// ElasticsearchSinkType sends logs to Elasticsearch
 	ElasticsearchSinkType SinkType = "elasticsearch"
+
+	// MongoDBSinkType sends logs to MongoDB
+	MongoDBSinkType SinkType = "mongodb"
 )
 
 // Protocol defines the communication protocol for remote sinks

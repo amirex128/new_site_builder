@@ -1,36 +1,36 @@
 package storage
 
 import (
-	"context"
 	"io"
 	"time"
+)
+
+// FileItemPermissionEnum represents the permission level for a file item
+type FileItemPermissionEnum int
+
+const (
+	Private FileItemPermissionEnum = iota
+	Public
 )
 
 // IStorageService defines the interface for storage operations
 type IStorageService interface {
 	// Basic operations
+	CreateFileOrDirectoryIfNotExists(serverKey, bucketName, key string, permission FileItemPermissionEnum, fileStream ...io.Reader) (string, error)
+	CheckFileOrDirectoryIsExists(serverKey, bucketName, key string) (bool, error)
+	RemoveFileOrDirectoryIfExists(serverKey, bucketName, key string) (bool, error)
 	CreateBucketIfNotExists(serverKey, bucketName string) error
-	CreateFileOrDirectoryIfNotExists(serverKey, bucketName, path string, permission int, content ...io.Reader) error
-	CheckFileOrDirectoryIsExists(serverKey, bucketName, path string) (bool, error)
+	DeleteBucketIfExists(serverKey, bucketName string) error
 
 	// File operations
-	RenameOrMoveFileOrDirectory(serverKey, bucketName, sourcePath, destinationPath string, permission int) error
-	CopyFileOrDirectory(serverKey, bucketName, sourcePath, destinationPath string, permission int) error
-	RemoveFileOrDirectoryIfExists(serverKey, bucketName, path string) error
+	DownloadFileOrDirectory(serverKey, bucketName, key string) (io.ReadCloser, error)
+	GeneratePreSignedUrl(serverKey, bucketName, key string, expiry time.Duration) (string, error)
+	GenerateUrl(serverKey, bucketName, key string) string
 
-	// Access management
-	AddOrRemoveOrChangePermission(serverKey, bucketName, path string, permission int) error
+	// Advanced operations
+	RenameOrMoveFileOrDirectory(serverKey, bucketName, oldKey, newKey string, currentPolicy FileItemPermissionEnum) (string, error)
+	CopyFileOrDirectory(serverKey, bucketName, sourceKey, destinationDirectory string, currentPolicy FileItemPermissionEnum) (bool, error)
 
-	// URL generation
-	GenerateUrl(serverKey, bucketName, path string) string
-	GeneratePreSignedUrl(serverKey, bucketName, path string, expiry time.Duration) (string, error)
-
-	// Download
-	DownloadFileOrDirectory(serverKey, bucketName, path string) (io.Reader, error)
-
-	// Convenience methods for direct operations on the default bucket
-	Upload(ctx context.Context, path string, content []byte, contentType string) (string, error)
-	Delete(ctx context.Context, path string) error
-	GetSignedURL(ctx context.Context, path string, expiry time.Duration) (string, error)
-	Download(ctx context.Context, path string) ([]byte, error)
+	// Permission management
+	AddOrRemoveOrChangePermission(serverKey, bucketName, key string, permission FileItemPermissionEnum, justRemove bool) error
 }

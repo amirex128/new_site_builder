@@ -29,7 +29,7 @@ func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 		logger:         c.GetLogger(),
 		paymentRepo:    c.GetPaymentRepo(),
 		gatewayRepo:    c.GetGatewayRepo(),
-		authContextSvc: c.GetAuthContextService(),
+		authContextSvc: c.GetAuthContextTransientService(),
 		container:      c,
 	}
 }
