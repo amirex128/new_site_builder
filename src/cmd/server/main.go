@@ -13,5 +13,5 @@ func main() {
 
 	handlers := bootstrap.HandlerBootstrap(container)
 
-	router.InitServer(handlers, container.Logger, container.Config)
+	router.InitServer(handlers, container, container.Logger, container.Config)
 }

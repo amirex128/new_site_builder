@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Result represents a standardized API response
@@ -222,4 +224,27 @@ func AuthorizeError() *Result {
 // Redirect creates a redirect response
 func Redirect(redirectURL string, queryParams map[string]string) *Result {
 	return newRedirectResult(redirectURL, queryParams)
+}
+
+// ErrorUnauthorized sends an unauthorized error response
+func ErrorUnauthorized(c *gin.Context, err error) {
+	result := AuthenticateError()
+	if err != nil {
+		result.WithSystemMessage(err.Error())
+	}
+	c.AbortWithStatusJSON(http.StatusUnauthorized, result)
+}
+
+// ErrorForbidden sends a forbidden error response
+func ErrorForbidden(c *gin.Context, err error) {
+	result := newFailureResult().
+		WithSystemMessage(resultMessages.AuthorizeError).
+		WithStatusCode(http.StatusForbidden).
+		WithType("Error")
+
+	if err != nil {
+		result.WithSystemMessage(err.Error())
+	}
+
+	c.AbortWithStatusJSON(http.StatusForbidden, result)
 }

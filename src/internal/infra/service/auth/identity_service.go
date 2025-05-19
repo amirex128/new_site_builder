@@ -202,10 +202,57 @@ func (s *IdentityService) GetToken(c *gin.Context) (*jwt.Token, error) {
 	return s.VerifyToken(tokenString)
 }
 
+// GetTokenString extracts the JWT token from the request context
+func (s *IdentityService) GetTokenString(c *gin.Context) (string, error) {
+	// Get the Authorization header
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		return "", errors.New("authorization header not found")
+	}
+
+	// Check if it's a Bearer token
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		return "", errors.New("invalid authorization header format")
+	}
+
+	// Extract the token
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+	// Parse and verify the token
+	return tokenString, nil
+}
+
 // VerifyToken validates a token string and returns the parsed token
 func (s *IdentityService) VerifyToken(tokenString string) (*jwt.Token, error) {
 	// Parse and validate the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Validate the signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(s.jwtSecret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	return token, nil
+}
+
+// VerifyTokenContext validates a token string and returns the parsed token
+func (s *IdentityService) VerifyTokenContext(c *gin.Context) (*jwt.Token, error) {
+	// Parse and validate the token
+	rawToken, err := s.GetTokenString(c)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := jwt.Parse(rawToken, func(token *jwt.Token) (interface{}, error) {
 		// Validate the signing method
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

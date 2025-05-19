@@ -18,9 +18,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitServer(handlers *bootstrap.HandlerManager, logger sflogger.Logger, cnf contract.IConfig) {
+func InitServer(handlers *bootstrap.HandlerManager, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
 
-	RegisterRoutes(handlers)
+	RegisterRoutes(handlers, container)
 
 	err := sfrouting.StartServer(fmt.Sprintf(":%s", cnf.GetString("app_port")))
 	if err != nil {
@@ -30,9 +30,9 @@ func InitServer(handlers *bootstrap.HandlerManager, logger sflogger.Logger, cnf 
 }
 
 // RegisterRoutes registers all routes
-func RegisterRoutes(h *bootstrap.HandlerManager) {
+func RegisterRoutes(h *bootstrap.HandlerManager, container contract.IContainer) {
 	// Register user routes in a group
-	sfrouting.RegisterRouterGroup("/api/v1", &RouterV1{h: h})
+	sfrouting.RegisterRouterGroup("/api/v1", &RouterV1{h: h, container: container})
 }
 
 func runServer(r *gin.Engine, logger sflogger.Logger) {

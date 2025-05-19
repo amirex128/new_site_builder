@@ -31,9 +31,11 @@ type IIdentityService interface {
 
 	// GetTokenFromContext extracts the JWT token from the request context
 	GetToken(c *gin.Context) (*jwt.Token, error)
+	GetTokenString(c *gin.Context) (string, error)
 
 	// VerifyToken validates a token string and returns the parsed token
 	VerifyToken(tokenString string) (*jwt.Token, error)
+	VerifyTokenContext(ctx *gin.Context) (*jwt.Token, error)
 
 	// GetClaim extracts a specific claim from a JWT token
 	GetClaim(ctx *gin.Context, claimName string) (string, error)

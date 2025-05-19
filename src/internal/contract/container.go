@@ -12,8 +12,15 @@ import (
 type IContainer interface {
 	GetLogger() sflogger.Logger
 
-	// Auth services
+	// Services
 	GetAuthTransientService() func(c *gin.Context) service.IAuthService
+	GetConfig() IConfig
+	GetMainCache() service.ICacheService
+	GetStockCacheTransient() service.ICacheService
+	GetDB() *gorm.DB
+	GetStorageService() service.IStorageService
+	GetIdentityService() service.IIdentityService
+	GetPaymentService() service.IPaymentService
 
 	// Repositories
 	GetAddressRepo() repository.IAddressRepository
@@ -62,11 +69,4 @@ type IContainer interface {
 	GetProvinceRepo() repository.IProvinceRepository
 	GetParbadPaymentRepo() repository.IParbadPaymentRepository
 	GetParbadTransactionRepo() repository.IParbadTransactionRepository
-	GetConfig() IConfig
-	GetMainCache() service.ICacheService
-	GetStockCacheTransient() service.ICacheService
-	GetDB() *gorm.DB
-	GetStorageService() service.IStorageService
-	GetIdentityService() service.IIdentityService
-	GetPaymentService() service.IPaymentService
 }
