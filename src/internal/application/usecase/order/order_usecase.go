@@ -3,8 +3,11 @@ package orderusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/order"
@@ -16,29 +19,35 @@ import (
 )
 
 type OrderUsecase struct {
-	logger         sflogger.Logger
-	orderRepo      repository.IOrderRepository
-	basketRepo     repository.IBasketRepository
-	orderItemRepo  repository.IOrderItemRepository
-	paymentRepo    repository.IPaymentRepository
-	authContextSvc common.IAuthContextService
-	container      contract.IContainer
+	ctx           *gin.Context
+	logger        sflogger.Logger
+	orderRepo     repository.IOrderRepository
+	basketRepo    repository.IBasketRepository
+	orderItemRepo repository.IOrderItemRepository
+	paymentRepo   repository.IPaymentRepository
+	authContext   func(c *gin.Context) service.IAuthService
+	container     contract.IContainer
 }
 
 func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
 	return &OrderUsecase{
-		logger:         c.GetLogger(),
-		orderRepo:      c.GetOrderRepo(),
-		basketRepo:     c.GetBasketRepo(),
-		orderItemRepo:  c.GetOrderItemRepo(),
-		paymentRepo:    c.GetPaymentRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
-		container:      c,
+		logger:        c.GetLogger(),
+		orderRepo:     c.GetOrderRepo(),
+		basketRepo:    c.GetBasketRepo(),
+		orderItemRepo: c.GetOrderItemRepo(),
+		paymentRepo:   c.GetPaymentRepo(),
+		authContext:   c.GetAuthTransientService(),
+		container:     c,
 	}
 }
 
+func (u *OrderUsecase) SetContext(c *gin.Context) *OrderUsecase {
+	u.ctx = c
+	return u
+}
+
 func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderRequestCommand) (any, error) {
-	customerID, err := u.authContextSvc.GetCustomerID()
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +319,7 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 }
 
 func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustomerQuery) (any, error) {
-	customerID, err := u.authContextSvc.GetCustomerID()
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +336,7 @@ func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustome
 }
 
 func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustomerDetailsQuery) (any, error) {
-	customerID, err := u.authContextSvc.GetCustomerID()
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -364,7 +373,7 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 	}
 
 	// Verify the order belongs to the user's site
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -395,7 +404,7 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 
 	// If admin, allow access regardless of site ownership
 	if !hasAccess {
-		isAdmin, err := u.authContextSvc.IsAdmin()
+		isAdmin, err := u.authContext(u.ctx).IsAdmin()
 		if err != nil {
 			return nil, err
 		}

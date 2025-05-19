@@ -765,12 +765,12 @@ func hasValidValue(field reflect.Value) bool {
 		}
 	}
 
-	// Special case for empty strings
+	// Special cache for empty strings
 	if field.Kind() == reflect.String && field.String() == "" {
 		return false
 	}
 
-	// Special case for zero numeric values
+	// Special cache for zero numeric values
 	if (field.Kind() == reflect.Int ||
 		field.Kind() == reflect.Int8 ||
 		field.Kind() == reflect.Int16 ||
@@ -786,12 +786,12 @@ func hasValidValue(field reflect.Value) bool {
 		return false
 	}
 
-	// Special case for slices - check if empty
+	// Special cache for slices - check if empty
 	if field.Kind() == reflect.Slice && field.Len() == 0 {
 		return false
 	}
 
-	// Special case for booleans - only true is valid
+	// Special cache for booleans - only true is valid
 	if field.Kind() == reflect.Bool {
 		return field.Bool()
 	}

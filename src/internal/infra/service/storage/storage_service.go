@@ -5,12 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"io"
 	"path/filepath"
 	"strings"
 	"time"
 
-	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )

@@ -2,31 +2,39 @@ package siteusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/site"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type SiteUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.ISiteRepository
-	settingRepo    repository.ISettingRepository
-	authContextSvc common.IAuthContextService
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	repo        repository.ISiteRepository
+	settingRepo repository.ISettingRepository
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewSiteUsecase(c contract.IContainer) *SiteUsecase {
 	return &SiteUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetSiteRepo(),
-		settingRepo:    c.GetSettingRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
+		logger:      c.GetLogger(),
+		repo:        c.GetSiteRepo(),
+		settingRepo: c.GetSettingRepo(),
+		authContext: c.GetAuthTransientService(),
 	}
+}
+
+func (u *SiteUsecase) SetContext(c *gin.Context) *SiteUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, error) {
@@ -44,7 +52,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -117,12 +125,12 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -196,12 +204,12 @@ func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +270,7 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (any, error)
 	})
 
 	// Get user ID
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -295,7 +303,7 @@ func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (a
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

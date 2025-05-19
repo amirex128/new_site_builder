@@ -4,8 +4,8 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/config"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
-	"log"
 	"strconv"
 	"time"
 )
@@ -17,6 +17,12 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 		sform.WithLogger(logger),
 		sform.WithGlobalOptions(func(db *gorm.DB) {
 			db.Debug()
+			err := db.AutoMigrate(
+				&domain.Address{},
+			)
+			if err != nil {
+				logger.Errorf("Error migrating database: %v", err)
+			}
 		}),
 		sform.WithConnectionDetails("main", &sform.MySQLConfig{
 			Username: cfg.MysqlUsername,
@@ -25,7 +31,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 			Port: func() int {
 				port, err := strconv.Atoi(cfg.MysqlPort)
 				if err != nil {
-					log.Fatalf("Failed to convert MySQL port to int: %v", err)
+					logger.Fatalf("Failed to convert MySQL port to int: %v", err)
 				}
 				return port
 			}(),
@@ -40,7 +46,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		log.Fatalf("Failed to register database connection: %v", err)
+		logger.Fatalf("Failed to register database connection: %v", err)
 	}
 
 }

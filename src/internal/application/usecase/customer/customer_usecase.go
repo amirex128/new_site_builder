@@ -3,47 +3,48 @@ package customerusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type CustomerUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.ICustomerRepository
-	fileItemRepo   repository.IFileItemRepository
-	addressRepo    repository.IAddressRepository
-	roleRepo       repository.IRoleRepository
-	authContextSvc common.IAuthContextService
-	identitySvc    common.IIdentityService
+	ctx          *gin.Context
+	logger       sflogger.Logger
+	repo         repository.ICustomerRepository
+	fileItemRepo repository.IFileItemRepository
+	addressRepo  repository.IAddressRepository
+	roleRepo     repository.IRoleRepository
+	authContext  func(c *gin.Context) service.IAuthService
+	identitySvc  service.IIdentityService
 }
 
 func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
 	return &CustomerUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetCustomerRepo(),
-		fileItemRepo:   c.GetFileItemRepo(),
-		addressRepo:    c.GetAddressRepo(),
-		roleRepo:       c.GetRoleRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
-		identitySvc:    getIdentityService(c),
+		logger:       c.GetLogger(),
+		repo:         c.GetCustomerRepo(),
+		fileItemRepo: c.GetFileItemRepo(),
+		addressRepo:  c.GetAddressRepo(),
+		roleRepo:     c.GetRoleRepo(),
+		authContext:  c.GetAuthTransientService(),
+		identitySvc:  c.GetIdentityService(),
 	}
 }
 
-// Helper function to get identity service, added as a separate function to make testing easier
-func getIdentityService(c contract.IContainer) common.IIdentityService {
-	// In a real implementation, this would get the identity service from the container
-	// For now, we'll assume it's implemented elsewhere and properly registered
-	return nil // This will be replaced with actual implementation
+func (u *CustomerUsecase) SetContext(c *gin.Context) *CustomerUsecase {
+	u.ctx = c
+	return u
 }
 
 // LoginCustomerCommand handles customer login
@@ -230,11 +231,12 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 // UpdateProfileCustomerCommand handles updating customer profile
 func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdateProfileCustomerCommand) (any, error) {
 	u.logger.Info("UpdateProfileCustomerCommand called", map[string]interface{}{
-		"phone": *params.Phone,
+		"firstName": params.FirstName,
+		"lastName":  params.LastName,
 	})
 
-	// Get current customer ID
-	customerID, err := u.authContextSvc.GetCustomerID()
+	// Get customer ID from auth context
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
@@ -379,10 +381,10 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 
 // GetProfileCustomerQuery handles getting customer profile
 func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCustomerQuery) (any, error) {
-	u.logger.Info("GetProfileCustomerQuery called", map[string]interface{}{})
+	u.logger.Info("GetProfileCustomerQuery called", nil)
 
-	// Get current customer ID
-	customerID, err := u.authContextSvc.GetCustomerID()
+	// Get customer ID from auth context
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
@@ -416,14 +418,13 @@ func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllC
 		"pageSize": params.PageSize,
 	})
 
-	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	// Check admin access
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
-		return nil, errors.New("خطا در بررسی دسترسی کاربر")
+		return nil, err
 	}
-
 	if !isAdmin {
-		return nil, errors.New("شما دسترسی به این عملیات را ندارید")
+		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
 	// Get all customers with pagination

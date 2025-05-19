@@ -28,7 +28,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.CreateProductCommand(&params)
+	result, err := h.usecase.SetContext(c).CreateProductCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -43,7 +43,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.UpdateProductCommand(&params)
+	result, err := h.usecase.SetContext(c).UpdateProductCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -58,7 +58,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.DeleteProductCommand(&params)
+	result, err := h.usecase.SetContext(c).DeleteProductCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -73,7 +73,7 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetByIdProductQuery(&params)
+	result, err := h.usecase.SetContext(c).GetByIdProductQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -88,7 +88,7 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetAllProductQuery(&params)
+	result, err := h.usecase.SetContext(c).GetAllProductQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -103,7 +103,7 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetByFiltersSortProductQuery(&params)
+	result, err := h.usecase.SetContext(c).GetByFiltersSortProductQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -118,7 +118,7 @@ func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.AdminGetAllProductQuery(&params)
+	result, err := h.usecase.SetContext(c).AdminGetAllProductQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

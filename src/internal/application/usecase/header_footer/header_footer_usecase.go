@@ -3,7 +3,10 @@ package headerfooterusecase
 import (
 	"encoding/json"
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/header_footer"
@@ -15,19 +18,25 @@ import (
 )
 
 type HeaderFooterUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IHeaderFooterRepository
-	siteRepo       repository.ISiteRepository
-	authContextSvc common.IAuthContextService
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	repo        repository.IHeaderFooterRepository
+	siteRepo    repository.ISiteRepository
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewHeaderFooterUsecase(c contract.IContainer) *HeaderFooterUsecase {
 	return &HeaderFooterUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetHeaderFooterRepo(),
-		siteRepo:       c.GetSiteRepo(),
-		authContextSvc: c.GetAuthContextTransiantService(),
+		logger:      c.GetLogger(),
+		repo:        c.GetHeaderFooterRepo(),
+		siteRepo:    c.GetSiteRepo(),
+		authContext: c.GetAuthTransientService(),
 	}
+}
+
+func (u *HeaderFooterUsecase) SetContext(c *gin.Context) *HeaderFooterUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.CreateHeaderFooterCommand) (any, error) {
@@ -47,7 +56,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -102,12 +111,12 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -174,12 +183,12 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -286,7 +295,7 @@ func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

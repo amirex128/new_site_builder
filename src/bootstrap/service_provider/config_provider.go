@@ -24,7 +24,7 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 		// First try Vault
 		sfconfigmanager.WithVaultOptions(
 			"http://localhost:8200",
-			"mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV",
+			"hvs.JMOtMiNJZv68zPZkQnCpJzT3",
 			&sfconfigmanager.VaultOptions{
 				SecretPath:  getVaultSecretPath(),
 				SecretMount: "secret",
@@ -32,15 +32,15 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 		),
 
 		// Then try file configuration
-		sfconfigmanager.WithFileOptions(
-			getConfigPath(os.Getenv("APP_ENV")),
-			&sfconfigmanager.FileOptions{
-				Type: "yml",
-			},
-		),
+		//sfconfigmanager.WithFileOptions(
+		//	getConfigPath(os.Getenv("APP_ENV")),
+		//	&sfconfigmanager.FileOptions{
+		//		Type: "yml",
+		//	},
+		//),
 
 		// Finally try environment variables
-		sfconfigmanager.WithEnvOptions(nil),
+		//sfconfigmanager.WithEnvOptions(nil),
 	)
 
 	if err != nil {

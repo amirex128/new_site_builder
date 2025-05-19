@@ -2,31 +2,39 @@ package defaultthemeusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/defaulttheme"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type DefaultThemeUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IDefaultThemeRepository
-	mediaRepo      repository.IMediaRepository
-	authContextSvc common.IAuthContextService
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	repo        repository.IDefaultThemeRepository
+	mediaRepo   repository.IMediaRepository
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
 	return &DefaultThemeUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetDefaultThemeRepo(),
-		mediaRepo:      c.GetMediaRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
+		logger:      c.GetLogger(),
+		repo:        c.GetDefaultThemeRepo(),
+		mediaRepo:   c.GetMediaRepo(),
+		authContext: c.GetAuthTransientService(),
 	}
+}
+
+func (u *DefaultThemeUsecase) SetContext(c *gin.Context) *DefaultThemeUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.CreateDefaultThemeCommand) (any, error) {
@@ -35,7 +43,7 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +103,7 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +172,7 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

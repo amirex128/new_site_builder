@@ -28,7 +28,7 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.CreatePlanCommand(&params)
+	result, err := h.usecase.SetContext(c).CreatePlanCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -43,7 +43,7 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.UpdatePlanCommand(&params)
+	result, err := h.usecase.SetContext(c).UpdatePlanCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -58,7 +58,7 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.DeletePlanCommand(&params)
+	result, err := h.usecase.SetContext(c).DeletePlanCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -73,7 +73,7 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetByIDPlanQuery(&params)
+	result, err := h.usecase.SetContext(c).GetByIDPlanQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -88,7 +88,7 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetAllPlanQuery(&params)
+	result, err := h.usecase.SetContext(c).GetAllPlanQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -103,7 +103,7 @@ func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.CalculatePlanPriceQuery(&params)
+	result, err := h.usecase.SetContext(c).CalculatePlanPriceQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

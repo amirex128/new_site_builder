@@ -44,14 +44,14 @@ type Config struct {
 }
 
 func (c Config) GetString(key string) string {
-	// Convert the key to lowercase for case-insensitive comparison
+	// Convert the key to lowercase for cache-insensitive comparison
 	lowerKey := strings.ToLower(key)
 
 	// Get the value of the struct using reflection
 	val := reflect.ValueOf(c)
 	typ := val.Type()
 
-	// Iterate through all fields to find a case-insensitive match on env tag
+	// Iterate through all fields to find a cache-insensitive match on env tag
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		fieldType := typ.Field(i)
@@ -59,7 +59,7 @@ func (c Config) GetString(key string) string {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-insensitive)
+		// Compare with requested key (cache-insensitive)
 		if strings.ToLower(envTag) == lowerKey {
 			if field.IsValid() && field.Kind() == reflect.String {
 				return field.String()
@@ -76,7 +76,7 @@ func (c Config) GetString(key string) string {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-sensitive)
+		// Compare with requested key (cache-sensitive)
 		if envTag == key {
 			if field.IsValid() && field.Kind() == reflect.String {
 				return field.String()
@@ -89,14 +89,14 @@ func (c Config) GetString(key string) string {
 }
 
 func (c Config) GetInt(key string) int {
-	// Convert the key to lowercase for case-insensitive comparison
+	// Convert the key to lowercase for cache-insensitive comparison
 	lowerKey := strings.ToLower(key)
 
 	// Get the value of the struct using reflection
 	val := reflect.ValueOf(c)
 	typ := val.Type()
 
-	// Iterate through all fields to find a case-insensitive match on env tag
+	// Iterate through all fields to find a cache-insensitive match on env tag
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		fieldType := typ.Field(i)
@@ -104,7 +104,7 @@ func (c Config) GetInt(key string) int {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-insensitive)
+		// Compare with requested key (cache-insensitive)
 		if strings.ToLower(envTag) == lowerKey {
 			if field.IsValid() && field.Kind() == reflect.String {
 				if intValue, err := strconv.Atoi(field.String()); err == nil {
@@ -123,7 +123,7 @@ func (c Config) GetInt(key string) int {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-sensitive)
+		// Compare with requested key (cache-sensitive)
 		if envTag == key {
 			if field.IsValid() && field.Kind() == reflect.String {
 				if intValue, err := strconv.Atoi(field.String()); err == nil {
@@ -138,14 +138,14 @@ func (c Config) GetInt(key string) int {
 }
 
 func (c Config) GetBool(key string) bool {
-	// Convert the key to lowercase for case-insensitive comparison
+	// Convert the key to lowercase for cache-insensitive comparison
 	lowerKey := strings.ToLower(key)
 
 	// Get the value of the struct using reflection
 	val := reflect.ValueOf(c)
 	typ := val.Type()
 
-	// Iterate through all fields to find a case-insensitive match on env tag
+	// Iterate through all fields to find a cache-insensitive match on env tag
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		fieldType := typ.Field(i)
@@ -153,7 +153,7 @@ func (c Config) GetBool(key string) bool {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-insensitive)
+		// Compare with requested key (cache-insensitive)
 		if strings.ToLower(envTag) == lowerKey {
 			if field.IsValid() && field.Kind() == reflect.String {
 				if boolValue, err := strconv.ParseBool(field.String()); err == nil {
@@ -172,7 +172,7 @@ func (c Config) GetBool(key string) bool {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-sensitive)
+		// Compare with requested key (cache-sensitive)
 		if envTag == key {
 			if field.IsValid() && field.Kind() == reflect.String {
 				if boolValue, err := strconv.ParseBool(field.String()); err == nil {
@@ -187,14 +187,14 @@ func (c Config) GetBool(key string) bool {
 }
 
 func (c Config) GetStringSlice(key string) []string {
-	// Convert the key to lowercase for case-insensitive comparison
+	// Convert the key to lowercase for cache-insensitive comparison
 	lowerKey := strings.ToLower(key)
 
 	// Get the value of the struct using reflection
 	val := reflect.ValueOf(c)
 	typ := val.Type()
 
-	// Iterate through all fields to find a case-insensitive match on env tag
+	// Iterate through all fields to find a cache-insensitive match on env tag
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		fieldType := typ.Field(i)
@@ -202,7 +202,7 @@ func (c Config) GetStringSlice(key string) []string {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-insensitive)
+		// Compare with requested key (cache-insensitive)
 		if strings.ToLower(envTag) == lowerKey {
 			if field.IsValid() && field.Kind() == reflect.String {
 				return []string{field.String()}
@@ -219,7 +219,7 @@ func (c Config) GetStringSlice(key string) []string {
 		// Get the env tag value
 		envTag := fieldType.Tag.Get("env")
 
-		// Compare with requested key (case-sensitive)
+		// Compare with requested key (cache-sensitive)
 		if envTag == key {
 			if field.IsValid() && field.Kind() == reflect.String {
 				return []string{field.String()}

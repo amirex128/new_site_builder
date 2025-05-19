@@ -2,17 +2,20 @@ package pageusageusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/page_usage"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type PageUsageUsecase struct {
+	ctx                       *gin.Context
 	logger                    sflogger.Logger
 	pageRepo                  repository.IPageRepository
 	pageArticleUsageRepo      repository.IPageArticleUsageRepository
@@ -22,7 +25,7 @@ type PageUsageUsecase struct {
 	productRepo               repository.IProductRepository
 	headerFooterRepo          repository.IHeaderFooterRepository
 	siteRepo                  repository.ISiteRepository
-	authContextSvc            common.IAuthContextService
+	authContext               func(c *gin.Context) service.IAuthService
 }
 
 func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
@@ -36,8 +39,13 @@ func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 		productRepo:               c.GetProductRepo(),
 		headerFooterRepo:          c.GetHeaderFooterRepo(),
 		siteRepo:                  c.GetSiteRepo(),
-		authContextSvc:            c.GetAuthContextTransientService(),
+		authContext:               c.GetAuthTransientService(),
 	}
+}
+
+func (u *PageUsageUsecase) SetContext(c *gin.Context) *PageUsageUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsageCommand) (any, error) {
@@ -67,13 +75,13 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check user access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

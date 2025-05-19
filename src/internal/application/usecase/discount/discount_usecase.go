@@ -2,30 +2,38 @@ package discountusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type DiscountUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IDiscountRepository
-	authContextSvc common.IAuthContextService
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	repo        repository.IDiscountRepository
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 	return &DiscountUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetDiscountRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
+		logger:      c.GetLogger(),
+		repo:        c.GetDiscountRepo(),
+		authContext: c.GetAuthTransientService(),
 	}
+}
+
+func (u *DiscountUsecase) SetContext(c *gin.Context) *DiscountUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (any, error) {
@@ -48,7 +56,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -97,12 +105,12 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	}
 
 	// Check user access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -178,12 +186,12 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 	}
 
 	// Check user access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +226,7 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 	}
 
 	// Check user access - anyone can view discounts but logging for audit
-	userID, _ := u.authContextSvc.GetUserID()
+	userID, _ := u.authContext(u.ctx).GetUserID()
 	if userID > 0 {
 		u.logger.Info("Discount accessed by user", map[string]interface{}{
 			"discountId": discount.ID,
@@ -299,7 +307,7 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

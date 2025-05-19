@@ -2,10 +2,13 @@ package productusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
@@ -17,6 +20,7 @@ import (
 )
 
 type ProductUsecase struct {
+	ctx                  *gin.Context
 	logger               sflogger.Logger
 	repo                 repository.IProductRepository
 	productCategoryRepo  repository.IProductCategoryRepository
@@ -25,7 +29,7 @@ type ProductUsecase struct {
 	productVariantRepo   repository.IProductVariantRepository
 	productAttributeRepo repository.IProductAttributeRepository
 	couponRepo           repository.ICouponRepository
-	authContextSvc       common.IAuthContextService
+	authContext          func(c *gin.Context) service.IAuthService
 }
 
 func NewProductUsecase(c contract.IContainer) *ProductUsecase {
@@ -38,8 +42,13 @@ func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 		productVariantRepo:   c.GetProductVariantRepo(),
 		productAttributeRepo: c.GetProductAttributeRepo(),
 		couponRepo:           c.GetCouponRepo(),
-		authContextSvc:       c.GetAuthContextTransientService(),
+		authContext:          c.GetAuthTransientService(),
 	}
+}
+
+func (u *ProductUsecase) SetContext(c *gin.Context) *ProductUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductCommand) (any, error) {
@@ -57,7 +66,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -221,13 +230,13 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// In our monolithic approach, we check directly
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -370,13 +379,13 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if user has access to this product
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -412,7 +421,7 @@ func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery
 
 	// Check user access - typically products are visible to all
 	// But we might want to log access
-	userID, _ := u.authContextSvc.GetUserID()
+	userID, _ := u.authContext(u.ctx).GetUserID()
 	if userID > 0 {
 		u.logger.Info("Product accessed by user", map[string]interface{}{
 			"productId": product.ID,
@@ -1102,7 +1111,7 @@ func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProd
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

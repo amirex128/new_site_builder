@@ -28,7 +28,7 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.CreateAddressCommand(&params)
+	result, err := h.usecase.SetContext(c).CreateAddressCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -43,7 +43,7 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.UpdateAddressCommand(&params)
+	result, err := h.usecase.SetContext(c).UpdateAddressCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -58,7 +58,7 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.DeleteAddressCommand(&params)
+	result, err := h.usecase.SetContext(c).DeleteAddressCommand(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -73,7 +73,7 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetByIdAddressQuery(&params)
+	result, err := h.usecase.SetContext(c).GetByIdAddressQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -88,7 +88,7 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetAllAddressQuery(&params)
+	result, err := h.usecase.SetContext(c).GetAllAddressQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -103,7 +103,7 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetAllCityQuery(&params)
+	result, err := h.usecase.SetContext(c).GetAllCityQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -118,7 +118,7 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetAllProvinceQuery(&params)
+	result, err := h.usecase.SetContext(c).GetAllProvinceQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return
@@ -133,7 +133,7 @@ func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.AdminGetAllAddressQuery(&params)
+	result, err := h.usecase.SetContext(c).AdminGetAllAddressQuery(&params)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
 		return

@@ -2,31 +2,39 @@ package productreviewusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_review"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type ProductReviewUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IProductReviewRepository
-	productRepo    repository.IProductRepository
-	authContextSvc common.IAuthContextService
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	repo        repository.IProductReviewRepository
+	productRepo repository.IProductRepository
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewProductReviewUsecase(c contract.IContainer) *ProductReviewUsecase {
 	return &ProductReviewUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetProductReviewRepo(),
-		productRepo:    c.GetProductRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
+		logger:      c.GetLogger(),
+		repo:        c.GetProductReviewRepo(),
+		productRepo: c.GetProductRepo(),
+		authContext: c.GetAuthTransientService(),
 	}
+}
+
+func (u *ProductReviewUsecase) SetContext(c *gin.Context) *ProductReviewUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review.CreateProductReviewCommand) (any, error) {
@@ -46,13 +54,13 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Get customer ID if available (in this monolithic app, we may have a customer context too)
-	customerID, _ := u.authContextSvc.GetCustomerID()
+	customerID, _ := u.authContext(u.ctx).GetCustomerID()
 	if customerID == 0 {
 		// If no customer ID available, use a default or generate one
 		customerID = 1 // Default value, in a real app this would need proper handling
@@ -104,13 +112,13 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if user has access to this review
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -178,13 +186,13 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// Check if user has access to this review
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -220,8 +228,8 @@ func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.
 
 	// Check user access - anyone can view approved reviews
 	if !review.Approved {
-		userID, _ := u.authContextSvc.GetUserID()
-		isAdmin, _ := u.authContextSvc.IsAdmin()
+		userID, _ := u.authContext(u.ctx).GetUserID()
+		isAdmin, _ := u.authContext(u.ctx).IsAdmin()
 
 		if review.UserID != userID && !isAdmin {
 			return nil, errors.New("شما به این نظر دسترسی ندارید")
@@ -265,7 +273,7 @@ func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_rev
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

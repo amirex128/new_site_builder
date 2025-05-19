@@ -4,25 +4,22 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // Container
 type Container struct {
-	Config                      contract.IConfig
-	MemoryLoader                cache.IMemoryLoader
-	MainCache                   cache.ICacheService
-	AuthContextTransientService func(c *gin.Context) common.IAuthContextService
-	IdentityService             common.IIdentityService
-	StorageService              storage.IStorageService
-	stockCacheTransient         func() cache.ICacheService
-	PaymentService              service.IPaymentService
+	Config               contract.IConfig
+	MemoryLoader         service.IMemoryLoader
+	MainCache            service.ICacheService
+	AuthTransientService func(c *gin.Context) service.IAuthService
+	IdentityService      service.IIdentityService
+	StorageService       service.IStorageService
+	stockCacheTransient  func() service.ICacheService
+	PaymentService       service.IPaymentService
 
 	Logger                    sflogger.Logger
 	ArticleRepo               repository.IArticleRepository
@@ -100,11 +97,11 @@ func (c *Container) GetPageHeaderFooterUsageRepo() repository.IPageHeaderFooterU
 	return c.PageHeaderFooterUsageRepo
 }
 
-func (c *Container) GetStorageService() storage.IStorageService {
+func (c *Container) GetStorageService() service.IStorageService {
 	return c.StorageService
 }
 
-func (c *Container) GetIdentityService() common.IIdentityService {
+func (c *Container) GetIdentityService() service.IIdentityService {
 	return c.IdentityService
 }
 
@@ -264,15 +261,15 @@ func (c *Container) GetPermissionRepo() repository.IPermissionRepository {
 	return c.PermissionRepo
 }
 
-func (c *Container) GetAuthContextTransientService() func(c *gin.Context) common.IAuthContextService {
-	return c.AuthContextTransientService
+func (c *Container) GetAuthTransientService() func(c *gin.Context) service.IAuthService {
+	return c.AuthTransientService
 }
 
-func (c *Container) GetMainCache() cache.ICacheService {
+func (c *Container) GetMainCache() service.ICacheService {
 	return c.MainCache
 }
 
-func (c *Container) GetStockCacheTransient() cache.ICacheService {
+func (c *Container) GetStockCacheTransient() service.ICacheService {
 	return c.stockCacheTransient()
 }
 

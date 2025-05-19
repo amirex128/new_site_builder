@@ -2,6 +2,7 @@ package fileitemusecase
 
 import (
 	"fmt"
+	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -12,7 +13,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 

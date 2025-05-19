@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/payment"
@@ -17,21 +20,27 @@ import (
 )
 
 type PaymentUsecase struct {
-	logger         sflogger.Logger
-	paymentRepo    repository.IPaymentRepository
-	gatewayRepo    repository.IGatewayRepository
-	authContextSvc common.IAuthContextService
-	container      contract.IContainer
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	paymentRepo repository.IPaymentRepository
+	gatewayRepo repository.IGatewayRepository
+	authContext func(c *gin.Context) service.IAuthService
+	container   contract.IContainer
 }
 
 func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 	return &PaymentUsecase{
-		logger:         c.GetLogger(),
-		paymentRepo:    c.GetPaymentRepo(),
-		gatewayRepo:    c.GetGatewayRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
-		container:      c,
+		logger:      c.GetLogger(),
+		paymentRepo: c.GetPaymentRepo(),
+		gatewayRepo: c.GetGatewayRepo(),
+		authContext: c.GetAuthTransientService(),
+		container:   c,
 	}
+}
+
+func (u *PaymentUsecase) SetContext(c *gin.Context) *PaymentUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentCommand) (any, error) {
@@ -130,7 +139,7 @@ func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUp
 	}
 
 	// Get current user ID
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -374,7 +383,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -382,7 +391,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 	// Assuming site owners should be able to see their gateway
 	// This logic might need adjustment based on your authorization requirements
 	if gateway.UserID != userID {
-		isAdmin, err := u.authContextSvc.IsAdmin()
+		isAdmin, err := u.authContext(u.ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, errors.New("شما به این درگاه پرداخت دسترسی ندارید")
 		}
@@ -398,7 +407,7 @@ func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGate
 	})
 
 	// Verify admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -517,7 +526,7 @@ func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaym
 	})
 
 	// Verify admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

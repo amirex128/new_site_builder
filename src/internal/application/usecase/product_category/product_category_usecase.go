@@ -2,33 +2,41 @@ package productcategoryusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_category"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type ProductCategoryUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IProductCategoryRepository
-	mediaRepo      repository.IMediaRepository
-	authContextSvc common.IAuthContextService
+	ctx         *gin.Context
+	logger      sflogger.Logger
+	repo        repository.IProductCategoryRepository
+	mediaRepo   repository.IMediaRepository
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewProductCategoryUsecase(c contract.IContainer) *ProductCategoryUsecase {
 	return &ProductCategoryUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetProductCategoryRepo(),
-		mediaRepo:      c.GetMediaRepo(),
-		authContextSvc: c.GetAuthContextTransientService(),
+		logger:      c.GetLogger(),
+		repo:        c.GetProductCategoryRepo(),
+		mediaRepo:   c.GetMediaRepo(),
+		authContext: c.GetAuthTransientService(),
 	}
+}
+
+func (u *ProductCategoryUsecase) SetContext(c *gin.Context) *ProductCategoryUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.CreateCategoryCommand) (any, error) {
@@ -46,7 +54,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -115,13 +123,13 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// In our monolithic approach, we check directly
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -206,12 +214,12 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 	}
 
 	// Check user access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +254,7 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 	}
 
 	// Check user access - anyone can view categories but logging for audit
-	userID, _ := u.authContextSvc.GetUserID()
+	userID, _ := u.authContext(u.ctx).GetUserID()
 	if userID > 0 {
 		u.logger.Info("Category accessed by user", map[string]interface{}{
 			"categoryId": category.ID,
@@ -361,7 +369,7 @@ func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_catego
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

@@ -2,25 +2,28 @@ package ticketusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/ticket"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type TicketUsecase struct {
+	ctx             *gin.Context
 	logger          sflogger.Logger
 	repo            repository.ITicketRepository
 	commentRepo     repository.ICommentRepository
 	ticketMediaRepo repository.ITicketMediaRepository
 	mediaRepo       repository.IMediaRepository
-	authContextSvc  common.IAuthContextService
+	authContext     func(c *gin.Context) service.IAuthService
 }
 
 func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
@@ -30,8 +33,13 @@ func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
 		commentRepo:     c.GetCommentRepo(),
 		ticketMediaRepo: c.GetTicketMediaRepo(),
 		mediaRepo:       c.GetMediaRepo(),
-		authContextSvc:  c.GetAuthContextTransientService(),
+		authContext:     c.GetAuthTransientService(),
 	}
+}
+
+func (u *TicketUsecase) SetContext(c *gin.Context) *TicketUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (any, error) {
@@ -42,7 +50,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	})
 
 	// Get current user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -117,7 +125,7 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 	})
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -133,7 +141,7 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 
 	// Check if user owns the ticket
 	if existingTicket.UserID != userID {
-		isAdmin, err := u.authContextSvc.IsAdmin()
+		isAdmin, err := u.authContext(u.ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, errors.New("شما دسترسی به این تیکت ندارید")
 		}
@@ -212,7 +220,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
@@ -222,7 +230,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 	}
 
 	// Get current user ID
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -309,7 +317,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (a
 	})
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -325,7 +333,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (a
 
 	// Check if user has access to this ticket
 	if result.UserID != userID {
-		isAdmin, err := u.authContextSvc.IsAdmin()
+		isAdmin, err := u.authContext(u.ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, errors.New("شما دسترسی به این تیکت ندارید")
 		}
@@ -341,7 +349,7 @@ func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (any
 	})
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -378,7 +386,7 @@ func (u *TicketUsecase) AdminGetAllTicketQuery(params *ticket.AdminGetAllTicketQ
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}

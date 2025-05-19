@@ -2,6 +2,7 @@ package planusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
@@ -20,7 +20,7 @@ type PlanUsecase struct {
 	logger      sflogger.Logger
 	planRepo    repository.IPlanRepository
 	userRepo    repository.IUserRepository
-	authContext func(c *gin.Context) common.IAuthContextService
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
@@ -28,7 +28,7 @@ func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 		logger:      c.GetLogger(),
 		planRepo:    c.GetPlanRepo(),
 		userRepo:    c.GetUserRepo(),
-		authContext: c.GetAuthContextTransientService(),
+		authContext: c.GetAuthTransientService(),
 	}
 }
 

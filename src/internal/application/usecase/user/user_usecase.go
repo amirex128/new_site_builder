@@ -2,6 +2,7 @@ package userusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
@@ -22,8 +22,8 @@ type UserUsecase struct {
 	planRepo    repository.IPlanRepository
 	addressRepo repository.IAddressRepository
 	paymentRepo repository.IPaymentRepository
-	identitySvc common.IIdentityService
-	authContext func(c *gin.Context) common.IAuthContextService
+	identitySvc service.IIdentityService
+	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewUserUsecase(c contract.IContainer) *UserUsecase {
@@ -34,7 +34,7 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 		addressRepo: c.GetAddressRepo(),
 		paymentRepo: c.GetPaymentRepo(),
 		identitySvc: c.GetIdentityService(),
-		authContext: c.GetAuthContextTransientService(),
+		authContext: c.GetAuthTransientService(),
 	}
 }
 

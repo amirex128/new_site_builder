@@ -2,33 +2,41 @@ package addressusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/address"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type AddressUsecase struct {
-	logger         sflogger.Logger
-	repo           repository.IAddressRepository
-	cityRepo       repository.ICityRepository
-	provinceRepo   repository.IProvinceRepository
-	authContextSvc common.IAuthContextService
+	ctx          *gin.Context
+	logger       sflogger.Logger
+	repo         repository.IAddressRepository
+	cityRepo     repository.ICityRepository
+	provinceRepo repository.IProvinceRepository
+	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 	return &AddressUsecase{
-		logger:         c.GetLogger(),
-		repo:           c.GetAddressRepo(),
-		cityRepo:       c.GetCityRepo(),
-		provinceRepo:   c.GetProvinceRepo(),
-		authContextSvc: c.GetAuthContextTransientService()(),
+		logger:       c.GetLogger(),
+		repo:         c.GetAddressRepo(),
+		cityRepo:     c.GetCityRepo(),
+		provinceRepo: c.GetProvinceRepo(),
+		authContext:  c.GetAuthTransientService(),
 	}
+}
+
+func (u *AddressUsecase) SetContext(c *gin.Context) *AddressUsecase {
+	u.ctx = c
+	return u
 }
 
 // CreateAddressCommand handles the creation of a new address
@@ -45,7 +53,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		customerID = *params.CustomerID
 	} else {
 		// Otherwise try to get from auth context
-		customerID, err = u.authContextSvc.GetCustomerID()
+		customerID, err = u.authContext(u.ctx).GetCustomerID()
 		if err != nil {
 			u.logger.Info("No customer ID in auth context, trying user ID", nil)
 			// Not a customer, try as a user
@@ -58,7 +66,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		userID = *params.UserID
 	} else if customerID == 0 {
 		// If no customer ID, try to get user ID from auth context
-		userID, err = u.authContextSvc.GetUserID()
+		userID, err = u.authContext(u.ctx).GetUserID()
 		if err != nil {
 			return nil, errors.New("خطا در احراز هویت کاربر")
 		}
@@ -151,10 +159,10 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	}
 
 	// Check ownership
-	customerID, _ := u.authContextSvc.GetCustomerID()
-	userID, _ := u.authContextSvc.GetUserID()
+	customerID, _ := u.authContext(u.ctx).GetCustomerID()
+	userID, _ := u.authContext(u.ctx).GetUserID()
 
-	isAdmin, _ := u.authContextSvc.IsAdmin()
+	isAdmin, _ := u.authContext(u.ctx).IsAdmin()
 
 	// Check if user has access to this address
 	if !isAdmin && existingAddress.CustomerID != customerID && existingAddress.UserID != userID {
@@ -238,10 +246,10 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 	}
 
 	// Check ownership
-	customerID, _ := u.authContextSvc.GetCustomerID()
-	userID, _ := u.authContextSvc.GetUserID()
+	customerID, _ := u.authContext(u.ctx).GetCustomerID()
+	userID, _ := u.authContext(u.ctx).GetUserID()
 
-	isAdmin, _ := u.authContextSvc.IsAdmin()
+	isAdmin, _ := u.authContext(u.ctx).IsAdmin()
 
 	// Check if user has access to this address
 	if !isAdmin && existingAddress.CustomerID != customerID && existingAddress.UserID != userID {
@@ -280,10 +288,10 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 	}
 
 	// Check ownership
-	customerID, _ := u.authContextSvc.GetCustomerID()
-	userID, _ := u.authContextSvc.GetUserID()
+	customerID, _ := u.authContext(u.ctx).GetCustomerID()
+	userID, _ := u.authContext(u.ctx).GetUserID()
 
-	isAdmin, _ := u.authContextSvc.IsAdmin()
+	isAdmin, _ := u.authContext(u.ctx).IsAdmin()
 
 	// Check if user has access to this address
 	if !isAdmin && result.CustomerID != customerID && result.UserID != userID {
@@ -305,7 +313,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 	var err error
 
 	// Try to get customer ID first
-	customerID, customerErr := u.authContextSvc.GetCustomerID()
+	customerID, customerErr := u.authContext(u.ctx).GetCustomerID()
 	if customerErr == nil && customerID > 0 {
 		// Get addresses for customer
 		results, err = u.repo.GetAllByCustomerID(customerID)
@@ -315,7 +323,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 		count = int64(len(results))
 	} else {
 		// Try user ID
-		userID, userErr := u.authContextSvc.GetUserID()
+		userID, userErr := u.authContext(u.ctx).GetUserID()
 		if userErr != nil {
 			return nil, errors.New("خطا در احراز هویت کاربر")
 		}
@@ -351,7 +359,7 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 	})
 
 	// Check if user is admin
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}

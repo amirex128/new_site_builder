@@ -1,7 +1,7 @@
-package common
+package service
 
-// IAuthContextService provides methods to access authentication and authorization context
-type IAuthContextService interface {
+// IAuthService provides methods to access authentication and authorization context
+type IAuthService interface {
 	GetRoles() ([]string, error)
 	GetSiteIDs() ([]int64, error)
 	GetUserID() (int64, error)

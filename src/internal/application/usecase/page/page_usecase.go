@@ -3,26 +3,29 @@ package pageusecase
 import (
 	"encoding/json"
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/page"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
 )
 
 type PageUsecase struct {
+	ctx              *gin.Context
 	logger           sflogger.Logger
 	repo             repository.IPageRepository
 	siteRepo         repository.ISiteRepository
 	headerFooterRepo repository.IHeaderFooterRepository
 	mediaRepo        repository.IMediaRepository
-	authContextSvc   common.IAuthContextService
+	authContext      func(c *gin.Context) service.IAuthService
 }
 
 func NewPageUsecase(c contract.IContainer) *PageUsecase {
@@ -32,8 +35,13 @@ func NewPageUsecase(c contract.IContainer) *PageUsecase {
 		siteRepo:         c.GetSiteRepo(),
 		headerFooterRepo: c.GetHeaderFooterRepo(),
 		mediaRepo:        c.GetMediaRepo(),
-		authContextSvc:   c.GetAuthContextTransientService(),
+		authContext:      c.GetAuthTransientService(),
 	}
+}
+
+func (u *PageUsecase) SetContext(c *gin.Context) *PageUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, error) {
@@ -79,7 +87,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, er
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -154,12 +162,12 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -304,12 +312,12 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (any, er
 	}
 
 	// Check user access
-	userID, err := u.authContextSvc.GetUserID()
+	userID, err := u.authContext(u.ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -402,7 +410,7 @@ func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (a
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContextSvc.IsAdmin()
+	isAdmin, err := u.authContext(u.ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

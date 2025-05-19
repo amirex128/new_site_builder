@@ -2,6 +2,7 @@ package unitpriceusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ type UnitPriceUsecase struct {
 	logger        sflogger.Logger
 	unitPriceRepo repository.IUnitPriceRepository
 	userRepo      repository.IUserRepository
-	authContext   func(c *gin.Context) common.IAuthContextService
+	authContext   func(c *gin.Context) service.IAuthService
 }
 
 func NewUnitPriceUsecase(c contract.IContainer) *UnitPriceUsecase {
@@ -26,7 +27,7 @@ func NewUnitPriceUsecase(c contract.IContainer) *UnitPriceUsecase {
 		logger:        c.GetLogger(),
 		unitPriceRepo: c.GetUnitPriceRepo(),
 		userRepo:      c.GetUserRepo(),
-		authContext:   c.GetAuthContextTransientService(),
+		authContext:   c.GetAuthTransientService(),
 	}
 }
 func (u *UnitPriceUsecase) SetContext(c *gin.Context) *UnitPriceUsecase {

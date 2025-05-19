@@ -5,12 +5,15 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -35,7 +38,7 @@ func NewIdentityService(jwtSecret string, issuer string, audience string, jwtExp
 }
 
 // AddClaim adds a claim to the token
-func (s *IdentityService) AddClaim(name string, value string) common.IIdentityService {
+func (s *IdentityService) AddClaim(name string, value string) service.IIdentityService {
 	s.claims = append(s.claims, jwt.RegisteredClaims{
 		Subject: name,
 		ID:      value,
@@ -44,7 +47,7 @@ func (s *IdentityService) AddClaim(name string, value string) common.IIdentitySe
 }
 
 // AddRoles adds role claims to the token
-func (s *IdentityService) AddRoles(roles []string) common.IIdentityService {
+func (s *IdentityService) AddRoles(roles []string) service.IIdentityService {
 	if roles == nil || len(roles) == 0 {
 		return s
 	}
@@ -71,7 +74,7 @@ func joinRoles(roles []string) string {
 }
 
 // TokenForUser creates a token for a user
-func (s *IdentityService) TokenForUser(user domain.User) common.IIdentityService {
+func (s *IdentityService) TokenForUser(user domain.User) service.IIdentityService {
 	s.claims = append(s.claims,
 		jwt.RegisteredClaims{
 			Subject: "user_id",
@@ -98,7 +101,7 @@ func (s *IdentityService) TokenForUser(user domain.User) common.IIdentityService
 }
 
 // TokenForCustomer creates a token for a customer
-func (s *IdentityService) TokenForCustomer(customer domain.Customer) common.IIdentityService {
+func (s *IdentityService) TokenForCustomer(customer domain.Customer) service.IIdentityService {
 	s.claims = append(s.claims,
 		jwt.RegisteredClaims{
 			Subject: "customer_id",
@@ -177,4 +180,73 @@ func (s *IdentityService) HashPassword(password string) (string, string) {
 	hashedPassword := hex.EncodeToString(hash.Sum(nil))
 
 	return hashedPassword, salt
+}
+
+// GetToken extracts the JWT token from the request context
+func (s *IdentityService) GetToken(c *gin.Context) (*jwt.Token, error) {
+	// Get the Authorization header
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		return nil, errors.New("authorization header not found")
+	}
+
+	// Check if it's a Bearer token
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		return nil, errors.New("invalid authorization header format")
+	}
+
+	// Extract the token
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+	// Parse and verify the token
+	return s.VerifyToken(tokenString)
+}
+
+// VerifyToken validates a token string and returns the parsed token
+func (s *IdentityService) VerifyToken(tokenString string) (*jwt.Token, error) {
+	// Parse and validate the token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Validate the signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(s.jwtSecret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	return token, nil
+}
+
+// GetClaim extracts a specific claim from a JWT token
+func (s *IdentityService) GetClaim(ctx *gin.Context, claimName string) (string, error) {
+	token, err := s.GetToken(ctx)
+	if err != nil {
+		return "", err
+	}
+	// Extract claims
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", errors.New("invalid token claims")
+	}
+
+	// Get the specific claim
+	claimValue, exists := claims[claimName]
+	if !exists {
+		return "", fmt.Errorf("claim %s not found", claimName)
+	}
+
+	// Convert claim value to string
+	claimStr, ok := claimValue.(string)
+	if !ok {
+		return "", fmt.Errorf("claim %s is not a string", claimName)
+	}
+
+	return claimStr, nil
 }

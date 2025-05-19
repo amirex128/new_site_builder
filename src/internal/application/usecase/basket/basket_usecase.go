@@ -3,7 +3,10 @@ package basketusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/basket"
@@ -15,13 +18,14 @@ import (
 )
 
 type BasketUsecase struct {
+	ctx                *gin.Context
 	logger             sflogger.Logger
 	basketRepo         repository.IBasketRepository
 	basketItemRepo     repository.IBasketItemRepository
 	productRepo        repository.IProductRepository
 	productVariantRepo repository.IProductVariantRepository
 	discountRepo       repository.IDiscountRepository
-	authContextSvc     common.IAuthContextService
+	authContext        func(c *gin.Context) service.IAuthService
 }
 
 func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
@@ -32,8 +36,13 @@ func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 		productRepo:        c.GetProductRepo(),
 		productVariantRepo: c.GetProductVariantRepo(),
 		discountRepo:       c.GetDiscountRepo(),
-		authContextSvc:     c.GetAuthContextTransientService(),
+		authContext:        c.GetAuthTransientService(),
 	}
+}
+
+func (u *BasketUsecase) SetContext(c *gin.Context) *BasketUsecase {
+	u.ctx = c
+	return u
 }
 
 func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (any, error) {
@@ -45,7 +54,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 		return nil, errors.New("آیتم‌های سبد خرید الزامی هستند")
 	}
 
-	customerID, err := u.authContextSvc.GetCustomerID()
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +275,7 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, erro
 		"params": params,
 	})
 
-	customerID, err := u.authContextSvc.GetCustomerID()
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}
@@ -296,7 +305,7 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 		"params": params,
 	})
 
-	customerID, err := u.authContextSvc.GetCustomerID()
+	customerID, err := u.authContext(u.ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
 	}

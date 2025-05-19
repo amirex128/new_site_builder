@@ -2,11 +2,8 @@ package contract
 
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service/cache"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service/storage"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -16,7 +13,7 @@ type IContainer interface {
 	GetLogger() sflogger.Logger
 
 	// Auth services
-	GetAuthContextTransientService() func(c *gin.Context) common.IAuthContextService
+	GetAuthTransientService() func(c *gin.Context) service.IAuthService
 
 	// Repositories
 	GetAddressRepo() repository.IAddressRepository
@@ -66,10 +63,10 @@ type IContainer interface {
 	GetParbadPaymentRepo() repository.IParbadPaymentRepository
 	GetParbadTransactionRepo() repository.IParbadTransactionRepository
 	GetConfig() IConfig
-	GetMainCache() cache.ICacheService
-	GetStockCacheTransient() cache.ICacheService
+	GetMainCache() service.ICacheService
+	GetStockCacheTransient() service.ICacheService
 	GetDB() *gorm.DB
-	GetStorageService() storage.IStorageService
-	GetIdentityService() common.IIdentityService
+	GetStorageService() service.IStorageService
+	GetIdentityService() service.IIdentityService
 	GetPaymentService() service.IPaymentService
 }
