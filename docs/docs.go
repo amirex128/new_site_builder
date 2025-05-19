@@ -15,14 +15,14 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users/{id}": {
-            "put": {
+        "/address": {
+            "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "update an existing user",
+                "description": "Retrieves a specific address by its ID for the authenticated user",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,20 +30,135 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "address"
                 ],
-                "summary": "Update a user",
+                "summary": "Get address by ID",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "Address ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.GetByIdAddressQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
                     },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
                     {
-                        "description": "User object",
-                        "name": "user",
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing address for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Update an existing address",
+                "parameters": [
+                    {
+                        "description": "Updated address information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.UpdateAddressCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated address",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new address for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Create a new address",
+                "parameters": [
+                    {
+                        "description": "Address information",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -52,31 +167,8746 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created address",
                         "schema": {
-                            "$ref": "#/definitions/address.CreateAddressCommand"
+                            "$ref": "#/definitions/resp.Result"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Validation error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/resp.Result"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/resp.Result"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an address for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Delete an address",
+                "parameters": [
+                    {
+                        "description": "Address ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.DeleteAddressCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted address confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all addresses in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Admin: Get all addresses",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.AdminGetAllAddressQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all addresses",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all addresses for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get all addresses",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.GetAllAddressQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of addresses",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/city/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all available cities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get all cities",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.GetAllCityQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of cities",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/province/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all available provinces",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get all provinces",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/address.GetAllProvinceQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of provinces",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific article by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Get article by ID",
+                "parameters": [
+                    {
+                        "description": "Article ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.GetByIdArticleQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Article not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing article with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Update an article",
+                "parameters": [
+                    {
+                        "description": "Updated article information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.UpdateArticleCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated article",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Article not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new article with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Create a new article",
+                "parameters": [
+                    {
+                        "description": "Article information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.CreateArticleCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created article",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing article by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Delete an article",
+                "parameters": [
+                    {
+                        "description": "Article ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.DeleteArticleCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted article confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Article not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article-category": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific article category by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article-category"
+                ],
+                "summary": "Get article category by ID",
+                "parameters": [
+                    {
+                        "description": "Category ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article_category.GetByIdCategoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing article category with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article-category"
+                ],
+                "summary": "Update an article category",
+                "parameters": [
+                    {
+                        "description": "Updated category information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article_category.UpdateCategoryCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated category",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new category for articles with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article-category"
+                ],
+                "summary": "Create a new article category",
+                "parameters": [
+                    {
+                        "description": "Category information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article_category.CreateCategoryCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created category",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing article category by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article-category"
+                ],
+                "summary": "Delete an article category",
+                "parameters": [
+                    {
+                        "description": "Category ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article_category.DeleteCategoryCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted category confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article-category/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all article categories with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article-category"
+                ],
+                "summary": "Admin: Get all article categories",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article_category.AdminGetAllCategoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all categories",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article-category/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all article categories with optional filtering",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article-category"
+                ],
+                "summary": "Get all article categories",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article_category.GetAllCategoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of categories",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all articles with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Admin: Get all articles",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.AdminGetAllArticleQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all articles",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all articles with optional filtering",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Get all articles",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.GetAllArticleQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of articles",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/article/filters-sort": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves articles based on specified filters and sorting criteria",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "article"
+                ],
+                "summary": "Get articles by filters and sorting",
+                "parameters": [
+                    {
+                        "description": "Filter and sort parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/article.GetByFiltersSortArticleQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filtered and sorted articles",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/basket": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the current user's shopping basket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "basket"
+                ],
+                "summary": "Get current basket",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/basket.GetBasketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Basket details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Basket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the user's shopping basket with new items or quantities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "basket"
+                ],
+                "summary": "Update shopping basket",
+                "parameters": [
+                    {
+                        "description": "Updated basket information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/basket.UpdateBasketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated basket",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/basket/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all shopping baskets across all users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "basket"
+                ],
+                "summary": "Admin: Get all user baskets",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/basket.AdminGetAllBasketUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all user baskets",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/basket/user/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all shopping baskets for the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "basket"
+                ],
+                "summary": "Get all user baskets",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/basket.GetAllBasketUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user baskets",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer-ticket": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific customer support ticket by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer-ticket"
+                ],
+                "summary": "Get customer ticket by ID",
+                "parameters": [
+                    {
+                        "description": "Ticket ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer_ticket.GetByIdCustomerTicketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adds a customer reply to an existing support ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer-ticket"
+                ],
+                "summary": "Reply to a customer ticket",
+                "parameters": [
+                    {
+                        "description": "Reply information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer_ticket.ReplayCustomerTicketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated ticket with reply",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new support ticket for a customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer-ticket"
+                ],
+                "summary": "Create a customer support ticket",
+                "parameters": [
+                    {
+                        "description": "Ticket information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer_ticket.CreateCustomerTicketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created ticket",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer-ticket/admin": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adds an admin reply to an existing customer support ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer-ticket"
+                ],
+                "summary": "Admin: Reply to a customer ticket",
+                "parameters": [
+                    {
+                        "description": "Admin reply information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer_ticket.AdminReplayCustomerTicketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated ticket with admin reply",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer-ticket/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all customer support tickets across all customers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer-ticket"
+                ],
+                "summary": "Admin: Get all customer tickets",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer_ticket.AdminGetAllCustomerTicketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all customer tickets",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer-ticket/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all support tickets for the current customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer-ticket"
+                ],
+                "summary": "Get all customer tickets",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer_ticket.GetAllCustomerTicketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of customer tickets",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all customers with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Admin: Get all customers",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.AdminGetAllCustomerQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all customers",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/login": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Authenticates a customer and returns an access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Customer login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.LoginCustomerCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Authentication token",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the authenticated customer's profile information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Get customer profile",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.GetProfileCustomerQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer profile",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Profile not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the authenticated customer's profile information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Update customer profile",
+                "parameters": [
+                    {
+                        "description": "Updated profile information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.UpdateProfileCustomerCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated profile",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/register": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Registers a new customer account with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Register new customer",
+                "parameters": [
+                    {
+                        "description": "Customer registration information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.RegisterCustomerCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Registered customer",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "409": {
+                        "description": "Email already exists",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/verify": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Verifies a customer's email address using the verification token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Verify customer email",
+                "parameters": [
+                    {
+                        "description": "Verification token",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.VerifyCustomerQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Verification successful",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid token",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/verify-forget": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sends verification email or password reset link to the customer's email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customer"
+                ],
+                "summary": "Request verification or password reset",
+                "parameters": [
+                    {
+                        "description": "Email information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customer.RequestVerifyAndForgetCustomerCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Email sent confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Email not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/default-theme": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific default theme template by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "default-theme"
+                ],
+                "summary": "Get default theme by ID",
+                "parameters": [
+                    {
+                        "description": "Theme ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/defaulttheme.GetByIdDefaultThemeQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Theme details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing default theme template",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "default-theme"
+                ],
+                "summary": "Update a default theme",
+                "parameters": [
+                    {
+                        "description": "Updated theme information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/defaulttheme.UpdateDefaultThemeCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated theme",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new default theme template for websites",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "default-theme"
+                ],
+                "summary": "Create a new default theme",
+                "parameters": [
+                    {
+                        "description": "Theme information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/defaulttheme.CreateDefaultThemeCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created theme",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing default theme template",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "default-theme"
+                ],
+                "summary": "Delete a default theme",
+                "parameters": [
+                    {
+                        "description": "Theme ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/defaulttheme.DeleteDefaultThemeCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted theme confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Theme not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/default-theme/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all default theme templates",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "default-theme"
+                ],
+                "summary": "Get all default themes",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/defaulttheme.GetAllDefaultThemeQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of themes",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/discount": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific discount by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "discount"
+                ],
+                "summary": "Get discount by ID",
+                "parameters": [
+                    {
+                        "description": "Discount ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/discount.GetByIdDiscountQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Discount details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Discount not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing discount code or promotion",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "discount"
+                ],
+                "summary": "Update a discount",
+                "parameters": [
+                    {
+                        "description": "Updated discount information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/discount.UpdateDiscountCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated discount",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Discount not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new discount code or promotion",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "discount"
+                ],
+                "summary": "Create a new discount",
+                "parameters": [
+                    {
+                        "description": "Discount information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/discount.CreateDiscountCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created discount",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing discount code or promotion",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "discount"
+                ],
+                "summary": "Delete a discount",
+                "parameters": [
+                    {
+                        "description": "Discount ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/discount.DeleteDiscountCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted discount confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Discount not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/discount/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all discount codes and promotions with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "discount"
+                ],
+                "summary": "Admin: Get all discounts",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/discount.AdminGetAllDiscountQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all discounts",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/discount/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all discount codes and promotions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "discount"
+                ],
+                "summary": "Get all discounts",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/discount.GetAllDiscountQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of discounts",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing file or directory with new information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Update a file or directory",
+                "parameters": [
+                    {
+                        "description": "Updated file or directory information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.UpdateFileItemCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated file or directory",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "File or directory not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new file or directory in the file system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Create file or directory",
+                "parameters": [
+                    {
+                        "description": "File or directory information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.CreateOrDirectoryItemCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created file or directory",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Soft deletes a file or directory (moves to trash)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Delete a file or directory",
+                "parameters": [
+                    {
+                        "description": "File or directory ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.DeleteFileItemCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted file or directory confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "File or directory not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/download": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a file for download by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Download a file",
+                "parameters": [
+                    {
+                        "description": "File ID to download",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.GetDownloadFileItemByIdQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File download information",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "File not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/force": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Permanently deletes a file or directory from the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Permanently delete a file or directory",
+                "parameters": [
+                    {
+                        "description": "File or directory ID to permanently delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.ForceDeleteFileItemCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Permanently deleted file or directory confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "File or directory not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/ids": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves multiple files or directories by their IDs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Get files or directories by IDs",
+                "parameters": [
+                    {
+                        "description": "File or directory IDs to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.GetByIdsQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Files or directories details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "One or more files or directories not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/operation": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Performs operations like copy, move, or rename on files and directories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Perform file operations",
+                "parameters": [
+                    {
+                        "description": "Operation details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.FileOperationCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation result",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "File or directory not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/restore": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Restores a previously deleted file or directory from trash",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Restore deleted file or directory",
+                "parameters": [
+                    {
+                        "description": "File or directory ID to restore",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.RestoreFileItemCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restored file or directory",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "File or directory not found in trash",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/tree": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the tree structure of files and directories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Get directory tree",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.GetTreeDirectoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Directory tree",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-item/tree/deleted": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the tree structure of deleted files and directories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "file-item"
+                ],
+                "summary": "Get deleted directory tree",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fileitem.GetDeletedTreeDirectoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted directory tree",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific payment gateway by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gateway"
+                ],
+                "summary": "Get payment gateway by ID",
+                "parameters": [
+                    {
+                        "description": "Gateway ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payment.GetByIdGatewayQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Gateway details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Gateway not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new payment gateway or updates an existing one",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gateway"
+                ],
+                "summary": "Create or update payment gateway",
+                "parameters": [
+                    {
+                        "description": "Gateway information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payment.CreateOrUpdateGatewayCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Created or updated gateway",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/gateway/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all payment gateways",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gateway"
+                ],
+                "summary": "Admin: Get all payment gateways",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payment.AdminGetAllGatewayQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all gateways",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/header-footer": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific header and footer template by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header-footer"
+                ],
+                "summary": "Get header/footer by ID",
+                "parameters": [
+                    {
+                        "description": "Header/footer ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/header_footer.GetByIdHeaderFooterQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Header/footer details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Header/footer not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing header and footer template",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header-footer"
+                ],
+                "summary": "Update a header/footer",
+                "parameters": [
+                    {
+                        "description": "Updated header/footer information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/header_footer.UpdateHeaderFooterCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated header/footer",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Header/footer not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new header and footer template for websites",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header-footer"
+                ],
+                "summary": "Create a header/footer",
+                "parameters": [
+                    {
+                        "description": "Header/footer information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/header_footer.CreateHeaderFooterCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created header/footer",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing header and footer template",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header-footer"
+                ],
+                "summary": "Delete a header/footer",
+                "parameters": [
+                    {
+                        "description": "Header/footer ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/header_footer.DeleteHeaderFooterCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted header/footer confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Header/footer not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/header-footer/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all header and footer templates with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header-footer"
+                ],
+                "summary": "Admin: Get all header/footers",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/header_footer.AdminGetAllHeaderFooterQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all header/footers",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/header-footer/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all header and footer templates",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "header-footer"
+                ],
+                "summary": "Get all header/footers",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/header_footer.GetAllHeaderFooterQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of header/footers",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new order request from the user's basket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Create an order request",
+                "parameters": [
+                    {
+                        "description": "Order request information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.CreateOrderRequestCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created order request",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all orders across all users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Admin: Get all orders",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.AdminGetAllOrderUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all orders",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/customer/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all orders for the authenticated customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get all customer orders",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.GetAllOrderCustomerQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of customer orders",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/customer/details": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves detailed information about a specific customer order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get customer order details",
+                "parameters": [
+                    {
+                        "description": "Order ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.GetOrderCustomerDetailsQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/user/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all orders for the authenticated user (seller)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get all user orders",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.GetAllOrderUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user orders",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/user/details": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves detailed information about a specific user (seller) order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Get user order details",
+                "parameters": [
+                    {
+                        "description": "Order ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.GetOrderUserDetailsQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/verify": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Verifies and finalizes an order after payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "Verify an order",
+                "parameters": [
+                    {
+                        "description": "Order verification information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.CreateOrderVerifyCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Verified order",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/page": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific web page by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "summary": "Get page by ID",
+                "parameters": [
+                    {
+                        "description": "Page ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page.GetByIdPageQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Page not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing web page with new content and settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "summary": "Update a page",
+                "parameters": [
+                    {
+                        "description": "Updated page information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page.UpdatePageCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated page",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Page not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new web page for a website",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "summary": "Create a new page",
+                "parameters": [
+                    {
+                        "description": "Page information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page.CreatePageCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created page",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing web page",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "summary": "Delete a page",
+                "parameters": [
+                    {
+                        "description": "Page ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page.DeletePageCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted page confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Page not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/page/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all web pages across all websites",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "summary": "Admin: Get all pages",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page.AdminGetAllPageQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all pages",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/page/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all web pages for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "page"
+                ],
+                "summary": "Get all pages",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page.GetAllPageQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of pages",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all payment transactions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payment"
+                ],
+                "summary": "Admin: Get all payments",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payment.AdminGetAllPaymentQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all payments",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/request": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Initiates a payment request to a payment gateway",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payment"
+                ],
+                "summary": "Request payment gateway",
+                "parameters": [
+                    {
+                        "description": "Payment request information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payment.RequestGatewayCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment gateway request result",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/verify": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Verifies a payment transaction after it's processed by the payment gateway",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payment"
+                ],
+                "summary": "Verify payment",
+                "parameters": [
+                    {
+                        "description": "Payment verification information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/payment.VerifyPaymentCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Verified payment",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Payment not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/plan": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific subscription plan by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Get plan by ID",
+                "parameters": [
+                    {
+                        "description": "Plan ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/plan.GetByIDPlanQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Plan details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Plan not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing subscription plan with new features and pricing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Update a subscription plan",
+                "parameters": [
+                    {
+                        "description": "Updated plan information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/plan.UpdatePlanCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated plan",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Plan not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new subscription plan with specified features and pricing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Create a new subscription plan",
+                "parameters": [
+                    {
+                        "description": "Plan information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/plan.CreatePlanCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created plan",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing subscription plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Delete a subscription plan",
+                "parameters": [
+                    {
+                        "description": "Plan ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/plan.DeletePlanCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted plan confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Plan not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/plan/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all available subscription plans",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Get all subscription plans",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/plan.GetAllPlanQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of plans",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/plan/calculate": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Calculates the price for a subscription plan based on selected options",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "plan"
+                ],
+                "summary": "Calculate plan price",
+                "parameters": [
+                    {
+                        "description": "Plan calculation parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/plan.CalculatePlanPriceQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculated plan price",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific product by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Get product by ID",
+                "parameters": [
+                    {
+                        "description": "Product ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.GetByIdProductQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing product with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Update a product",
+                "parameters": [
+                    {
+                        "description": "Updated product information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.UpdateProductCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated product",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new product with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Create a new product",
+                "parameters": [
+                    {
+                        "description": "Product information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.CreateProductCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created product",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing product by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Delete a product",
+                "parameters": [
+                    {
+                        "description": "Product ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.DeleteProductCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted product confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-category": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific product category by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-category"
+                ],
+                "summary": "Get product category by ID",
+                "parameters": [
+                    {
+                        "description": "Category ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_category.GetByIdCategoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing product category with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-category"
+                ],
+                "summary": "Update a product category",
+                "parameters": [
+                    {
+                        "description": "Updated category information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_category.UpdateCategoryCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated category",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new category for products with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-category"
+                ],
+                "summary": "Create a new product category",
+                "parameters": [
+                    {
+                        "description": "Category information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_category.CreateCategoryCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created category",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing product category by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-category"
+                ],
+                "summary": "Delete a product category",
+                "parameters": [
+                    {
+                        "description": "Category ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_category.DeleteCategoryCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted category confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-category/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all product categories with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-category"
+                ],
+                "summary": "Admin: Get all product categories",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_category.AdminGetAllCategoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all categories",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-category/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all product categories with optional filtering",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-category"
+                ],
+                "summary": "Get all product categories",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_category.GetAllCategoryQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of categories",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-review": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific product review by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-review"
+                ],
+                "summary": "Get product review by ID",
+                "parameters": [
+                    {
+                        "description": "Review ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_review.GetByIdProductReviewQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing product review",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-review"
+                ],
+                "summary": "Update a product review",
+                "parameters": [
+                    {
+                        "description": "Updated review information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_review.UpdateProductReviewCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated review",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new review for a product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-review"
+                ],
+                "summary": "Create a product review",
+                "parameters": [
+                    {
+                        "description": "Review information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_review.CreateProductReviewCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created review",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing product review",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-review"
+                ],
+                "summary": "Delete a product review",
+                "parameters": [
+                    {
+                        "description": "Review ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_review.DeleteProductReviewCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted review confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-review/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all product reviews with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-review"
+                ],
+                "summary": "Admin: Get all product reviews",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_review.AdminGetAllProductReviewQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all reviews",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-review/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all product reviews with optional filtering",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product-review"
+                ],
+                "summary": "Get all product reviews",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product_review.GetAllProductReviewQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of reviews",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all products with additional information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Admin: Get all products",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.AdminGetAllProductQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all products",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all products with optional filtering",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Get all products",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.GetAllProductQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/filters-sort": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves products based on specified filters and sorting criteria",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Get products by filters and sorting",
+                "parameters": [
+                    {
+                        "description": "Filter and sort parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.GetByFiltersSortProductQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filtered and sorted products",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing role's name and permissions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Update an existing role",
+                "parameters": [
+                    {
+                        "description": "Updated role information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.UpdateRoleCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated role",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new role with specified permissions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Create a new role",
+                "parameters": [
+                    {
+                        "description": "Role information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.CreateRoleCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created role",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all roles in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get all roles",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.GetAllRoleQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all roles",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/customer": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Assigns a specific role to a customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Assign role to customer",
+                "parameters": [
+                    {
+                        "description": "Role and customer assignment details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.SetRoleToCustomerCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role assigned to customer",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Role or customer not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/permission/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all available permissions in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get all permissions",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.GetAllPermissionQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all permissions",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all permissions assigned to a specific role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get role permissions",
+                "parameters": [
+                    {
+                        "description": "Role ID to retrieve permissions for",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.GetRolePermissionsQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of permissions for the role",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Role not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/plan": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Assigns a specific role to a subscription plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Assign role to plan",
+                "parameters": [
+                    {
+                        "description": "Role and plan assignment details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.SetRoleToPlanCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role assigned to plan",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Role or plan not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/user": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Assigns a specific role to a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Assign role to user",
+                "parameters": [
+                    {
+                        "description": "Role and user assignment details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.SetRoleToUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role assigned to user",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Role or user not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/site": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific site by its ID for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "site"
+                ],
+                "summary": "Get site by ID",
+                "parameters": [
+                    {
+                        "description": "Site ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.GetByIdSiteQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Site details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Site not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing site for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "site"
+                ],
+                "summary": "Update an existing site",
+                "parameters": [
+                    {
+                        "description": "Updated site information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.UpdateSiteCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated site",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Site not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new site for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "site"
+                ],
+                "summary": "Create a new site",
+                "parameters": [
+                    {
+                        "description": "Site information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.CreateSiteCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created site",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a site for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "site"
+                ],
+                "summary": "Delete a site",
+                "parameters": [
+                    {
+                        "description": "Site ID to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.DeleteSiteCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted site confirmation",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Site not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/site/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all sites in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "site"
+                ],
+                "summary": "Admin: Get all sites",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.AdminGetAllSiteQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all sites",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/site/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all sites for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "site"
+                ],
+                "summary": "Get all sites",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.GetAllSiteQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of sites",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific ticket by its ID for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Get ticket by ID",
+                "parameters": [
+                    {
+                        "description": "Ticket ID to retrieve",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ticket.GetByIdTicketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ticket details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new support ticket for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Create a new ticket",
+                "parameters": [
+                    {
+                        "description": "Ticket information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ticket.CreateTicketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created ticket",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all tickets in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Admin: Get all tickets",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ticket.AdminGetAllTicketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all tickets",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket/admin/reply": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to add a reply to any support ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Admin: Reply to a ticket",
+                "parameters": [
+                    {
+                        "description": "Admin reply information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ticket.AdminReplayTicketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated ticket with admin reply",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all tickets for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Get all tickets",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ticket.GetAllTicketQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tickets",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket/reply": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adds a user reply to an existing support ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Reply to a ticket",
+                "parameters": [
+                    {
+                        "description": "Reply information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ticket.ReplayTicketCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated ticket with reply",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit-price": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing unit price configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "unit-price"
+                ],
+                "summary": "Update unit price",
+                "parameters": [
+                    {
+                        "description": "Unit price update information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/unit_price.UpdateUnitPriceCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated unit price",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Unit price not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit-price/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all unit price configurations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "unit-price"
+                ],
+                "summary": "Get all unit prices",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/unit_price.GetAllUnitPriceQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of unit prices",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit-price/calculate": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Calculates the unit price based on provided parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "unit-price"
+                ],
+                "summary": "Calculate unit price",
+                "parameters": [
+                    {
+                        "description": "Parameters for price calculation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/unit_price.CalculateUnitPriceQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculated unit price",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/admin/all": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Admin endpoint to retrieve all users in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Admin: Get all users",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.AdminGetAllUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of all users",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Admin access required",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/credit/charge": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a request to charge the user's account credit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Request credit charge",
+                "parameters": [
+                    {
+                        "description": "Credit charge request details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.ChargeCreditRequestUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created charge request",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "description": "Authenticates a user and returns a token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "User login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.LoginUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Authentication token and user details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/plan/upgrade": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a request to upgrade the user's subscription plan",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Request plan upgrade",
+                "parameters": [
+                    {
+                        "description": "Plan upgrade request details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.UpgradePlanRequestUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created plan upgrade request",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the profile information for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user profile",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.GetProfileUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the profile information for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update user profile",
+                "parameters": [
+                    {
+                        "description": "Updated profile information",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateProfileUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated user profile",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/register": {
+            "post": {
+                "description": "Creates a new user account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Register new user",
+                "parameters": [
+                    {
+                        "description": "User registration details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RegisterUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created user account",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/verify": {
+            "get": {
+                "description": "Verifies a user's email or resets password using a verification code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Verify user",
+                "parameters": [
+                    {
+                        "description": "Verification details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.VerifyUserQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User verified or password reset",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found or invalid code",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/verify-forget/request": {
+            "post": {
+                "description": "Sends a verification code or password reset link to the user's email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Request verification or password reset",
+                "parameters": [
+                    {
+                        "description": "Email verification or password reset request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RequestVerifyAndForgetUserCommand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Verification or reset request created",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/article": {
+            "get": {
+                "description": "Retrieves a specific article identified by its slug",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get article by slug",
+                "parameters": [
+                    {
+                        "description": "Article slug",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetSingleArticleBySlugQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Article not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/article/category": {
+            "get": {
+                "description": "Retrieves articles belonging to a specific category identified by slug",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get articles by category slug",
+                "parameters": [
+                    {
+                        "description": "Category slug and query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetArticlesByCategorySlugQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of articles in the category",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/article/filters-sort": {
+            "get": {
+                "description": "Retrieves available filters and sorting options for articles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get article filters and sorting options",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetFiltersSortArticleQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article filters and sorting options",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/header-footer": {
+            "get": {
+                "description": "Retrieves header and footer content for a specific domain",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get header and footer by domain",
+                "parameters": [
+                    {
+                        "description": "Domain parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetByDomainHeaderFooterQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Header and footer content",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Domain not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/page": {
+            "get": {
+                "description": "Retrieves page content for a specific domain",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get page by domain",
+                "parameters": [
+                    {
+                        "description": "Domain and page parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetByDomainPageQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page content",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Page or domain not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/product": {
+            "get": {
+                "description": "Retrieves a specific product identified by its slug",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get product by slug",
+                "parameters": [
+                    {
+                        "description": "Product slug",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetSingleProductBySlugQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/product/category": {
+            "get": {
+                "description": "Retrieves products belonging to a specific category identified by slug",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get products by category slug",
+                "parameters": [
+                    {
+                        "description": "Category slug and query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetProductsByCategorySlugQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products in the category",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/product/filters-sort": {
+            "get": {
+                "description": "Retrieves available filters and sorting options for products",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Get product filters and sorting options",
+                "parameters": [
+                    {
+                        "description": "Query parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.GetFiltersSortProductQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product filters and sorting options",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/website/product/search": {
+            "get": {
+                "description": "Searches for products based on provided criteria",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "website"
+                ],
+                "summary": "Search products",
+                "parameters": [
+                    {
+                        "description": "Search parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/website.ProductSearchListQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products matching search criteria",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
                         }
                     }
                 }
@@ -84,6 +8914,48 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "address.AdminGetAllAddressQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
         "address.CreateAddressCommand": {
             "type": "object",
             "required": [
@@ -123,6 +8995,5504 @@ const docTemplate = `{
                 },
                 "userId": {
                     "type": "integer"
+                }
+            }
+        },
+        "address.DeleteAddressCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "address.GetAllAddressQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "address.GetAllCityQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "address.GetAllProvinceQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "address.GetByIdAddressQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "address.UpdateAddressCommand": {
+            "type": "object",
+            "required": [
+                "cityId",
+                "id",
+                "provinceId"
+            ],
+            "properties": {
+                "addressLine": {
+                    "type": "string"
+                },
+                "cityId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "latitude": {
+                    "type": "number",
+                    "maximum": 90,
+                    "minimum": -90
+                },
+                "longitude": {
+                    "type": "number",
+                    "maximum": 180,
+                    "minimum": -180
+                },
+                "postalCode": {
+                    "type": "string"
+                },
+                "provinceId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "article.AdminGetAllArticleQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "article.ArticleSortEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ],
+            "x-enum-varnames": [
+                "TitleAZ",
+                "TitleZA",
+                "RecentlyAdded",
+                "RecentlyUpdated",
+                "MostVisited",
+                "LeastVisited",
+                "MostRated",
+                "LeastRated",
+                "MostReviewed",
+                "LeastReviewed"
+            ]
+        },
+        "article.CreateArticleCommand": {
+            "type": "object",
+            "required": [
+                "siteId"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "categoryIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "article.DeleteArticleCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "article.GetAllArticleQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "article.GetByFiltersSortArticleQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "selectedFilters": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "selectedSort": {
+                    "$ref": "#/definitions/article.ArticleSortEnum"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "article.GetByIdArticleQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "article.UpdateArticleCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "siteId"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "categoryIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "article_category.AdminGetAllCategoryQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "article_category.CreateCategoryCommand": {
+            "type": "object",
+            "required": [
+                "order",
+                "siteId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parentCategoryId": {
+                    "type": "integer"
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "article_category.DeleteCategoryCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "article_category.GetAllCategoryQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "article_category.GetByIdCategoryQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "article_category.UpdateCategoryCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "siteId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parentCategoryId": {
+                    "type": "integer"
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "basket.AdminGetAllBasketUserQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "basket.BasketItemCommand": {
+            "type": "object",
+            "required": [
+                "productId",
+                "quantity"
+            ],
+            "properties": {
+                "basketItemId": {
+                    "type": "integer"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "productVariantId": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "maximum": 1000
+                }
+            }
+        },
+        "basket.GetAllBasketUserQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "basket.GetBasketQuery": {
+            "type": "object",
+            "required": [
+                "siteId"
+            ],
+            "properties": {
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "basket.UpdateBasketCommand": {
+            "type": "object",
+            "required": [
+                "basketItems",
+                "siteId"
+            ],
+            "properties": {
+                "basketItems": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/basket.BasketItemCommand"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "simpleAdd": {
+                    "type": "boolean"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "common_dto.PaginationJson": {
+            "type": "object",
+            "properties": {
+                "hasNextPage": {
+                    "type": "boolean"
+                },
+                "hasPreviousPage": {
+                    "type": "boolean"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {}
+                },
+                "pageNumber": {
+                    "type": "integer"
+                },
+                "totalCount": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "customer.AdminGetAllCustomerQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "customer.GetProfileCustomerQuery": {
+            "type": "object"
+        },
+        "customer.LoginCustomerCommand": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "customer.RegisterCustomerCommand": {
+            "type": "object",
+            "required": [
+                "email",
+                "siteId"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "customer.RequestVerifyAndForgetCustomerCommand": {
+            "type": "object",
+            "required": [
+                "email",
+                "phone",
+                "type"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/user.VerifyTypeEnum"
+                }
+            }
+        },
+        "customer.UpdateProfileCustomerCommand": {
+            "type": "object",
+            "required": [
+                "phone"
+            ],
+            "properties": {
+                "addressIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "nationalCode": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "customer.VerifyCustomerQuery": {
+            "type": "object",
+            "required": [
+                "code",
+                "email",
+                "type"
+            ],
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/user.VerifyTypeEnum"
+                }
+            }
+        },
+        "customer_ticket.AdminGetAllCustomerTicketQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "customer_ticket.AdminReplayCustomerTicketCommand": {
+            "type": "object",
+            "required": [
+                "assignedTo",
+                "comment",
+                "id",
+                "priority",
+                "product_category",
+                "status"
+            ],
+            "properties": {
+                "assignedTo": {
+                    "type": "integer"
+                },
+                "comment": {
+                    "$ref": "#/definitions/customer_ticket.CustomerCommentCommand"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "priority": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketPriorityEnum"
+                },
+                "product_category": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketCategoryEnum"
+                },
+                "status": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketStatusEnum"
+                }
+            }
+        },
+        "customer_ticket.CreateCustomerTicketCommand": {
+            "type": "object",
+            "required": [
+                "comment",
+                "ownerUserId",
+                "priority",
+                "product_category"
+            ],
+            "properties": {
+                "comment": {
+                    "$ref": "#/definitions/customer_ticket.CustomerCommentCommand"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "ownerUserId": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketPriorityEnum"
+                },
+                "product_category": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketCategoryEnum"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "customer_ticket.CustomerCommentCommand": {
+            "type": "object",
+            "required": [
+                "respondentId"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "respondentId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "customer_ticket.CustomerTicketCategoryEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "x-enum-varnames": [
+                "Bug",
+                "Enhancement",
+                "FeatureRequest",
+                "Question",
+                "Documentation",
+                "Financial"
+            ]
+        },
+        "customer_ticket.CustomerTicketPriorityEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Low",
+                "Medium",
+                "High",
+                "Critical"
+            ]
+        },
+        "customer_ticket.CustomerTicketStatusEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "New",
+                "InProgress",
+                "Closed"
+            ]
+        },
+        "customer_ticket.GetAllCustomerTicketQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "customer_ticket.GetByIdCustomerTicketQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "customer_ticket.ReplayCustomerTicketCommand": {
+            "type": "object",
+            "required": [
+                "assignedTo",
+                "comment",
+                "id",
+                "priority",
+                "product_category",
+                "status"
+            ],
+            "properties": {
+                "assignedTo": {
+                    "type": "integer"
+                },
+                "comment": {
+                    "$ref": "#/definitions/customer_ticket.CustomerCommentCommand"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "priority": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketPriorityEnum"
+                },
+                "product_category": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketCategoryEnum"
+                },
+                "status": {
+                    "$ref": "#/definitions/customer_ticket.CustomerTicketStatusEnum"
+                }
+            }
+        },
+        "defaulttheme.CreateDefaultThemeCommand": {
+            "type": "object",
+            "required": [
+                "mediaId"
+            ],
+            "properties": {
+                "demo": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "mediaId": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pages": {
+                    "type": "string"
+                }
+            }
+        },
+        "defaulttheme.DeleteDefaultThemeCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "defaulttheme.GetAllDefaultThemeQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "defaulttheme.GetByIdDefaultThemeQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "defaulttheme.UpdateDefaultThemeCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "demo": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaId": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pages": {
+                    "type": "string"
+                }
+            }
+        },
+        "discount.AdminGetAllDiscountQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "discount.CreateDiscountCommand": {
+            "type": "object",
+            "required": [
+                "expiryDate",
+                "quantity",
+                "siteId",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "expiryDate": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "maximum": 1000
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/product.DiscountTypeEnum"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "discount.DeleteDiscountCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "discount.GetAllDiscountQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "discount.GetByIdDiscountQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "discount.UpdateDiscountCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "expiryDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/product.DiscountTypeEnum"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.CreateOrDirectoryItemCommand": {
+            "type": "object"
+        },
+        "fileitem.DeleteFileItemCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.FileItemPermissionEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Private",
+                "Public"
+            ]
+        },
+        "fileitem.FileOperationCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "operationType"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "newName": {
+                    "type": "string"
+                },
+                "newParentId": {
+                    "type": "integer"
+                },
+                "operationType": {
+                    "$ref": "#/definitions/fileitem.OperationType"
+                }
+            }
+        },
+        "fileitem.ForceDeleteFileItemCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.GetByIdsQuery": {
+            "type": "object",
+            "required": [
+                "idsOrder",
+                "isTemporary"
+            ],
+            "properties": {
+                "expireMinutes": {
+                    "type": "integer"
+                },
+                "idsOrder": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/fileitem.MediaUrlRequest"
+                    }
+                },
+                "isTemporary": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "fileitem.GetDeletedTreeDirectoryQuery": {
+            "type": "object"
+        },
+        "fileitem.GetDownloadFileItemByIdQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.GetTreeDirectoryQuery": {
+            "type": "object",
+            "properties": {
+                "parentFileItemId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.MediaUrlRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "order"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "order": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.OperationType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "Copy",
+                "Move",
+                "Rename"
+            ]
+        },
+        "fileitem.RestoreFileItemCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "fileitem.UpdateFileItemCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "isChangePermission": {
+                    "type": "boolean"
+                },
+                "permission": {
+                    "$ref": "#/definitions/fileitem.FileItemPermissionEnum"
+                }
+            }
+        },
+        "header_footer.AdminGetAllHeaderFooterQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "header_footer.CreateHeaderFooterCommand": {
+            "type": "object",
+            "required": [
+                "body",
+                "siteId",
+                "type"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/header_footer.HeaderFooterBody"
+                },
+                "isMain": {
+                    "type": "boolean"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
+                }
+            }
+        },
+        "header_footer.DeleteHeaderFooterCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "header_footer.GetAllHeaderFooterQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "type": {
+                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
+                }
+            }
+        },
+        "header_footer.GetByIdHeaderFooterQuery": {
+            "type": "object",
+            "required": [
+                "siteId"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
+                }
+            }
+        },
+        "header_footer.HeaderFooterBody": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "props": {},
+                "rows": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/header_footer.HeaderFooterRow"
+                    }
+                }
+            }
+        },
+        "header_footer.HeaderFooterColumn": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/header_footer.HeaderFooterComponent"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "props": {},
+                "style": {}
+            }
+        },
+        "header_footer.HeaderFooterComponent": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/common_dto.PaginationJson"
+                },
+                "filters": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "props": {},
+                "sort": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "header_footer.HeaderFooterRow": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/header_footer.HeaderFooterColumn"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "props": {}
+            }
+        },
+        "header_footer.HeaderFooterTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Header",
+                "Footer"
+            ]
+        },
+        "header_footer.UpdateHeaderFooterCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "siteId",
+                "type"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/header_footer.HeaderFooterBody"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isMain": {
+                    "type": "boolean"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
+                }
+            }
+        },
+        "order.AdminGetAllOrderUserQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "order.CourierEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Post",
+                "Tipax"
+            ]
+        },
+        "order.CreateOrderRequestCommand": {
+            "type": "object",
+            "required": [
+                "addressId",
+                "gateway",
+                "siteId"
+            ],
+            "properties": {
+                "addressId": {
+                    "type": "integer"
+                },
+                "courier": {
+                    "$ref": "#/definitions/order.CourierEnum"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "finalFrontReturnUrl": {
+                    "type": "string"
+                },
+                "gateway": {
+                    "$ref": "#/definitions/order.PaymentGatewaysEnum"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.CreateOrderVerifyCommand": {
+            "type": "object",
+            "required": [
+                "orderData"
+            ],
+            "properties": {
+                "isSuccess": {
+                    "type": "boolean"
+                },
+                "orderData": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "paymentStatus": {
+                    "type": "string"
+                },
+                "transaction_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "order.GetAllOrderCustomerQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "order.GetAllOrderUserQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "order.GetOrderCustomerDetailsQuery": {
+            "type": "object",
+            "required": [
+                "orderId"
+            ],
+            "properties": {
+                "orderId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.GetOrderUserDetailsQuery": {
+            "type": "object",
+            "required": [
+                "orderId"
+            ],
+            "properties": {
+                "orderId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.PaymentGatewaysEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+            ],
+            "x-enum-varnames": [
+                "Saman",
+                "Mellat",
+                "Parsian",
+                "Pasargad",
+                "IranKish",
+                "Melli",
+                "AsanPardakht",
+                "Sepehr",
+                "ZarinPal",
+                "PayIr",
+                "IdPay",
+                "YekPay",
+                "PayPing",
+                "ParbadVirtual"
+            ]
+        },
+        "page.AdminGetAllPageQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "page.CreatePageCommand": {
+            "type": "object",
+            "required": [
+                "body",
+                "footerId",
+                "headerId",
+                "siteId",
+                "slug"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/page.PageBody"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "footerId": {
+                    "type": "integer"
+                },
+                "headerId": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "page.DeletePageCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "page.GetAllPageQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "page.GetByIdPageQuery": {
+            "type": "object",
+            "required": [
+                "siteId"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "page.PageBody": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "props": {},
+                "rows": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/page.PageRow"
+                    }
+                }
+            }
+        },
+        "page.PageColumn": {
+            "type": "object",
+            "properties": {
+                "components": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/page.PageComponent"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "props": {},
+                "style": {}
+            }
+        },
+        "page.PageComponent": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/common_dto.PaginationJson"
+                },
+                "filters": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "props": {},
+                "sort": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "page.PageRow": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/page.PageColumn"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "props": {}
+            }
+        },
+        "page.UpdatePageCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "body": {
+                    "$ref": "#/definitions/page.PageBody"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "footerId": {
+                    "type": "integer"
+                },
+                "headerId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.AdminGetAllGatewayQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "payment.AdminGetAllPaymentQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "payment.AsanPardakhtGateway": {
+            "type": "object",
+            "properties": {
+                "iv": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "merchantConfigurationId": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.CreateOrUpdateGatewayCommand": {
+            "type": "object",
+            "required": [
+                "siteId"
+            ],
+            "properties": {
+                "asanPardakht": {
+                    "$ref": "#/definitions/payment.AsanPardakhtGateway"
+                },
+                "idPay": {
+                    "$ref": "#/definitions/payment.IdPayGateway"
+                },
+                "iranKish": {
+                    "$ref": "#/definitions/payment.IranKishGateway"
+                },
+                "isActiveAsanPardakht": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveIdPay": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveIranKish": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveMellat": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveMelli": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveParbadVirtual": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveParsian": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActivePasargad": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActivePayIr": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActivePayPing": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveSaman": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveSepehr": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveYekPay": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "isActiveZarinPal": {
+                    "$ref": "#/definitions/payment.StatusEnum"
+                },
+                "mellat": {
+                    "$ref": "#/definitions/payment.MellatGateway"
+                },
+                "melli": {
+                    "$ref": "#/definitions/payment.MelliGateway"
+                },
+                "parsian": {
+                    "$ref": "#/definitions/payment.ParsianGateway"
+                },
+                "pasargad": {
+                    "$ref": "#/definitions/payment.PasargadGateway"
+                },
+                "payIr": {
+                    "$ref": "#/definitions/payment.PayIrGateway"
+                },
+                "payPing": {
+                    "$ref": "#/definitions/payment.PayPingGateway"
+                },
+                "saman": {
+                    "$ref": "#/definitions/payment.SamanGateway"
+                },
+                "sepehr": {
+                    "$ref": "#/definitions/payment.SepehrGateway"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "yekPay": {
+                    "$ref": "#/definitions/payment.YekPayGateway"
+                },
+                "zarinPal": {
+                    "$ref": "#/definitions/payment.ZarinPalGateway"
+                }
+            }
+        },
+        "payment.GetByIdGatewayQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "payment.IdPayGateway": {
+            "type": "object",
+            "required": [
+                "isTestAccount"
+            ],
+            "properties": {
+                "api": {
+                    "type": "string"
+                },
+                "isTestAccount": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "payment.IranKishGateway": {
+            "type": "object",
+            "properties": {
+                "acceptorId": {
+                    "type": "string"
+                },
+                "passPhrase": {
+                    "type": "string"
+                },
+                "publicKey": {
+                    "type": "string"
+                },
+                "terminalId": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.MellatGateway": {
+            "type": "object",
+            "required": [
+                "terminalId"
+            ],
+            "properties": {
+                "terminalId": {
+                    "type": "integer"
+                },
+                "userName": {
+                    "type": "string"
+                },
+                "userPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.MelliGateway": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "terminalId": {
+                    "type": "string"
+                },
+                "terminalKey": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.ParsianGateway": {
+            "type": "object",
+            "properties": {
+                "loginAccount": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.PasargadGateway": {
+            "type": "object",
+            "properties": {
+                "merchantCode": {
+                    "type": "string"
+                },
+                "privateKey": {
+                    "type": "string"
+                },
+                "terminalCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.PayIrGateway": {
+            "type": "object",
+            "properties": {
+                "api": {
+                    "type": "string"
+                },
+                "isTestAccount": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "payment.PayPingGateway": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.PaymentGatewaysEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+            ],
+            "x-enum-varnames": [
+                "Saman",
+                "Mellat",
+                "Parsian",
+                "Pasargad",
+                "IranKish",
+                "Melli",
+                "AsanPardakht",
+                "Sepehr",
+                "ZarinPal",
+                "PayIr",
+                "IdPay",
+                "YekPay",
+                "PayPing",
+                "ParbadVirtual"
+            ]
+        },
+        "payment.RequestGatewayCommand": {
+            "type": "object",
+            "required": [
+                "amount",
+                "callVerifyUrl",
+                "gateway",
+                "orderData",
+                "orderId",
+                "siteId",
+                "userId",
+                "userType"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "callVerifyUrl": {
+                    "$ref": "#/definitions/payment.VerifyPaymentEndpointEnum"
+                },
+                "clientIp": {
+                    "type": "string"
+                },
+                "gateway": {
+                    "$ref": "#/definitions/payment.PaymentGatewaysEnum"
+                },
+                "orderData": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "returnUrl": {
+                    "type": "string"
+                },
+                "serviceAction": {
+                    "type": "string"
+                },
+                "serviceName": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userType": {
+                    "$ref": "#/definitions/payment.UserTypeEnum"
+                }
+            }
+        },
+        "payment.SamanGateway": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.SepehrGateway": {
+            "type": "object",
+            "required": [
+                "terminalId"
+            ],
+            "properties": {
+                "terminalId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "payment.StatusEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Inactive",
+                "Active"
+            ]
+        },
+        "payment.UserTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "User",
+                "Customer",
+                "Guest"
+            ]
+        },
+        "payment.VerifyPaymentCommand": {
+            "type": "object",
+            "properties": {
+                "paymentToken": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string"
+                },
+                "transactionCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.VerifyPaymentEndpointEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "ChargeCreditVerify",
+                "UpgradePlanVerify",
+                "CreateOrderVerify"
+            ]
+        },
+        "payment.YekPayGateway": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                }
+            }
+        },
+        "payment.ZarinPalGateway": {
+            "type": "object",
+            "properties": {
+                "authorizationToken": {
+                    "type": "string"
+                },
+                "isSandbox": {
+                    "type": "boolean"
+                },
+                "merchantId": {
+                    "type": "string"
+                }
+            }
+        },
+        "plan.CalculatePlanPriceQuery": {
+            "type": "object",
+            "required": [
+                "planId"
+            ],
+            "properties": {
+                "planId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "plan.CreatePlanCommand": {
+            "type": "object",
+            "required": [
+                "aiCredits",
+                "aiImageCredits",
+                "duration",
+                "emailCredits",
+                "price",
+                "smsCredits",
+                "storageMbCredits"
+            ],
+            "properties": {
+                "aiCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "aiImageCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "description": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "discountType": {
+                    "$ref": "#/definitions/user.DiscountType"
+                },
+                "duration": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "emailCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "feature": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "showStatus": {
+                    "type": "string"
+                },
+                "smsCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "storageMbCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "plan.DeletePlanCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "plan.GetAllPlanQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "plan.GetByIDPlanQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "plan.UpdatePlanCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "aiCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "aiImageCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "description": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "discountType": {
+                    "$ref": "#/definitions/user.DiscountType"
+                },
+                "duration": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "emailCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "feature": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "showStatus": {
+                    "type": "string"
+                },
+                "smsCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "storageMbCredits": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "product.AdminGetAllProductQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product.CouponCommand": {
+            "type": "object",
+            "required": [
+                "expiryDate",
+                "quantity",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "expiryDate": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/product.DiscountTypeEnum"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.CreateProductCommand": {
+            "type": "object",
+            "required": [
+                "productVariants",
+                "siteId",
+                "slug",
+                "status",
+                "weight"
+            ],
+            "properties": {
+                "categoryIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "coupon": {
+                    "$ref": "#/definitions/product.CouponCommand"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "discountIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "freeSend": {
+                    "type": "boolean"
+                },
+                "longDescription": {
+                    "type": "string"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "productAttributes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/product.ProductAttributeCommand"
+                    }
+                },
+                "productVariants": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/product.ProductVariantCommand"
+                    }
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/product.StatusEnum"
+                },
+                "weight": {
+                    "type": "integer",
+                    "maximum": 1000
+                }
+            }
+        },
+        "product.DeleteProductCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.DiscountTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Percentage",
+                "Value"
+            ]
+        },
+        "product.GetAllProductQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product.GetByFiltersSortProductQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "selectedFilters": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "selectedSort": {
+                    "$ref": "#/definitions/product.ProductSortEnum"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product.GetByIdProductQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.ProductAttributeCommand": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/product.ProductAttributeTypeEnum"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "product.ProductAttributeTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "Public",
+                "Technical",
+                "Other"
+            ]
+        },
+        "product.ProductSortEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13
+            ],
+            "x-enum-varnames": [
+                "PriceLowToHigh",
+                "PriceHighToLow",
+                "CouponHighToLow",
+                "NameAZ",
+                "NameZA",
+                "RecentlyAdded",
+                "RecentlyUpdated",
+                "MostSelling",
+                "MostVisited",
+                "MostRated",
+                "MostReviewed",
+                "LeastVisited",
+                "LeastRated",
+                "LeastReviewed"
+            ]
+        },
+        "product.ProductVariantCommand": {
+            "type": "object",
+            "required": [
+                "price",
+                "stock"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.StatusEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Inactive",
+                "Active"
+            ]
+        },
+        "product.UpdateProductCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "siteId"
+            ],
+            "properties": {
+                "categoryIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "coupon": {
+                    "$ref": "#/definitions/product.CouponCommand"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "discountIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "freeSend": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "longDescription": {
+                    "type": "string"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "productAttributes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/product.ProductAttributeCommand"
+                    }
+                },
+                "productVariants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/product.ProductVariantCommand"
+                    }
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/product.StatusEnum"
+                },
+                "weight": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product_category.AdminGetAllCategoryQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product_category.CreateCategoryCommand": {
+            "type": "object",
+            "required": [
+                "order",
+                "siteId",
+                "slug"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parentCategoryId": {
+                    "type": "integer"
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "product_category.DeleteCategoryCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product_category.GetAllCategoryQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product_category.GetByIdCategoryQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product_category.UpdateCategoryCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "order",
+                "siteId"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parentCategoryId": {
+                    "type": "integer"
+                },
+                "seoTags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "product_review.AdminGetAllProductReviewQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product_review.CreateProductReviewCommand": {
+            "type": "object",
+            "required": [
+                "dislike",
+                "like",
+                "productId",
+                "rating",
+                "siteId"
+            ],
+            "properties": {
+                "approved": {
+                    "type": "boolean"
+                },
+                "dislike": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "like": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "reviewText": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product_review.DeleteProductReviewCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product_review.GetAllProductReviewQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize",
+                "siteId"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "product_review.GetByIdProductReviewQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product_review.UpdateProductReviewCommand": {
+            "type": "object",
+            "required": [
+                "id",
+                "productId"
+            ],
+            "properties": {
+                "approved": {
+                    "type": "boolean"
+                },
+                "dislike": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "like": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "reviewText": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resp.Result": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "role.CreateRoleCommand": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "permissionIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "role.GetAllPermissionQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "role.GetAllRoleQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "role.GetRolePermissionsQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "role.SetRoleToCustomerCommand": {
+            "type": "object",
+            "required": [
+                "customerId"
+            ],
+            "properties": {
+                "customerId": {
+                    "type": "integer"
+                },
+                "role": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "role.SetRoleToPlanCommand": {
+            "type": "object",
+            "required": [
+                "planId"
+            ],
+            "properties": {
+                "planId": {
+                    "type": "integer"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "role.SetRoleToUserCommand": {
+            "type": "object",
+            "required": [
+                "userId"
+            ],
+            "properties": {
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "role.UpdateRoleCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissionIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "site.AdminGetAllSiteQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "site.CreateSiteCommand": {
+            "type": "object",
+            "required": [
+                "domain",
+                "domainType",
+                "siteType",
+                "status"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "domainType": {
+                    "$ref": "#/definitions/site.DomainTypeEnum"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "siteType": {
+                    "$ref": "#/definitions/site.SiteTypeEnum"
+                },
+                "status": {
+                    "$ref": "#/definitions/site.StatusEnum"
+                }
+            }
+        },
+        "site.DeleteSiteCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "site.DomainTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Domain",
+                "Subdomain"
+            ]
+        },
+        "site.GetAllSiteQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "site.GetByIdSiteQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "site.SiteTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "Shop",
+                "Blog",
+                "Business"
+            ]
+        },
+        "site.StatusEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Active",
+                "Inactive",
+                "Pending",
+                "Deleted"
+            ]
+        },
+        "site.UpdateSiteCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "domainType": {
+                    "$ref": "#/definitions/site.DomainTypeEnum"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "siteType": {
+                    "$ref": "#/definitions/site.SiteTypeEnum"
+                },
+                "status": {
+                    "$ref": "#/definitions/site.StatusEnum"
+                }
+            }
+        },
+        "ticket.AdminGetAllTicketQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "ticket.AdminReplayTicketCommand": {
+            "type": "object",
+            "required": [
+                "comment",
+                "id",
+                "priority",
+                "product_category",
+                "status"
+            ],
+            "properties": {
+                "assignedTo": {
+                    "type": "integer"
+                },
+                "comment": {
+                    "$ref": "#/definitions/ticket.CommentCommand"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "priority": {
+                    "$ref": "#/definitions/ticket.TicketPriorityEnum"
+                },
+                "product_category": {
+                    "$ref": "#/definitions/ticket.TicketCategoryEnum"
+                },
+                "status": {
+                    "$ref": "#/definitions/ticket.TicketStatusEnum"
+                }
+            }
+        },
+        "ticket.CommentCommand": {
+            "type": "object",
+            "required": [
+                "respondentId"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "respondentId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "ticket.CreateTicketCommand": {
+            "type": "object",
+            "required": [
+                "comment",
+                "priority",
+                "product_category"
+            ],
+            "properties": {
+                "comment": {
+                    "$ref": "#/definitions/ticket.CommentCommand"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "priority": {
+                    "$ref": "#/definitions/ticket.TicketPriorityEnum"
+                },
+                "product_category": {
+                    "$ref": "#/definitions/ticket.TicketCategoryEnum"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "ticket.GetAllTicketQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "ticket.GetByIdTicketQuery": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "ticket.ReplayTicketCommand": {
+            "type": "object",
+            "required": [
+                "assignedTo",
+                "comment",
+                "id",
+                "priority",
+                "product_category",
+                "status"
+            ],
+            "properties": {
+                "assignedTo": {
+                    "type": "integer"
+                },
+                "comment": {
+                    "$ref": "#/definitions/ticket.CommentCommand"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "priority": {
+                    "$ref": "#/definitions/ticket.TicketPriorityEnum"
+                },
+                "product_category": {
+                    "$ref": "#/definitions/ticket.TicketCategoryEnum"
+                },
+                "status": {
+                    "$ref": "#/definitions/ticket.TicketStatusEnum"
+                }
+            }
+        },
+        "ticket.TicketCategoryEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "x-enum-varnames": [
+                "Bug",
+                "Enhancement",
+                "FeatureRequest",
+                "Question",
+                "Documentation",
+                "Financial"
+            ]
+        },
+        "ticket.TicketPriorityEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Low",
+                "Medium",
+                "High",
+                "Critical"
+            ]
+        },
+        "ticket.TicketStatusEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "New",
+                "InProgress",
+                "Closed"
+            ]
+        },
+        "unit_price.CalculateUnitPriceQuery": {
+            "type": "object",
+            "required": [
+                "unitPrices"
+            ],
+            "properties": {
+                "unitPrices": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/unit_price.CalculateUnitPriceUnitPriceQuery"
+                    }
+                }
+            }
+        },
+        "unit_price.CalculateUnitPriceUnitPriceQuery": {
+            "type": "object",
+            "required": [
+                "unitPriceCount",
+                "unitPriceName"
+            ],
+            "properties": {
+                "unitPriceCount": {
+                    "type": "integer"
+                },
+                "unitPriceDay": {
+                    "type": "integer"
+                },
+                "unitPriceName": {
+                    "$ref": "#/definitions/unit_price.UnitPriceNameEnum"
+                }
+            }
+        },
+        "unit_price.DiscountTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Fixed",
+                "Percentage"
+            ]
+        },
+        "unit_price.GetAllUnitPriceQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "unit_price.UnitPriceNameEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+            ],
+            "x-enum-varnames": [
+                "StorageMbCredits",
+                "PageViewCredits",
+                "FormSubmitCredits",
+                "SiteCredits",
+                "SmsCredits",
+                "EmailCredits",
+                "AiCredits",
+                "AiImageCredits"
+            ]
+        },
+        "unit_price.UpdateUnitPriceCommand": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "discount": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "discountType": {
+                    "$ref": "#/definitions/unit_price.DiscountTypeEnum"
+                },
+                "hasDay": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                }
+            }
+        },
+        "user.AdminGetAllUserQuery": {
+            "type": "object",
+            "required": [
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "user.AiTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "GPT35",
+                "GPT4",
+                "Claude"
+            ]
+        },
+        "user.ChargeCreditRequestUserCommand": {
+            "type": "object",
+            "required": [
+                "gateway",
+                "unitPrices"
+            ],
+            "properties": {
+                "finalFrontReturnUrl": {
+                    "type": "string"
+                },
+                "gateway": {
+                    "$ref": "#/definitions/user.PaymentGatewaysEnum"
+                },
+                "unitPrices": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/user.UnitPriceQuery"
+                    }
+                }
+            }
+        },
+        "user.DiscountType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Fixed",
+                "Percentage"
+            ]
+        },
+        "user.GetProfileUserQuery": {
+            "type": "object"
+        },
+        "user.LoginUserCommand": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.PaymentGatewaysEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "ZarinPal",
+                "IDPay",
+                "NextPay"
+            ]
+        },
+        "user.RegisterUserCommand": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.RequestVerifyAndForgetUserCommand": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/user.VerifyTypeEnum"
+                }
+            }
+        },
+        "user.SmptSettings": {
+            "type": "object",
+            "required": [
+                "port"
+            ],
+            "properties": {
+                "host": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.StatusEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "Disabled",
+                "Enabled"
+            ]
+        },
+        "user.UnitPriceNameEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+            ],
+            "x-enum-varnames": [
+                "StorageMbCredits",
+                "PageViewCredits",
+                "FormSubmitCredits",
+                "SiteCredits",
+                "SmsCredits",
+                "EmailCredits",
+                "AiCredits",
+                "AiImageCredits"
+            ]
+        },
+        "user.UnitPriceQuery": {
+            "type": "object",
+            "required": [
+                "unitPriceCount",
+                "unitPriceName"
+            ],
+            "properties": {
+                "unitPriceCount": {
+                    "type": "integer",
+                    "maximum": 1000,
+                    "minimum": 1
+                },
+                "unitPriceDay": {
+                    "type": "integer"
+                },
+                "unitPriceName": {
+                    "$ref": "#/definitions/user.UnitPriceNameEnum"
+                }
+            }
+        },
+        "user.UpdateProfileUserCommand": {
+            "type": "object",
+            "required": [
+                "phone"
+            ],
+            "properties": {
+                "addressIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "aiTypeEnum": {
+                    "$ref": "#/definitions/user.AiTypeEnum"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "nationalCode": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "smtp": {
+                    "$ref": "#/definitions/user.SmptSettings"
+                },
+                "useCustomEmailSmtp": {
+                    "$ref": "#/definitions/user.StatusEnum"
+                }
+            }
+        },
+        "user.UpgradePlanRequestUserCommand": {
+            "type": "object",
+            "required": [
+                "gateway",
+                "planId"
+            ],
+            "properties": {
+                "finalFrontReturnUrl": {
+                    "type": "string"
+                },
+                "gateway": {
+                    "$ref": "#/definitions/user.PaymentGatewaysEnum"
+                },
+                "planId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "user.VerifyTypeEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "VerifyEmail",
+                "VerifyPhone",
+                "ForgetPasswordEmail",
+                "ForgetPasswordPhone"
+            ]
+        },
+        "user.VerifyUserQuery": {
+            "type": "object",
+            "required": [
+                "code",
+                "email",
+                "type"
+            ],
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/user.VerifyTypeEnum"
+                }
+            }
+        },
+        "website.ArticleSortEnum": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ],
+            "x-enum-varnames": [
+                "TitleAZ",
+                "TitleZA",
+                "RecentlyAdded",
+                "RecentlyUpdated",
+                "MostVisited",
+                "LeastVisited",
+                "MostRated",
+                "LeastRated",
+                "MostReviewed",
+                "LeastReviewed"
+            ]
+        },
+        "website.GetArticlesByCategorySlugQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "page",
+                "pageSize",
+                "slug"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "website.GetByDomainHeaderFooterQuery": {
+            "type": "object",
+            "required": [
+                "domain"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "website.GetByDomainPageQuery": {
+            "type": "object",
+            "required": [
+                "domain"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "website.GetFiltersSortArticleQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "selectedFilters": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "selectedSort": {
+                    "$ref": "#/definitions/website.ArticleSortEnum"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "website.GetFiltersSortProductQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "selectedFilters": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "selectedSort": {
+                    "$ref": "#/definitions/product.ProductSortEnum"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "website.GetProductsByCategorySlugQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "page",
+                "pageSize",
+                "slug"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                }
+            }
+        },
+        "website.GetSingleArticleBySlugQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "slug"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "website.GetSingleProductBySlugQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "slug"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                }
+            }
+        },
+        "website.ProductSearchListQuery": {
+            "type": "object",
+            "required": [
+                "domain",
+                "page",
+                "pageSize"
+            ],
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "search": {
+                    "type": "string"
+                },
+                "searchBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
+                },
+                "siteId": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "sortBy": {
+                    "type": "string",
+                    "enum": [
+                        "title",
+                        "description"
+                    ]
                 }
             }
         }
