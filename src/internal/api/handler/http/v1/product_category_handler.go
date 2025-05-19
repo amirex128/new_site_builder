@@ -20,6 +20,19 @@ func NewProductCategoryHandler(usc *productcategoryusecase.ProductCategoryUsecas
 	}
 }
 
+// CreateCategory godoc
+// @Summary      Create a new product category
+// @Description  Creates a new category for products with the provided information
+// @Tags         product-category
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product_category.CreateCategoryCommand  true  "Category information"
+// @Success      201      {object}  resp.Result                             "Created category"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /product-category [post]
+// @Security     BearerAuth
 func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 	var params product_category.CreateCategoryCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 	resp.Created(c, result)
 }
 
+// UpdateCategory godoc
+// @Summary      Update a product category
+// @Description  Updates an existing product category with the provided information
+// @Tags         product-category
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product_category.UpdateCategoryCommand  true  "Updated category information"
+// @Success      200      {object}  resp.Result                             "Updated category"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      404      {object}  resp.Result                             "Category not found"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /product-category [put]
+// @Security     BearerAuth
 func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 	var params product_category.UpdateCategoryCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,20 @@ func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// DeleteCategory godoc
+// @Summary      Delete a product category
+// @Description  Deletes an existing product category by its ID
+// @Tags         product-category
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product_category.DeleteCategoryCommand  true  "Category ID to delete"
+// @Success      200      {object}  resp.Result                             "Deleted category confirmation"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      404      {object}  resp.Result                             "Category not found"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /product-category [delete]
+// @Security     BearerAuth
 func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 	var params product_category.DeleteCategoryCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +106,20 @@ func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 	resp.Deleted(c, result)
 }
 
+// GetByIdCategory godoc
+// @Summary      Get product category by ID
+// @Description  Retrieves a specific product category by its ID
+// @Tags         product-category
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product_category.GetByIdCategoryQuery  true  "Category ID to retrieve"
+// @Success      200      {object}  resp.Result                            "Category details"
+// @Failure      400      {object}  resp.Result                            "Validation error"
+// @Failure      401      {object}  resp.Result                            "Unauthorized"
+// @Failure      404      {object}  resp.Result                            "Category not found"
+// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Router       /product-category [get]
+// @Security     BearerAuth
 func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 	var params product_category.GetByIdCategoryQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -80,6 +135,19 @@ func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllCategory godoc
+// @Summary      Get all product categories
+// @Description  Retrieves all product categories with optional filtering
+// @Tags         product-category
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product_category.GetAllCategoryQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                           "List of categories"
+// @Failure      400      {object}  resp.Result                           "Validation error"
+// @Failure      401      {object}  resp.Result                           "Unauthorized"
+// @Failure      500      {object}  resp.Result                           "Internal server error"
+// @Router       /product-category/all [get]
+// @Security     BearerAuth
 func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 	var params product_category.GetAllCategoryQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -95,6 +163,20 @@ func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// AdminGetAllCategory godoc
+// @Summary      Admin: Get all product categories
+// @Description  Admin endpoint to retrieve all product categories with additional information
+// @Tags         product-category
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product_category.AdminGetAllCategoryQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                                "List of all categories"
+// @Failure      400      {object}  resp.Result                                "Validation error"
+// @Failure      401      {object}  resp.Result                                "Unauthorized"
+// @Failure      403      {object}  resp.Result                                "Forbidden - Admin access required"
+// @Failure      500      {object}  resp.Result                                "Internal server error"
+// @Router       /product-category/admin/all [get]
+// @Security     BearerAuth
 func (h *ProductCategoryHandler) AdminGetAllCategory(c *gin.Context) {
 	var params product_category.AdminGetAllCategoryQuery
 	if !h.validator.ValidateRequest(c, &params) {

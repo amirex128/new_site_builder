@@ -20,6 +20,19 @@ func NewCustomerTicketHandler(usc *customerticketusecase.CustomerTicketUsecase) 
 	}
 }
 
+// CreateCustomerTicket godoc
+// @Summary      Create a customer support ticket
+// @Description  Creates a new support ticket for a customer
+// @Tags         customer-ticket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      customer_ticket.CreateCustomerTicketCommand  true  "Ticket information"
+// @Success      201      {object}  resp.Result                                  "Created ticket"
+// @Failure      400      {object}  resp.Result                                  "Validation error"
+// @Failure      401      {object}  resp.Result                                  "Unauthorized"
+// @Failure      500      {object}  resp.Result                                  "Internal server error"
+// @Router       /customer-ticket [post]
+// @Security     BearerAuth
 func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 	var params customer_ticket.CreateCustomerTicketCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 	resp.Created(c, result)
 }
 
+// ReplayCustomerTicket godoc
+// @Summary      Reply to a customer ticket
+// @Description  Adds a customer reply to an existing support ticket
+// @Tags         customer-ticket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      customer_ticket.ReplayCustomerTicketCommand  true  "Reply information"
+// @Success      200      {object}  resp.Result                                  "Updated ticket with reply"
+// @Failure      400      {object}  resp.Result                                  "Validation error"
+// @Failure      401      {object}  resp.Result                                  "Unauthorized"
+// @Failure      404      {object}  resp.Result                                  "Ticket not found"
+// @Failure      500      {object}  resp.Result                                  "Internal server error"
+// @Router       /customer-ticket [put]
+// @Security     BearerAuth
 func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 	var params customer_ticket.ReplayCustomerTicketCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,21 @@ func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// AdminReplayCustomerTicket godoc
+// @Summary      Admin: Reply to a customer ticket
+// @Description  Adds an admin reply to an existing customer support ticket
+// @Tags         customer-ticket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      customer_ticket.AdminReplayCustomerTicketCommand  true  "Admin reply information"
+// @Success      200      {object}  resp.Result                                       "Updated ticket with admin reply"
+// @Failure      400      {object}  resp.Result                                       "Validation error"
+// @Failure      401      {object}  resp.Result                                       "Unauthorized"
+// @Failure      403      {object}  resp.Result                                       "Forbidden - Admin access required"
+// @Failure      404      {object}  resp.Result                                       "Ticket not found"
+// @Failure      500      {object}  resp.Result                                       "Internal server error"
+// @Router       /customer-ticket/admin [put]
+// @Security     BearerAuth
 func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 	var params customer_ticket.AdminReplayCustomerTicketCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +107,20 @@ func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// GetByIdCustomerTicket godoc
+// @Summary      Get customer ticket by ID
+// @Description  Retrieves a specific customer support ticket by its ID
+// @Tags         customer-ticket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      customer_ticket.GetByIdCustomerTicketQuery  true  "Ticket ID to retrieve"
+// @Success      200      {object}  resp.Result                                 "Ticket details"
+// @Failure      400      {object}  resp.Result                                 "Validation error"
+// @Failure      401      {object}  resp.Result                                 "Unauthorized"
+// @Failure      404      {object}  resp.Result                                 "Ticket not found"
+// @Failure      500      {object}  resp.Result                                 "Internal server error"
+// @Router       /customer-ticket [get]
+// @Security     BearerAuth
 func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 	var params customer_ticket.GetByIdCustomerTicketQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -80,6 +136,19 @@ func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllCustomerTicket godoc
+// @Summary      Get all customer tickets
+// @Description  Retrieves all support tickets for the current customer
+// @Tags         customer-ticket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      customer_ticket.GetAllCustomerTicketQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                                "List of customer tickets"
+// @Failure      400      {object}  resp.Result                                "Validation error"
+// @Failure      401      {object}  resp.Result                                "Unauthorized"
+// @Failure      500      {object}  resp.Result                                "Internal server error"
+// @Router       /customer-ticket/all [get]
+// @Security     BearerAuth
 func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 	var params customer_ticket.GetAllCustomerTicketQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -95,6 +164,20 @@ func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// AdminGetAllCustomerTicket godoc
+// @Summary      Admin: Get all customer tickets
+// @Description  Admin endpoint to retrieve all customer support tickets across all customers
+// @Tags         customer-ticket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      customer_ticket.AdminGetAllCustomerTicketQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                                     "List of all customer tickets"
+// @Failure      400      {object}  resp.Result                                     "Validation error"
+// @Failure      401      {object}  resp.Result                                     "Unauthorized"
+// @Failure      403      {object}  resp.Result                                     "Forbidden - Admin access required"
+// @Failure      500      {object}  resp.Result                                     "Internal server error"
+// @Router       /customer-ticket/admin/all [get]
+// @Security     BearerAuth
 func (h *CustomerTicketHandler) AdminGetAllCustomerTicket(c *gin.Context) {
 	var params customer_ticket.AdminGetAllCustomerTicketQuery
 	if !h.validator.ValidateRequest(c, &params) {

@@ -20,6 +20,19 @@ func NewPageHandler(usc *pageusecase.PageUsecase) *PageHandler {
 	}
 }
 
+// CreatePage godoc
+// @Summary      Create a new page
+// @Description  Creates a new web page for a website
+// @Tags         page
+// @Accept       json
+// @Produce      json
+// @Param        request  body      page.CreatePageCommand  true  "Page information"
+// @Success      201      {object}  resp.Result            "Created page"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /page [post]
+// @Security     BearerAuth
 func (h *PageHandler) CreatePage(c *gin.Context) {
 	var params page.CreatePageCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 	resp.Created(c, result)
 }
 
+// UpdatePage godoc
+// @Summary      Update a page
+// @Description  Updates an existing web page with new content and settings
+// @Tags         page
+// @Accept       json
+// @Produce      json
+// @Param        request  body      page.UpdatePageCommand  true  "Updated page information"
+// @Success      200      {object}  resp.Result            "Updated page"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      404      {object}  resp.Result            "Page not found"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /page [put]
+// @Security     BearerAuth
 func (h *PageHandler) UpdatePage(c *gin.Context) {
 	var params page.UpdatePageCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,20 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// DeletePage godoc
+// @Summary      Delete a page
+// @Description  Deletes an existing web page
+// @Tags         page
+// @Accept       json
+// @Produce      json
+// @Param        request  body      page.DeletePageCommand  true  "Page ID to delete"
+// @Success      200      {object}  resp.Result            "Deleted page confirmation"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      404      {object}  resp.Result            "Page not found"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /page [delete]
+// @Security     BearerAuth
 func (h *PageHandler) DeletePage(c *gin.Context) {
 	var params page.DeletePageCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +106,20 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 	resp.Deleted(c, result)
 }
 
+// GetByIdPage godoc
+// @Summary      Get page by ID
+// @Description  Retrieves a specific web page by its ID
+// @Tags         page
+// @Accept       json
+// @Produce      json
+// @Param        request  body      page.GetByIdPageQuery  true  "Page ID to retrieve"
+// @Success      200      {object}  resp.Result           "Page details"
+// @Failure      400      {object}  resp.Result           "Validation error"
+// @Failure      401      {object}  resp.Result           "Unauthorized"
+// @Failure      404      {object}  resp.Result           "Page not found"
+// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Router       /page [get]
+// @Security     BearerAuth
 func (h *PageHandler) GetByIdPage(c *gin.Context) {
 	var params page.GetByIdPageQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -80,6 +135,19 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllPage godoc
+// @Summary      Get all pages
+// @Description  Retrieves all web pages for the authenticated user
+// @Tags         page
+// @Accept       json
+// @Produce      json
+// @Param        request  body      page.GetAllPageQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result          "List of pages"
+// @Failure      400      {object}  resp.Result          "Validation error"
+// @Failure      401      {object}  resp.Result          "Unauthorized"
+// @Failure      500      {object}  resp.Result          "Internal server error"
+// @Router       /page/all [get]
+// @Security     BearerAuth
 func (h *PageHandler) GetAllPage(c *gin.Context) {
 	var params page.GetAllPageQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -95,6 +163,20 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// AdminGetAllPage godoc
+// @Summary      Admin: Get all pages
+// @Description  Admin endpoint to retrieve all web pages across all websites
+// @Tags         page
+// @Accept       json
+// @Produce      json
+// @Param        request  body      page.AdminGetAllPageQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result               "List of all pages"
+// @Failure      400      {object}  resp.Result               "Validation error"
+// @Failure      401      {object}  resp.Result               "Unauthorized"
+// @Failure      403      {object}  resp.Result               "Forbidden - Admin access required"
+// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Router       /page/admin/all [get]
+// @Security     BearerAuth
 func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 	var params page.AdminGetAllPageQuery
 	if !h.validator.ValidateRequest(c, &params) {

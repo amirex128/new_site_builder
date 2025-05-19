@@ -20,6 +20,19 @@ func NewHeaderFooterHandler(usc *headerfooterusecase.HeaderFooterUsecase) *Heade
 	}
 }
 
+// CreateHeaderFooter godoc
+// @Summary      Create a header/footer
+// @Description  Creates a new header and footer template for websites
+// @Tags         header-footer
+// @Accept       json
+// @Produce      json
+// @Param        request  body      header_footer.CreateHeaderFooterCommand  true  "Header/footer information"
+// @Success      201      {object}  resp.Result                              "Created header/footer"
+// @Failure      400      {object}  resp.Result                              "Validation error"
+// @Failure      401      {object}  resp.Result                              "Unauthorized"
+// @Failure      500      {object}  resp.Result                              "Internal server error"
+// @Router       /header-footer [post]
+// @Security     BearerAuth
 func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 	var params header_footer.CreateHeaderFooterCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 	resp.Created(c, result)
 }
 
+// UpdateHeaderFooter godoc
+// @Summary      Update a header/footer
+// @Description  Updates an existing header and footer template
+// @Tags         header-footer
+// @Accept       json
+// @Produce      json
+// @Param        request  body      header_footer.UpdateHeaderFooterCommand  true  "Updated header/footer information"
+// @Success      200      {object}  resp.Result                              "Updated header/footer"
+// @Failure      400      {object}  resp.Result                              "Validation error"
+// @Failure      401      {object}  resp.Result                              "Unauthorized"
+// @Failure      404      {object}  resp.Result                              "Header/footer not found"
+// @Failure      500      {object}  resp.Result                              "Internal server error"
+// @Router       /header-footer [put]
+// @Security     BearerAuth
 func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 	var params header_footer.UpdateHeaderFooterCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,20 @@ func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// DeleteHeaderFooter godoc
+// @Summary      Delete a header/footer
+// @Description  Deletes an existing header and footer template
+// @Tags         header-footer
+// @Accept       json
+// @Produce      json
+// @Param        request  body      header_footer.DeleteHeaderFooterCommand  true  "Header/footer ID to delete"
+// @Success      200      {object}  resp.Result                              "Deleted header/footer confirmation"
+// @Failure      400      {object}  resp.Result                              "Validation error"
+// @Failure      401      {object}  resp.Result                              "Unauthorized"
+// @Failure      404      {object}  resp.Result                              "Header/footer not found"
+// @Failure      500      {object}  resp.Result                              "Internal server error"
+// @Router       /header-footer [delete]
+// @Security     BearerAuth
 func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 	var params header_footer.DeleteHeaderFooterCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +106,20 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 	resp.Deleted(c, result)
 }
 
+// GetByIdHeaderFooter godoc
+// @Summary      Get header/footer by ID
+// @Description  Retrieves a specific header and footer template by its ID
+// @Tags         header-footer
+// @Accept       json
+// @Produce      json
+// @Param        request  body      header_footer.GetByIdHeaderFooterQuery  true  "Header/footer ID to retrieve"
+// @Success      200      {object}  resp.Result                             "Header/footer details"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      404      {object}  resp.Result                             "Header/footer not found"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /header-footer [get]
+// @Security     BearerAuth
 func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 	var params header_footer.GetByIdHeaderFooterQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -80,6 +135,19 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllHeaderFooter godoc
+// @Summary      Get all header/footers
+// @Description  Retrieves all header and footer templates
+// @Tags         header-footer
+// @Accept       json
+// @Produce      json
+// @Param        request  body      header_footer.GetAllHeaderFooterQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                            "List of header/footers"
+// @Failure      400      {object}  resp.Result                            "Validation error"
+// @Failure      401      {object}  resp.Result                            "Unauthorized"
+// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Router       /header-footer/all [get]
+// @Security     BearerAuth
 func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 	var params header_footer.GetAllHeaderFooterQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -95,6 +163,20 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// AdminGetAllHeaderFooter godoc
+// @Summary      Admin: Get all header/footers
+// @Description  Admin endpoint to retrieve all header and footer templates with additional information
+// @Tags         header-footer
+// @Accept       json
+// @Produce      json
+// @Param        request  body      header_footer.AdminGetAllHeaderFooterQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                                 "List of all header/footers"
+// @Failure      400      {object}  resp.Result                                 "Validation error"
+// @Failure      401      {object}  resp.Result                                 "Unauthorized"
+// @Failure      403      {object}  resp.Result                                 "Forbidden - Admin access required"
+// @Failure      500      {object}  resp.Result                                 "Internal server error"
+// @Router       /header-footer/admin/all [get]
+// @Security     BearerAuth
 func (h *HeaderFooterHandler) AdminGetAllHeaderFooter(c *gin.Context) {
 	var params header_footer.AdminGetAllHeaderFooterQuery
 	if !h.validator.ValidateRequest(c, &params) {

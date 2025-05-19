@@ -20,6 +20,19 @@ func NewPlanHandler(usc *planusecase.PlanUsecase) *PlanHandler {
 	}
 }
 
+// CreatePlan godoc
+// @Summary      Create a new subscription plan
+// @Description  Creates a new subscription plan with specified features and pricing
+// @Tags         plan
+// @Accept       json
+// @Produce      json
+// @Param        request  body      plan.CreatePlanCommand  true  "Plan information"
+// @Success      201      {object}  resp.Result            "Created plan"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /plan [post]
+// @Security     BearerAuth
 func (h *PlanHandler) CreatePlan(c *gin.Context) {
 	var params plan.CreatePlanCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 	resp.Created(c, result)
 }
 
+// UpdatePlan godoc
+// @Summary      Update a subscription plan
+// @Description  Updates an existing subscription plan with new features and pricing
+// @Tags         plan
+// @Accept       json
+// @Produce      json
+// @Param        request  body      plan.UpdatePlanCommand  true  "Updated plan information"
+// @Success      200      {object}  resp.Result            "Updated plan"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      404      {object}  resp.Result            "Plan not found"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /plan [put]
+// @Security     BearerAuth
 func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 	var params plan.UpdatePlanCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,20 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// DeletePlan godoc
+// @Summary      Delete a subscription plan
+// @Description  Deletes an existing subscription plan
+// @Tags         plan
+// @Accept       json
+// @Produce      json
+// @Param        request  body      plan.DeletePlanCommand  true  "Plan ID to delete"
+// @Success      200      {object}  resp.Result            "Deleted plan confirmation"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      404      {object}  resp.Result            "Plan not found"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /plan [delete]
+// @Security     BearerAuth
 func (h *PlanHandler) DeletePlan(c *gin.Context) {
 	var params plan.DeletePlanCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +106,20 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 	resp.Deleted(c, result)
 }
 
+// GetByIdPlan godoc
+// @Summary      Get plan by ID
+// @Description  Retrieves a specific subscription plan by its ID
+// @Tags         plan
+// @Accept       json
+// @Produce      json
+// @Param        request  body      plan.GetByIDPlanQuery  true  "Plan ID to retrieve"
+// @Success      200      {object}  resp.Result           "Plan details"
+// @Failure      400      {object}  resp.Result           "Validation error"
+// @Failure      401      {object}  resp.Result           "Unauthorized"
+// @Failure      404      {object}  resp.Result           "Plan not found"
+// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Router       /plan [get]
+// @Security     BearerAuth
 func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 	var params plan.GetByIDPlanQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -80,6 +135,19 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllPlan godoc
+// @Summary      Get all subscription plans
+// @Description  Retrieves all available subscription plans
+// @Tags         plan
+// @Accept       json
+// @Produce      json
+// @Param        request  body      plan.GetAllPlanQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result          "List of plans"
+// @Failure      400      {object}  resp.Result          "Validation error"
+// @Failure      401      {object}  resp.Result          "Unauthorized"
+// @Failure      500      {object}  resp.Result          "Internal server error"
+// @Router       /plan/all [get]
+// @Security     BearerAuth
 func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 	var params plan.GetAllPlanQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -95,6 +163,19 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// CalculatePlanPrice godoc
+// @Summary      Calculate plan price
+// @Description  Calculates the price for a subscription plan based on selected options
+// @Tags         plan
+// @Accept       json
+// @Produce      json
+// @Param        request  body      plan.CalculatePlanPriceQuery  true  "Plan calculation parameters"
+// @Success      200      {object}  resp.Result                  "Calculated plan price"
+// @Failure      400      {object}  resp.Result                  "Validation error"
+// @Failure      401      {object}  resp.Result                  "Unauthorized"
+// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Router       /plan/calculate [get]
+// @Security     BearerAuth
 func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 	var params plan.CalculatePlanPriceQuery
 	if !h.validator.ValidateRequest(c, &params) {

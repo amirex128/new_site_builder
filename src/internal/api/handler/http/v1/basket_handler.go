@@ -20,6 +20,19 @@ func NewBasketHandler(usc *basketusecase.BasketUsecase) *BasketHandler {
 	}
 }
 
+// UpdateBasket godoc
+// @Summary      Update shopping basket
+// @Description  Updates the user's shopping basket with new items or quantities
+// @Tags         basket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      basket.UpdateBasketCommand  true  "Updated basket information"
+// @Success      200      {object}  resp.Result                 "Updated basket"
+// @Failure      400      {object}  resp.Result                 "Validation error"
+// @Failure      401      {object}  resp.Result                 "Unauthorized"
+// @Failure      500      {object}  resp.Result                 "Internal server error"
+// @Router       /basket [put]
+// @Security     BearerAuth
 func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 	var params basket.UpdateBasketCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// GetBasket godoc
+// @Summary      Get current basket
+// @Description  Retrieves the current user's shopping basket
+// @Tags         basket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      basket.GetBasketQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result            "Basket details"
+// @Failure      400      {object}  resp.Result            "Validation error"
+// @Failure      401      {object}  resp.Result            "Unauthorized"
+// @Failure      404      {object}  resp.Result            "Basket not found"
+// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Router       /basket [get]
+// @Security     BearerAuth
 func (h *BasketHandler) GetBasket(c *gin.Context) {
 	var params basket.GetBasketQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,19 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllBasketUser godoc
+// @Summary      Get all user baskets
+// @Description  Retrieves all shopping baskets for the current user
+// @Tags         basket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      basket.GetAllBasketUserQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                   "List of user baskets"
+// @Failure      400      {object}  resp.Result                   "Validation error"
+// @Failure      401      {object}  resp.Result                   "Unauthorized"
+// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Router       /basket/user/all [get]
+// @Security     BearerAuth
 func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 	var params basket.GetAllBasketUserQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +105,20 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// AdminGetAllBasketUser godoc
+// @Summary      Admin: Get all user baskets
+// @Description  Admin endpoint to retrieve all shopping baskets across all users
+// @Tags         basket
+// @Accept       json
+// @Produce      json
+// @Param        request  body      basket.AdminGetAllBasketUserQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                        "List of all user baskets"
+// @Failure      400      {object}  resp.Result                        "Validation error"
+// @Failure      401      {object}  resp.Result                        "Unauthorized"
+// @Failure      403      {object}  resp.Result                        "Forbidden - Admin access required"
+// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Router       /basket/admin/all [get]
+// @Security     BearerAuth
 func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 	var params basket.AdminGetAllBasketUserQuery
 	if !h.validator.ValidateRequest(c, &params) {

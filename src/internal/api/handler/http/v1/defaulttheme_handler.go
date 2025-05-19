@@ -20,6 +20,19 @@ func NewDefaultThemeHandler(usc *defaultthemeusecase.DefaultThemeUsecase) *Defau
 	}
 }
 
+// CreateDefaultTheme godoc
+// @Summary      Create a new default theme
+// @Description  Creates a new default theme template for websites
+// @Tags         default-theme
+// @Accept       json
+// @Produce      json
+// @Param        request  body      defaulttheme.CreateDefaultThemeCommand  true  "Theme information"
+// @Success      201      {object}  resp.Result                             "Created theme"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /default-theme [post]
+// @Security     BearerAuth
 func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 	var params defaulttheme.CreateDefaultThemeCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -35,6 +48,20 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 	resp.Created(c, result)
 }
 
+// UpdateDefaultTheme godoc
+// @Summary      Update a default theme
+// @Description  Updates an existing default theme template
+// @Tags         default-theme
+// @Accept       json
+// @Produce      json
+// @Param        request  body      defaulttheme.UpdateDefaultThemeCommand  true  "Updated theme information"
+// @Success      200      {object}  resp.Result                             "Updated theme"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      404      {object}  resp.Result                             "Theme not found"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /default-theme [put]
+// @Security     BearerAuth
 func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 	var params defaulttheme.UpdateDefaultThemeCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -50,6 +77,20 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 	resp.Updated(c, result)
 }
 
+// DeleteDefaultTheme godoc
+// @Summary      Delete a default theme
+// @Description  Deletes an existing default theme template
+// @Tags         default-theme
+// @Accept       json
+// @Produce      json
+// @Param        request  body      defaulttheme.DeleteDefaultThemeCommand  true  "Theme ID to delete"
+// @Success      200      {object}  resp.Result                             "Deleted theme confirmation"
+// @Failure      400      {object}  resp.Result                             "Validation error"
+// @Failure      401      {object}  resp.Result                             "Unauthorized"
+// @Failure      404      {object}  resp.Result                             "Theme not found"
+// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Router       /default-theme [delete]
+// @Security     BearerAuth
 func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 	var params defaulttheme.DeleteDefaultThemeCommand
 	if !h.validator.ValidateRequest(c, &params) {
@@ -65,6 +106,20 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 	resp.Deleted(c, result)
 }
 
+// GetByIdDefaultTheme godoc
+// @Summary      Get default theme by ID
+// @Description  Retrieves a specific default theme template by its ID
+// @Tags         default-theme
+// @Accept       json
+// @Produce      json
+// @Param        request  body      defaulttheme.GetByIdDefaultThemeQuery  true  "Theme ID to retrieve"
+// @Success      200      {object}  resp.Result                            "Theme details"
+// @Failure      400      {object}  resp.Result                            "Validation error"
+// @Failure      401      {object}  resp.Result                            "Unauthorized"
+// @Failure      404      {object}  resp.Result                            "Theme not found"
+// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Router       /default-theme [get]
+// @Security     BearerAuth
 func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 	var params defaulttheme.GetByIdDefaultThemeQuery
 	if !h.validator.ValidateRequest(c, &params) {
@@ -80,6 +135,19 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 	resp.Retrieved(c, result)
 }
 
+// GetAllDefaultTheme godoc
+// @Summary      Get all default themes
+// @Description  Retrieves all default theme templates
+// @Tags         default-theme
+// @Accept       json
+// @Produce      json
+// @Param        request  body      defaulttheme.GetAllDefaultThemeQuery  true  "Query parameters"
+// @Success      200      {object}  resp.Result                           "List of themes"
+// @Failure      400      {object}  resp.Result                           "Validation error"
+// @Failure      401      {object}  resp.Result                           "Unauthorized"
+// @Failure      500      {object}  resp.Result                           "Internal server error"
+// @Router       /default-theme/all [get]
+// @Security     BearerAuth
 func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
 	var params defaulttheme.GetAllDefaultThemeQuery
 	if !h.validator.ValidateRequest(c, &params) {
