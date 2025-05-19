@@ -62,7 +62,7 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {

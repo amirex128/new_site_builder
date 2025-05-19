@@ -62,7 +62,7 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *SiteHandler) GetByIdSite(c *gin.Context) {

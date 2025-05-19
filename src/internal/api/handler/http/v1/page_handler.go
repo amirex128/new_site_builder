@@ -62,7 +62,7 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *PageHandler) GetByIdPage(c *gin.Context) {

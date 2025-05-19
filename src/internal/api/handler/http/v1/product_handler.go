@@ -26,7 +26,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).CreateProductCommand(&params)
+	result, err := h.usecase.CreateProductCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -41,7 +41,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).UpdateProductCommand(&params)
+	result, err := h.usecase.UpdateProductCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -56,13 +56,13 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).DeleteProductCommand(&params)
+	result, err := h.usecase.DeleteProductCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
@@ -71,7 +71,7 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetByIdProductQuery(&params)
+	result, err := h.usecase.GetByIdProductQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -86,7 +86,7 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetAllProductQuery(&params)
+	result, err := h.usecase.GetAllProductQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -101,7 +101,7 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetByFiltersSortProductQuery(&params)
+	result, err := h.usecase.GetByFiltersSortProductQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -116,7 +116,7 @@ func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).AdminGetAllProductQuery(&params)
+	result, err := h.usecase.AdminGetAllProductQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return

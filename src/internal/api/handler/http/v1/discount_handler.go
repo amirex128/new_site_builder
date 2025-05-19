@@ -62,7 +62,7 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {

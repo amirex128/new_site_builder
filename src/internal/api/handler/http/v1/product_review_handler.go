@@ -62,7 +62,7 @@ func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {

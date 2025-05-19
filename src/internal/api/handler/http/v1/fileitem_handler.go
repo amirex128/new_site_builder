@@ -47,7 +47,7 @@ func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
@@ -62,7 +62,7 @@ func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {

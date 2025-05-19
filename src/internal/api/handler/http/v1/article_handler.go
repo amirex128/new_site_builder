@@ -62,7 +62,7 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *ArticleHandler) ArticleGet(c *gin.Context) {

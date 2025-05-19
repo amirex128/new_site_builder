@@ -62,7 +62,7 @@ func (h *ArticleCategoryHandler) CategoryDelete(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *ArticleCategoryHandler) CategoryGet(c *gin.Context) {

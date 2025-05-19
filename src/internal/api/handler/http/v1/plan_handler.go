@@ -26,7 +26,7 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).CreatePlanCommand(&params)
+	result, err := h.usecase.CreatePlanCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -41,7 +41,7 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).UpdatePlanCommand(&params)
+	result, err := h.usecase.UpdatePlanCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -56,13 +56,13 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).DeletePlanCommand(&params)
+	result, err := h.usecase.DeletePlanCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
@@ -71,7 +71,7 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetByIDPlanQuery(&params)
+	result, err := h.usecase.GetByIDPlanQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -86,7 +86,7 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetAllPlanQuery(&params)
+	result, err := h.usecase.GetAllPlanQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -101,7 +101,7 @@ func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).CalculatePlanPriceQuery(&params)
+	result, err := h.usecase.CalculatePlanPriceQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return

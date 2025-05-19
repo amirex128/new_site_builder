@@ -40,7 +40,7 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).CreateAddressCommand(&params)
+	result, err := h.usecase.CreateAddressCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -55,7 +55,7 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).UpdateAddressCommand(&params)
+	result, err := h.usecase.UpdateAddressCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -70,13 +70,13 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).DeleteAddressCommand(&params)
+	result, err := h.usecase.DeleteAddressCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
@@ -85,7 +85,7 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetByIdAddressQuery(&params)
+	result, err := h.usecase.GetByIdAddressQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -100,7 +100,7 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetAllAddressQuery(&params)
+	result, err := h.usecase.GetAllAddressQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -115,7 +115,7 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetAllCityQuery(&params)
+	result, err := h.usecase.GetAllCityQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -130,7 +130,7 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).GetAllProvinceQuery(&params)
+	result, err := h.usecase.GetAllProvinceQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return
@@ -145,7 +145,7 @@ func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.SetContext(c).AdminGetAllAddressQuery(&params)
+	result, err := h.usecase.AdminGetAllAddressQuery(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())
 		return

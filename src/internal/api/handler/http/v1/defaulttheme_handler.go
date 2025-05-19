@@ -62,7 +62,7 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 		return
 	}
 
-	resp.Deleted(c)
+	resp.Deleted(c, result)
 }
 
 func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
