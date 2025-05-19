@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/role"
@@ -30,11 +28,11 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 
 	result, err := h.usecase.CreateRoleCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *RoleHandler) UpdateRole(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 
 	result, err := h.usecase.UpdateRoleCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 
 	result, err := h.usecase.SetRoleToCustomerCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 
 	result, err := h.usecase.SetRoleToUserCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 
 	result, err := h.usecase.SetRoleToPlanCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *RoleHandler) GetAllPermission(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 
 	result, err := h.usecase.GetAllPermissionQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *RoleHandler) GetAllRole(c *gin.Context) {
@@ -120,11 +118,11 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 
 	result, err := h.usecase.GetAllRoleQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
@@ -135,9 +133,9 @@ func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
 
 	result, err := h.usecase.GetRolePermissionsQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

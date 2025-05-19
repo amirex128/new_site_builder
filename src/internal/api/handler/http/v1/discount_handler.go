@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
@@ -30,11 +28,11 @@ func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 
 	result, err := h.usecase.CreateDiscountCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 
 	result, err := h.usecase.UpdateDiscountCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 
 	result, err := h.usecase.DeleteDiscountCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdDiscountQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 
 	result, err := h.usecase.GetAllDiscountQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *DiscountHandler) AdminGetAllDiscount(c *gin.Context) {
@@ -105,9 +103,9 @@ func (h *DiscountHandler) AdminGetAllDiscount(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllDiscountQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

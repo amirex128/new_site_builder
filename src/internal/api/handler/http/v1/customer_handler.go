@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer"
@@ -30,11 +28,11 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 
 	result, err := h.usecase.UpdateProfileCustomerCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 
 	result, err := h.usecase.GetProfileCustomerQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 
 	result, err := h.usecase.RegisterCustomerCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 
 	result, err := h.usecase.LoginCustomerCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 
 	result, err := h.usecase.RequestVerifyAndForgetCustomerCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 
 	result, err := h.usecase.VerifyCustomerQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
@@ -120,9 +118,9 @@ func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllCustomerQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

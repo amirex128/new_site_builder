@@ -88,9 +88,12 @@ func Updated(c *gin.Context, data interface{}) {
 }
 
 // Deleted creates a 200 OK response for deletions
-func Deleted(c *gin.Context) {
-	NewResponse(true, MsgDeleted, http.StatusOK).
-		Send(c)
+func Deleted(c *gin.Context, data ...interface{}) {
+	result := NewResponse(true, MsgDeleted, http.StatusOK)
+	if len(data) > 0 && data[0] != nil {
+		result.WithData(data[0])
+	}
+	result.Send(c)
 }
 
 // Retrieved creates a 200 OK response for data retrieval

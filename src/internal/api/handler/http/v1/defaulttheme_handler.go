@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/defaulttheme"
@@ -30,11 +28,11 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.CreateDefaultThemeCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.UpdateDefaultThemeCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.DeleteDefaultThemeCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdDefaultThemeQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
@@ -90,9 +88,9 @@ func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.GetAllDefaultThemeQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

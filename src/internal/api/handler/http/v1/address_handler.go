@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/address"
@@ -44,11 +42,11 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).CreateAddressCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *AddressHandler) UpdateAddress(c *gin.Context) {
@@ -59,11 +57,11 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).UpdateAddressCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *AddressHandler) DeleteAddress(c *gin.Context) {
@@ -74,11 +72,11 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).DeleteAddressCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
@@ -89,11 +87,11 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetByIdAddressQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *AddressHandler) GetAllAddress(c *gin.Context) {
@@ -104,11 +102,11 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetAllAddressQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *AddressHandler) GetAllCity(c *gin.Context) {
@@ -119,11 +117,11 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetAllCityQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *AddressHandler) GetAllProvince(c *gin.Context) {
@@ -134,11 +132,11 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetAllProvinceQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
@@ -149,9 +147,9 @@ func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).AdminGetAllAddressQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

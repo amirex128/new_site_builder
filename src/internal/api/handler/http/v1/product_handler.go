@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
@@ -30,11 +28,11 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).CreateProductCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).UpdateProductCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).DeleteProductCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetByIdProductQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ProductHandler) GetAllProduct(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetAllProductQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetByFiltersSortProductQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
@@ -120,9 +118,9 @@ func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).AdminGetAllProductQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

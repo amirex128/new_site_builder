@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
@@ -30,11 +28,11 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 
 	result, err := h.usecase.CreateArticleCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 
 	result, err := h.usecase.UpdateArticleCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 
 	result, err := h.usecase.DeleteArticleCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *ArticleHandler) ArticleGet(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdArticleQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 
 	result, err := h.usecase.GetAllArticleQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 
 	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
@@ -120,9 +118,9 @@ func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllArticleQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

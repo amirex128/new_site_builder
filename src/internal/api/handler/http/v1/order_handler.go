@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/order"
@@ -30,11 +28,11 @@ func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 
 	result, err := h.usecase.CreateOrderRequestCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 
 	result, err := h.usecase.CreateOrderVerifyCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Success().WithData(result))
+	resp.OK(c, result)
 }
 
 func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 
 	result, err := h.usecase.GetAllOrderCustomerQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 
 	result, err := h.usecase.GetOrderCustomerDetailsQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 
 	result, err := h.usecase.GetAllOrderUserQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 
 	result, err := h.usecase.GetOrderUserDetailsQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *OrderHandler) AdminGetAllOrderUser(c *gin.Context) {
@@ -120,9 +118,9 @@ func (h *OrderHandler) AdminGetAllOrderUser(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllOrderUserQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

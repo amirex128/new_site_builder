@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer_ticket"
@@ -30,11 +28,11 @@ func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.CreateCustomerTicketCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.ReplayCustomerTicketCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.AdminReplayCustomerTicketCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdCustomerTicketQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.GetAllCustomerTicketQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *CustomerTicketHandler) AdminGetAllCustomerTicket(c *gin.Context) {
@@ -105,9 +103,9 @@ func (h *CustomerTicketHandler) AdminGetAllCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllCustomerTicketQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

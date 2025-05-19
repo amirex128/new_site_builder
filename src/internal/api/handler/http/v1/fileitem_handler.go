@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
@@ -30,11 +28,11 @@ func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 
 	result, err := h.usecase.CreateOrDirectoryItemCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 
 	result, err := h.usecase.DeleteFileItemCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 
 	result, err := h.usecase.ForceDeleteFileItemCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 
 	result, err := h.usecase.UpdateFileItemCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *FileItemHandler) FileOperation(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *FileItemHandler) FileOperation(c *gin.Context) {
 
 	result, err := h.usecase.FileOperationCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 
 	result, err := h.usecase.RestoreFileItemCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *FileItemHandler) GetByIds(c *gin.Context) {
@@ -120,11 +118,11 @@ func (h *FileItemHandler) GetByIds(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdsQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
@@ -135,11 +133,11 @@ func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 
 	result, err := h.usecase.GetDeletedTreeDirectoryQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
@@ -150,11 +148,11 @@ func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 
 	result, err := h.usecase.GetDownloadFileItemByIdQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *FileItemHandler) GetTreeDirectory(c *gin.Context) {
@@ -165,9 +163,9 @@ func (h *FileItemHandler) GetTreeDirectory(c *gin.Context) {
 
 	result, err := h.usecase.GetTreeDirectoryQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

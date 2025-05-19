@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -24,13 +22,30 @@ func NewValidationHelper() *ValidationHelper {
 // Returns true if validation passes, false otherwise
 func (h *ValidationHelper) ValidateRequest(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindJSON(params); err != nil {
-		c.JSON(http.StatusBadRequest, resp.ValidationFailed().WithSystemMessage(err.Error()))
+		resp.ValidationError(c, err.Error())
 		return false
 	}
 
 	if err := h.validate.Struct(params); err != nil {
 		validationErrors := err.(validator.ValidationErrors)
-		c.JSON(http.StatusBadRequest, resp.ValidationFailed().WithSystemMessage(validationErrors.Error()))
+		resp.ValidationError(c, validationErrors.Error())
+		return false
+	}
+
+	return true
+}
+
+// ValidateQuery handles binding and validating query parameters
+// Returns true if validation passes, false otherwise
+func (h *ValidationHelper) ValidateQuery(c *gin.Context, params interface{}) bool {
+	if err := c.ShouldBindQuery(params); err != nil {
+		resp.ValidationError(c, err.Error())
+		return false
+	}
+
+	if err := h.validate.Struct(params); err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		resp.ValidationError(c, validationErrors.Error())
 		return false
 	}
 

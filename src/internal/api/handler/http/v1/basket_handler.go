@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/basket"
@@ -30,11 +28,11 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 
 	result, err := h.usecase.UpdateBasketCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *BasketHandler) GetBasket(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 
 	result, err := h.usecase.GetBasketQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 
 	result, err := h.usecase.GetAllBasketUserQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
@@ -75,9 +73,9 @@ func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllBasketUserQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

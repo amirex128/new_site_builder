@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/page"
@@ -30,11 +28,11 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 
 	result, err := h.usecase.CreatePageCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *PageHandler) UpdatePage(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 
 	result, err := h.usecase.UpdatePageCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *PageHandler) DeletePage(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 
 	result, err := h.usecase.DeletePageCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *PageHandler) GetByIdPage(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdPageQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *PageHandler) GetAllPage(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 
 	result, err := h.usecase.GetAllPageQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
@@ -105,9 +103,9 @@ func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllPageQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

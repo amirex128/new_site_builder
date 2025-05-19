@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
@@ -30,11 +28,11 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).CreatePlanCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *PlanHandler) UpdatePlan(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).UpdatePlanCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *PlanHandler) DeletePlan(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).DeletePlanCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c)
 }
 
 func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetByIDPlanQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *PlanHandler) GetAllPlan(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).GetAllPlanQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
@@ -105,9 +103,9 @@ func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 
 	result, err := h.usecase.SetContext(c).CalculatePlanPriceQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

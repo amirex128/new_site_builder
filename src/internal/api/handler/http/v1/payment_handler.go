@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/payment"
@@ -30,11 +28,11 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 
 	result, err := h.usecase.VerifyPaymentCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *PaymentHandler) RequestGateway(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 
 	result, err := h.usecase.RequestGatewayCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Success().WithData(result))
+	resp.OK(c, result)
 }
 
 func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
@@ -60,13 +58,13 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 
 	result, err := h.usecase.CreateOrUpdateGatewayCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
 	// Since there's no clear ID field to determine if this is an update or a create,
 	// we'll always respond with a generic success response
-	c.JSON(http.StatusOK, resp.Success().WithData(result))
+	resp.OK(c, result)
 }
 
 func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
@@ -77,11 +75,11 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdGatewayQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
@@ -92,11 +90,11 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllGatewayQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *PaymentHandler) AdminGetAllPayment(c *gin.Context) {
@@ -107,9 +105,9 @@ func (h *PaymentHandler) AdminGetAllPayment(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllPaymentQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

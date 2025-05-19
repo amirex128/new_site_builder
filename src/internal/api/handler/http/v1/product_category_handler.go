@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_category"
@@ -30,11 +28,11 @@ func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 
 	result, err := h.usecase.CreateCategoryCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Created().WithData(result))
+	resp.Created(c, result)
 }
 
 func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 
 	result, err := h.usecase.UpdateCategoryCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Updated().WithData(result))
+	resp.Updated(c, result)
 }
 
 func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 
 	result, err := h.usecase.DeleteCategoryCommand(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Deleted().WithData(result))
+	resp.Deleted(c, result)
 }
 
 func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdCategoryQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 
 	result, err := h.usecase.GetAllCategoryQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *ProductCategoryHandler) AdminGetAllCategory(c *gin.Context) {
@@ -105,9 +103,9 @@ func (h *ProductCategoryHandler) AdminGetAllCategory(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllCategoryQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }

@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/website"
@@ -30,11 +28,11 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 
 	result, err := h.usecase.GetByDomainPageQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
@@ -45,11 +43,11 @@ func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.GetByDomainHeaderFooterQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
@@ -60,11 +58,11 @@ func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 
 	result, err := h.usecase.ProductSearchListQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
@@ -75,11 +73,11 @@ func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 
 	result, err := h.usecase.GetFiltersSortArticleQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
@@ -90,11 +88,11 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 
 	result, err := h.usecase.GetFiltersSortProductQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
@@ -105,11 +103,11 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetArticlesByCategorySlugQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
@@ -120,11 +118,11 @@ func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetProductsByCategorySlugQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
@@ -135,11 +133,11 @@ func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetSingleArticleBySlugQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
 
 func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
@@ -150,9 +148,9 @@ func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetSingleProductBySlugQuery(&params)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, resp.InternalError().WithSystemMessage(err.Error()))
+		resp.InternalError(c, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, resp.Retrieved().WithData(result))
+	resp.Retrieved(c, result)
 }
