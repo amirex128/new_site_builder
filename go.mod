@@ -10,7 +10,7 @@ require (
 	git.snappfood.ir/backend/go/packages/sf-orm v0.0.4
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3
 	git.snappfood.ir/backend/go/packages/sf-redis v0.0.4
-	git.snappfood.ir/backend/go/packages/sf-routing v0.0.6
+	git.snappfood.ir/backend/go/packages/sf-routing v0.0.7
 	github.com/elastic/go-elasticsearch/v8 v8.17.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.26.0
@@ -99,7 +99,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
-	github.com/mvrilo/go-redoc v0.1.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/procfs v0.16.0 // indirect

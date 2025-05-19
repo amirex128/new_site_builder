@@ -9,7 +9,7 @@ SF-Routing is a Golang library that wraps the Gin framework to make it easy to u
 - **Router Groups**: Organize routes into groups for better structure.
 - **Middleware Management**: Add global and per-route middleware.
 - **Error Handling**: Set a custom error handler for all routes.
-- **API Documentation**: Generate OpenAPI documentation with support for both Swagger UI and ReDoc.
+- **API Documentation**: Generate OpenAPI documentation with Swagger UI.
 - **Custom Logger**: Use a custom logger that implements the `Logger` interface.
 - **Direct Gin Configuration**: Configure the Gin engine directly with custom settings.
 - **CORS Configuration**: Easily set up Cross-Origin Resource Sharing (CORS) for your API.
@@ -23,7 +23,7 @@ go get git.snappfood.ir/backend/go/packages/sf-routing
 
 # OpenAPI Documentation
 
-SF-Routing supports OpenAPI documentation using both Swagger UI and ReDoc. You can choose which UI to use when configuring your application.
+SF-Routing supports OpenAPI documentation using Swagger UI.
 
 ## Prerequisites
 
@@ -33,7 +33,6 @@ To use the OpenAPI documentation features, you need to install the following pac
 go get -u github.com/swaggo/swag/cmd/swag
 go get -u github.com/swaggo/gin-swagger
 go get -u github.com/swaggo/files
-go get -u github.com/mvrilo/go-redoc
 ```
 
 ## Using Swagger UI
@@ -49,25 +48,6 @@ err := sfrouting.RegisterConnection(
 		Host:     "localhost:8080",
 		BasePath: "/api/v1",
 		Schemes:  []string{"http", "https"},
-		UIType:   "swagger", // Use Swagger UI (default)
-	}),
-)
-```
-
-## Using ReDoc UI
-
-To use ReDoc UI instead of Swagger UI:
-
-```go
-err := sfrouting.RegisterConnection(
-	sfrouting.WithSwagger(sfrouting.SwaggerConfig{
-		Enabled:  true,
-		Title:    "SF-Routing API",
-		Version:  "1.0",
-		Host:     "localhost:8080",
-		BasePath: "/api/v1",
-		Schemes:  []string{"http", "https"},
-		UIType:   "redoc", // Use ReDoc UI
 	}),
 )
 ```
@@ -117,7 +97,6 @@ swag init -g path/to/api.go -o ./docs
 
 echo "Documentation generated successfully!"
 echo "You can access the Swagger UI at: http://localhost:8080/swagger/index.html"
-echo "You can access the ReDoc UI at: http://localhost:8080/redoc/index.html"
 ```
 
 ## Complete Example
@@ -263,7 +242,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 }
 ```
 
-### Main Application with Swagger and ReDoc
+### Main Application with Swagger
 
 ```go
 package main
@@ -288,7 +267,7 @@ func main() {
 	// Create a new user handler
 	userHandler := NewUserHandler()
 
-	// Configure Swagger with Swagger UI
+	// Configure Swagger
 	err := sfrouting.RegisterConnection(
 		sfrouting.WithSwagger(sfrouting.SwaggerConfig{
 			Enabled:  true,
@@ -297,39 +276,6 @@ func main() {
 			Host:     "localhost:8080",
 			BasePath: "/api/v1",
 			Schemes:  []string{"http", "https"},
-			UIType:   "swagger", // Use Swagger UI
-		}),
-		sfrouting.WithHealthChecks(&HealthChecker{}),
-	)
-	if err != nil {
-		log.Fatalf("Failed to register connection: %v", err)
-	}
-
-	// Register API routes
-	sfrouting.RegisterRouterGroup("/api/v1", userHandler)
-
-	// Start the server
-	log.Println("Starting server on :8080")
-	if err := sfrouting.StartServer(":8080"); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
-}
-
-// Example of using ReDoc instead of Swagger UI:
-func mainWithRedoc() {
-	// Create a new user handler
-	userHandler := NewUserHandler()
-
-	// Configure Swagger with ReDoc UI
-	err := sfrouting.RegisterConnection(
-		sfrouting.WithSwagger(sfrouting.SwaggerConfig{
-			Enabled:  true,
-			Title:    "SF Routing API",
-			Version:  "1.0",
-			Host:     "localhost:8080",
-			BasePath: "/api/v1",
-			Schemes:  []string{"http", "https"},
-			UIType:   "redoc", // Use ReDoc UI
 		}),
 		sfrouting.WithHealthChecks(&HealthChecker{}),
 	)

@@ -10,7 +10,6 @@ import (
 
 	"git.snappfood.ir/backend/go/packages/sf-routing/middlewares"
 	"github.com/gin-gonic/gin"
-	"github.com/mvrilo/go-redoc"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.elastic.co/apm/module/apmgin/v2"
@@ -83,7 +82,6 @@ type SwaggerConfig struct {
 	Host     string
 	BasePath string
 	Schemes  []string
-	UIType   string // "swagger" or "redoc"
 }
 
 // DefaultSwaggerConfig returns the default Swagger configuration
@@ -95,7 +93,6 @@ func DefaultSwaggerConfig() SwaggerConfig {
 		Host:     "",
 		BasePath: "/",
 		Schemes:  []string{"http", "https"},
-		UIType:   "swagger", // Default to Swagger UI
 	}
 }
 
@@ -120,7 +117,6 @@ type Registry struct {
 	SwaggerHost        string
 	SwaggerBasePath    string
 	SwaggerSchemes     []string
-	SwaggerUIType      string
 	corsConfig         CorsConfig
 	corsApplied        bool
 	prometheusExporter PrometheusExporter
@@ -140,7 +136,6 @@ var globalRegistry = &Registry{
 	SwaggerHost:       "",
 	SwaggerBasePath:   "/",
 	SwaggerSchemes:    []string{"http", "https"},
-	SwaggerUIType:     "swagger", // Default to Swagger UI
 	corsConfig:        CorsConfig{},
 	prometheusConfig:  PrometheusConfig{Enabled: false, Path: "/metrics"},
 }
@@ -180,7 +175,6 @@ func WithSwagger(config SwaggerConfig) Option {
 		r.SwaggerHost = config.Host
 		r.SwaggerBasePath = config.BasePath
 		r.SwaggerSchemes = config.Schemes
-		r.SwaggerUIType = config.UIType
 	}
 }
 
@@ -338,55 +332,21 @@ func RegisterConnection(opts ...Option) error {
 
 	// Register Swagger if enabled
 	if globalRegistry.SwaggerEnabled {
-		// Configure Swagger docs
-		if globalRegistry.SwaggerUIType == "redoc" {
-			// Setup ReDoc
-			doc := redoc.Redoc{
-				Title:       globalRegistry.SwaggerTitle,
-				Description: "API Documentation using ReDoc",
-				SpecFile:    "./docs/swagger.json",
-				SpecPath:    "/swagger/doc.json",
+		// Default to Swagger UI
+		url := ginSwagger.URL("/swagger/doc.json") // The URL pointing to API definition
+		globalRegistry.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+
+		if globalRegistry.logger != nil {
+			extraMap := map[string]interface{}{
+				ExtraKey.HTTP.Path: "/swagger/*any",
 			}
 
-			// Register ReDoc handler
-			globalRegistry.engine.GET("/redoc/*any", func(c *gin.Context) {
-				doc.Handler().ServeHTTP(c.Writer, c.Request)
-			})
-
-			// Register the swagger.json endpoint
-			globalRegistry.engine.GET("/swagger/doc.json", func(c *gin.Context) {
-				c.File("./docs/swagger.json")
-			})
-
-			if globalRegistry.logger != nil {
-				extraMap := map[string]interface{}{
-					ExtraKey.HTTP.Path: "/redoc/",
-				}
-
-				globalRegistry.logger.InfoWithCategory(
-					Category.API.Documentation,
-					SubCategory.Operation.Configuration,
-					"ReDoc API documentation endpoint registered",
-					extraMap,
-				)
-			}
-		} else {
-			// Default to Swagger UI
-			url := ginSwagger.URL("/swagger/doc.json") // The URL pointing to API definition
-			globalRegistry.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
-
-			if globalRegistry.logger != nil {
-				extraMap := map[string]interface{}{
-					ExtraKey.HTTP.Path: "/swagger/*any",
-				}
-
-				globalRegistry.logger.InfoWithCategory(
-					Category.API.Documentation,
-					SubCategory.Operation.Configuration,
-					"Swagger API documentation endpoint registered",
-					extraMap,
-				)
-			}
+			globalRegistry.logger.InfoWithCategory(
+				Category.API.Documentation,
+				SubCategory.Operation.Configuration,
+				"Swagger API documentation endpoint registered",
+				extraMap,
+			)
 		}
 	}
 
