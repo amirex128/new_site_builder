@@ -36,15 +36,15 @@ func (ProductCategory) TableName() string {
 	return "categories"
 }
 
-// CategoryProduct represents Product.CategoryProduct table - a join table
-type CategoryProduct struct {
+// ProductCategoryProduct represents Product.ProductCategoryProduct table - a join table
+type ProductCategoryProduct struct {
 	ID         int64 `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	ProductID  int64 `json:"product_id" gorm:"column:product_id;type:bigint;not null;index"`
 	CategoryID int64 `json:"category_id" gorm:"column:category_id;type:bigint;not null;index"`
 }
 
-// TableName specifies the table name for CategoryProduct
-func (CategoryProduct) TableName() string {
+// TableName specifies the table name for ProductCategoryProduct
+func (ProductCategoryProduct) TableName() string {
 	return "category_product"
 }
 

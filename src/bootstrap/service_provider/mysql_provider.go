@@ -1,13 +1,14 @@
 package serviceprovider
 
 import (
+	"strconv"
+	"time"
+
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/config"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
-	"strconv"
-	"time"
 )
 
 func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
@@ -19,6 +20,56 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 			db.Debug()
 			err := db.AutoMigrate(
 				&domain.Address{},
+				&domain.AddressCustomer{},
+				&domain.AddressUser{},
+				&domain.Article{},
+				&domain.Basket{},
+				&domain.BasketItem{},
+				&domain.BlogCategory{},
+				&domain.City{},
+				&domain.Comment{},
+				&domain.Coupon{},
+				&domain.Credit{},
+				&domain.Customer{},
+				&domain.CustomerComment{},
+				&domain.CustomerRole{},
+				&domain.CustomerTicket{},
+				&domain.CustomerTicketMedia{},
+				&domain.DefaultTheme{},
+				&domain.Discount{},
+				&domain.FileItem{},
+				&domain.Gateway{},
+				&domain.HeaderFooter{},
+				&domain.Media{},
+				&domain.Order{},
+				&domain.OrderItem{},
+				&domain.Page{},
+				&domain.PageArticleUsage{},
+				&domain.PageHeaderFooterUsage{},
+				&domain.PageProductUsage{},
+				&domain.ParbadPayment{},
+				&domain.ParbadTransaction{},
+				&domain.Payment{},
+				&domain.Permission{},
+				&domain.PermissionRole{},
+				&domain.Plan{},
+				&domain.Product{},
+				&domain.ProductAttribute{},
+				&domain.ProductCategory{},
+				&domain.ProductReview{},
+				&domain.ProductVariant{},
+				&domain.Province{},
+				&domain.ReturnItem{},
+				&domain.Role{},
+				&domain.RolePlan{},
+				&domain.RoleUser{},
+				&domain.Setting{},
+				&domain.Site{},
+				&domain.Storage{},
+				&domain.Ticket{},
+				&domain.TicketMedia{},
+				&domain.UnitPrice{},
+				&domain.User{},
 			)
 			if err != nil {
 				logger.Errorf("Error migrating database: %v", err)

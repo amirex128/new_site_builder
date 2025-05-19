@@ -49,14 +49,14 @@ func (ArticleMedia) TableName() string {
 	return "article_media"
 }
 
-// ArticleCategory represents Blog.ArticleCategory table - a join table
-type ArticleCategory struct {
+// ArticleArticleCategory represents Blog.ArticleArticleCategory table - a join table
+type ArticleArticleCategory struct {
 	ID         int64 `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	ArticleID  int64 `json:"article_id" gorm:"column:article_id;type:bigint;not null;index"`
 	CategoryID int64 `json:"category_id" gorm:"column:category_id;type:bigint;not null;index"`
 }
 
-// TableName specifies the table name for ArticleCategory
-func (ArticleCategory) TableName() string {
+// TableName specifies the table name for ArticleArticleCategory
+func (ArticleArticleCategory) TableName() string {
 	return "article_category"
 }

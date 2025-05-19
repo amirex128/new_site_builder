@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"context"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
+	"github.com/amirex128/new_site_builder/src/internal/infra/repository"
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/auth"
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/cache"
 	"github.com/amirex128/new_site_builder/src/internal/infra/service/payment"
@@ -15,14 +16,13 @@ import (
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	sfredis "git.snappfood.ir/backend/go/packages/sf-redis"
 	"github.com/amirex128/new_site_builder/src/config"
-	"github.com/amirex128/new_site_builder/src/internal/infra/repository/mysql"
 )
 
 func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
 	mainDB := sform.MustDB("main")
 
-	paymentRepo := mysql.NewPaymentRepository(mainDB)
-	gatewayRepo := mysql.NewGatewayRepository(mainDB)
+	paymentRepo := repository.NewPaymentRepository(mainDB)
+	gatewayRepo := repository.NewGatewayRepository(mainDB)
 
 	identityService := auth.NewIdentityService(cfg.JwtSecretToken, cfg.JwtIssuer, cfg.JwtAudience, 24*time.Hour)
 	return &Container{
@@ -46,40 +46,40 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		},
 
 		// Repositories
-		ArticleRepo:               mysql.NewArticleRepository(mainDB),
-		BasketRepo:                mysql.NewBasketRepository(mainDB),
-		BasketItemRepo:            mysql.NewBasketItemRepository(mainDB),
-		ArticleCategoryRepo:       mysql.NewArticleCategoryRepository(mainDB),
-		CustomerRepo:              mysql.NewCustomerRepository(mainDB),
-		DiscountRepo:              mysql.NewDiscountRepository(mainDB),
-		HeaderFooterRepo:          mysql.NewHeaderFooterRepository(mainDB),
-		MediaRepo:                 mysql.NewMediaRepository(mainDB),
-		OrderRepo:                 mysql.NewOrderRepository(mainDB),
-		OrderItemRepo:             mysql.NewOrderItemRepository(mainDB),
-		PageRepo:                  mysql.NewPageRepository(mainDB),
-		PaymentRepo:               mysql.NewPaymentRepository(mainDB),
-		ProductRepo:               mysql.NewProductRepository(mainDB),
-		ProductCategoryRepo:       mysql.NewProductCategoryRepository(mainDB),
-		ProductReviewRepo:         mysql.NewProductReviewRepository(mainDB),
-		ProductVariantRepo:        mysql.NewProductVariantRepository(mainDB),
-		SettingRepo:               mysql.NewSettingRepository(mainDB),
-		SiteRepo:                  mysql.NewSiteRepository(mainDB),
-		TicketRepo:                mysql.NewTicketRepository(mainDB),
-		CustomerTicketRepo:        mysql.NewCustomerTicketRepository(mainDB),
-		UserRepo:                  mysql.NewUserRepository(mainDB),
-		UnitPriceRepo:             mysql.NewUnitPriceRepository(mainDB),
-		AddressRepo:               mysql.NewAddressRepository(mainDB),
-		CityRepo:                  mysql.NewCityRepository(mainDB),
-		ProvinceRepo:              mysql.NewProvinceRepository(mainDB),
-		PlanRepo:                  mysql.NewPlanRepository(mainDB),
-		RoleRepo:                  mysql.NewRoleRepository(mainDB),
-		PermissionRepo:            mysql.NewPermissionRepository(mainDB),
-		CommentRepo:               mysql.NewCommentRepository(mainDB),
-		CustomerCommentRepo:       mysql.NewCustomerCommentRepository(mainDB),
-		TicketMediaRepo:           mysql.NewTicketMediaRepository(mainDB),
-		CustomerTicketMediaRepo:   mysql.NewCustomerTicketMediaRepository(mainDB),
-		PageArticleUsageRepo:      mysql.NewPageArticleUsageRepository(mainDB),
-		PageProductUsageRepo:      mysql.NewPageProductUsageRepository(mainDB),
-		PageHeaderFooterUsageRepo: mysql.NewPageHeaderFooterUsageRepository(mainDB),
+		ArticleRepo:               repository.NewArticleRepository(mainDB),
+		BasketRepo:                repository.NewBasketRepository(mainDB),
+		BasketItemRepo:            repository.NewBasketItemRepository(mainDB),
+		ArticleCategoryRepo:       repository.NewArticleCategoryRepository(mainDB),
+		CustomerRepo:              repository.NewCustomerRepository(mainDB),
+		DiscountRepo:              repository.NewDiscountRepository(mainDB),
+		HeaderFooterRepo:          repository.NewHeaderFooterRepository(mainDB),
+		MediaRepo:                 repository.NewMediaRepository(mainDB),
+		OrderRepo:                 repository.NewOrderRepository(mainDB),
+		OrderItemRepo:             repository.NewOrderItemRepository(mainDB),
+		PageRepo:                  repository.NewPageRepository(mainDB),
+		PaymentRepo:               repository.NewPaymentRepository(mainDB),
+		ProductRepo:               repository.NewProductRepository(mainDB),
+		ProductCategoryRepo:       repository.NewProductCategoryRepository(mainDB),
+		ProductReviewRepo:         repository.NewProductReviewRepository(mainDB),
+		ProductVariantRepo:        repository.NewProductVariantRepository(mainDB),
+		SettingRepo:               repository.NewSettingRepository(mainDB),
+		SiteRepo:                  repository.NewSiteRepository(mainDB),
+		TicketRepo:                repository.NewTicketRepository(mainDB),
+		CustomerTicketRepo:        repository.NewCustomerTicketRepository(mainDB),
+		UserRepo:                  repository.NewUserRepository(mainDB),
+		UnitPriceRepo:             repository.NewUnitPriceRepository(mainDB),
+		AddressRepo:               repository.NewAddressRepository(mainDB),
+		CityRepo:                  repository.NewCityRepository(mainDB),
+		ProvinceRepo:              repository.NewProvinceRepository(mainDB),
+		PlanRepo:                  repository.NewPlanRepository(mainDB),
+		RoleRepo:                  repository.NewRoleRepository(mainDB),
+		PermissionRepo:            repository.NewPermissionRepository(mainDB),
+		CommentRepo:               repository.NewCommentRepository(mainDB),
+		CustomerCommentRepo:       repository.NewCustomerCommentRepository(mainDB),
+		TicketMediaRepo:           repository.NewTicketMediaRepository(mainDB),
+		CustomerTicketMediaRepo:   repository.NewCustomerTicketMediaRepository(mainDB),
+		PageArticleUsageRepo:      repository.NewPageArticleUsageRepository(mainDB),
+		PageProductUsageRepo:      repository.NewPageProductUsageRepository(mainDB),
+		PageHeaderFooterUsageRepo: repository.NewPageHeaderFooterUsageRepository(mainDB),
 	}
 }
