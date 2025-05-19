@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.4
 	git.snappfood.ir/backend/go/packages/sf-elasticsearch-client v0.0.5
-	git.snappfood.ir/backend/go/packages/sf-logger v0.0.20
+	git.snappfood.ir/backend/go/packages/sf-logger v0.0.21
 	git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.2
 	git.snappfood.ir/backend/go/packages/sf-orm v0.0.4
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3

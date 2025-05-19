@@ -188,19 +188,32 @@ func WithElasticsearchSink(url string, indexName string, username, password stri
 }
 
 // WithMongoDBSink adds a MongoDB sink to the logger
-func WithMongoDBSink(host string, port int, database string, collection string, username string, password string, batchSize int) Option {
+func WithMongoDBSink(host string, port int, database string, collection string, username string, password string, batchSize int, failSilently bool) Option {
 	return func(c *Config) {
-		var mongoURL string
+		var mongoURI string
 		if username != "" && password != "" {
-			mongoURL = fmt.Sprintf("mongodb://%s:%s@%s:%d/%s?collection=%s", username, password, host, port, database, collection)
+			mongoURI = fmt.Sprintf("mongodb://%s:%s@%s:%d", username, password, host, port)
 		} else {
-			mongoURL = fmt.Sprintf("mongodb://%s:%d/%s?collection=%s", host, port, database, collection)
+			mongoURI = fmt.Sprintf("mongodb://%s:%d", host, port)
 		}
 
-		if batchSize > 0 {
-			mongoURL += fmt.Sprintf("&batchSize=%d", batchSize)
+		// Add database to URI if provided
+		if database != "" {
+			mongoURI += "/" + database
 		}
-		c.SinkURLs = append(c.SinkURLs, mongoURL)
+
+		// Add query parameters
+		mongoURI += "?collection=" + collection
+
+		if batchSize > 0 {
+			mongoURI += fmt.Sprintf("&batchSize=%d", batchSize)
+		}
+
+		if !failSilently {
+			mongoURI += fmt.Sprintf("&failSilently=false")
+		}
+
+		c.SinkURLs = append(c.SinkURLs, mongoURI)
 	}
 }
 

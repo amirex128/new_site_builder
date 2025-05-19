@@ -2,8 +2,6 @@ package serviceprovider
 
 import (
 	"context"
-	"os"
-
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
@@ -26,13 +24,7 @@ func LoggerProvider(ctx context.Context) sflogger.Logger {
 		sflogger.WithFileSink("./logs/app.log", 10, 30, 5, true),
 
 		// Elasticsearch integration for centralized logging
-		sflogger.WithElasticsearchSink(
-			os.Getenv("ELASTIC_SINK"),
-			"snappfood-new-search-logs",
-			"",  // username
-			"",  // password
-			100, // batch size (default)
-		),
+		sflogger.WithMongoDBSink("localhost", 27017, "new_site_builder", "app_logs", "amirex128", "mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV", 5, true),
 	}
 
 	// Initialize local logger

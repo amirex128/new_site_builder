@@ -3,6 +3,7 @@ package sflogger
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/url"
 	"strconv"
 	"sync"
@@ -26,6 +27,8 @@ type MongoDBSinkImpl struct {
 	collectionRef *mongo.Collection
 	ctx           context.Context
 	cancelFunc    context.CancelFunc
+	connected     bool
+	failSilently  bool
 }
 
 // MongoDBSinkOption defines the function signature for MongoDB sink options
@@ -33,22 +36,24 @@ type MongoDBSinkOption func(*mongoDBSinkConfig)
 
 // mongoDBSinkConfig contains options for configuring a MongoDB sink
 type mongoDBSinkConfig struct {
-	URI        string
-	Database   string
-	Collection string
-	BatchSize  int
-	FlushTime  time.Duration
-	Timeout    time.Duration
+	URI          string
+	Database     string
+	Collection   string
+	BatchSize    int
+	FlushTime    time.Duration
+	Timeout      time.Duration
+	FailSilently bool
 }
 
 // NewMongoDBSink creates a new MongoDB sink
 func NewMongoDBSink(opts ...MongoDBSinkOption) Sink {
 	config := &mongoDBSinkConfig{
-		Database:   "logs",
-		Collection: "logs",
-		BatchSize:  100,
-		FlushTime:  5 * time.Second,
-		Timeout:    10 * time.Second,
+		Database:     "logs",
+		Collection:   "logs",
+		BatchSize:    100,
+		FlushTime:    5 * time.Second,
+		Timeout:      10 * time.Second,
+		FailSilently: true,
 	}
 
 	// Apply options
@@ -59,39 +64,51 @@ func NewMongoDBSink(opts ...MongoDBSinkOption) Sink {
 	// Create context with timeout for MongoDB operations
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// Create MongoDB client
+	// Create sink instance first
+	sink := &MongoDBSinkImpl{
+		database:     config.Database,
+		collection:   config.Collection,
+		batchSize:    config.BatchSize,
+		flushTime:    config.FlushTime,
+		buffer:       make([]map[string]interface{}, 0, config.BatchSize),
+		done:         make(chan struct{}),
+		ctx:          ctx,
+		cancelFunc:   cancel,
+		connected:    false,
+		failSilently: config.FailSilently,
+	}
+
+	// Try to connect to MongoDB
 	clientOpts := options.Client().ApplyURI(config.URI).SetTimeout(config.Timeout)
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
-		// In a real implementation, we might want to handle this error better
-		// For now, we'll just panic
-		panic(fmt.Sprintf("failed to connect to MongoDB: %v", err))
+		if !config.FailSilently {
+			log.Printf("Failed to connect to MongoDB: %v", err)
+		}
+		// Start the ticker anyway so we don't block if MongoDB becomes available later
+		sink.ticker = time.NewTicker(config.FlushTime)
+		go sink.flushPeriodically()
+		return sink
 	}
 
 	// Ping MongoDB to verify connection
-	pingCtx, cancel := context.WithTimeout(ctx, config.Timeout)
-	defer cancel()
+	pingCtx, pingCancel := context.WithTimeout(ctx, config.Timeout)
+	defer pingCancel()
+
 	if err := client.Ping(pingCtx, nil); err != nil {
-		client.Disconnect(ctx)
-		panic(fmt.Sprintf("failed to ping MongoDB: %v", err))
+		if !config.FailSilently {
+			log.Printf("Failed to ping MongoDB: %v", err)
+		}
+		// Start the ticker anyway so we don't block if MongoDB becomes available later
+		sink.ticker = time.NewTicker(config.FlushTime)
+		go sink.flushPeriodically()
+		return sink
 	}
 
 	// Get collection reference
-	collection := client.Database(config.Database).Collection(config.Collection)
-
-	// Create sink
-	sink := &MongoDBSinkImpl{
-		client:        client,
-		database:      config.Database,
-		collection:    config.Collection,
-		batchSize:     config.BatchSize,
-		flushTime:     config.FlushTime,
-		buffer:        make([]map[string]interface{}, 0, config.BatchSize),
-		done:          make(chan struct{}),
-		collectionRef: collection,
-		ctx:           ctx,
-		cancelFunc:    cancel,
-	}
+	sink.client = client
+	sink.collectionRef = client.Database(config.Database).Collection(config.Collection)
+	sink.connected = true
 
 	// Start background flusher
 	sink.ticker = time.NewTicker(config.FlushTime)
@@ -122,6 +139,12 @@ func (s *MongoDBSinkImpl) flush() error {
 		return nil
 	}
 
+	// If not connected, just clear the buffer and return
+	if !s.connected || s.client == nil || s.collectionRef == nil {
+		s.buffer = s.buffer[:0]
+		return nil
+	}
+
 	// Convert buffer to interface slice for MongoDB
 	documents := make([]interface{}, len(s.buffer))
 	for i, entry := range s.buffer {
@@ -139,7 +162,12 @@ func (s *MongoDBSinkImpl) flush() error {
 	// Insert documents
 	_, err := s.collectionRef.InsertMany(ctx, documents)
 	if err != nil {
-		return fmt.Errorf("failed to insert documents into MongoDB: %w", err)
+		if !s.failSilently {
+			log.Printf("Failed to insert documents into MongoDB: %v", err)
+		}
+		// Clear buffer anyway to prevent memory buildup
+		s.buffer = s.buffer[:0]
+		return err
 	}
 
 	// Reset buffer
@@ -171,11 +199,12 @@ func (s *MongoDBSinkImpl) Close() error {
 	err := s.flush()
 	s.mutex.Unlock()
 
-	// Disconnect from MongoDB
-	if s.client != nil {
+	// Disconnect from MongoDB if connected
+	if s.connected && s.client != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		if disconnectErr := s.client.Disconnect(ctx); disconnectErr != nil {
+		if disconnectErr := s.client.Disconnect(ctx); disconnectErr != nil && !s.failSilently {
+			log.Printf("Failed to disconnect from MongoDB: %v", disconnectErr)
 			if err == nil {
 				err = disconnectErr
 			}
@@ -237,43 +266,63 @@ func MongoDBWithTimeout(timeout time.Duration) MongoDBSinkOption {
 	}
 }
 
+// MongoDBWithFailSilently sets whether to fail silently or log errors
+func MongoDBWithFailSilently(failSilently bool) MongoDBSinkOption {
+	return func(c *mongoDBSinkConfig) {
+		c.FailSilently = failSilently
+	}
+}
+
 // Register MongoDB sink with the registry
 func init() {
 	RegisterSink("mongodb", func(u *url.URL) (Sink, error) {
 		var opts []MongoDBSinkOption
 
-		// Build connection URI
-		// MongoDB connection strings are in the format: mongodb://user:password@host:port/database
-		// We need to reconstruct this from the parsed URL
-		mongoURI := fmt.Sprintf("mongodb://%s", u.Host)
-
-		// Handle authentication if present in the URL
-		if u.User != nil {
-			username := u.User.Username()
-			password, _ := u.User.Password()
-			// If we have auth info, reconstruct the URI with auth
-			mongoURI = fmt.Sprintf("mongodb://%s:%s@%s", username, password, u.Host)
-		}
-
+		// Extract database and collection from URL path and query
+		dbName := ""
 		if u.Path != "" {
 			// Remove leading slash from path
-			dbName := u.Path
+			dbName = u.Path
 			if len(dbName) > 0 && dbName[0] == '/' {
 				dbName = dbName[1:]
 			}
-			if dbName != "" {
-				opts = append(opts, MongoDBWithDatabase(dbName))
-			}
 		}
-		opts = append(opts, MongoDBWithURI(mongoURI))
 
 		// Parse query parameters
 		q := u.Query()
-
-		if collection := q.Get("collection"); collection != "" {
-			opts = append(opts, MongoDBWithCollection(collection))
+		collName := q.Get("collection")
+		if collName == "" {
+			collName = "logs"
 		}
 
+		// Build connection URI with database included
+		// Format: mongodb://[username:password@]host[:port][/database][?options]
+		var mongoURI string
+		if u.User != nil {
+			// Has authentication
+			username := u.User.Username()
+			password, _ := u.User.Password()
+			mongoURI = fmt.Sprintf("mongodb://%s:%s@%s", username, password, u.Host)
+		} else {
+			// No authentication
+			mongoURI = fmt.Sprintf("mongodb://%s", u.Host)
+		}
+
+		// Add database to URI if provided
+		if dbName != "" {
+			mongoURI += "/" + dbName
+		}
+
+		opts = append(opts, MongoDBWithURI(mongoURI))
+
+		// Set database and collection
+		if dbName != "" {
+			opts = append(opts, MongoDBWithDatabase(dbName))
+		}
+
+		opts = append(opts, MongoDBWithCollection(collName))
+
+		// Parse other query parameters
 		if batchSize := q.Get("batchSize"); batchSize != "" {
 			if size, err := strconv.Atoi(batchSize); err == nil && size > 0 {
 				opts = append(opts, MongoDBWithBatchSize(size))
@@ -290,6 +339,11 @@ func init() {
 			if duration, err := time.ParseDuration(timeout); err == nil {
 				opts = append(opts, MongoDBWithTimeout(duration))
 			}
+		}
+
+		if failSilently := q.Get("failSilently"); failSilently != "" {
+			silent := failSilently == "true" || failSilently == "1"
+			opts = append(opts, MongoDBWithFailSilently(silent))
 		}
 
 		return NewMongoDBSink(opts...), nil
