@@ -3,7 +3,6 @@ package serviceprovider
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfrabbitmq "git.snappfood.ir/backend/go/packages/sf-rabbitmq"
-	"log"
 	"time"
 )
 
@@ -51,7 +50,7 @@ func RabbitProvider(logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		log.Fatalf("Failed to register rabbit connection: %v", err)
+		logger.Errorf("Failed to register rabbit connection: %v", err)
 	}
 
 }

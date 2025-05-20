@@ -5,7 +5,6 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfredis "git.snappfood.ir/backend/go/packages/sf-redis"
 	"github.com/amirex128/new_site_builder/src/config"
-	"log"
 	"time"
 )
 
@@ -32,6 +31,6 @@ func RedisProvider(cfg *config.Config, logger sflogger.Logger) {
 		),
 	)
 	if err != nil {
-		log.Fatalf("Failed to register redis connection: %v", err)
+		logger.Errorf("Failed to register redis connection: %v", err)
 	}
 }

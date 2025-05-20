@@ -12,6 +12,6 @@ func HttpProvider(logger sflogger.Logger) {
 	//	httpo.WithLogger(logger),
 	//)
 	//if err != nil {
-	//	log.Fatalf("Failed to register connection: %v", err)
+	//	log.Errorf("Failed to register connection: %v", err)
 	//}
 }

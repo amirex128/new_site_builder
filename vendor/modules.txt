@@ -1,22 +1,29 @@
-# git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.5
+# filippo.io/edwards25519 v1.1.0
+## explicit; go 1.20
+filippo.io/edwards25519
+filippo.io/edwards25519/field
+# git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.7
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-config-manager
-# git.snappfood.ir/backend/go/packages/sf-logger v0.0.21
+# git.snappfood.ir/backend/go/packages/sf-logger v0.0.22
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-logger
-# git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.2
-## explicit; go 1.23.2
+# git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3
+## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-memory-loader
-# git.snappfood.ir/backend/go/packages/sf-orm v0.0.6
+# git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3
+## explicit; go 1.24.2
+git.snappfood.ir/backend/go/packages/sf-mongo
+# git.snappfood.ir/backend/go/packages/sf-orm v0.0.8
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-orm
-# git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3
-## explicit; go 1.24.0
+# git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5
+## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-rabbitmq
-# git.snappfood.ir/backend/go/packages/sf-redis v0.0.5
+# git.snappfood.ir/backend/go/packages/sf-redis v0.0.7
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-redis
-# git.snappfood.ir/backend/go/packages/sf-routing v0.0.9
+# git.snappfood.ir/backend/go/packages/sf-routing v0.0.10
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-routing
 git.snappfood.ir/backend/go/packages/sf-routing/middlewares
@@ -129,8 +136,8 @@ github.com/gin-gonic/gin/binding
 github.com/gin-gonic/gin/internal/bytesconv
 github.com/gin-gonic/gin/internal/json
 github.com/gin-gonic/gin/render
-# github.com/go-co-op/gocron/v2 v2.16.1
-## explicit; go 1.21.0
+# github.com/go-co-op/gocron/v2 v2.16.2
+## explicit; go 1.23.0
 github.com/go-co-op/gocron/v2
 # github.com/go-ini/ini v1.67.0
 ## explicit
@@ -174,8 +181,8 @@ github.com/go-redis/redis/v8/internal/pool
 github.com/go-redis/redis/v8/internal/proto
 github.com/go-redis/redis/v8/internal/rand
 github.com/go-redis/redis/v8/internal/util
-# github.com/go-sql-driver/mysql v1.7.0
-## explicit; go 1.13
+# github.com/go-sql-driver/mysql v1.9.2
+## explicit; go 1.21.0
 github.com/go-sql-driver/mysql
 # github.com/go-zookeeper/zk v1.0.4
 ## explicit; go 1.13
@@ -208,7 +215,7 @@ github.com/golang-sql/sqlexp
 # github.com/golang/protobuf v1.5.4
 ## explicit; go 1.17
 github.com/golang/protobuf/proto
-# github.com/golang/snappy v0.0.4
+# github.com/golang/snappy v1.0.0
 ## explicit
 github.com/golang/snappy
 # github.com/google/uuid v1.6.0
@@ -306,14 +313,14 @@ github.com/leodido/go-urn/scim/schema
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
-# github.com/mattn/go-colorable v0.1.13
-## explicit; go 1.15
+# github.com/mattn/go-colorable v0.1.14
+## explicit; go 1.18
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.20
 ## explicit; go 1.15
 github.com/mattn/go-isatty
-# github.com/microsoft/go-mssqldb v1.7.2
-## explicit; go 1.17
+# github.com/microsoft/go-mssqldb v1.8.1
+## explicit; go 1.18
 github.com/microsoft/go-mssqldb
 github.com/microsoft/go-mssqldb/aecmk
 github.com/microsoft/go-mssqldb/integratedauth
@@ -376,8 +383,8 @@ github.com/pelletier/go-toml/v2/unstable
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
-# github.com/prometheus/procfs v0.16.0
-## explicit; go 1.21
+# github.com/prometheus/procfs v0.16.1
+## explicit; go 1.23.0
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
@@ -387,8 +394,6 @@ github.com/rabbitmq/amqp091-go
 # github.com/robfig/cron/v3 v3.0.1
 ## explicit; go 1.12
 github.com/robfig/cron/v3
-# github.com/rogpeppe/go-internal v1.13.1
-## explicit; go 1.22
 # github.com/rs/xid v1.6.0
 ## explicit; go 1.16
 github.com/rs/xid
@@ -441,8 +446,8 @@ github.com/xdg-go/scram
 # github.com/xdg-go/stringprep v1.0.4
 ## explicit; go 1.11
 github.com/xdg-go/stringprep
-# github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a
-## explicit; go 1.12
+# github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78
+## explicit; go 1.17
 github.com/youmark/pkcs8
 # go.elastic.co/apm/module/apmgin/v2 v2.7.0
 ## explicit; go 1.23
@@ -480,7 +485,7 @@ go.elastic.co/apm/v2/model
 go.elastic.co/apm/v2/sqlutil
 go.elastic.co/apm/v2/stacktrace
 go.elastic.co/apm/v2/transport
-# go.elastic.co/fastjson v1.5.0
+# go.elastic.co/fastjson v1.5.1
 ## explicit; go 1.23
 go.elastic.co/fastjson
 # go.etcd.io/etcd/api/v3 v3.5.21
@@ -502,7 +507,7 @@ go.etcd.io/etcd/client/v3
 go.etcd.io/etcd/client/v3/credentials
 go.etcd.io/etcd/client/v3/internal/endpoint
 go.etcd.io/etcd/client/v3/internal/resolver
-# go.mongodb.org/mongo-driver v1.14.0
+# go.mongodb.org/mongo-driver v1.17.3
 ## explicit; go 1.18
 go.mongodb.org/mongo-driver/bson
 go.mongodb.org/mongo-driver/bson/bsoncodec
@@ -754,11 +759,13 @@ gorm.io/driver/mysql
 # gorm.io/driver/sqlserver v1.5.4
 ## explicit; go 1.14
 gorm.io/driver/sqlserver
-# gorm.io/gorm v1.25.12
+# gorm.io/gorm v1.26.1
 ## explicit; go 1.18
 gorm.io/gorm
 gorm.io/gorm/callbacks
 gorm.io/gorm/clause
+gorm.io/gorm/internal/lru
+gorm.io/gorm/internal/stmt_store
 gorm.io/gorm/logger
 gorm.io/gorm/migrator
 gorm.io/gorm/schema

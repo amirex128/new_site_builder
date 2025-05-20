@@ -88,7 +88,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 			Port: func() int {
 				port, err := strconv.Atoi(cfg.MysqlPort)
 				if err != nil {
-					logger.Fatalf("Failed to convert MySQL port to int: %v", err)
+					logger.Errorf("Failed to convert MySQL port to int: %v", err)
 				}
 				return port
 			}(),
@@ -103,7 +103,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		logger.Fatalf("Failed to register database connection: %v", err)
+		logger.Errorf("Failed to register database connection: %v", err)
 	}
 
 }

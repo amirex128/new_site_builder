@@ -264,7 +264,7 @@ func (b *Bulk) createColMetadata() []byte {
 		}
 		binary.Write(buf, binary.LittleEndian, uint16(col.Flags))
 
-		writeTypeInfo(buf, &b.bulkColumns[i].ti, false)
+		writeTypeInfo(buf, &b.bulkColumns[i].ti, false, b.cn.sess.encoding)
 
 		if col.ti.TypeId == typeNText ||
 			col.ti.TypeId == typeText ||
@@ -627,6 +627,6 @@ func (b *Bulk) makeParam(val DataValue, col columnStruct) (res param, err error)
 
 func (b *Bulk) dlogf(ctx context.Context, format string, v ...interface{}) {
 	if b.Debug {
-		b.cn.sess.logger.Log(ctx, msdsn.LogDebug, fmt.Sprintf(format, v...))
+		b.cn.sess.LogF(ctx, msdsn.LogDebug, format, v...)
 	}
 }

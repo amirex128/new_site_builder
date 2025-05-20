@@ -14,6 +14,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/google/uuid"
 )
 
 type (
@@ -44,6 +46,8 @@ const (
 	LogTransaction Log = 32
 	LogDebug       Log = 64
 	LogRetries     Log = 128
+	// LogSessionIDs tells the session logger to include activity id and connection id
+	LogSessionIDs Log = 0x8000
 )
 
 const (
@@ -79,7 +83,14 @@ const (
 	DialTimeout            = "dial timeout"
 	Pipe                   = "pipe"
 	MultiSubnetFailover    = "multisubnetfailover"
+	NoTraceID              = "notraceid"
+	GuidConversion         = "guid conversion"
 )
+
+type EncodeParameters struct {
+	// Properly convert GUIDs, using correct byte endianness
+	GuidConversion bool
+}
 
 type Config struct {
 	Port       uint64
@@ -131,6 +142,13 @@ type Config struct {
 	ColumnEncryption bool
 	// Attempt to connect to all IPs in parallel when MultiSubnetFailover is true
 	MultiSubnetFailover bool
+	// guid to set as Activity Id in the prelogin packet. Defaults to a new value for each Config.
+	ActivityID []byte
+	// When true, no connection id or trace id value is sent in the prelogin packet.
+	// Some cloud servers may block connections that lack such values.
+	NoTraceID bool
+	// Parameters related to type encoding
+	Encoding EncodeParameters
 }
 
 func readDERFile(filename string) ([]byte, error) {
@@ -285,6 +303,10 @@ func Parse(dsn string) (Config, error) {
 		Protocols:          []string{},
 	}
 
+	activityid, uerr := uuid.NewRandom()
+	if uerr == nil {
+		p.ActivityID = activityid[:]
+	}
 	var params map[string]string
 	var err error
 
@@ -504,6 +526,27 @@ func Parse(dsn string) (Config, error) {
 		// Defaulting to true to prevent breaking change although other client libraries default to false
 		p.MultiSubnetFailover = true
 	}
+	nti, ok := params[NoTraceID]
+	if ok {
+		notraceid, err := strconv.ParseBool(nti)
+		if err == nil {
+			p.NoTraceID = notraceid
+		}
+	}
+
+	guidConversion, ok := params[GuidConversion]
+	if ok {
+		var err error
+		p.Encoding.GuidConversion, err = strconv.ParseBool(guidConversion)
+		if err != nil {
+			f := "invalid guid conversion '%s': %s"
+			return p, fmt.Errorf(f, guidConversion, err.Error())
+		}
+	} else {
+		// set to false for backward compatibility
+		p.Encoding.GuidConversion = false
+	}
+
 	return p, nil
 }
 
@@ -564,6 +607,11 @@ func (p Config) URL() *url.URL {
 	if p.ColumnEncryption {
 		q.Add("columnencryption", "true")
 	}
+
+	if p.Encoding.GuidConversion {
+		q.Add(GuidConversion, strconv.FormatBool(p.Encoding.GuidConversion))
+	}
+
 	if len(q) > 0 {
 		res.RawQuery = q.Encode()
 	}

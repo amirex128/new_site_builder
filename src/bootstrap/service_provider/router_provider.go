@@ -7,7 +7,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/bootstrap/exporter"
 	"github.com/amirex128/new_site_builder/src/bootstrap/healthcheck"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 func RouterProvider(logger sflogger.Logger) {
@@ -53,7 +52,7 @@ func RouterProvider(logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		log.Fatalf("Failed to register Routers: %v", err)
+		logger.Errorf("Failed to register Routers: %v", err)
 	}
 
 }

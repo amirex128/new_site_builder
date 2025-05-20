@@ -247,16 +247,23 @@ func RegisterConnection(opts ...RegistryOption) error {
 		globalRegistry.retryOptions = DefaultRetryOptions()
 	}
 
+	var errs []error
 	// Start connections for all registered connections
 	for name := range globalRegistry.connections {
-		go connectWithRetry(name)
+		err := connectWithRetry(name)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("connection '%s': %w", name, err))
+		}
 	}
 
+	if len(errs) > 0 {
+		return fmt.Errorf("failed to connect to one or more databases: %v", errs)
+	}
 	return nil
 }
 
-// connectWithRetry attempts to establish a connection with infinite retry
-func connectWithRetry(name string) {
+// connectWithRetry attempts to establish a connection with retry and returns error if all retries fail
+func connectWithRetry(name string) error {
 	operation := func() error {
 		globalRegistry.mu.RLock()
 		conn, exists := globalRegistry.connections[name]
@@ -292,7 +299,7 @@ func connectWithRetry(name string) {
 		}
 		return err
 	}
-	_ = WithRetry(
+	return WithRetry(
 		operation,
 		globalRegistry.retryOptions,
 		globalRegistry.logger,
