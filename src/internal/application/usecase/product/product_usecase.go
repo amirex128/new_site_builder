@@ -2,7 +2,6 @@ package productusecase
 
 import (
 	"errors"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -12,12 +11,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"gorm.io/gorm"
 )
 
@@ -469,165 +468,33 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 		"filterCount":  len(params.SelectedFilters),
 	})
 
-	// Build query filters based on selected filters
-	queryBuilder := &filterQueryBuilder{
-		siteID: *params.SiteID,
-		logger: u.Logger,
+	// Convert filter enums to ProductFilterEnum keys for repository
+	filters := make(map[enums.ProductFilterEnum][]string)
+	for k, v := range params.SelectedFilters {
+		filters[enums.ProductFilterEnum(k)] = v
 	}
 
-	// Apply filters if any are provided
-	if params.SelectedFilters != nil && len(params.SelectedFilters) > 0 {
-		// Process all filter types
-		for filterType, values := range params.SelectedFilters {
-			switch filterType {
-			case "price_range":
-				if len(values) == 2 {
-					minPrice, errMin := strconv.ParseInt(values[0], 10, 64)
-					maxPrice, errMax := strconv.ParseInt(values[1], 10, 64)
-					if errMin == nil && errMax == nil {
-						queryBuilder.addPriceRangeFilter(minPrice, maxPrice)
-					}
-				}
-			case "rating_range":
-				if len(values) == 2 {
-					minRating, errMin := strconv.Atoi(values[0])
-					maxRating, errMax := strconv.Atoi(values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addRatingRangeFilter(minRating, maxRating)
-					}
-				}
-			case "selling_range":
-				if len(values) == 2 {
-					minSelling, errMin := strconv.Atoi(values[0])
-					maxSelling, errMax := strconv.Atoi(values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addSellingRangeFilter(minSelling, maxSelling)
-					}
-				}
-			case "visited_range":
-				if len(values) == 2 {
-					minVisited, errMin := strconv.Atoi(values[0])
-					maxVisited, errMax := strconv.Atoi(values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addVisitedRangeFilter(minVisited, maxVisited)
-					}
-				}
-			case "review_range":
-				if len(values) == 2 {
-					minReview, errMin := strconv.Atoi(values[0])
-					maxReview, errMax := strconv.Atoi(values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addReviewRangeFilter(minReview, maxReview)
-					}
-				}
-			case "weight_range":
-				if len(values) == 2 {
-					minWeight, errMin := strconv.Atoi(values[0])
-					maxWeight, errMax := strconv.Atoi(values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addWeightRangeFilter(minWeight, maxWeight)
-					}
-				}
-			case "category_ids":
-				if len(values) > 0 {
-					var categoryIDs []int64
-					for _, val := range values {
-						id, err := strconv.ParseInt(val, 10, 64)
-						if err == nil {
-							categoryIDs = append(categoryIDs, id)
-						}
-					}
-					if len(categoryIDs) > 0 {
-						queryBuilder.addCategoryIDsFilter(categoryIDs)
-					}
-				}
-			case "product_ids":
-				if len(values) > 0 {
-					var productIDs []int64
-					for _, val := range values {
-						id, err := strconv.ParseInt(val, 10, 64)
-						if err == nil {
-							productIDs = append(productIDs, id)
-						}
-					}
-					if len(productIDs) > 0 {
-						queryBuilder.addProductIDsFilter(productIDs)
-					}
-				}
-			case "free_send":
-				if len(values) > 0 {
-					freeSend, err := strconv.ParseBool(values[0])
-					if err == nil {
-						queryBuilder.addFreeSendFilter(freeSend)
-					}
-				}
-			case "updated_range":
-				if len(values) == 2 {
-					minUpdated, errMin := time.Parse(time.RFC3339, values[0])
-					maxUpdated, errMax := time.Parse(time.RFC3339, values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addUpdatedRangeFilter(minUpdated, maxUpdated)
-					}
-				}
-			case "added_range":
-				if len(values) == 2 {
-					minAdded, errMin := time.Parse(time.RFC3339, values[0])
-					maxAdded, errMax := time.Parse(time.RFC3339, values[1])
-					if errMin == nil && errMax == nil {
-						queryBuilder.addAddedRangeFilter(minAdded, maxAdded)
-					}
-				}
-			}
-		}
-	}
-
-	// Apply sorting if specified
+	// Convert sort enum to string pointer
+	var sortStr *string
 	if params.SelectedSort != nil {
-		queryBuilder.addSorting(string(*params.SelectedSort))
+		s := string(*params.SelectedSort)
+		sortStr = &s
 	}
 
-	// In a real implementation, we would use the query builder to construct a complex SQL query
-	// For now, we'll query the repository and then filter/sort in memory for demonstration
-	products, count, err := u.productRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	// Call the repository method for filtering and sorting
+	products, count, err := u.productRepo.GetAllByFilterAndSort(
+		*params.SiteID,
+		filters,
+		sortStr,
+		params.PaginationRequestDto,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	// Apply filters and sorting (simplistic implementation for demonstration)
-	// In a real implementation, this would be handled by the database query
-	var filteredProducts []domain.Product
-	for _, p := range products {
-		// In a real implementation, we would filter based on queryBuilder parameters
-		// For this example, we'll include all products
-		filteredProducts = append(filteredProducts, p)
-	}
-
-	// Sort products based on selected sort (if any)
-	if params.SelectedSort != nil {
-		// In a real implementation, this would be handled by the database ORDER BY
-		switch *params.SelectedSort {
-		case "name_az":
-			sort.Slice(filteredProducts, func(i, j int) bool {
-				return filteredProducts[i].Name < filteredProducts[j].Name
-			})
-		case "name_za":
-			sort.Slice(filteredProducts, func(i, j int) bool {
-				return filteredProducts[i].Name > filteredProducts[j].Name
-			})
-		case "recently_added":
-			sort.Slice(filteredProducts, func(i, j int) bool {
-				return filteredProducts[i].CreatedAt.After(filteredProducts[j].CreatedAt)
-			})
-		case "most_visited":
-			sort.Slice(filteredProducts, func(i, j int) bool {
-				return filteredProducts[i].VisitedCount > filteredProducts[j].VisitedCount
-			})
-		}
-	}
-
-	// Enhancement: Load associated data (variants, categories, etc.)
+	// Enhancement: Load associated data (media, etc.)
 	var enhancedProducts []map[string]interface{}
-	for _, p := range filteredProducts {
+	for _, p := range products {
 		productData := map[string]interface{}{
 			"id":              p.ID,
 			"name":            p.Name,
@@ -666,105 +533,13 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 		enhancedProducts = append(enhancedProducts, productData)
 	}
 
-	// Apply pagination to the enhanced products
-	// In a real implementation, this would be handled by the database LIMIT/OFFSET
-	startIndex := int((params.Page - 1) * params.PageSize)
-	endIndex := int(params.Page * params.PageSize)
-	totalProducts := len(enhancedProducts)
-
-	// Adjust indices if they are out of bounds
-	if startIndex >= totalProducts {
-		startIndex = 0
-		endIndex = 0
-	}
-	if endIndex > totalProducts {
-		endIndex = totalProducts
-	}
-
-	// Get paginated slice of products
-	var paginatedProducts []map[string]interface{}
-	if startIndex < totalProducts {
-		paginatedProducts = enhancedProducts[startIndex:endIndex]
-	}
-
-	// Return paginated result
 	return map[string]interface{}{
-		"items":     paginatedProducts,
+		"items":     enhancedProducts,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
 	}, nil
-}
-
-// filterQueryBuilder is a helper struct to build SQL queries for product filtering
-type filterQueryBuilder struct {
-	siteID       int64
-	priceRange   []int64
-	ratingRange  []int
-	sellingRange []int
-	visitedRange []int
-	reviewRange  []int
-	weightRange  []int
-	categoryIDs  []int64
-	productIDs   []int64
-	freeSend     *bool
-	updatedRange []time.Time
-	addedRange   []time.Time
-	selectedSort *string
-	logger       sflogger.Logger
-}
-
-func (qb *filterQueryBuilder) addPriceRangeFilter(min, max int64) {
-	qb.priceRange = []int64{min, max}
-	qb.logger.Info("Added price range filter", map[string]interface{}{
-		"min": min,
-		"max": max,
-	})
-}
-
-func (qb *filterQueryBuilder) addRatingRangeFilter(min, max int) {
-	qb.ratingRange = []int{min, max}
-}
-
-func (qb *filterQueryBuilder) addSellingRangeFilter(min, max int) {
-	qb.sellingRange = []int{min, max}
-}
-
-func (qb *filterQueryBuilder) addVisitedRangeFilter(min, max int) {
-	qb.visitedRange = []int{min, max}
-}
-
-func (qb *filterQueryBuilder) addReviewRangeFilter(min, max int) {
-	qb.reviewRange = []int{min, max}
-}
-
-func (qb *filterQueryBuilder) addWeightRangeFilter(min, max int) {
-	qb.weightRange = []int{min, max}
-}
-
-func (qb *filterQueryBuilder) addCategoryIDsFilter(categoryIDs []int64) {
-	qb.categoryIDs = categoryIDs
-}
-
-func (qb *filterQueryBuilder) addProductIDsFilter(productIDs []int64) {
-	qb.productIDs = productIDs
-}
-
-func (qb *filterQueryBuilder) addFreeSendFilter(freeSend bool) {
-	qb.freeSend = &freeSend
-}
-
-func (qb *filterQueryBuilder) addUpdatedRangeFilter(min, max time.Time) {
-	qb.updatedRange = []time.Time{min, max}
-}
-
-func (qb *filterQueryBuilder) addAddedRangeFilter(min, max time.Time) {
-	qb.addedRange = []time.Time{min, max}
-}
-
-func (qb *filterQueryBuilder) addSorting(sortType string) {
-	qb.selectedSort = &sortType
 }
 
 func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByCategoryQuery) (any, error) {

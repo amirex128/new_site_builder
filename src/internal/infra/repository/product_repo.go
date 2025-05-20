@@ -3,6 +3,8 @@ package repository
 import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -106,4 +108,136 @@ func (r *ProductRepo) Update(product domain.Product) error {
 func (r *ProductRepo) Delete(id int64) error {
 	result := r.database.Delete(&domain.Product{}, id)
 	return result.Error
+}
+
+func (r *ProductRepo) GetAllByFilterAndSort(
+	siteID int64,
+	filters map[enums.ProductFilterEnum][]string,
+	sort *string,
+	paginationRequestDto common.PaginationRequestDto,
+) ([]domain.Product, int64, error) {
+	var products []domain.Product
+	var count int64
+
+	query := r.database.Model(&domain.Product{}).
+		Where("site_id = ?", siteID)
+
+	// Apply filters if they exist
+	if filters != nil {
+		for filterType, values := range filters {
+			switch filterType {
+			case "price_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("price BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "rating_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("rate BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "selling_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("selling_count BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "visited_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("visited_count BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "review_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("review_count BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "weight_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("weight BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "added_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("created_at BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "updated_range":
+				if len(values) > 0 {
+					parts := strings.Split(values[0], ",")
+					if len(parts) == 2 {
+						query = query.Where("updated_at BETWEEN ? AND ?", parts[0], parts[1])
+					}
+				}
+			case "category_ids":
+				if len(values) > 0 {
+					categoryIds := strings.Join(values, ",")
+					query = query.Joins("JOIN product_category pc ON pc.product_id = products.id").
+						Where("pc.category_id IN (?)", categoryIds)
+				}
+			case "product_ids":
+				if len(values) > 0 {
+					productIds := strings.Join(values, ",")
+					query = query.Where("id IN (?)", productIds)
+				}
+			case "free_send":
+				if len(values) > 0 {
+					query = query.Where("free_send = ?", values[0])
+				}
+			}
+		}
+	}
+
+	// Apply sorting if specified
+	if sort != nil {
+		switch *sort {
+		case "name_az":
+			query = query.Order("name ASC")
+		case "name_za":
+			query = query.Order("name DESC")
+		case "recently_added":
+			query = query.Order("created_at DESC")
+		case "recently_updated":
+			query = query.Order("updated_at DESC")
+		case "most_visited":
+			query = query.Order("visited_count DESC")
+		case "least_visited":
+			query = query.Order("visited_count ASC")
+		case "most_rated":
+			query = query.Order("rate DESC")
+		case "least_rated":
+			query = query.Order("rate ASC")
+		case "most_reviewed":
+			query = query.Order("review_count DESC")
+		case "least_reviewed":
+			query = query.Order("review_count ASC")
+		}
+	} else {
+		query = query.Order("updated_at DESC")
+	}
+
+	query.Count(&count)
+
+	limit := paginationRequestDto.PageSize
+	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
+
+	result := query.Limit(limit).Offset(offset).Find(&products)
+	if result.Error != nil {
+		return nil, 0, result.Error
+	}
+
+	return products, count, nil
 }

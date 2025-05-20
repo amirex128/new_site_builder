@@ -455,7 +455,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 	}
 
 	// Generate gateway account name
-	gatewayAccountName := fmt.Sprintf("%d-%d", *params.Gateway, *params.SiteID)
+	gatewayAccountName := fmt.Sprintf("%s-%d", string(*params.Gateway), *params.SiteID)
 
 	// Create payment record
 	paymentData := domain.Payment{

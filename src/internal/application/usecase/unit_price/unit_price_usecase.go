@@ -188,7 +188,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 		}
 
 		if matchingUnitPrice == nil {
-			return nil, fmt.Errorf("unit price not found for name: %d", *unitPriceParam.UnitPriceName)
+			return nil, fmt.Errorf("unit price not found for name: %s", string(*unitPriceParam.UnitPriceName))
 		}
 	}
 

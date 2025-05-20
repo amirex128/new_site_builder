@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strings"
 
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
@@ -83,8 +84,8 @@ func (r *ArticleRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto 
 
 func (r *ArticleRepo) GetAllByFilterAndSort(
 	siteID int64,
-	filters map[string][]string,
-	sort *string,
+	filters map[enums.ArticleFilterEnum][]string,
+	sort *enums.ArticleSortEnum,
 	paginationRequestDto common.PaginationRequestDto,
 ) ([]domain.Article, int64, error) {
 	var articles []domain.Article
