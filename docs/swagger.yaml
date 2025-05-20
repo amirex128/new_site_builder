@@ -63,30 +63,6 @@ definitions:
     - id
     - provinceId
     type: object
-  article.ArticleSortEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    type: integer
-    x-enum-varnames:
-    - TitleAZ
-    - TitleZA
-    - RecentlyAdded
-    - RecentlyUpdated
-    - MostVisited
-    - LeastVisited
-    - MostRated
-    - LeastRated
-    - MostReviewed
-    - LeastReviewed
   article.CreateArticleCommand:
     properties:
       body:
@@ -144,7 +120,7 @@ definitions:
           type: array
         type: object
       selectedSort:
-        $ref: '#/definitions/article.ArticleSortEnum'
+        $ref: '#/definitions/enums.ArticleSortEnum'
       siteId:
         type: integer
       sort:
@@ -296,6 +272,8 @@ definitions:
         type: array
       pageNumber:
         type: integer
+      search:
+        type: string
       totalCount:
         type: integer
       totalPages:
@@ -329,7 +307,7 @@ definitions:
       phone:
         type: string
       type:
-        $ref: '#/definitions/user.VerifyTypeEnum'
+        $ref: '#/definitions/enums.VerifyTypeEnum'
     required:
     - email
     - phone
@@ -369,11 +347,11 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/customer_ticket.CustomerTicketPriorityEnum'
+        $ref: '#/definitions/enums.CustomerTicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/customer_ticket.CustomerTicketCategoryEnum'
+        $ref: '#/definitions/enums.CustomerTicketCategoryEnum'
       status:
-        $ref: '#/definitions/customer_ticket.CustomerTicketStatusEnum'
+        $ref: '#/definitions/enums.CustomerTicketStatusEnum'
     required:
     - assignedTo
     - comment
@@ -393,9 +371,9 @@ definitions:
       ownerUserId:
         type: integer
       priority:
-        $ref: '#/definitions/customer_ticket.CustomerTicketPriorityEnum'
+        $ref: '#/definitions/enums.CustomerTicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/customer_ticket.CustomerTicketCategoryEnum'
+        $ref: '#/definitions/enums.CustomerTicketCategoryEnum'
       title:
         type: string
     required:
@@ -413,44 +391,6 @@ definitions:
     required:
     - respondentId
     type: object
-  customer_ticket.CustomerTicketCategoryEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    type: integer
-    x-enum-varnames:
-    - Bug
-    - Enhancement
-    - FeatureRequest
-    - Question
-    - Documentation
-    - Financial
-  customer_ticket.CustomerTicketPriorityEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - Low
-    - Medium
-    - High
-    - Critical
-  customer_ticket.CustomerTicketStatusEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - New
-    - InProgress
-    - Closed
   customer_ticket.ReplayCustomerTicketCommand:
     properties:
       assignedTo:
@@ -464,11 +404,11 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/customer_ticket.CustomerTicketPriorityEnum'
+        $ref: '#/definitions/enums.CustomerTicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/customer_ticket.CustomerTicketCategoryEnum'
+        $ref: '#/definitions/enums.CustomerTicketCategoryEnum'
       status:
-        $ref: '#/definitions/customer_ticket.CustomerTicketStatusEnum'
+        $ref: '#/definitions/enums.CustomerTicketStatusEnum'
     required:
     - assignedTo
     - comment
@@ -528,7 +468,7 @@ definitions:
       siteId:
         type: integer
       type:
-        $ref: '#/definitions/product.DiscountTypeEnum'
+        $ref: '#/definitions/enums.DiscountTypeEnum'
       value:
         type: integer
     required:
@@ -556,12 +496,322 @@ definitions:
       quantity:
         type: integer
       type:
-        $ref: '#/definitions/product.DiscountTypeEnum'
+        $ref: '#/definitions/enums.DiscountTypeEnum'
       value:
         type: integer
     required:
     - id
     type: object
+  enums.AiTypeEnum:
+    enum:
+    - gpt35
+    - gpt4
+    - claude
+    type: string
+    x-enum-varnames:
+    - GPT35Type
+    - GPT4Type
+    - ClaudeType
+  enums.ArticleSortEnum:
+    enum:
+    - title_a_z
+    - title_z_a
+    - recently_added
+    - recently_updated
+    - most_visited
+    - least_visited
+    - most_rated
+    - least_rated
+    - most_reviewed
+    - least_reviewed
+    type: string
+    x-enum-varnames:
+    - ArticleTitleAZSort
+    - ArticleTitleZASort
+    - ArticleRecentlyAddedSort
+    - ArticleRecentlyUpdatedSort
+    - ArticleMostVisitedSort
+    - ArticleLeastVisitedSort
+    - ArticleMostRatedSort
+    - ArticleLeastRatedSort
+    - ArticleMostReviewedSort
+    - ArticleLeastReviewedSort
+  enums.CourierEnum:
+    enum:
+    - post
+    - tipax
+    type: string
+    x-enum-varnames:
+    - PostCourier
+    - TipaxCourier
+  enums.CustomerTicketCategoryEnum:
+    enum:
+    - bug
+    - enhancement
+    - feature_request
+    - question
+    - documentation
+    - financial
+    type: string
+    x-enum-varnames:
+    - CustomerTicketBugCategory
+    - CustomerTicketEnhancementCategory
+    - CustomerTicketFeatureRequestCategory
+    - CustomerTicketQuestionCategory
+    - CustomerTicketDocumentationCategory
+    - CustomerTicketFinancialCategory
+  enums.CustomerTicketPriorityEnum:
+    enum:
+    - low
+    - medium
+    - high
+    - critical
+    type: string
+    x-enum-varnames:
+    - CustomerTicketLowPriority
+    - CustomerTicketMediumPriority
+    - CustomerTicketHighPriority
+    - CustomerTicketCriticalPriority
+  enums.CustomerTicketStatusEnum:
+    enum:
+    - new
+    - in_progress
+    - closed
+    type: string
+    x-enum-varnames:
+    - CustomerTicketNewStatus
+    - CustomerTicketInProgressStatus
+    - CustomerTicketClosedStatus
+  enums.DiscountTypeEnum:
+    enum:
+    - fixed
+    - percentage
+    type: string
+    x-enum-varnames:
+    - FixedDiscountType
+    - PercentageDiscountType
+  enums.DomainTypeEnum:
+    enum:
+    - domain
+    - subdomain
+    type: string
+    x-enum-varnames:
+    - DomainType
+    - SubdomainType
+  enums.FileItemPermissionEnum:
+    enum:
+    - private
+    - public
+    - private
+    - public
+    type: string
+    x-enum-varnames:
+    - FileItemPrivatePermission
+    - FileItemPublicPermission
+    - PrivatePermission
+    - PublicPermission
+  enums.OperationType:
+    enum:
+    - copy
+    - move
+    - rename
+    type: string
+    x-enum-varnames:
+    - FileItemCopyOperation
+    - FileItemMoveOperation
+    - FileItemRenameOperation
+  enums.PaymentGatewaysEnum:
+    enum:
+    - saman
+    - mellat
+    - parsian
+    - pasargad
+    - irankish
+    - melli
+    - asanpardakht
+    - sepehr
+    - zarinpal
+    - payir
+    - idpay
+    - yekpay
+    - payping
+    - parbadvirtual
+    - nextpay
+    type: string
+    x-enum-varnames:
+    - SamanGatewayEnum
+    - MellatGatewayEnum
+    - ParsianGatewayEnum
+    - PasargadGatewayEnum
+    - IranKishGatewayEnum
+    - MelliGatewayEnum
+    - AsanPardakhtGatewayEnum
+    - SepehrGatewayEnum
+    - ZarinPalGatewayEnum
+    - PayIrGatewayEnum
+    - IdPayGatewayEnum
+    - YekPayGatewayEnum
+    - PayPingGatewayEnum
+    - ParbadVirtualGatewayEnum
+    - NextPayGateway
+  enums.ProductAttributeTypeEnum:
+    enum:
+    - public
+    - technical
+    - other
+    type: string
+    x-enum-varnames:
+    - PublicProductAttributeType
+    - TechnicalProductAttributeType
+    - OtherProductAttributeType
+  enums.ProductSortEnum:
+    enum:
+    - price_low_to_high
+    - price_high_to_low
+    - coupon_high_to_low
+    - name_a_z
+    - name_z_a
+    - recently_added
+    - recently_updated
+    - most_selling
+    - most_visited
+    - most_rated
+    - most_reviewed
+    - least_visited
+    - least_rated
+    - least_reviewed
+    type: string
+    x-enum-varnames:
+    - ProductPriceLowToHighSort
+    - ProductPriceHighToLowSort
+    - ProductCouponHighToLowSort
+    - ProductNameAZSort
+    - ProductNameZASort
+    - ProductRecentlyAddedSort
+    - ProductRecentlyUpdatedSort
+    - ProductMostSellingSort
+    - ProductMostVisitedSort
+    - ProductMostRatedSort
+    - ProductMostReviewedSort
+    - ProductLeastVisitedSort
+    - ProductLeastRatedSort
+    - ProductLeastReviewedSort
+  enums.SiteTypeEnum:
+    enum:
+    - shop
+    - blog
+    - business
+    type: string
+    x-enum-varnames:
+    - ShopType
+    - BlogType
+    - BusinessType
+  enums.StatusEnum:
+    enum:
+    - inactive
+    - active
+    - pending
+    - deleted
+    - disabled
+    - enabled
+    type: string
+    x-enum-varnames:
+    - InactiveStatus
+    - ActiveStatus
+    - PendingStatus
+    - DeletedStatus
+    - DisabledStatus
+    - EnabledStatus
+  enums.TicketCategoryEnum:
+    enum:
+    - bug
+    - enhancement
+    - feature_request
+    - question
+    - documentation
+    - financial
+    type: string
+    x-enum-varnames:
+    - TicketBugCategory
+    - TicketEnhancementCategory
+    - TicketFeatureRequestCategory
+    - TicketQuestionCategory
+    - TicketDocumentationCategory
+    - TicketFinancialCategory
+  enums.TicketPriorityEnum:
+    enum:
+    - low
+    - medium
+    - high
+    - critical
+    type: string
+    x-enum-varnames:
+    - TicketLowPriority
+    - TicketMediumPriority
+    - TicketHighPriority
+    - TicketCriticalPriority
+  enums.TicketStatusEnum:
+    enum:
+    - new
+    - in_progress
+    - closed
+    type: string
+    x-enum-varnames:
+    - NewTicketStatus
+    - InProgressTicketStatus
+    - ClosedTicketStatus
+  enums.UnitPriceNameEnum:
+    enum:
+    - storage_mb_credits
+    - page_view_credits
+    - form_submit_credits
+    - site_credits
+    - sms_credits
+    - email_credits
+    - ai_credits
+    - ai_image_credits
+    type: string
+    x-enum-varnames:
+    - StorageMbCreditsName
+    - PageViewCreditsName
+    - FormSubmitCreditsName
+    - SiteCreditsName
+    - SmsCreditsName
+    - EmailCreditsName
+    - AiCreditsName
+    - AiImageCreditsName
+  enums.UserTypeEnum:
+    enum:
+    - user
+    - customer
+    - guest
+    type: string
+    x-enum-varnames:
+    - UserTypeValue
+    - CustomerTypeValue
+    - GuestTypeValue
+  enums.VerifyPaymentEndpointEnum:
+    enum:
+    - charge_credit_verify
+    - upgrade_plan_verify
+    - create_order_verify
+    type: string
+    x-enum-varnames:
+    - ChargeCreditVerifyEndpoint
+    - UpgradePlanVerifyEndpoint
+    - CreateOrderVerifyEndpoint
+  enums.VerifyTypeEnum:
+    enum:
+    - verify_email
+    - verify_phone
+    - forget_password_email
+    - forget_password_phone
+    type: string
+    x-enum-varnames:
+    - VerifyEmailType
+    - VerifyPhoneType
+    - ForgetPasswordEmailType
+    - ForgetPasswordPhoneType
   fileitem.CreateOrDirectoryItemCommand:
     type: object
   fileitem.DeleteFileItemCommand:
@@ -571,14 +821,6 @@ definitions:
     required:
     - id
     type: object
-  fileitem.FileItemPermissionEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Private
-    - Public
   fileitem.FileOperationCommand:
     properties:
       id:
@@ -588,7 +830,7 @@ definitions:
       newParentId:
         type: integer
       operationType:
-        $ref: '#/definitions/fileitem.OperationType'
+        $ref: '#/definitions/enums.OperationType'
     required:
     - id
     - operationType
@@ -622,16 +864,6 @@ definitions:
     - id
     - order
     type: object
-  fileitem.OperationType:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - Copy
-    - Move
-    - Rename
   fileitem.RestoreFileItemCommand:
     properties:
       id:
@@ -646,7 +878,7 @@ definitions:
       isChangePermission:
         type: boolean
       permission:
-        $ref: '#/definitions/fileitem.FileItemPermissionEnum'
+        $ref: '#/definitions/enums.FileItemPermissionEnum'
     required:
     - id
     type: object
@@ -725,12 +957,12 @@ definitions:
     type: object
   header_footer.HeaderFooterTypeEnum:
     enum:
-    - 0
-    - 1
-    type: integer
+    - header
+    - footer
+    type: string
     x-enum-varnames:
-    - Header
-    - Footer
+    - HeaderType
+    - FooterType
   header_footer.UpdateHeaderFooterCommand:
     properties:
       body:
@@ -750,26 +982,18 @@ definitions:
     - siteId
     - type
     type: object
-  order.CourierEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Post
-    - Tipax
   order.CreateOrderRequestCommand:
     properties:
       addressId:
         type: integer
       courier:
-        $ref: '#/definitions/order.CourierEnum'
+        $ref: '#/definitions/enums.CourierEnum'
       description:
         type: string
       finalFrontReturnUrl:
         type: string
       gateway:
-        $ref: '#/definitions/order.PaymentGatewaysEnum'
+        $ref: '#/definitions/enums.PaymentGatewaysEnum'
       siteId:
         type: integer
     required:
@@ -792,38 +1016,6 @@ definitions:
     required:
     - orderData
     type: object
-  order.PaymentGatewaysEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    - 10
-    - 11
-    - 12
-    - 13
-    type: integer
-    x-enum-varnames:
-    - Saman
-    - Mellat
-    - Parsian
-    - Pasargad
-    - IranKish
-    - Melli
-    - AsanPardakht
-    - Sepehr
-    - ZarinPal
-    - PayIr
-    - IdPay
-    - YekPay
-    - PayPing
-    - ParbadVirtual
   page.CreatePageCommand:
     properties:
       body:
@@ -962,33 +1154,33 @@ definitions:
       iranKish:
         $ref: '#/definitions/payment.IranKishGateway'
       isActiveAsanPardakht:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveIdPay:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveIranKish:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveMellat:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveMelli:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveParbadVirtual:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveParsian:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActivePasargad:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActivePayIr:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActivePayPing:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveSaman:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveSepehr:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveYekPay:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       isActiveZarinPal:
-        $ref: '#/definitions/payment.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       mellat:
         $ref: '#/definitions/payment.MellatGateway'
       melli:
@@ -1080,48 +1272,16 @@ definitions:
       accessToken:
         type: string
     type: object
-  payment.PaymentGatewaysEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    - 10
-    - 11
-    - 12
-    - 13
-    type: integer
-    x-enum-varnames:
-    - Saman
-    - Mellat
-    - Parsian
-    - Pasargad
-    - IranKish
-    - Melli
-    - AsanPardakht
-    - Sepehr
-    - ZarinPal
-    - PayIr
-    - IdPay
-    - YekPay
-    - PayPing
-    - ParbadVirtual
   payment.RequestGatewayCommand:
     properties:
       amount:
         type: integer
       callVerifyUrl:
-        $ref: '#/definitions/payment.VerifyPaymentEndpointEnum'
+        $ref: '#/definitions/enums.VerifyPaymentEndpointEnum'
       clientIp:
         type: string
       gateway:
-        $ref: '#/definitions/payment.PaymentGatewaysEnum'
+        $ref: '#/definitions/enums.PaymentGatewaysEnum'
       orderData:
         additionalProperties:
           type: string
@@ -1139,7 +1299,7 @@ definitions:
       userId:
         type: integer
       userType:
-        $ref: '#/definitions/payment.UserTypeEnum'
+        $ref: '#/definitions/enums.UserTypeEnum'
     required:
     - amount
     - callVerifyUrl
@@ -1164,24 +1324,6 @@ definitions:
     required:
     - terminalId
     type: object
-  payment.StatusEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Inactive
-    - Active
-  payment.UserTypeEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - User
-    - Customer
-    - Guest
   payment.VerifyPaymentCommand:
     properties:
       paymentToken:
@@ -1191,16 +1333,6 @@ definitions:
       transactionCode:
         type: string
     type: object
-  payment.VerifyPaymentEndpointEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - ChargeCreditVerify
-    - UpgradePlanVerify
-    - CreateOrderVerify
   payment.YekPayGateway:
     properties:
       merchantId:
@@ -1230,7 +1362,7 @@ definitions:
         minimum: 0
         type: integer
       discountType:
-        $ref: '#/definitions/user.DiscountType'
+        $ref: '#/definitions/enums.DiscountTypeEnum'
       duration:
         minimum: 1
         type: integer
@@ -1283,7 +1415,7 @@ definitions:
         minimum: 0
         type: integer
       discountType:
-        $ref: '#/definitions/user.DiscountType'
+        $ref: '#/definitions/enums.DiscountTypeEnum'
       duration:
         minimum: 1
         type: integer
@@ -1317,7 +1449,7 @@ definitions:
       quantity:
         type: integer
       type:
-        $ref: '#/definitions/product.DiscountTypeEnum'
+        $ref: '#/definitions/enums.DiscountTypeEnum'
       value:
         type: integer
     required:
@@ -1368,7 +1500,7 @@ definitions:
       slug:
         type: string
       status:
-        $ref: '#/definitions/product.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       weight:
         maximum: 1000
         type: integer
@@ -1386,14 +1518,6 @@ definitions:
     required:
     - id
     type: object
-  product.DiscountTypeEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Percentage
-    - Value
   product.GetByFiltersSortProductQuery:
     properties:
       page:
@@ -1417,7 +1541,7 @@ definitions:
           type: array
         type: object
       selectedSort:
-        $ref: '#/definitions/product.ProductSortEnum'
+        $ref: '#/definitions/enums.ProductSortEnum'
       siteId:
         type: integer
       sort:
@@ -1442,54 +1566,12 @@ definitions:
       name:
         type: string
       type:
-        $ref: '#/definitions/product.ProductAttributeTypeEnum'
+        $ref: '#/definitions/enums.ProductAttributeTypeEnum'
       value:
         type: string
     required:
     - type
     type: object
-  product.ProductAttributeTypeEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - Public
-    - Technical
-    - Other
-  product.ProductSortEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    - 10
-    - 11
-    - 12
-    - 13
-    type: integer
-    x-enum-varnames:
-    - PriceLowToHigh
-    - PriceHighToLow
-    - CouponHighToLow
-    - NameAZ
-    - NameZA
-    - RecentlyAdded
-    - RecentlyUpdated
-    - MostSelling
-    - MostVisited
-    - MostRated
-    - MostReviewed
-    - LeastVisited
-    - LeastRated
-    - LeastReviewed
   product.ProductVariantCommand:
     properties:
       id:
@@ -1504,14 +1586,6 @@ definitions:
     - price
     - stock
     type: object
-  product.StatusEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Inactive
-    - Active
   product.UpdateProductCommand:
     properties:
       categoryIds:
@@ -1555,7 +1629,7 @@ definitions:
       slug:
         type: string
       status:
-        $ref: '#/definitions/product.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
       weight:
         type: integer
     required:
@@ -1832,13 +1906,13 @@ definitions:
       domain:
         type: string
       domainType:
-        $ref: '#/definitions/site.DomainTypeEnum'
+        $ref: '#/definitions/enums.DomainTypeEnum'
       name:
         type: string
       siteType:
-        $ref: '#/definitions/site.SiteTypeEnum'
+        $ref: '#/definitions/enums.SiteTypeEnum'
       status:
-        $ref: '#/definitions/site.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
     required:
     - domain
     - domainType
@@ -1852,50 +1926,20 @@ definitions:
     required:
     - id
     type: object
-  site.DomainTypeEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Domain
-    - Subdomain
-  site.SiteTypeEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - Shop
-    - Blog
-    - Business
-  site.StatusEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - Active
-    - Inactive
-    - Pending
-    - Deleted
   site.UpdateSiteCommand:
     properties:
       domain:
         type: string
       domainType:
-        $ref: '#/definitions/site.DomainTypeEnum'
+        $ref: '#/definitions/enums.DomainTypeEnum'
       id:
         type: integer
       name:
         type: string
       siteType:
-        $ref: '#/definitions/site.SiteTypeEnum'
+        $ref: '#/definitions/enums.SiteTypeEnum'
       status:
-        $ref: '#/definitions/site.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
     required:
     - id
     type: object
@@ -1912,11 +1956,11 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/ticket.TicketPriorityEnum'
+        $ref: '#/definitions/enums.TicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/ticket.TicketCategoryEnum'
+        $ref: '#/definitions/enums.TicketCategoryEnum'
       status:
-        $ref: '#/definitions/ticket.TicketStatusEnum'
+        $ref: '#/definitions/enums.TicketStatusEnum'
     required:
     - comment
     - id
@@ -1928,6 +1972,9 @@ definitions:
     properties:
       content:
         type: string
+      media:
+        items: {}
+        type: array
       respondentId:
         type: integer
     required:
@@ -1942,9 +1989,9 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/ticket.TicketPriorityEnum'
+        $ref: '#/definitions/enums.TicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/ticket.TicketCategoryEnum'
+        $ref: '#/definitions/enums.TicketCategoryEnum'
       title:
         type: string
     required:
@@ -1965,11 +2012,11 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/ticket.TicketPriorityEnum'
+        $ref: '#/definitions/enums.TicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/ticket.TicketCategoryEnum'
+        $ref: '#/definitions/enums.TicketCategoryEnum'
       status:
-        $ref: '#/definitions/ticket.TicketStatusEnum'
+        $ref: '#/definitions/enums.TicketStatusEnum'
     required:
     - assignedTo
     - comment
@@ -1978,44 +2025,6 @@ definitions:
     - product_category
     - status
     type: object
-  ticket.TicketCategoryEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    type: integer
-    x-enum-varnames:
-    - Bug
-    - Enhancement
-    - FeatureRequest
-    - Question
-    - Documentation
-    - Financial
-  ticket.TicketPriorityEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - Low
-    - Medium
-    - High
-    - Critical
-  ticket.TicketStatusEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - New
-    - InProgress
-    - Closed
   unit_price.CalculateUnitPriceUnitPriceQuery:
     properties:
       unitPriceCount:
@@ -2023,39 +2032,11 @@ definitions:
       unitPriceDay:
         type: integer
       unitPriceName:
-        $ref: '#/definitions/unit_price.UnitPriceNameEnum'
+        $ref: '#/definitions/enums.UnitPriceNameEnum'
     required:
     - unitPriceCount
     - unitPriceName
     type: object
-  unit_price.DiscountTypeEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Fixed
-    - Percentage
-  unit_price.UnitPriceNameEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    type: integer
-    x-enum-varnames:
-    - StorageMbCredits
-    - PageViewCredits
-    - FormSubmitCredits
-    - SiteCredits
-    - SmsCredits
-    - EmailCredits
-    - AiCredits
-    - AiImageCredits
   unit_price.UpdateUnitPriceCommand:
     properties:
       discount:
@@ -2063,7 +2044,7 @@ definitions:
         minimum: 0
         type: integer
       discountType:
-        $ref: '#/definitions/unit_price.DiscountTypeEnum'
+        $ref: '#/definitions/enums.DiscountTypeEnum'
       hasDay:
         type: boolean
       id:
@@ -2075,22 +2056,12 @@ definitions:
     required:
     - id
     type: object
-  user.AiTypeEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - GPT35
-    - GPT4
-    - Claude
   user.ChargeCreditRequestUserCommand:
     properties:
       finalFrontReturnUrl:
         type: string
       gateway:
-        $ref: '#/definitions/user.PaymentGatewaysEnum'
+        $ref: '#/definitions/enums.PaymentGatewaysEnum'
       unitPrices:
         items:
           $ref: '#/definitions/user.UnitPriceQuery'
@@ -2100,14 +2071,6 @@ definitions:
     - gateway
     - unitPrices
     type: object
-  user.DiscountType:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Fixed
-    - Percentage
   user.LoginUserCommand:
     properties:
       email:
@@ -2117,16 +2080,6 @@ definitions:
     required:
     - email
     type: object
-  user.PaymentGatewaysEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - ZarinPal
-    - IDPay
-    - NextPay
   user.RegisterUserCommand:
     properties:
       email:
@@ -2143,7 +2096,7 @@ definitions:
       phone:
         type: string
       type:
-        $ref: '#/definitions/user.VerifyTypeEnum'
+        $ref: '#/definitions/enums.VerifyTypeEnum'
     required:
     - type
     type: object
@@ -2162,34 +2115,6 @@ definitions:
     required:
     - port
     type: object
-  user.StatusEnum:
-    enum:
-    - 0
-    - 1
-    type: integer
-    x-enum-varnames:
-    - Disabled
-    - Enabled
-  user.UnitPriceNameEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    type: integer
-    x-enum-varnames:
-    - StorageMbCredits
-    - PageViewCredits
-    - FormSubmitCredits
-    - SiteCredits
-    - SmsCredits
-    - EmailCredits
-    - AiCredits
-    - AiImageCredits
   user.UnitPriceQuery:
     properties:
       unitPriceCount:
@@ -2199,7 +2124,7 @@ definitions:
       unitPriceDay:
         type: integer
       unitPriceName:
-        $ref: '#/definitions/user.UnitPriceNameEnum'
+        $ref: '#/definitions/enums.UnitPriceNameEnum'
     required:
     - unitPriceCount
     - unitPriceName
@@ -2211,7 +2136,7 @@ definitions:
           type: integer
         type: array
       aiTypeEnum:
-        $ref: '#/definitions/user.AiTypeEnum'
+        $ref: '#/definitions/enums.AiTypeEnum'
       email:
         type: string
       firstName:
@@ -2227,7 +2152,7 @@ definitions:
       smtp:
         $ref: '#/definitions/user.SmptSettings'
       useCustomEmailSmtp:
-        $ref: '#/definitions/user.StatusEnum'
+        $ref: '#/definitions/enums.StatusEnum'
     required:
     - phone
     type: object
@@ -2236,49 +2161,13 @@ definitions:
       finalFrontReturnUrl:
         type: string
       gateway:
-        $ref: '#/definitions/user.PaymentGatewaysEnum'
+        $ref: '#/definitions/enums.PaymentGatewaysEnum'
       planId:
         type: integer
     required:
     - gateway
     - planId
     type: object
-  user.VerifyTypeEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - VerifyEmail
-    - VerifyPhone
-    - ForgetPasswordEmail
-    - ForgetPasswordPhone
-  website.ArticleSortEnum:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    type: integer
-    x-enum-varnames:
-    - TitleAZ
-    - TitleZA
-    - RecentlyAdded
-    - RecentlyUpdated
-    - MostVisited
-    - LeastVisited
-    - MostRated
-    - LeastRated
-    - MostReviewed
-    - LeastReviewed
   website.GetSingleArticleBySlugQuery:
     properties:
       domain:
@@ -4023,19 +3912,19 @@ paths:
         required: true
         type: string
       - enum:
-        - 0
-        - 1
-        - 2
-        - 3
+        - verify_email
+        - verify_phone
+        - forget_password_email
+        - forget_password_phone
         in: query
         name: type
         required: true
-        type: integer
+        type: string
         x-enum-varnames:
-        - VerifyEmail
-        - VerifyPhone
-        - ForgetPasswordEmail
-        - ForgetPasswordPhone
+        - VerifyEmailType
+        - VerifyPhoneType
+        - ForgetPasswordEmailType
+        - ForgetPasswordPhoneType
       produces:
       - application/json
       responses:
@@ -5172,14 +5061,14 @@ paths:
         required: true
         type: integer
       - enum:
-        - 0
-        - 1
+        - header
+        - footer
         in: query
         name: type
-        type: integer
+        type: string
         x-enum-varnames:
-        - Header
-        - Footer
+        - HeaderType
+        - FooterType
       produces:
       - application/json
       responses:
@@ -5392,14 +5281,14 @@ paths:
         name: sortBy
         type: string
       - enum:
-        - 0
-        - 1
+        - header
+        - footer
         in: query
         name: type
-        type: integer
+        type: string
         x-enum-varnames:
-        - Header
-        - Footer
+        - HeaderType
+        - FooterType
       produces:
       - application/json
       responses:
@@ -8677,19 +8566,19 @@ paths:
         required: true
         type: string
       - enum:
-        - 0
-        - 1
-        - 2
-        - 3
+        - verify_email
+        - verify_phone
+        - forget_password_email
+        - forget_password_phone
         in: query
         name: type
         required: true
-        type: integer
+        type: string
         x-enum-varnames:
-        - VerifyEmail
-        - VerifyPhone
-        - ForgetPasswordEmail
-        - ForgetPasswordPhone
+        - VerifyEmailType
+        - VerifyPhoneType
+        - ForgetPasswordEmailType
+        - ForgetPasswordPhoneType
       produces:
       - application/json
       responses:
@@ -8884,30 +8773,30 @@ paths:
         name: searchBy
         type: string
       - enum:
-        - 0
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        - 7
-        - 8
-        - 9
+        - title_a_z
+        - title_z_a
+        - recently_added
+        - recently_updated
+        - most_visited
+        - least_visited
+        - most_rated
+        - least_rated
+        - most_reviewed
+        - least_reviewed
         in: query
         name: selectedSort
-        type: integer
+        type: string
         x-enum-varnames:
-        - TitleAZ
-        - TitleZA
-        - RecentlyAdded
-        - RecentlyUpdated
-        - MostVisited
-        - LeastVisited
-        - MostRated
-        - LeastRated
-        - MostReviewed
-        - LeastReviewed
+        - ArticleTitleAZSort
+        - ArticleTitleZASort
+        - ArticleRecentlyAddedSort
+        - ArticleRecentlyUpdatedSort
+        - ArticleMostVisitedSort
+        - ArticleLeastVisitedSort
+        - ArticleMostRatedSort
+        - ArticleLeastRatedSort
+        - ArticleMostReviewedSort
+        - ArticleLeastReviewedSort
       - in: query
         name: siteId
         type: integer
@@ -9151,38 +9040,38 @@ paths:
         name: searchBy
         type: string
       - enum:
-        - 0
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        - 7
-        - 8
-        - 9
-        - 10
-        - 11
-        - 12
-        - 13
+        - price_low_to_high
+        - price_high_to_low
+        - coupon_high_to_low
+        - name_a_z
+        - name_z_a
+        - recently_added
+        - recently_updated
+        - most_selling
+        - most_visited
+        - most_rated
+        - most_reviewed
+        - least_visited
+        - least_rated
+        - least_reviewed
         in: query
         name: selectedSort
-        type: integer
+        type: string
         x-enum-varnames:
-        - PriceLowToHigh
-        - PriceHighToLow
-        - CouponHighToLow
-        - NameAZ
-        - NameZA
-        - RecentlyAdded
-        - RecentlyUpdated
-        - MostSelling
-        - MostVisited
-        - MostRated
-        - MostReviewed
-        - LeastVisited
-        - LeastRated
-        - LeastReviewed
+        - ProductPriceLowToHighSort
+        - ProductPriceHighToLowSort
+        - ProductCouponHighToLowSort
+        - ProductNameAZSort
+        - ProductNameZASort
+        - ProductRecentlyAddedSort
+        - ProductRecentlyUpdatedSort
+        - ProductMostSellingSort
+        - ProductMostVisitedSort
+        - ProductMostRatedSort
+        - ProductMostReviewedSort
+        - ProductLeastVisitedSort
+        - ProductLeastRatedSort
+        - ProductLeastReviewedSort
       - in: query
         name: siteId
         type: integer

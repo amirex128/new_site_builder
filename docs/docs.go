@@ -2686,17 +2686,17 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            0,
-                            1,
-                            2,
-                            3
+                            "verify_email",
+                            "verify_phone",
+                            "forget_password_email",
+                            "forget_password_phone"
                         ],
-                        "type": "integer",
+                        "type": "string",
                         "x-enum-varnames": [
-                            "VerifyEmail",
-                            "VerifyPhone",
-                            "ForgetPasswordEmail",
-                            "ForgetPasswordPhone"
+                            "VerifyEmailType",
+                            "VerifyPhoneType",
+                            "ForgetPasswordEmailType",
+                            "ForgetPasswordPhoneType"
                         ],
                         "name": "type",
                         "in": "query",
@@ -4415,13 +4415,13 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            0,
-                            1
+                            "header",
+                            "footer"
                         ],
-                        "type": "integer",
+                        "type": "string",
                         "x-enum-varnames": [
-                            "Header",
-                            "Footer"
+                            "HeaderType",
+                            "FooterType"
                         ],
                         "name": "type",
                         "in": "query"
@@ -4813,13 +4813,13 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            0,
-                            1
+                            "header",
+                            "footer"
                         ],
-                        "type": "integer",
+                        "type": "string",
                         "x-enum-varnames": [
-                            "Header",
-                            "Footer"
+                            "HeaderType",
+                            "FooterType"
                         ],
                         "name": "type",
                         "in": "query"
@@ -9909,17 +9909,17 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            0,
-                            1,
-                            2,
-                            3
+                            "verify_email",
+                            "verify_phone",
+                            "forget_password_email",
+                            "forget_password_phone"
                         ],
-                        "type": "integer",
+                        "type": "string",
                         "x-enum-varnames": [
-                            "VerifyEmail",
-                            "VerifyPhone",
-                            "ForgetPasswordEmail",
-                            "ForgetPasswordPhone"
+                            "VerifyEmailType",
+                            "VerifyPhoneType",
+                            "ForgetPasswordEmailType",
+                            "ForgetPasswordPhoneType"
                         ],
                         "name": "type",
                         "in": "query",
@@ -10216,29 +10216,29 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9
+                            "title_a_z",
+                            "title_z_a",
+                            "recently_added",
+                            "recently_updated",
+                            "most_visited",
+                            "least_visited",
+                            "most_rated",
+                            "least_rated",
+                            "most_reviewed",
+                            "least_reviewed"
                         ],
-                        "type": "integer",
+                        "type": "string",
                         "x-enum-varnames": [
-                            "TitleAZ",
-                            "TitleZA",
-                            "RecentlyAdded",
-                            "RecentlyUpdated",
-                            "MostVisited",
-                            "LeastVisited",
-                            "MostRated",
-                            "LeastRated",
-                            "MostReviewed",
-                            "LeastReviewed"
+                            "ArticleTitleAZSort",
+                            "ArticleTitleZASort",
+                            "ArticleRecentlyAddedSort",
+                            "ArticleRecentlyUpdatedSort",
+                            "ArticleMostVisitedSort",
+                            "ArticleLeastVisitedSort",
+                            "ArticleMostRatedSort",
+                            "ArticleLeastRatedSort",
+                            "ArticleMostReviewedSort",
+                            "ArticleLeastReviewedSort"
                         ],
                         "name": "selectedSort",
                         "in": "query"
@@ -10612,37 +10612,37 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            0,
-                            1,
-                            2,
-                            3,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            9,
-                            10,
-                            11,
-                            12,
-                            13
+                            "price_low_to_high",
+                            "price_high_to_low",
+                            "coupon_high_to_low",
+                            "name_a_z",
+                            "name_z_a",
+                            "recently_added",
+                            "recently_updated",
+                            "most_selling",
+                            "most_visited",
+                            "most_rated",
+                            "most_reviewed",
+                            "least_visited",
+                            "least_rated",
+                            "least_reviewed"
                         ],
-                        "type": "integer",
+                        "type": "string",
                         "x-enum-varnames": [
-                            "PriceLowToHigh",
-                            "PriceHighToLow",
-                            "CouponHighToLow",
-                            "NameAZ",
-                            "NameZA",
-                            "RecentlyAdded",
-                            "RecentlyUpdated",
-                            "MostSelling",
-                            "MostVisited",
-                            "MostRated",
-                            "MostReviewed",
-                            "LeastVisited",
-                            "LeastRated",
-                            "LeastReviewed"
+                            "ProductPriceLowToHighSort",
+                            "ProductPriceHighToLowSort",
+                            "ProductCouponHighToLowSort",
+                            "ProductNameAZSort",
+                            "ProductNameZASort",
+                            "ProductRecentlyAddedSort",
+                            "ProductRecentlyUpdatedSort",
+                            "ProductMostSellingSort",
+                            "ProductMostVisitedSort",
+                            "ProductMostRatedSort",
+                            "ProductMostReviewedSort",
+                            "ProductLeastVisitedSort",
+                            "ProductLeastRatedSort",
+                            "ProductLeastReviewedSort"
                         ],
                         "name": "selectedSort",
                         "in": "query"
@@ -10881,33 +10881,6 @@ const docTemplate = `{
                 }
             }
         },
-        "article.ArticleSortEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9
-            ],
-            "x-enum-varnames": [
-                "TitleAZ",
-                "TitleZA",
-                "RecentlyAdded",
-                "RecentlyUpdated",
-                "MostVisited",
-                "LeastVisited",
-                "MostRated",
-                "LeastRated",
-                "MostReviewed",
-                "LeastReviewed"
-            ]
-        },
         "article.CreateArticleCommand": {
             "type": "object",
             "required": [
@@ -10997,7 +10970,7 @@ const docTemplate = `{
                     }
                 },
                 "selectedSort": {
-                    "$ref": "#/definitions/article.ArticleSortEnum"
+                    "$ref": "#/definitions/enums.ArticleSortEnum"
                 },
                 "siteId": {
                     "type": "integer"
@@ -11218,6 +11191,9 @@ const docTemplate = `{
                 "pageNumber": {
                     "type": "integer"
                 },
+                "search": {
+                    "type": "string"
+                },
                 "totalCount": {
                     "type": "integer"
                 },
@@ -11273,7 +11249,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
-                    "$ref": "#/definitions/user.VerifyTypeEnum"
+                    "$ref": "#/definitions/enums.VerifyTypeEnum"
                 }
             }
         },
@@ -11336,13 +11312,13 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketPriorityEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketCategoryEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketCategoryEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketStatusEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketStatusEnum"
                 }
             }
         },
@@ -11368,10 +11344,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "priority": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketPriorityEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketCategoryEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketCategoryEnum"
                 },
                 "title": {
                     "type": "string"
@@ -11391,53 +11367,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "customer_ticket.CustomerTicketCategoryEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
-            ],
-            "x-enum-varnames": [
-                "Bug",
-                "Enhancement",
-                "FeatureRequest",
-                "Question",
-                "Documentation",
-                "Financial"
-            ]
-        },
-        "customer_ticket.CustomerTicketPriorityEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "Low",
-                "Medium",
-                "High",
-                "Critical"
-            ]
-        },
-        "customer_ticket.CustomerTicketStatusEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "New",
-                "InProgress",
-                "Closed"
-            ]
         },
         "customer_ticket.ReplayCustomerTicketCommand": {
             "type": "object",
@@ -11466,13 +11395,13 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketPriorityEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketCategoryEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketCategoryEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/customer_ticket.CustomerTicketStatusEnum"
+                    "$ref": "#/definitions/enums.CustomerTicketStatusEnum"
                 }
             }
         },
@@ -11560,7 +11489,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "type": {
-                    "$ref": "#/definitions/product.DiscountTypeEnum"
+                    "$ref": "#/definitions/enums.DiscountTypeEnum"
                 },
                 "value": {
                     "type": "integer"
@@ -11597,12 +11526,388 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "type": {
-                    "$ref": "#/definitions/product.DiscountTypeEnum"
+                    "$ref": "#/definitions/enums.DiscountTypeEnum"
                 },
                 "value": {
                     "type": "integer"
                 }
             }
+        },
+        "enums.AiTypeEnum": {
+            "type": "string",
+            "enum": [
+                "gpt35",
+                "gpt4",
+                "claude"
+            ],
+            "x-enum-varnames": [
+                "GPT35Type",
+                "GPT4Type",
+                "ClaudeType"
+            ]
+        },
+        "enums.ArticleSortEnum": {
+            "type": "string",
+            "enum": [
+                "title_a_z",
+                "title_z_a",
+                "recently_added",
+                "recently_updated",
+                "most_visited",
+                "least_visited",
+                "most_rated",
+                "least_rated",
+                "most_reviewed",
+                "least_reviewed"
+            ],
+            "x-enum-varnames": [
+                "ArticleTitleAZSort",
+                "ArticleTitleZASort",
+                "ArticleRecentlyAddedSort",
+                "ArticleRecentlyUpdatedSort",
+                "ArticleMostVisitedSort",
+                "ArticleLeastVisitedSort",
+                "ArticleMostRatedSort",
+                "ArticleLeastRatedSort",
+                "ArticleMostReviewedSort",
+                "ArticleLeastReviewedSort"
+            ]
+        },
+        "enums.CourierEnum": {
+            "type": "string",
+            "enum": [
+                "post",
+                "tipax"
+            ],
+            "x-enum-varnames": [
+                "PostCourier",
+                "TipaxCourier"
+            ]
+        },
+        "enums.CustomerTicketCategoryEnum": {
+            "type": "string",
+            "enum": [
+                "bug",
+                "enhancement",
+                "feature_request",
+                "question",
+                "documentation",
+                "financial"
+            ],
+            "x-enum-varnames": [
+                "CustomerTicketBugCategory",
+                "CustomerTicketEnhancementCategory",
+                "CustomerTicketFeatureRequestCategory",
+                "CustomerTicketQuestionCategory",
+                "CustomerTicketDocumentationCategory",
+                "CustomerTicketFinancialCategory"
+            ]
+        },
+        "enums.CustomerTicketPriorityEnum": {
+            "type": "string",
+            "enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+            ],
+            "x-enum-varnames": [
+                "CustomerTicketLowPriority",
+                "CustomerTicketMediumPriority",
+                "CustomerTicketHighPriority",
+                "CustomerTicketCriticalPriority"
+            ]
+        },
+        "enums.CustomerTicketStatusEnum": {
+            "type": "string",
+            "enum": [
+                "new",
+                "in_progress",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "CustomerTicketNewStatus",
+                "CustomerTicketInProgressStatus",
+                "CustomerTicketClosedStatus"
+            ]
+        },
+        "enums.DiscountTypeEnum": {
+            "type": "string",
+            "enum": [
+                "fixed",
+                "percentage"
+            ],
+            "x-enum-varnames": [
+                "FixedDiscountType",
+                "PercentageDiscountType"
+            ]
+        },
+        "enums.DomainTypeEnum": {
+            "type": "string",
+            "enum": [
+                "domain",
+                "subdomain"
+            ],
+            "x-enum-varnames": [
+                "DomainType",
+                "SubdomainType"
+            ]
+        },
+        "enums.FileItemPermissionEnum": {
+            "type": "string",
+            "enum": [
+                "private",
+                "public",
+                "private",
+                "public"
+            ],
+            "x-enum-varnames": [
+                "FileItemPrivatePermission",
+                "FileItemPublicPermission",
+                "PrivatePermission",
+                "PublicPermission"
+            ]
+        },
+        "enums.OperationType": {
+            "type": "string",
+            "enum": [
+                "copy",
+                "move",
+                "rename"
+            ],
+            "x-enum-varnames": [
+                "FileItemCopyOperation",
+                "FileItemMoveOperation",
+                "FileItemRenameOperation"
+            ]
+        },
+        "enums.PaymentGatewaysEnum": {
+            "type": "string",
+            "enum": [
+                "saman",
+                "mellat",
+                "parsian",
+                "pasargad",
+                "irankish",
+                "melli",
+                "asanpardakht",
+                "sepehr",
+                "zarinpal",
+                "payir",
+                "idpay",
+                "yekpay",
+                "payping",
+                "parbadvirtual",
+                "nextpay"
+            ],
+            "x-enum-varnames": [
+                "SamanGatewayEnum",
+                "MellatGatewayEnum",
+                "ParsianGatewayEnum",
+                "PasargadGatewayEnum",
+                "IranKishGatewayEnum",
+                "MelliGatewayEnum",
+                "AsanPardakhtGatewayEnum",
+                "SepehrGatewayEnum",
+                "ZarinPalGatewayEnum",
+                "PayIrGatewayEnum",
+                "IdPayGatewayEnum",
+                "YekPayGatewayEnum",
+                "PayPingGatewayEnum",
+                "ParbadVirtualGatewayEnum",
+                "NextPayGateway"
+            ]
+        },
+        "enums.ProductAttributeTypeEnum": {
+            "type": "string",
+            "enum": [
+                "public",
+                "technical",
+                "other"
+            ],
+            "x-enum-varnames": [
+                "PublicProductAttributeType",
+                "TechnicalProductAttributeType",
+                "OtherProductAttributeType"
+            ]
+        },
+        "enums.ProductSortEnum": {
+            "type": "string",
+            "enum": [
+                "price_low_to_high",
+                "price_high_to_low",
+                "coupon_high_to_low",
+                "name_a_z",
+                "name_z_a",
+                "recently_added",
+                "recently_updated",
+                "most_selling",
+                "most_visited",
+                "most_rated",
+                "most_reviewed",
+                "least_visited",
+                "least_rated",
+                "least_reviewed"
+            ],
+            "x-enum-varnames": [
+                "ProductPriceLowToHighSort",
+                "ProductPriceHighToLowSort",
+                "ProductCouponHighToLowSort",
+                "ProductNameAZSort",
+                "ProductNameZASort",
+                "ProductRecentlyAddedSort",
+                "ProductRecentlyUpdatedSort",
+                "ProductMostSellingSort",
+                "ProductMostVisitedSort",
+                "ProductMostRatedSort",
+                "ProductMostReviewedSort",
+                "ProductLeastVisitedSort",
+                "ProductLeastRatedSort",
+                "ProductLeastReviewedSort"
+            ]
+        },
+        "enums.SiteTypeEnum": {
+            "type": "string",
+            "enum": [
+                "shop",
+                "blog",
+                "business"
+            ],
+            "x-enum-varnames": [
+                "ShopType",
+                "BlogType",
+                "BusinessType"
+            ]
+        },
+        "enums.StatusEnum": {
+            "type": "string",
+            "enum": [
+                "inactive",
+                "active",
+                "pending",
+                "deleted",
+                "disabled",
+                "enabled"
+            ],
+            "x-enum-varnames": [
+                "InactiveStatus",
+                "ActiveStatus",
+                "PendingStatus",
+                "DeletedStatus",
+                "DisabledStatus",
+                "EnabledStatus"
+            ]
+        },
+        "enums.TicketCategoryEnum": {
+            "type": "string",
+            "enum": [
+                "bug",
+                "enhancement",
+                "feature_request",
+                "question",
+                "documentation",
+                "financial"
+            ],
+            "x-enum-varnames": [
+                "TicketBugCategory",
+                "TicketEnhancementCategory",
+                "TicketFeatureRequestCategory",
+                "TicketQuestionCategory",
+                "TicketDocumentationCategory",
+                "TicketFinancialCategory"
+            ]
+        },
+        "enums.TicketPriorityEnum": {
+            "type": "string",
+            "enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+            ],
+            "x-enum-varnames": [
+                "TicketLowPriority",
+                "TicketMediumPriority",
+                "TicketHighPriority",
+                "TicketCriticalPriority"
+            ]
+        },
+        "enums.TicketStatusEnum": {
+            "type": "string",
+            "enum": [
+                "new",
+                "in_progress",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "NewTicketStatus",
+                "InProgressTicketStatus",
+                "ClosedTicketStatus"
+            ]
+        },
+        "enums.UnitPriceNameEnum": {
+            "type": "string",
+            "enum": [
+                "storage_mb_credits",
+                "page_view_credits",
+                "form_submit_credits",
+                "site_credits",
+                "sms_credits",
+                "email_credits",
+                "ai_credits",
+                "ai_image_credits"
+            ],
+            "x-enum-varnames": [
+                "StorageMbCreditsName",
+                "PageViewCreditsName",
+                "FormSubmitCreditsName",
+                "SiteCreditsName",
+                "SmsCreditsName",
+                "EmailCreditsName",
+                "AiCreditsName",
+                "AiImageCreditsName"
+            ]
+        },
+        "enums.UserTypeEnum": {
+            "type": "string",
+            "enum": [
+                "user",
+                "customer",
+                "guest"
+            ],
+            "x-enum-varnames": [
+                "UserTypeValue",
+                "CustomerTypeValue",
+                "GuestTypeValue"
+            ]
+        },
+        "enums.VerifyPaymentEndpointEnum": {
+            "type": "string",
+            "enum": [
+                "charge_credit_verify",
+                "upgrade_plan_verify",
+                "create_order_verify"
+            ],
+            "x-enum-varnames": [
+                "ChargeCreditVerifyEndpoint",
+                "UpgradePlanVerifyEndpoint",
+                "CreateOrderVerifyEndpoint"
+            ]
+        },
+        "enums.VerifyTypeEnum": {
+            "type": "string",
+            "enum": [
+                "verify_email",
+                "verify_phone",
+                "forget_password_email",
+                "forget_password_phone"
+            ],
+            "x-enum-varnames": [
+                "VerifyEmailType",
+                "VerifyPhoneType",
+                "ForgetPasswordEmailType",
+                "ForgetPasswordPhoneType"
+            ]
         },
         "fileitem.CreateOrDirectoryItemCommand": {
             "type": "object"
@@ -11617,17 +11922,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "fileitem.FileItemPermissionEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Private",
-                "Public"
-            ]
         },
         "fileitem.FileOperationCommand": {
             "type": "object",
@@ -11646,7 +11940,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "operationType": {
-                    "$ref": "#/definitions/fileitem.OperationType"
+                    "$ref": "#/definitions/enums.OperationType"
                 }
             }
         },
@@ -11695,19 +11989,6 @@ const docTemplate = `{
                 }
             }
         },
-        "fileitem.OperationType": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "Copy",
-                "Move",
-                "Rename"
-            ]
-        },
         "fileitem.RestoreFileItemCommand": {
             "type": "object",
             "required": [
@@ -11732,7 +12013,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "permission": {
-                    "$ref": "#/definitions/fileitem.FileItemPermissionEnum"
+                    "$ref": "#/definitions/enums.FileItemPermissionEnum"
                 }
             }
         },
@@ -11846,14 +12127,14 @@ const docTemplate = `{
             }
         },
         "header_footer.HeaderFooterTypeEnum": {
-            "type": "integer",
+            "type": "string",
             "enum": [
-                0,
-                1
+                "header",
+                "footer"
             ],
             "x-enum-varnames": [
-                "Header",
-                "Footer"
+                "HeaderType",
+                "FooterType"
             ]
         },
         "header_footer.UpdateHeaderFooterCommand": {
@@ -11884,17 +12165,6 @@ const docTemplate = `{
                 }
             }
         },
-        "order.CourierEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Post",
-                "Tipax"
-            ]
-        },
         "order.CreateOrderRequestCommand": {
             "type": "object",
             "required": [
@@ -11907,7 +12177,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "courier": {
-                    "$ref": "#/definitions/order.CourierEnum"
+                    "$ref": "#/definitions/enums.CourierEnum"
                 },
                 "description": {
                     "type": "string"
@@ -11916,7 +12186,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gateway": {
-                    "$ref": "#/definitions/order.PaymentGatewaysEnum"
+                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
                 },
                 "siteId": {
                     "type": "integer"
@@ -11945,41 +12215,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "order.PaymentGatewaysEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13
-            ],
-            "x-enum-varnames": [
-                "Saman",
-                "Mellat",
-                "Parsian",
-                "Pasargad",
-                "IranKish",
-                "Melli",
-                "AsanPardakht",
-                "Sepehr",
-                "ZarinPal",
-                "PayIr",
-                "IdPay",
-                "YekPay",
-                "PayPing",
-                "ParbadVirtual"
-            ]
         },
         "page.CreatePageCommand": {
             "type": "object",
@@ -12190,46 +12425,46 @@ const docTemplate = `{
                     "$ref": "#/definitions/payment.IranKishGateway"
                 },
                 "isActiveAsanPardakht": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveIdPay": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveIranKish": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveMellat": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveMelli": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveParbadVirtual": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveParsian": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActivePasargad": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActivePayIr": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActivePayPing": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveSaman": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveSepehr": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveYekPay": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "isActiveZarinPal": {
-                    "$ref": "#/definitions/payment.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "mellat": {
                     "$ref": "#/definitions/payment.MellatGateway"
@@ -12369,41 +12604,6 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.PaymentGatewaysEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13
-            ],
-            "x-enum-varnames": [
-                "Saman",
-                "Mellat",
-                "Parsian",
-                "Pasargad",
-                "IranKish",
-                "Melli",
-                "AsanPardakht",
-                "Sepehr",
-                "ZarinPal",
-                "PayIr",
-                "IdPay",
-                "YekPay",
-                "PayPing",
-                "ParbadVirtual"
-            ]
-        },
         "payment.RequestGatewayCommand": {
             "type": "object",
             "required": [
@@ -12421,13 +12621,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "callVerifyUrl": {
-                    "$ref": "#/definitions/payment.VerifyPaymentEndpointEnum"
+                    "$ref": "#/definitions/enums.VerifyPaymentEndpointEnum"
                 },
                 "clientIp": {
                     "type": "string"
                 },
                 "gateway": {
-                    "$ref": "#/definitions/payment.PaymentGatewaysEnum"
+                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
                 },
                 "orderData": {
                     "type": "object",
@@ -12454,7 +12654,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "userType": {
-                    "$ref": "#/definitions/payment.UserTypeEnum"
+                    "$ref": "#/definitions/enums.UserTypeEnum"
                 }
             }
         },
@@ -12480,30 +12680,6 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.StatusEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Inactive",
-                "Active"
-            ]
-        },
-        "payment.UserTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "User",
-                "Customer",
-                "Guest"
-            ]
-        },
         "payment.VerifyPaymentCommand": {
             "type": "object",
             "properties": {
@@ -12517,19 +12693,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "payment.VerifyPaymentEndpointEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "ChargeCreditVerify",
-                "UpgradePlanVerify",
-                "CreateOrderVerify"
-            ]
         },
         "payment.YekPayGateway": {
             "type": "object",
@@ -12582,7 +12745,7 @@ const docTemplate = `{
                     "minimum": 0
                 },
                 "discountType": {
-                    "$ref": "#/definitions/user.DiscountType"
+                    "$ref": "#/definitions/enums.DiscountTypeEnum"
                 },
                 "duration": {
                     "type": "integer",
@@ -12649,7 +12812,7 @@ const docTemplate = `{
                     "minimum": 0
                 },
                 "discountType": {
-                    "$ref": "#/definitions/user.DiscountType"
+                    "$ref": "#/definitions/enums.DiscountTypeEnum"
                 },
                 "duration": {
                     "type": "integer",
@@ -12701,7 +12864,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "type": {
-                    "$ref": "#/definitions/product.DiscountTypeEnum"
+                    "$ref": "#/definitions/enums.DiscountTypeEnum"
                 },
                 "value": {
                     "type": "integer"
@@ -12777,7 +12940,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "$ref": "#/definitions/product.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "weight": {
                     "type": "integer",
@@ -12795,17 +12958,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "product.DiscountTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Percentage",
-                "Value"
-            ]
         },
         "product.GetByFiltersSortProductQuery": {
             "type": "object",
@@ -12844,7 +12996,7 @@ const docTemplate = `{
                     }
                 },
                 "selectedSort": {
-                    "$ref": "#/definitions/product.ProductSortEnum"
+                    "$ref": "#/definitions/enums.ProductSortEnum"
                 },
                 "siteId": {
                     "type": "integer"
@@ -12878,60 +13030,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
-                    "$ref": "#/definitions/product.ProductAttributeTypeEnum"
+                    "$ref": "#/definitions/enums.ProductAttributeTypeEnum"
                 },
                 "value": {
                     "type": "string"
                 }
             }
-        },
-        "product.ProductAttributeTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "Public",
-                "Technical",
-                "Other"
-            ]
-        },
-        "product.ProductSortEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13
-            ],
-            "x-enum-varnames": [
-                "PriceLowToHigh",
-                "PriceHighToLow",
-                "CouponHighToLow",
-                "NameAZ",
-                "NameZA",
-                "RecentlyAdded",
-                "RecentlyUpdated",
-                "MostSelling",
-                "MostVisited",
-                "MostRated",
-                "MostReviewed",
-                "LeastVisited",
-                "LeastRated",
-                "LeastReviewed"
-            ]
         },
         "product.ProductVariantCommand": {
             "type": "object",
@@ -12953,17 +13057,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "product.StatusEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Inactive",
-                "Active"
-            ]
         },
         "product.UpdateProductCommand": {
             "type": "object",
@@ -13033,7 +13126,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "$ref": "#/definitions/product.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 },
                 "weight": {
                     "type": "integer"
@@ -13441,16 +13534,16 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "domainType": {
-                    "$ref": "#/definitions/site.DomainTypeEnum"
+                    "$ref": "#/definitions/enums.DomainTypeEnum"
                 },
                 "name": {
                     "type": "string"
                 },
                 "siteType": {
-                    "$ref": "#/definitions/site.SiteTypeEnum"
+                    "$ref": "#/definitions/enums.SiteTypeEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/site.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 }
             }
         },
@@ -13465,45 +13558,6 @@ const docTemplate = `{
                 }
             }
         },
-        "site.DomainTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Domain",
-                "Subdomain"
-            ]
-        },
-        "site.SiteTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "Shop",
-                "Blog",
-                "Business"
-            ]
-        },
-        "site.StatusEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "Active",
-                "Inactive",
-                "Pending",
-                "Deleted"
-            ]
-        },
         "site.UpdateSiteCommand": {
             "type": "object",
             "required": [
@@ -13514,7 +13568,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "domainType": {
-                    "$ref": "#/definitions/site.DomainTypeEnum"
+                    "$ref": "#/definitions/enums.DomainTypeEnum"
                 },
                 "id": {
                     "type": "integer"
@@ -13523,10 +13577,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "siteType": {
-                    "$ref": "#/definitions/site.SiteTypeEnum"
+                    "$ref": "#/definitions/enums.SiteTypeEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/site.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 }
             }
         },
@@ -13556,13 +13610,13 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/ticket.TicketPriorityEnum"
+                    "$ref": "#/definitions/enums.TicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/ticket.TicketCategoryEnum"
+                    "$ref": "#/definitions/enums.TicketCategoryEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/ticket.TicketStatusEnum"
+                    "$ref": "#/definitions/enums.TicketStatusEnum"
                 }
             }
         },
@@ -13574,6 +13628,10 @@ const docTemplate = `{
             "properties": {
                 "content": {
                     "type": "string"
+                },
+                "media": {
+                    "type": "array",
+                    "items": {}
                 },
                 "respondentId": {
                     "type": "integer"
@@ -13598,10 +13656,10 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/ticket.TicketPriorityEnum"
+                    "$ref": "#/definitions/enums.TicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/ticket.TicketCategoryEnum"
+                    "$ref": "#/definitions/enums.TicketCategoryEnum"
                 },
                 "title": {
                     "type": "string"
@@ -13635,62 +13693,15 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/ticket.TicketPriorityEnum"
+                    "$ref": "#/definitions/enums.TicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/ticket.TicketCategoryEnum"
+                    "$ref": "#/definitions/enums.TicketCategoryEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/ticket.TicketStatusEnum"
+                    "$ref": "#/definitions/enums.TicketStatusEnum"
                 }
             }
-        },
-        "ticket.TicketCategoryEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
-            ],
-            "x-enum-varnames": [
-                "Bug",
-                "Enhancement",
-                "FeatureRequest",
-                "Question",
-                "Documentation",
-                "Financial"
-            ]
-        },
-        "ticket.TicketPriorityEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "Low",
-                "Medium",
-                "High",
-                "Critical"
-            ]
-        },
-        "ticket.TicketStatusEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "New",
-                "InProgress",
-                "Closed"
-            ]
         },
         "unit_price.CalculateUnitPriceUnitPriceQuery": {
             "type": "object",
@@ -13706,43 +13717,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "unitPriceName": {
-                    "$ref": "#/definitions/unit_price.UnitPriceNameEnum"
+                    "$ref": "#/definitions/enums.UnitPriceNameEnum"
                 }
             }
-        },
-        "unit_price.DiscountTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Fixed",
-                "Percentage"
-            ]
-        },
-        "unit_price.UnitPriceNameEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7
-            ],
-            "x-enum-varnames": [
-                "StorageMbCredits",
-                "PageViewCredits",
-                "FormSubmitCredits",
-                "SiteCredits",
-                "SmsCredits",
-                "EmailCredits",
-                "AiCredits",
-                "AiImageCredits"
-            ]
         },
         "unit_price.UpdateUnitPriceCommand": {
             "type": "object",
@@ -13756,7 +13733,7 @@ const docTemplate = `{
                     "minimum": 0
                 },
                 "discountType": {
-                    "$ref": "#/definitions/unit_price.DiscountTypeEnum"
+                    "$ref": "#/definitions/enums.DiscountTypeEnum"
                 },
                 "hasDay": {
                     "type": "boolean"
@@ -13772,19 +13749,6 @@ const docTemplate = `{
                 }
             }
         },
-        "user.AiTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "GPT35",
-                "GPT4",
-                "Claude"
-            ]
-        },
         "user.ChargeCreditRequestUserCommand": {
             "type": "object",
             "required": [
@@ -13796,7 +13760,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gateway": {
-                    "$ref": "#/definitions/user.PaymentGatewaysEnum"
+                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
                 },
                 "unitPrices": {
                     "type": "array",
@@ -13806,17 +13770,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "user.DiscountType": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Fixed",
-                "Percentage"
-            ]
         },
         "user.LoginUserCommand": {
             "type": "object",
@@ -13831,19 +13784,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "user.PaymentGatewaysEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "ZarinPal",
-                "IDPay",
-                "NextPay"
-            ]
         },
         "user.RegisterUserCommand": {
             "type": "object",
@@ -13872,7 +13812,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "type": {
-                    "$ref": "#/definitions/user.VerifyTypeEnum"
+                    "$ref": "#/definitions/enums.VerifyTypeEnum"
                 }
             }
         },
@@ -13898,40 +13838,6 @@ const docTemplate = `{
                 }
             }
         },
-        "user.StatusEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1
-            ],
-            "x-enum-varnames": [
-                "Disabled",
-                "Enabled"
-            ]
-        },
-        "user.UnitPriceNameEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7
-            ],
-            "x-enum-varnames": [
-                "StorageMbCredits",
-                "PageViewCredits",
-                "FormSubmitCredits",
-                "SiteCredits",
-                "SmsCredits",
-                "EmailCredits",
-                "AiCredits",
-                "AiImageCredits"
-            ]
-        },
         "user.UnitPriceQuery": {
             "type": "object",
             "required": [
@@ -13948,7 +13854,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "unitPriceName": {
-                    "$ref": "#/definitions/user.UnitPriceNameEnum"
+                    "$ref": "#/definitions/enums.UnitPriceNameEnum"
                 }
             }
         },
@@ -13965,7 +13871,7 @@ const docTemplate = `{
                     }
                 },
                 "aiTypeEnum": {
-                    "$ref": "#/definitions/user.AiTypeEnum"
+                    "$ref": "#/definitions/enums.AiTypeEnum"
                 },
                 "email": {
                     "type": "string"
@@ -13989,7 +13895,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/user.SmptSettings"
                 },
                 "useCustomEmailSmtp": {
-                    "$ref": "#/definitions/user.StatusEnum"
+                    "$ref": "#/definitions/enums.StatusEnum"
                 }
             }
         },
@@ -14004,54 +13910,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gateway": {
-                    "$ref": "#/definitions/user.PaymentGatewaysEnum"
+                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
                 },
                 "planId": {
                     "type": "integer"
                 }
             }
-        },
-        "user.VerifyTypeEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "VerifyEmail",
-                "VerifyPhone",
-                "ForgetPasswordEmail",
-                "ForgetPasswordPhone"
-            ]
-        },
-        "website.ArticleSortEnum": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9
-            ],
-            "x-enum-varnames": [
-                "TitleAZ",
-                "TitleZA",
-                "RecentlyAdded",
-                "RecentlyUpdated",
-                "MostVisited",
-                "LeastVisited",
-                "MostRated",
-                "LeastRated",
-                "MostReviewed",
-                "LeastReviewed"
-            ]
         },
         "website.GetSingleArticleBySlugQuery": {
             "type": "object",
