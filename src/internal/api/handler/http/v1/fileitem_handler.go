@@ -26,12 +26,12 @@ func NewFileItemHandler(usc *fileitemusecase.FileItemUsecase) *FileItemHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.CreateOrDirectoryItemCommand  true  "File or directory information"
-// @Success      201      {object}  resp.Result                            "Created file or directory"
-// @Failure      400      {object}  resp.Result                            "Validation error"
-// @Failure      401      {object}  resp.Result                            "Unauthorized"
-// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Success      201      {object}  utils.Result                            "Created file or directory"
+// @Failure      400      {object}  utils.Result                            "Validation error"
+// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /file-item [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 	var params fileitem.CreateOrDirectoryItemCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.DeleteFileItemCommand  true  "File or directory ID to delete"
-// @Success      200      {object}  resp.Result                     "Deleted file or directory confirmation"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      404      {object}  resp.Result                     "File or directory not found"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      200      {object}  utils.Result                     "Deleted file or directory confirmation"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      404      {object}  utils.Result                     "File or directory not found"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /file-item [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 	var params fileitem.DeleteFileItemCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.ForceDeleteFileItemCommand  true  "File or directory ID to permanently delete"
-// @Success      200      {object}  resp.Result                          "Permanently deleted file or directory confirmation"
-// @Failure      400      {object}  resp.Result                          "Validation error"
-// @Failure      401      {object}  resp.Result                          "Unauthorized"
-// @Failure      404      {object}  resp.Result                          "File or directory not found"
-// @Failure      500      {object}  resp.Result                          "Internal server error"
+// @Success      200      {object}  utils.Result                          "Permanently deleted file or directory confirmation"
+// @Failure      400      {object}  utils.Result                          "Validation error"
+// @Failure      401      {object}  utils.Result                          "Unauthorized"
+// @Failure      404      {object}  utils.Result                          "File or directory not found"
+// @Failure      500      {object}  utils.Result                          "Internal server error"
 // @Router       /file-item/force [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 	var params fileitem.ForceDeleteFileItemCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.UpdateFileItemCommand  true  "Updated file or directory information"
-// @Success      200      {object}  resp.Result                     "Updated file or directory"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      404      {object}  resp.Result                     "File or directory not found"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      200      {object}  utils.Result                     "Updated file or directory"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      404      {object}  utils.Result                     "File or directory not found"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /file-item [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 	var params fileitem.UpdateFileItemCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -141,13 +141,13 @@ func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.FileOperationCommand  true  "Operation details"
-// @Success      200      {object}  resp.Result                    "Operation result"
-// @Failure      400      {object}  resp.Result                    "Validation error"
-// @Failure      401      {object}  resp.Result                    "Unauthorized"
-// @Failure      404      {object}  resp.Result                    "File or directory not found"
-// @Failure      500      {object}  resp.Result                    "Internal server error"
+// @Success      200      {object}  utils.Result                    "Operation result"
+// @Failure      400      {object}  utils.Result                    "Validation error"
+// @Failure      401      {object}  utils.Result                    "Unauthorized"
+// @Failure      404      {object}  utils.Result                    "File or directory not found"
+// @Failure      500      {object}  utils.Result                    "Internal server error"
 // @Router       /file-item/operation [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) FileOperation(c *gin.Context) {
 	var params fileitem.FileOperationCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -170,13 +170,13 @@ func (h *FileItemHandler) FileOperation(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.RestoreFileItemCommand  true  "File or directory ID to restore"
-// @Success      200      {object}  resp.Result                      "Restored file or directory"
-// @Failure      400      {object}  resp.Result                      "Validation error"
-// @Failure      401      {object}  resp.Result                      "Unauthorized"
-// @Failure      404      {object}  resp.Result                      "File or directory not found in trash"
-// @Failure      500      {object}  resp.Result                      "Internal server error"
+// @Success      200      {object}  utils.Result                      "Restored file or directory"
+// @Failure      400      {object}  utils.Result                      "Validation error"
+// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      404      {object}  utils.Result                      "File or directory not found in trash"
+// @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /file-item/restore [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 	var params fileitem.RestoreFileItemCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -199,13 +199,13 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     fileitem.GetByIdsQuery  true  "File or directory IDs to retrieve"
-// @Success      200      {object}  resp.Result            "Files or directories details"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "One or more files or directories not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Files or directories details"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "One or more files or directories not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /file-item/ids [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) GetByIds(c *gin.Context) {
 	var params fileitem.GetByIdsQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -228,12 +228,12 @@ func (h *FileItemHandler) GetByIds(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     fileitem.GetDeletedTreeDirectoryQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                            "Deleted directory tree"
-// @Failure      400      {object}  resp.Result                            "Validation error"
-// @Failure      401      {object}  resp.Result                            "Unauthorized"
-// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Success      200      {object}  utils.Result                            "Deleted directory tree"
+// @Failure      400      {object}  utils.Result                            "Validation error"
+// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /file-item/tree/deleted [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 	var params fileitem.GetDeletedTreeDirectoryQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -256,13 +256,13 @@ func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.GetDownloadFileItemByIdQuery  true  "File ID to download"
-// @Success      200      {object}  resp.Result                            "File download information"
-// @Failure      400      {object}  resp.Result                            "Validation error"
-// @Failure      401      {object}  resp.Result                            "Unauthorized"
-// @Failure      404      {object}  resp.Result                            "File not found"
-// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Success      200      {object}  utils.Result                            "File download information"
+// @Failure      400      {object}  utils.Result                            "Validation error"
+// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      404      {object}  utils.Result                            "File not found"
+// @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /file-item/download [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 	var params fileitem.GetDownloadFileItemByIdQuery
 	if !h.validator.ValidateCommand(c, &params) {
@@ -285,12 +285,12 @@ func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      fileitem.GetTreeDirectoryQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                     "Directory tree"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      200      {object}  utils.Result                     "Directory tree"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /file-item/tree [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *FileItemHandler) GetTreeDirectory(c *gin.Context) {
 	var params fileitem.GetTreeDirectoryQuery
 	if !h.validator.ValidateCommand(c, &params) {

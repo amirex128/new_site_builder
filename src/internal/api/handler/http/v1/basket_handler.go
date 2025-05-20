@@ -26,12 +26,12 @@ func NewBasketHandler(usc *basketusecase.BasketUsecase) *BasketHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      basket.UpdateBasketCommand  true  "Updated basket information"
-// @Success      200      {object}  resp.Result                 "Updated basket"
-// @Failure      400      {object}  resp.Result                 "Validation error"
-// @Failure      401      {object}  resp.Result                 "Unauthorized"
-// @Failure      500      {object}  resp.Result                 "Internal server error"
+// @Success      200      {object}  utils.Result                 "Updated basket"
+// @Failure      400      {object}  utils.Result                 "Validation error"
+// @Failure      401      {object}  utils.Result                 "Unauthorized"
+// @Failure      500      {object}  utils.Result                 "Internal server error"
 // @Router       /basket [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 	var params basket.UpdateBasketCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     basket.GetBasketQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result            "Basket details"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Basket not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Basket details"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Basket not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /basket [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *BasketHandler) GetBasket(c *gin.Context) {
 	var params basket.GetBasketQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -83,12 +83,12 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     basket.GetAllBasketUserQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                   "List of user baskets"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "List of user baskets"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /basket/user/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 	var params basket.GetAllBasketUserQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -111,13 +111,13 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     basket.AdminGetAllBasketUserQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                        "List of all user baskets"
-// @Failure      400      {object}  resp.Result                        "Validation error"
-// @Failure      401      {object}  resp.Result                        "Unauthorized"
-// @Failure      403      {object}  resp.Result                        "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Success      200      {object}  utils.Result                        "List of all user baskets"
+// @Failure      400      {object}  utils.Result                        "Validation error"
+// @Failure      401      {object}  utils.Result                        "Unauthorized"
+// @Failure      403      {object}  utils.Result                        "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /basket/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 	var params basket.AdminGetAllBasketUserQuery
 	if !h.validator.ValidateQuery(c, &params) {

@@ -26,10 +26,10 @@ func NewWebsiteHandler(usc *websiteusecase.WebsiteUsecase) *WebsiteHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.GetByDomainPageQuery  true  "Domain and page parameters"
-// @Success      200      {object}  resp.Result                  "Page content"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      404      {object}  resp.Result                  "Page or domain not found"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "Page content"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      404      {object}  utils.Result                  "Page or domain not found"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /website/page [get]
 func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 	var params website.GetByDomainPageQuery
@@ -53,10 +53,10 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.GetByDomainHeaderFooterQuery  true  "Domain parameters"
-// @Success      200      {object}  resp.Result                          "Header and footer content"
-// @Failure      400      {object}  resp.Result                          "Validation error"
-// @Failure      404      {object}  resp.Result                          "Domain not found"
-// @Failure      500      {object}  resp.Result                          "Internal server error"
+// @Success      200      {object}  utils.Result                          "Header and footer content"
+// @Failure      400      {object}  utils.Result                          "Validation error"
+// @Failure      404      {object}  utils.Result                          "Domain not found"
+// @Failure      500      {object}  utils.Result                          "Internal server error"
 // @Router       /website/header-footer [get]
 func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 	var params website.GetByDomainHeaderFooterQuery
@@ -80,9 +80,9 @@ func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.ProductSearchListQuery  true  "Search parameters"
-// @Success      200      {object}  resp.Result                    "List of products matching search criteria"
-// @Failure      400      {object}  resp.Result                    "Validation error"
-// @Failure      500      {object}  resp.Result                    "Internal server error"
+// @Success      200      {object}  utils.Result                    "List of products matching search criteria"
+// @Failure      400      {object}  utils.Result                    "Validation error"
+// @Failure      500      {object}  utils.Result                    "Internal server error"
 // @Router       /website/product/search [get]
 func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 	var params website.ProductSearchListQuery
@@ -106,9 +106,9 @@ func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.GetFiltersSortArticleQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                        "Article filters and sorting options"
-// @Failure      400      {object}  resp.Result                        "Validation error"
-// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Success      200      {object}  utils.Result                        "Article filters and sorting options"
+// @Failure      400      {object}  utils.Result                        "Validation error"
+// @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /website/article/filters-sort [get]
 func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 	var params website.GetFiltersSortArticleQuery
@@ -132,9 +132,9 @@ func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.GetFiltersSortProductQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                        "Product filters and sorting options"
-// @Failure      400      {object}  resp.Result                        "Validation error"
-// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Success      200      {object}  utils.Result                        "Product filters and sorting options"
+// @Failure      400      {object}  utils.Result                        "Validation error"
+// @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /website/product/filters-sort [get]
 func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 	var params website.GetFiltersSortProductQuery
@@ -158,10 +158,10 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.GetArticlesByCategorySlugQuery  true  "Category slug and query parameters"
-// @Success      200      {object}  resp.Result                            "List of articles in the category"
-// @Failure      400      {object}  resp.Result                            "Validation error"
-// @Failure      404      {object}  resp.Result                            "Category not found"
-// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Success      200      {object}  utils.Result                            "List of articles in the category"
+// @Failure      400      {object}  utils.Result                            "Validation error"
+// @Failure      404      {object}  utils.Result                            "Category not found"
+// @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /website/article/category [get]
 func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 	var params website.GetArticlesByCategorySlugQuery
@@ -185,10 +185,10 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     website.GetProductsByCategorySlugQuery  true  "Category slug and query parameters"
-// @Success      200      {object}  resp.Result                            "List of products in the category"
-// @Failure      400      {object}  resp.Result                            "Validation error"
-// @Failure      404      {object}  resp.Result                            "Category not found"
-// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Success      200      {object}  utils.Result                            "List of products in the category"
+// @Failure      400      {object}  utils.Result                            "Validation error"
+// @Failure      404      {object}  utils.Result                            "Category not found"
+// @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /website/product/category [get]
 func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 	var params website.GetProductsByCategorySlugQuery
@@ -212,10 +212,10 @@ func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      website.GetSingleArticleBySlugQuery  true  "Article slug"
-// @Success      200      {object}  resp.Result                         "Article details"
-// @Failure      400      {object}  resp.Result                         "Validation error"
-// @Failure      404      {object}  resp.Result                         "Article not found"
-// @Failure      500      {object}  resp.Result                         "Internal server error"
+// @Success      200      {object}  utils.Result                         "Article details"
+// @Failure      400      {object}  utils.Result                         "Validation error"
+// @Failure      404      {object}  utils.Result                         "Article not found"
+// @Failure      500      {object}  utils.Result                         "Internal server error"
 // @Router       /website/article [get]
 func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 	var params website.GetSingleArticleBySlugQuery
@@ -239,10 +239,10 @@ func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      website.GetSingleProductBySlugQuery  true  "Product slug"
-// @Success      200      {object}  resp.Result                         "Product details"
-// @Failure      400      {object}  resp.Result                         "Validation error"
-// @Failure      404      {object}  resp.Result                         "Product not found"
-// @Failure      500      {object}  resp.Result                         "Internal server error"
+// @Success      200      {object}  utils.Result                         "Product details"
+// @Failure      400      {object}  utils.Result                         "Validation error"
+// @Failure      404      {object}  utils.Result                         "Product not found"
+// @Failure      500      {object}  utils.Result                         "Internal server error"
 // @Router       /website/product [get]
 func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
 	var params website.GetSingleProductBySlugQuery

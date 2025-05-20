@@ -26,12 +26,12 @@ func NewCustomerHandler(usc *customerusecase.CustomerUsecase) *CustomerHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      customer.UpdateProfileCustomerCommand  true  "Updated profile information"
-// @Success      200      {object}  resp.Result                            "Updated profile"
-// @Failure      400      {object}  resp.Result                            "Validation error"
-// @Failure      401      {object}  resp.Result                            "Unauthorized"
-// @Failure      500      {object}  resp.Result                            "Internal server error"
+// @Success      200      {object}  utils.Result                            "Updated profile"
+// @Failure      400      {object}  utils.Result                            "Validation error"
+// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /customer/profile [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 	var params customer.UpdateProfileCustomerCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     customer.GetProfileCustomerQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                       "Customer profile"
-// @Failure      400      {object}  resp.Result                       "Validation error"
-// @Failure      401      {object}  resp.Result                       "Unauthorized"
-// @Failure      404      {object}  resp.Result                       "Profile not found"
-// @Failure      500      {object}  resp.Result                       "Internal server error"
+// @Success      200      {object}  utils.Result                       "Customer profile"
+// @Failure      400      {object}  utils.Result                       "Validation error"
+// @Failure      401      {object}  utils.Result                       "Unauthorized"
+// @Failure      404      {object}  utils.Result                       "Profile not found"
+// @Failure      500      {object}  utils.Result                       "Internal server error"
 // @Router       /customer/profile [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 	var params customer.GetProfileCustomerQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -83,12 +83,12 @@ func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      customer.RegisterCustomerCommand  true  "Customer registration information"
-// @Success      201      {object}  resp.Result                       "Registered customer"
-// @Failure      400      {object}  resp.Result                       "Validation error"
-// @Failure      409      {object}  resp.Result                       "Email already exists"
-// @Failure      500      {object}  resp.Result                       "Internal server error"
+// @Success      201      {object}  utils.Result                       "Registered customer"
+// @Failure      400      {object}  utils.Result                       "Validation error"
+// @Failure      409      {object}  utils.Result                       "Email already exists"
+// @Failure      500      {object}  utils.Result                       "Internal server error"
 // @Router       /customer/register [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 	var params customer.RegisterCustomerCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -111,12 +111,12 @@ func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      customer.LoginCustomerCommand  true  "Login credentials"
-// @Success      200      {object}  resp.Result                    "Authentication token"
-// @Failure      400      {object}  resp.Result                    "Validation error"
-// @Failure      401      {object}  resp.Result                    "Invalid credentials"
-// @Failure      500      {object}  resp.Result                    "Internal server error"
+// @Success      200      {object}  utils.Result                    "Authentication token"
+// @Failure      400      {object}  utils.Result                    "Validation error"
+// @Failure      401      {object}  utils.Result                    "Invalid credentials"
+// @Failure      500      {object}  utils.Result                    "Internal server error"
 // @Router       /customer/login [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 	var params customer.LoginCustomerCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -139,12 +139,12 @@ func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      customer.RequestVerifyAndForgetCustomerCommand  true  "Email information"
-// @Success      201      {object}  resp.Result                                     "Email sent confirmation"
-// @Failure      400      {object}  resp.Result                                     "Validation error"
-// @Failure      404      {object}  resp.Result                                     "Email not found"
-// @Failure      500      {object}  resp.Result                                     "Internal server error"
+// @Success      201      {object}  utils.Result                                     "Email sent confirmation"
+// @Failure      400      {object}  utils.Result                                     "Validation error"
+// @Failure      404      {object}  utils.Result                                     "Email not found"
+// @Failure      500      {object}  utils.Result                                     "Internal server error"
 // @Router       /customer/verify-forget [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 	var params customer.RequestVerifyAndForgetCustomerCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -167,12 +167,12 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     customer.VerifyCustomerQuery  true  "Verification token"
-// @Success      200      {object}  resp.Result                   "Verification successful"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Invalid token"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Verification successful"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Invalid token"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /customer/verify [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 	var params customer.VerifyCustomerQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -195,13 +195,13 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     customer.AdminGetAllCustomerQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                        "List of all customers"
-// @Failure      400      {object}  resp.Result                        "Validation error"
-// @Failure      401      {object}  resp.Result                        "Unauthorized"
-// @Failure      403      {object}  resp.Result                        "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Success      200      {object}  utils.Result                        "List of all customers"
+// @Failure      400      {object}  utils.Result                        "Validation error"
+// @Failure      401      {object}  utils.Result                        "Unauthorized"
+// @Failure      403      {object}  utils.Result                        "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /customer/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
 	var params customer.AdminGetAllCustomerQuery
 	if !h.validator.ValidateQuery(c, &params) {

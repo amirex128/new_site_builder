@@ -26,13 +26,13 @@ func NewUnitPriceHandler(usc *unitpriceusecase.UnitPriceUsecase) *UnitPriceHandl
 // @Accept       json
 // @Produce      json
 // @Param        request  body      unit_price.UpdateUnitPriceCommand  true  "Unit price update information"
-// @Success      200      {object}  resp.Result                        "Updated unit price"
-// @Failure      400      {object}  resp.Result                        "Validation error"
-// @Failure      401      {object}  resp.Result                        "Unauthorized"
-// @Failure      404      {object}  resp.Result                        "Unit price not found"
-// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Success      200      {object}  utils.Result                        "Updated unit price"
+// @Failure      400      {object}  utils.Result                        "Validation error"
+// @Failure      401      {object}  utils.Result                        "Unauthorized"
+// @Failure      404      {object}  utils.Result                        "Unit price not found"
+// @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /unit-price [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 	var params unit_price.UpdateUnitPriceCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -55,12 +55,12 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     unit_price.CalculateUnitPriceQuery  true  "Parameters for price calculation"
-// @Success      200      {object}  resp.Result                         "Calculated unit price"
-// @Failure      400      {object}  resp.Result                         "Validation error"
-// @Failure      401      {object}  resp.Result                         "Unauthorized"
-// @Failure      500      {object}  resp.Result                         "Internal server error"
+// @Success      200      {object}  utils.Result                         "Calculated unit price"
+// @Failure      400      {object}  utils.Result                         "Validation error"
+// @Failure      401      {object}  utils.Result                         "Unauthorized"
+// @Failure      500      {object}  utils.Result                         "Internal server error"
 // @Router       /unit-price/calculate [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 	var params unit_price.CalculateUnitPriceQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -83,12 +83,12 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     unit_price.GetAllUnitPriceQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                      "List of unit prices"
-// @Failure      400      {object}  resp.Result                      "Validation error"
-// @Failure      401      {object}  resp.Result                      "Unauthorized"
-// @Failure      500      {object}  resp.Result                      "Internal server error"
+// @Success      200      {object}  utils.Result                      "List of unit prices"
+// @Failure      400      {object}  utils.Result                      "Validation error"
+// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /unit-price/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UnitPriceHandler) GetAllUnitPrice(c *gin.Context) {
 	var params unit_price.GetAllUnitPriceQuery
 	if !h.validator.ValidateQuery(c, &params) {

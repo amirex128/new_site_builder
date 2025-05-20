@@ -26,12 +26,12 @@ func NewUserHandler(usc *userusecase.UserUsecase) *UserHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      user.UpdateProfileUserCommand  true  "Updated profile information"
-// @Success      200      {object}  resp.Result                    "Updated user profile"
-// @Failure      400      {object}  resp.Result                    "Validation error"
-// @Failure      401      {object}  resp.Result                    "Unauthorized"
-// @Failure      500      {object}  resp.Result                    "Internal server error"
+// @Success      200      {object}  utils.Result                    "Updated user profile"
+// @Failure      400      {object}  utils.Result                    "Validation error"
+// @Failure      401      {object}  utils.Result                    "Unauthorized"
+// @Failure      500      {object}  utils.Result                    "Internal server error"
 // @Router       /user/profile [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 	var params user.UpdateProfileUserCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     user.GetProfileUserQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result               "User profile details"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      404      {object}  resp.Result               "User not found"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "User profile details"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      404      {object}  utils.Result               "User not found"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /user/profile [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UserHandler) GetProfileUser(c *gin.Context) {
 	var params user.GetProfileUserQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -83,12 +83,12 @@ func (h *UserHandler) GetProfileUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      user.ChargeCreditRequestUserCommand  true  "Credit charge request details"
-// @Success      201      {object}  resp.Result                          "Created charge request"
-// @Failure      400      {object}  resp.Result                          "Validation error"
-// @Failure      401      {object}  resp.Result                          "Unauthorized"
-// @Failure      500      {object}  resp.Result                          "Internal server error"
+// @Success      201      {object}  utils.Result                          "Created charge request"
+// @Failure      400      {object}  utils.Result                          "Validation error"
+// @Failure      401      {object}  utils.Result                          "Unauthorized"
+// @Failure      500      {object}  utils.Result                          "Internal server error"
 // @Router       /user/credit/charge [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 	var params user.ChargeCreditRequestUserCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -111,12 +111,12 @@ func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      user.UpgradePlanRequestUserCommand  true  "Plan upgrade request details"
-// @Success      201      {object}  resp.Result                         "Created plan upgrade request"
-// @Failure      400      {object}  resp.Result                         "Validation error"
-// @Failure      401      {object}  resp.Result                         "Unauthorized"
-// @Failure      500      {object}  resp.Result                         "Internal server error"
+// @Success      201      {object}  utils.Result                         "Created plan upgrade request"
+// @Failure      400      {object}  utils.Result                         "Validation error"
+// @Failure      401      {object}  utils.Result                         "Unauthorized"
+// @Failure      500      {object}  utils.Result                         "Internal server error"
 // @Router       /user/plan/upgrade [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 	var params user.UpgradePlanRequestUserCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -139,9 +139,9 @@ func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      user.RegisterUserCommand  true  "User registration details"
-// @Success      201      {object}  resp.Result              "Created user account"
-// @Failure      400      {object}  resp.Result              "Validation error"
-// @Failure      500      {object}  resp.Result              "Internal server error"
+// @Success      201      {object}  utils.Result              "Created user account"
+// @Failure      400      {object}  utils.Result              "Validation error"
+// @Failure      500      {object}  utils.Result              "Internal server error"
 // @Router       /user/register [post]
 func (h *UserHandler) RegisterUser(c *gin.Context) {
 	var params user.RegisterUserCommand
@@ -165,10 +165,10 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      user.LoginUserCommand  true  "User login credentials"
-// @Success      200      {object}  resp.Result           "Authentication token and user details"
-// @Failure      400      {object}  resp.Result           "Validation error"
-// @Failure      401      {object}  resp.Result           "Invalid credentials"
-// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Success      200      {object}  utils.Result           "Authentication token and user details"
+// @Failure      400      {object}  utils.Result           "Validation error"
+// @Failure      401      {object}  utils.Result           "Invalid credentials"
+// @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /user/login [post]
 func (h *UserHandler) LoginUser(c *gin.Context) {
 	var params user.LoginUserCommand
@@ -192,10 +192,10 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      user.RequestVerifyAndForgetUserCommand  true  "Email verification or password reset request"
-// @Success      201      {object}  resp.Result                             "Verification or reset request created"
-// @Failure      400      {object}  resp.Result                             "Validation error"
-// @Failure      404      {object}  resp.Result                             "User not found"
-// @Failure      500      {object}  resp.Result                             "Internal server error"
+// @Success      201      {object}  utils.Result                             "Verification or reset request created"
+// @Failure      400      {object}  utils.Result                             "Validation error"
+// @Failure      404      {object}  utils.Result                             "User not found"
+// @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /user/verify-forget/request [post]
 func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 	var params user.RequestVerifyAndForgetUserCommand
@@ -219,10 +219,10 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     user.VerifyUserQuery  true  "Verification details"
-// @Success      200      {object}  resp.Result           "User verified or password reset"
-// @Failure      400      {object}  resp.Result           "Validation error"
-// @Failure      404      {object}  resp.Result           "User not found or invalid code"
-// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Success      200      {object}  utils.Result           "User verified or password reset"
+// @Failure      400      {object}  utils.Result           "Validation error"
+// @Failure      404      {object}  utils.Result           "User not found or invalid code"
+// @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /user/verify [get]
 func (h *UserHandler) VerifyUser(c *gin.Context) {
 	var params user.VerifyUserQuery
@@ -246,13 +246,13 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     user.AdminGetAllUserQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result               "List of all users"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      403      {object}  resp.Result               "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "List of all users"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /user/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *UserHandler) AdminGetAllUser(c *gin.Context) {
 	var params user.AdminGetAllUserQuery
 	if !h.validator.ValidateQuery(c, &params) {

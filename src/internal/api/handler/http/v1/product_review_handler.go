@@ -26,12 +26,12 @@ func NewProductReviewHandler(usc *productreviewusecase.ProductReviewUsecase) *Pr
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_review.CreateProductReviewCommand  true  "Review information"
-// @Success      201      {object}  resp.Result                                "Created review"
-// @Failure      400      {object}  resp.Result                                "Validation error"
-// @Failure      401      {object}  resp.Result                                "Unauthorized"
-// @Failure      500      {object}  resp.Result                                "Internal server error"
+// @Success      201      {object}  utils.Result                                "Created review"
+// @Failure      400      {object}  utils.Result                                "Validation error"
+// @Failure      401      {object}  utils.Result                                "Unauthorized"
+// @Failure      500      {object}  utils.Result                                "Internal server error"
 // @Router       /product-review [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
 	var params product_review.CreateProductReviewCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_review.UpdateProductReviewCommand  true  "Updated review information"
-// @Success      200      {object}  resp.Result                                "Updated review"
-// @Failure      400      {object}  resp.Result                                "Validation error"
-// @Failure      401      {object}  resp.Result                                "Unauthorized"
-// @Failure      404      {object}  resp.Result                                "Review not found"
-// @Failure      500      {object}  resp.Result                                "Internal server error"
+// @Success      200      {object}  utils.Result                                "Updated review"
+// @Failure      400      {object}  utils.Result                                "Validation error"
+// @Failure      401      {object}  utils.Result                                "Unauthorized"
+// @Failure      404      {object}  utils.Result                                "Review not found"
+// @Failure      500      {object}  utils.Result                                "Internal server error"
 // @Router       /product-review [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
 	var params product_review.UpdateProductReviewCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_review.DeleteProductReviewCommand  true  "Review ID to delete"
-// @Success      200      {object}  resp.Result                                "Deleted review confirmation"
-// @Failure      400      {object}  resp.Result                                "Validation error"
-// @Failure      401      {object}  resp.Result                                "Unauthorized"
-// @Failure      404      {object}  resp.Result                                "Review not found"
-// @Failure      500      {object}  resp.Result                                "Internal server error"
+// @Success      200      {object}  utils.Result                                "Deleted review confirmation"
+// @Failure      400      {object}  utils.Result                                "Validation error"
+// @Failure      401      {object}  utils.Result                                "Unauthorized"
+// @Failure      404      {object}  utils.Result                                "Review not found"
+// @Failure      500      {object}  utils.Result                                "Internal server error"
 // @Router       /product-review [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 	var params product_review.DeleteProductReviewCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_review.GetByIdProductReviewQuery  true  "Review ID to retrieve"
-// @Success      200      {object}  resp.Result                               "Review details"
-// @Failure      400      {object}  resp.Result                               "Validation error"
-// @Failure      401      {object}  resp.Result                               "Unauthorized"
-// @Failure      404      {object}  resp.Result                               "Review not found"
-// @Failure      500      {object}  resp.Result                               "Internal server error"
+// @Success      200      {object}  utils.Result                               "Review details"
+// @Failure      400      {object}  utils.Result                               "Validation error"
+// @Failure      401      {object}  utils.Result                               "Unauthorized"
+// @Failure      404      {object}  utils.Result                               "Review not found"
+// @Failure      500      {object}  utils.Result                               "Internal server error"
 // @Router       /product-review [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
 	var params product_review.GetByIdProductReviewQuery
 	if !h.validator.ValidateCommand(c, &params) {
@@ -141,12 +141,12 @@ func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_review.GetAllProductReviewQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                              "List of reviews"
-// @Failure      400      {object}  resp.Result                              "Validation error"
-// @Failure      401      {object}  resp.Result                              "Unauthorized"
-// @Failure      500      {object}  resp.Result                              "Internal server error"
+// @Success      200      {object}  utils.Result                              "List of reviews"
+// @Failure      400      {object}  utils.Result                              "Validation error"
+// @Failure      401      {object}  utils.Result                              "Unauthorized"
+// @Failure      500      {object}  utils.Result                              "Internal server error"
 // @Router       /product-review/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
 	var params product_review.GetAllProductReviewQuery
 	if !h.validator.ValidateCommand(c, &params) {
@@ -169,13 +169,13 @@ func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_review.AdminGetAllProductReviewQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                                   "List of all reviews"
-// @Failure      400      {object}  resp.Result                                   "Validation error"
-// @Failure      401      {object}  resp.Result                                   "Unauthorized"
-// @Failure      403      {object}  resp.Result                                   "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                                   "Internal server error"
+// @Success      200      {object}  utils.Result                                   "List of all reviews"
+// @Failure      400      {object}  utils.Result                                   "Validation error"
+// @Failure      401      {object}  utils.Result                                   "Unauthorized"
+// @Failure      403      {object}  utils.Result                                   "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                                   "Internal server error"
 // @Router       /product-review/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductReviewHandler) AdminGetAllProductReview(c *gin.Context) {
 	var params product_review.AdminGetAllProductReviewQuery
 	if !h.validator.ValidateCommand(c, &params) {

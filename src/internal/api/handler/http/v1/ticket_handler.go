@@ -26,12 +26,12 @@ func NewTicketHandler(usc *ticketusecase.TicketUsecase) *TicketHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      ticket.CreateTicketCommand  true  "Ticket information"
-// @Success      201      {object}  resp.Result                "Created ticket"
-// @Failure      400      {object}  resp.Result                "Validation error"
-// @Failure      401      {object}  resp.Result                "Unauthorized"
-// @Failure      500      {object}  resp.Result                "Internal server error"
+// @Success      201      {object}  utils.Result                "Created ticket"
+// @Failure      400      {object}  utils.Result                "Validation error"
+// @Failure      401      {object}  utils.Result                "Unauthorized"
+// @Failure      500      {object}  utils.Result                "Internal server error"
 // @Router       /ticket [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	var params ticket.CreateTicketCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      ticket.ReplayTicketCommand  true  "Reply information"
-// @Success      200      {object}  resp.Result                "Updated ticket with reply"
-// @Failure      400      {object}  resp.Result                "Validation error"
-// @Failure      401      {object}  resp.Result                "Unauthorized"
-// @Failure      404      {object}  resp.Result                "Ticket not found"
-// @Failure      500      {object}  resp.Result                "Internal server error"
+// @Success      200      {object}  utils.Result                "Updated ticket with reply"
+// @Failure      400      {object}  utils.Result                "Validation error"
+// @Failure      401      {object}  utils.Result                "Unauthorized"
+// @Failure      404      {object}  utils.Result                "Ticket not found"
+// @Failure      500      {object}  utils.Result                "Internal server error"
 // @Router       /ticket/reply [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *TicketHandler) ReplayTicket(c *gin.Context) {
 	var params ticket.ReplayTicketCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,14 +83,14 @@ func (h *TicketHandler) ReplayTicket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      ticket.AdminReplayTicketCommand  true  "Admin reply information"
-// @Success      200      {object}  resp.Result                     "Updated ticket with admin reply"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      403      {object}  resp.Result                     "Forbidden - Admin access required"
-// @Failure      404      {object}  resp.Result                     "Ticket not found"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      200      {object}  utils.Result                     "Updated ticket with admin reply"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      403      {object}  utils.Result                     "Forbidden - Admin access required"
+// @Failure      404      {object}  utils.Result                     "Ticket not found"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /ticket/admin/reply [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 	var params ticket.AdminReplayTicketCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -113,13 +113,13 @@ func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     ticket.GetByIdTicketQuery  true  "Ticket ID to retrieve"
-// @Success      200      {object}  resp.Result               "Ticket details"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      404      {object}  resp.Result               "Ticket not found"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "Ticket details"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      404      {object}  utils.Result               "Ticket not found"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /ticket [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 	var params ticket.GetByIdTicketQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -142,12 +142,12 @@ func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     ticket.GetAllTicketQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result              "List of tickets"
-// @Failure      400      {object}  resp.Result              "Validation error"
-// @Failure      401      {object}  resp.Result              "Unauthorized"
-// @Failure      500      {object}  resp.Result              "Internal server error"
+// @Success      200      {object}  utils.Result              "List of tickets"
+// @Failure      400      {object}  utils.Result              "Validation error"
+// @Failure      401      {object}  utils.Result              "Unauthorized"
+// @Failure      500      {object}  utils.Result              "Internal server error"
 // @Router       /ticket/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 	var params ticket.GetAllTicketQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -170,13 +170,13 @@ func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     ticket.AdminGetAllTicketQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                   "List of all tickets"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      403      {object}  resp.Result                   "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "List of all tickets"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      403      {object}  utils.Result                   "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /ticket/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *TicketHandler) AdminGetAllTicket(c *gin.Context) {
 	var params ticket.AdminGetAllTicketQuery
 	if !h.validator.ValidateQuery(c, &params) {

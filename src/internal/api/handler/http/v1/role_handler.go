@@ -26,13 +26,13 @@ func NewRoleHandler(usc *roleusecase.RoleUsecase) *RoleHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      role.CreateRoleCommand  true  "Role information"
-// @Success      201      {object}  resp.Result            "Created role"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      403      {object}  resp.Result            "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      201      {object}  utils.Result            "Created role"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      403      {object}  utils.Result            "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /role [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) CreateRole(c *gin.Context) {
 	var params role.CreateRoleCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -55,14 +55,14 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      role.UpdateRoleCommand  true  "Updated role information"
-// @Success      200      {object}  resp.Result            "Updated role"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      403      {object}  resp.Result            "Forbidden - Admin access required"
-// @Failure      404      {object}  resp.Result            "Role not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Updated role"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      403      {object}  utils.Result            "Forbidden - Admin access required"
+// @Failure      404      {object}  utils.Result            "Role not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /role [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	var params role.UpdateRoleCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -85,14 +85,14 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      role.SetRoleToCustomerCommand  true  "Role and customer assignment details"
-// @Success      200      {object}  resp.Result                   "Role assigned to customer"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      403      {object}  resp.Result                   "Forbidden - Admin access required"
-// @Failure      404      {object}  resp.Result                   "Role or customer not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Role assigned to customer"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      403      {object}  utils.Result                   "Forbidden - Admin access required"
+// @Failure      404      {object}  utils.Result                   "Role or customer not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /role/customer [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 	var params role.SetRoleToCustomerCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -115,14 +115,14 @@ func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      role.SetRoleToUserCommand  true  "Role and user assignment details"
-// @Success      200      {object}  resp.Result               "Role assigned to user"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      403      {object}  resp.Result               "Forbidden - Admin access required"
-// @Failure      404      {object}  resp.Result               "Role or user not found"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "Role assigned to user"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
+// @Failure      404      {object}  utils.Result               "Role or user not found"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /role/user [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 	var params role.SetRoleToUserCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -145,14 +145,14 @@ func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      role.SetRoleToPlanCommand  true  "Role and plan assignment details"
-// @Success      200      {object}  resp.Result               "Role assigned to plan"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      403      {object}  resp.Result               "Forbidden - Admin access required"
-// @Failure      404      {object}  resp.Result               "Role or plan not found"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "Role assigned to plan"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
+// @Failure      404      {object}  utils.Result               "Role or plan not found"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /role/plan [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 	var params role.SetRoleToPlanCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -175,12 +175,12 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     role.GetAllPermissionQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                "List of all permissions"
-// @Failure      400      {object}  resp.Result                "Validation error"
-// @Failure      401      {object}  resp.Result                "Unauthorized"
-// @Failure      500      {object}  resp.Result                "Internal server error"
+// @Success      200      {object}  utils.Result                "List of all permissions"
+// @Failure      400      {object}  utils.Result                "Validation error"
+// @Failure      401      {object}  utils.Result                "Unauthorized"
+// @Failure      500      {object}  utils.Result                "Internal server error"
 // @Router       /role/permission/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 	var params role.GetAllPermissionQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -203,12 +203,12 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     role.GetAllRoleQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result          "List of all roles"
-// @Failure      400      {object}  resp.Result          "Validation error"
-// @Failure      401      {object}  resp.Result          "Unauthorized"
-// @Failure      500      {object}  resp.Result          "Internal server error"
+// @Success      200      {object}  utils.Result          "List of all roles"
+// @Failure      400      {object}  utils.Result          "Validation error"
+// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /role/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) GetAllRole(c *gin.Context) {
 	var params role.GetAllRoleQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -231,13 +231,13 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     role.GetRolePermissionsQuery  true  "Role ID to retrieve permissions for"
-// @Success      200      {object}  resp.Result                  "List of permissions for the role"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      401      {object}  resp.Result                  "Unauthorized"
-// @Failure      404      {object}  resp.Result                  "Role not found"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "List of permissions for the role"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      404      {object}  utils.Result                  "Role not found"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /role/permissions [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
 	var params role.GetRolePermissionsQuery
 	if !h.validator.ValidateQuery(c, &params) {

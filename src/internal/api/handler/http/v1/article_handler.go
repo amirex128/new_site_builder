@@ -26,12 +26,12 @@ func NewArticleHandler(usc *articleusecase.ArticleUsecase) *ArticleHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.CreateArticleCommand  true  "Article information"
-// @Success      201      {object}  resp.Result                   "Created article"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      201      {object}  utils.Result                   "Created article"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /article [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	var params article.CreateArticleCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.UpdateArticleCommand  true  "Updated article information"
-// @Success      200      {object}  resp.Result                   "Updated article"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      404      {object}  resp.Result                   "Article not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Updated article"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      404      {object}  utils.Result                   "Article not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /article [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	var params article.UpdateArticleCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.DeleteArticleCommand  true  "Article ID to delete"
-// @Success      200      {object}  resp.Result                   "Deleted article confirmation"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      404      {object}  resp.Result                   "Article not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Deleted article confirmation"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      404      {object}  utils.Result                   "Article not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /article [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	var params article.DeleteArticleCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     article.GetByIdArticleQuery  true  "Article ID to retrieve"
-// @Success      200      {object}  resp.Result                  "Article details"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      401      {object}  resp.Result                  "Unauthorized"
-// @Failure      404      {object}  resp.Result                  "Article not found"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "Article details"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      404      {object}  utils.Result                  "Article not found"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /article [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	var params article.GetByIdArticleQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     article.GetAllArticleQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                 "List of articles"
-// @Failure      400      {object}  resp.Result                 "Validation error"
-// @Failure      401      {object}  resp.Result                 "Unauthorized"
-// @Failure      500      {object}  resp.Result                 "Internal server error"
+// @Success      200      {object}  utils.Result                 "List of articles"
+// @Failure      400      {object}  utils.Result                 "Validation error"
+// @Failure      401      {object}  utils.Result                 "Unauthorized"
+// @Failure      500      {object}  utils.Result                 "Internal server error"
 // @Router       /article/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	var params article.GetAllArticleQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,12 +169,12 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.GetByFiltersSortArticleQuery  true  "Filter and sort parameters"
-// @Success      200      {object}  resp.Result                           "Filtered and sorted articles"
-// @Failure      400      {object}  resp.Result                           "Validation error"
-// @Failure      401      {object}  resp.Result                           "Unauthorized"
-// @Failure      500      {object}  resp.Result                           "Internal server error"
+// @Success      200      {object}  utils.Result                           "Filtered and sorted articles"
+// @Failure      400      {object}  utils.Result                           "Validation error"
+// @Failure      401      {object}  utils.Result                           "Unauthorized"
+// @Failure      500      {object}  utils.Result                           "Internal server error"
 // @Router       /article/filters-sort [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 	var params article.GetByFiltersSortArticleQuery
 	if !h.validator.ValidateCommand(c, &params) {
@@ -197,13 +197,13 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     article.AdminGetAllArticleQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                      "List of all articles"
-// @Failure      400      {object}  resp.Result                      "Validation error"
-// @Failure      401      {object}  resp.Result                      "Unauthorized"
-// @Failure      403      {object}  resp.Result                      "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                      "Internal server error"
+// @Success      200      {object}  utils.Result                      "List of all articles"
+// @Failure      400      {object}  utils.Result                      "Validation error"
+// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /article/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
 	var params article.AdminGetAllArticleQuery
 	if !h.validator.ValidateQuery(c, &params) {

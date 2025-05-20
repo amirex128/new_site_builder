@@ -26,12 +26,12 @@ func NewPlanHandler(usc *planusecase.PlanUsecase) *PlanHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      plan.CreatePlanCommand  true  "Plan information"
-// @Success      201      {object}  resp.Result            "Created plan"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      201      {object}  utils.Result            "Created plan"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /plan [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PlanHandler) CreatePlan(c *gin.Context) {
 	var params plan.CreatePlanCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      plan.UpdatePlanCommand  true  "Updated plan information"
-// @Success      200      {object}  resp.Result            "Updated plan"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Plan not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Updated plan"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Plan not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /plan [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 	var params plan.UpdatePlanCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      plan.DeletePlanCommand  true  "Plan ID to delete"
-// @Success      200      {object}  resp.Result            "Deleted plan confirmation"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Plan not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Deleted plan confirmation"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Plan not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /plan [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PlanHandler) DeletePlan(c *gin.Context) {
 	var params plan.DeletePlanCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     plan.GetByIDPlanQuery  true  "Plan ID to retrieve"
-// @Success      200      {object}  resp.Result           "Plan details"
-// @Failure      400      {object}  resp.Result           "Validation error"
-// @Failure      401      {object}  resp.Result           "Unauthorized"
-// @Failure      404      {object}  resp.Result           "Plan not found"
-// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Success      200      {object}  utils.Result           "Plan details"
+// @Failure      400      {object}  utils.Result           "Validation error"
+// @Failure      401      {object}  utils.Result           "Unauthorized"
+// @Failure      404      {object}  utils.Result           "Plan not found"
+// @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /plan [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 	var params plan.GetByIDPlanQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     plan.GetAllPlanQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result          "List of plans"
-// @Failure      400      {object}  resp.Result          "Validation error"
-// @Failure      401      {object}  resp.Result          "Unauthorized"
-// @Failure      500      {object}  resp.Result          "Internal server error"
+// @Success      200      {object}  utils.Result          "List of plans"
+// @Failure      400      {object}  utils.Result          "Validation error"
+// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /plan/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 	var params plan.GetAllPlanQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,12 +169,12 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     plan.CalculatePlanPriceQuery  true  "Plan calculation parameters"
-// @Success      200      {object}  resp.Result                  "Calculated plan price"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      401      {object}  resp.Result                  "Unauthorized"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "Calculated plan price"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /plan/calculate [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 	var params plan.CalculatePlanPriceQuery
 	if !h.validator.ValidateQuery(c, &params) {

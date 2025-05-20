@@ -26,12 +26,12 @@ func NewSiteHandler(usc *siteusecase.SiteUsecase) *SiteHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      site.CreateSiteCommand  true  "Site information"
-// @Success      201      {object}  resp.Result            "Created site"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      201      {object}  utils.Result            "Created site"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /site [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *SiteHandler) CreateSite(c *gin.Context) {
 	var params site.CreateSiteCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *SiteHandler) CreateSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      site.UpdateSiteCommand  true  "Updated site information"
-// @Success      200      {object}  resp.Result            "Updated site"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Site not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Updated site"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Site not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /site [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *SiteHandler) UpdateSite(c *gin.Context) {
 	var params site.UpdateSiteCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *SiteHandler) UpdateSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      site.DeleteSiteCommand  true  "Site ID to delete"
-// @Success      200      {object}  resp.Result            "Deleted site confirmation"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Site not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Deleted site confirmation"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Site not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /site [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *SiteHandler) DeleteSite(c *gin.Context) {
 	var params site.DeleteSiteCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     site.GetByIdSiteQuery  true  "Site ID to retrieve"
-// @Success      200      {object}  resp.Result           "Site details"
-// @Failure      400      {object}  resp.Result           "Validation error"
-// @Failure      401      {object}  resp.Result           "Unauthorized"
-// @Failure      404      {object}  resp.Result           "Site not found"
-// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Success      200      {object}  utils.Result           "Site details"
+// @Failure      400      {object}  utils.Result           "Validation error"
+// @Failure      401      {object}  utils.Result           "Unauthorized"
+// @Failure      404      {object}  utils.Result           "Site not found"
+// @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /site [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 	var params site.GetByIdSiteQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     site.GetAllSiteQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result          "List of sites"
-// @Failure      400      {object}  resp.Result          "Validation error"
-// @Failure      401      {object}  resp.Result          "Unauthorized"
-// @Failure      500      {object}  resp.Result          "Internal server error"
+// @Success      200      {object}  utils.Result          "List of sites"
+// @Failure      400      {object}  utils.Result          "Validation error"
+// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /site/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *SiteHandler) GetAllSite(c *gin.Context) {
 	var params site.GetAllSiteQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,13 +169,13 @@ func (h *SiteHandler) GetAllSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     site.AdminGetAllSiteQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result               "List of all sites"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      403      {object}  resp.Result               "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "List of all sites"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /site/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *SiteHandler) AdminGetAllSite(c *gin.Context) {
 	var params site.AdminGetAllSiteQuery
 	if !h.validator.ValidateQuery(c, &params) {

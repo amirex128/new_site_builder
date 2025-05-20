@@ -26,12 +26,12 @@ func NewDiscountHandler(usc *discountusecase.DiscountUsecase) *DiscountHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      discount.CreateDiscountCommand  true  "Discount information"
-// @Success      201      {object}  resp.Result                     "Created discount"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      201      {object}  utils.Result                     "Created discount"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /discount [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 	var params discount.CreateDiscountCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      discount.UpdateDiscountCommand  true  "Updated discount information"
-// @Success      200      {object}  resp.Result                     "Updated discount"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      404      {object}  resp.Result                     "Discount not found"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      200      {object}  utils.Result                     "Updated discount"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      404      {object}  utils.Result                     "Discount not found"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /discount [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 	var params discount.UpdateDiscountCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      discount.DeleteDiscountCommand  true  "Discount ID to delete"
-// @Success      200      {object}  resp.Result                     "Deleted discount confirmation"
-// @Failure      400      {object}  resp.Result                     "Validation error"
-// @Failure      401      {object}  resp.Result                     "Unauthorized"
-// @Failure      404      {object}  resp.Result                     "Discount not found"
-// @Failure      500      {object}  resp.Result                     "Internal server error"
+// @Success      200      {object}  utils.Result                     "Deleted discount confirmation"
+// @Failure      400      {object}  utils.Result                     "Validation error"
+// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      404      {object}  utils.Result                     "Discount not found"
+// @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /discount [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 	var params discount.DeleteDiscountCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     discount.GetByIdDiscountQuery  true  "Discount ID to retrieve"
-// @Success      200      {object}  resp.Result                    "Discount details"
-// @Failure      400      {object}  resp.Result                    "Validation error"
-// @Failure      401      {object}  resp.Result                    "Unauthorized"
-// @Failure      404      {object}  resp.Result                    "Discount not found"
-// @Failure      500      {object}  resp.Result                    "Internal server error"
+// @Success      200      {object}  utils.Result                    "Discount details"
+// @Failure      400      {object}  utils.Result                    "Validation error"
+// @Failure      401      {object}  utils.Result                    "Unauthorized"
+// @Failure      404      {object}  utils.Result                    "Discount not found"
+// @Failure      500      {object}  utils.Result                    "Internal server error"
 // @Router       /discount [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 	var params discount.GetByIdDiscountQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     discount.GetAllDiscountQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                   "List of discounts"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "List of discounts"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /discount/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 	var params discount.GetAllDiscountQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,13 +169,13 @@ func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     discount.AdminGetAllDiscountQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                        "List of all discounts"
-// @Failure      400      {object}  resp.Result                        "Validation error"
-// @Failure      401      {object}  resp.Result                        "Unauthorized"
-// @Failure      403      {object}  resp.Result                        "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                        "Internal server error"
+// @Success      200      {object}  utils.Result                        "List of all discounts"
+// @Failure      400      {object}  utils.Result                        "Validation error"
+// @Failure      401      {object}  utils.Result                        "Unauthorized"
+// @Failure      403      {object}  utils.Result                        "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /discount/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *DiscountHandler) AdminGetAllDiscount(c *gin.Context) {
 	var params discount.AdminGetAllDiscountQuery
 	if !h.validator.ValidateQuery(c, &params) {

@@ -26,12 +26,12 @@ func NewProductHandler(usc *productusecase.ProductUsecase) *ProductHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product.CreateProductCommand  true  "Product information"
-// @Success      201      {object}  resp.Result                   "Created product"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      201      {object}  utils.Result                   "Created product"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /product [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	var params product.CreateProductCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product.UpdateProductCommand  true  "Updated product information"
-// @Success      200      {object}  resp.Result                   "Updated product"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      404      {object}  resp.Result                   "Product not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Updated product"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      404      {object}  utils.Result                   "Product not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /product [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	var params product.UpdateProductCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product.DeleteProductCommand  true  "Product ID to delete"
-// @Success      200      {object}  resp.Result                   "Deleted product confirmation"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      404      {object}  resp.Result                   "Product not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Deleted product confirmation"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      404      {object}  utils.Result                   "Product not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /product [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	var params product.DeleteProductCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     product.GetByIdProductQuery  true  "Product ID to retrieve"
-// @Success      200      {object}  resp.Result                  "Product details"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      401      {object}  resp.Result                  "Unauthorized"
-// @Failure      404      {object}  resp.Result                  "Product not found"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "Product details"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      404      {object}  utils.Result                  "Product not found"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /product [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 	var params product.GetByIdProductQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     product.GetAllProductQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                 "List of products"
-// @Failure      400      {object}  resp.Result                 "Validation error"
-// @Failure      401      {object}  resp.Result                 "Unauthorized"
-// @Failure      500      {object}  resp.Result                 "Internal server error"
+// @Success      200      {object}  utils.Result                 "List of products"
+// @Failure      400      {object}  utils.Result                 "Validation error"
+// @Failure      401      {object}  utils.Result                 "Unauthorized"
+// @Failure      500      {object}  utils.Result                 "Internal server error"
 // @Router       /product/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 	var params product.GetAllProductQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,12 +169,12 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product.GetByFiltersSortProductQuery  true  "Filter and sort parameters"
-// @Success      200      {object}  resp.Result                           "Filtered and sorted products"
-// @Failure      400      {object}  resp.Result                           "Validation error"
-// @Failure      401      {object}  resp.Result                           "Unauthorized"
-// @Failure      500      {object}  resp.Result                           "Internal server error"
+// @Success      200      {object}  utils.Result                           "Filtered and sorted products"
+// @Failure      400      {object}  utils.Result                           "Validation error"
+// @Failure      401      {object}  utils.Result                           "Unauthorized"
+// @Failure      500      {object}  utils.Result                           "Internal server error"
 // @Router       /product/filters-sort [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 	var params product.GetByFiltersSortProductQuery
 	if !h.validator.ValidateCommand(c, &params) {
@@ -197,13 +197,13 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     product.AdminGetAllProductQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                      "List of all products"
-// @Failure      400      {object}  resp.Result                      "Validation error"
-// @Failure      401      {object}  resp.Result                      "Unauthorized"
-// @Failure      403      {object}  resp.Result                      "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                      "Internal server error"
+// @Success      200      {object}  utils.Result                      "List of all products"
+// @Failure      400      {object}  utils.Result                      "Validation error"
+// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /product/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 	var params product.AdminGetAllProductQuery
 	if !h.validator.ValidateQuery(c, &params) {

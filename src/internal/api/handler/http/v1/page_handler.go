@@ -26,12 +26,12 @@ func NewPageHandler(usc *pageusecase.PageUsecase) *PageHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      page.CreatePageCommand  true  "Page information"
-// @Success      201      {object}  resp.Result            "Created page"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      201      {object}  utils.Result            "Created page"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /page [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PageHandler) CreatePage(c *gin.Context) {
 	var params page.CreatePageCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      page.UpdatePageCommand  true  "Updated page information"
-// @Success      200      {object}  resp.Result            "Updated page"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Page not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Updated page"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Page not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /page [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PageHandler) UpdatePage(c *gin.Context) {
 	var params page.UpdatePageCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      page.DeletePageCommand  true  "Page ID to delete"
-// @Success      200      {object}  resp.Result            "Deleted page confirmation"
-// @Failure      400      {object}  resp.Result            "Validation error"
-// @Failure      401      {object}  resp.Result            "Unauthorized"
-// @Failure      404      {object}  resp.Result            "Page not found"
-// @Failure      500      {object}  resp.Result            "Internal server error"
+// @Success      200      {object}  utils.Result            "Deleted page confirmation"
+// @Failure      400      {object}  utils.Result            "Validation error"
+// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      404      {object}  utils.Result            "Page not found"
+// @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /page [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PageHandler) DeletePage(c *gin.Context) {
 	var params page.DeletePageCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     page.GetByIdPageQuery  true  "Page ID to retrieve"
-// @Success      200      {object}  resp.Result           "Page details"
-// @Failure      400      {object}  resp.Result           "Validation error"
-// @Failure      401      {object}  resp.Result           "Unauthorized"
-// @Failure      404      {object}  resp.Result           "Page not found"
-// @Failure      500      {object}  resp.Result           "Internal server error"
+// @Success      200      {object}  utils.Result           "Page details"
+// @Failure      400      {object}  utils.Result           "Validation error"
+// @Failure      401      {object}  utils.Result           "Unauthorized"
+// @Failure      404      {object}  utils.Result           "Page not found"
+// @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /page [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PageHandler) GetByIdPage(c *gin.Context) {
 	var params page.GetByIdPageQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     page.GetAllPageQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result          "List of pages"
-// @Failure      400      {object}  resp.Result          "Validation error"
-// @Failure      401      {object}  resp.Result          "Unauthorized"
-// @Failure      500      {object}  resp.Result          "Internal server error"
+// @Success      200      {object}  utils.Result          "List of pages"
+// @Failure      400      {object}  utils.Result          "Validation error"
+// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /page/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PageHandler) GetAllPage(c *gin.Context) {
 	var params page.GetAllPageQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,13 +169,13 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     page.AdminGetAllPageQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result               "List of all pages"
-// @Failure      400      {object}  resp.Result               "Validation error"
-// @Failure      401      {object}  resp.Result               "Unauthorized"
-// @Failure      403      {object}  resp.Result               "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result               "Internal server error"
+// @Success      200      {object}  utils.Result               "List of all pages"
+// @Failure      400      {object}  utils.Result               "Validation error"
+// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /page/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 	var params page.AdminGetAllPageQuery
 	if !h.validator.ValidateQuery(c, &params) {

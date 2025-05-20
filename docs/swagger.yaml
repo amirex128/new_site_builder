@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   address.CreateAddressCommand:
     properties:
@@ -1832,20 +1833,6 @@ definitions:
     - id
     - productId
     type: object
-  resp.Result:
-    properties:
-      data: {}
-      errors:
-        items:
-          type: string
-        type: array
-      message:
-        type: string
-      statusCode:
-        type: integer
-      success:
-        type: boolean
-    type: object
   role.CreateRoleCommand:
     properties:
       name:
@@ -2168,6 +2155,23 @@ definitions:
     - gateway
     - planId
     type: object
+  utils.Result:
+    properties:
+      data: {}
+      errorData:
+        items: {}
+        type: array
+      errors:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+      statusCode:
+        type: integer
+      success:
+        type: boolean
+    type: object
   website.GetSingleArticleBySlugQuery:
     properties:
       domain:
@@ -2192,8 +2196,19 @@ definitions:
     - domain
     - slug
     type: object
+host: localhost:8080
 info:
-  contact: {}
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://www.example.com/support
+  description: This is a sample server.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://example.com/terms/
+  title: My API
+  version: "1.0"
 paths:
   /address:
     delete:
@@ -2213,23 +2228,23 @@ paths:
         "200":
           description: Deleted address confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Address not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete an address
@@ -2250,23 +2265,23 @@ paths:
         "200":
           description: Address details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Address not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get address by ID
@@ -2289,19 +2304,19 @@ paths:
         "201":
           description: Created address
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new address
@@ -2324,23 +2339,23 @@ paths:
         "200":
           description: Updated address
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Address not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update an existing address
@@ -2390,23 +2405,23 @@ paths:
         "200":
           description: List of all addresses
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all addresses'
@@ -2456,19 +2471,19 @@ paths:
         "200":
           description: List of addresses
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all addresses
@@ -2518,19 +2533,19 @@ paths:
         "200":
           description: List of cities
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all cities
@@ -2580,19 +2595,19 @@ paths:
         "200":
           description: List of provinces
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all provinces
@@ -2616,23 +2631,23 @@ paths:
         "200":
           description: Deleted article confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Article not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete an article
@@ -2653,23 +2668,23 @@ paths:
         "200":
           description: Article details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Article not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get article by ID
@@ -2692,19 +2707,19 @@ paths:
         "201":
           description: Created article
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new article
@@ -2727,23 +2742,23 @@ paths:
         "200":
           description: Updated article
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Article not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update an article
@@ -2767,23 +2782,23 @@ paths:
         "200":
           description: Deleted category confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete an article category
@@ -2804,23 +2819,23 @@ paths:
         "200":
           description: Category details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get article category by ID
@@ -2843,19 +2858,19 @@ paths:
         "201":
           description: Created category
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new article category
@@ -2878,23 +2893,23 @@ paths:
         "200":
           description: Updated category
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update an article category
@@ -2945,23 +2960,23 @@ paths:
         "200":
           description: List of all categories
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all article categories'
@@ -3015,19 +3030,19 @@ paths:
         "200":
           description: List of categories
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all article categories
@@ -3077,23 +3092,23 @@ paths:
         "200":
           description: List of all articles
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all articles'
@@ -3147,19 +3162,19 @@ paths:
         "200":
           description: List of articles
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all articles
@@ -3183,19 +3198,19 @@ paths:
         "200":
           description: Filtered and sorted articles
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get articles by filters and sorting
@@ -3217,23 +3232,23 @@ paths:
         "200":
           description: Basket details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Basket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get current basket
@@ -3256,19 +3271,19 @@ paths:
         "200":
           description: Updated basket
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update shopping basket
@@ -3318,23 +3333,23 @@ paths:
         "200":
           description: List of all user baskets
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all user baskets'
@@ -3388,19 +3403,19 @@ paths:
         "200":
           description: List of user baskets
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all user baskets
@@ -3422,23 +3437,23 @@ paths:
         "200":
           description: Ticket details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Ticket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get customer ticket by ID
@@ -3461,19 +3476,19 @@ paths:
         "201":
           description: Created ticket
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a customer support ticket
@@ -3496,23 +3511,23 @@ paths:
         "200":
           description: Updated ticket with reply
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Ticket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Reply to a customer ticket
@@ -3536,27 +3551,27 @@ paths:
         "200":
           description: Updated ticket with admin reply
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Ticket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Reply to a customer ticket'
@@ -3607,23 +3622,23 @@ paths:
         "200":
           description: List of all customer tickets
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all customer tickets'
@@ -3673,19 +3688,19 @@ paths:
         "200":
           description: List of customer tickets
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all customer tickets
@@ -3735,23 +3750,23 @@ paths:
         "200":
           description: List of all customers
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all customers'
@@ -3775,19 +3790,19 @@ paths:
         "200":
           description: Authentication token
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Invalid credentials
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Customer login
@@ -3804,23 +3819,23 @@ paths:
         "200":
           description: Customer profile
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Profile not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get customer profile
@@ -3843,19 +3858,19 @@ paths:
         "200":
           description: Updated profile
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update customer profile
@@ -3879,19 +3894,19 @@ paths:
         "201":
           description: Registered customer
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "409":
           description: Email already exists
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Register new customer
@@ -3931,19 +3946,19 @@ paths:
         "200":
           description: Verification successful
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Invalid token
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Verify customer email
@@ -3968,19 +3983,19 @@ paths:
         "201":
           description: Email sent confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Email not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Request verification or password reset
@@ -4004,23 +4019,23 @@ paths:
         "200":
           description: Deleted theme confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Theme not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a default theme
@@ -4041,23 +4056,23 @@ paths:
         "200":
           description: Theme details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Theme not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get default theme by ID
@@ -4080,19 +4095,19 @@ paths:
         "201":
           description: Created theme
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new default theme
@@ -4115,23 +4130,23 @@ paths:
         "200":
           description: Updated theme
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Theme not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a default theme
@@ -4181,19 +4196,19 @@ paths:
         "200":
           description: List of themes
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all default themes
@@ -4217,23 +4232,23 @@ paths:
         "200":
           description: Deleted discount confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Discount not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a discount
@@ -4254,23 +4269,23 @@ paths:
         "200":
           description: Discount details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Discount not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get discount by ID
@@ -4293,19 +4308,19 @@ paths:
         "201":
           description: Created discount
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new discount
@@ -4328,23 +4343,23 @@ paths:
         "200":
           description: Updated discount
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Discount not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a discount
@@ -4395,23 +4410,23 @@ paths:
         "200":
           description: List of all discounts
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all discounts'
@@ -4465,19 +4480,19 @@ paths:
         "200":
           description: List of discounts
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all discounts
@@ -4501,23 +4516,23 @@ paths:
         "200":
           description: Deleted file or directory confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: File or directory not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a file or directory
@@ -4540,19 +4555,19 @@ paths:
         "201":
           description: Created file or directory
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create file or directory
@@ -4575,23 +4590,23 @@ paths:
         "200":
           description: Updated file or directory
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: File or directory not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a file or directory
@@ -4615,23 +4630,23 @@ paths:
         "200":
           description: File download information
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: File not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Download a file
@@ -4655,23 +4670,23 @@ paths:
         "200":
           description: Permanently deleted file or directory confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: File or directory not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Permanently delete a file or directory
@@ -4696,23 +4711,23 @@ paths:
         "200":
           description: Files or directories details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: One or more files or directories not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get files or directories by IDs
@@ -4736,23 +4751,23 @@ paths:
         "200":
           description: Operation result
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: File or directory not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Perform file operations
@@ -4776,23 +4791,23 @@ paths:
         "200":
           description: Restored file or directory
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: File or directory not found in trash
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Restore deleted file or directory
@@ -4816,19 +4831,19 @@ paths:
         "200":
           description: Directory tree
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get directory tree
@@ -4845,19 +4860,19 @@ paths:
         "200":
           description: Deleted directory tree
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get deleted directory tree
@@ -4879,23 +4894,23 @@ paths:
         "200":
           description: Gateway details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Gateway not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get payment gateway by ID
@@ -4918,19 +4933,19 @@ paths:
         "200":
           description: Created or updated gateway
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create or update payment gateway
@@ -4980,23 +4995,23 @@ paths:
         "200":
           description: List of all gateways
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all payment gateways'
@@ -5020,23 +5035,23 @@ paths:
         "200":
           description: Deleted header/footer confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Header/footer not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a header/footer
@@ -5075,23 +5090,23 @@ paths:
         "200":
           description: Header/footer details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Header/footer not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get header/footer by ID
@@ -5114,19 +5129,19 @@ paths:
         "201":
           description: Created header/footer
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a header/footer
@@ -5149,23 +5164,23 @@ paths:
         "200":
           description: Updated header/footer
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Header/footer not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a header/footer
@@ -5216,23 +5231,23 @@ paths:
         "200":
           description: List of all header/footers
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all header/footers'
@@ -5295,19 +5310,19 @@ paths:
         "200":
           description: List of header/footers
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all header/footers
@@ -5331,19 +5346,19 @@ paths:
         "201":
           description: Created order request
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create an order request
@@ -5393,23 +5408,23 @@ paths:
         "200":
           description: List of all orders
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all orders'
@@ -5459,19 +5474,19 @@ paths:
         "200":
           description: List of customer orders
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all customer orders
@@ -5493,23 +5508,23 @@ paths:
         "200":
           description: Order details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Order not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get customer order details
@@ -5563,19 +5578,19 @@ paths:
         "200":
           description: List of user orders
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all user orders
@@ -5597,23 +5612,23 @@ paths:
         "200":
           description: Order details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Order not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get user order details
@@ -5637,23 +5652,23 @@ paths:
         "200":
           description: Verified order
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Order not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Verify an order
@@ -5677,23 +5692,23 @@ paths:
         "200":
           description: Deleted page confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Page not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a page
@@ -5723,23 +5738,23 @@ paths:
         "200":
           description: Page details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Page not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get page by ID
@@ -5762,19 +5777,19 @@ paths:
         "201":
           description: Created page
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new page
@@ -5797,23 +5812,23 @@ paths:
         "200":
           description: Updated page
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Page not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a page
@@ -5863,23 +5878,23 @@ paths:
         "200":
           description: List of all pages
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all pages'
@@ -5933,19 +5948,19 @@ paths:
         "200":
           description: List of pages
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all pages
@@ -5995,23 +6010,23 @@ paths:
         "200":
           description: List of all payments
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all payments'
@@ -6035,19 +6050,19 @@ paths:
         "200":
           description: Payment gateway request result
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Request payment gateway
@@ -6072,23 +6087,23 @@ paths:
         "200":
           description: Verified payment
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Payment not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Verify payment
@@ -6112,23 +6127,23 @@ paths:
         "200":
           description: Deleted plan confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Plan not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a subscription plan
@@ -6149,23 +6164,23 @@ paths:
         "200":
           description: Plan details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Plan not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get plan by ID
@@ -6188,19 +6203,19 @@ paths:
         "201":
           description: Created plan
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new subscription plan
@@ -6223,23 +6238,23 @@ paths:
         "200":
           description: Updated plan
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Plan not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a subscription plan
@@ -6289,19 +6304,19 @@ paths:
         "200":
           description: List of plans
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all subscription plans
@@ -6324,19 +6339,19 @@ paths:
         "200":
           description: Calculated plan price
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Calculate plan price
@@ -6360,23 +6375,23 @@ paths:
         "200":
           description: Deleted product confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Product not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a product
@@ -6397,23 +6412,23 @@ paths:
         "200":
           description: Product details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Product not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get product by ID
@@ -6436,19 +6451,19 @@ paths:
         "201":
           description: Created product
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new product
@@ -6471,23 +6486,23 @@ paths:
         "200":
           description: Updated product
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Product not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a product
@@ -6511,23 +6526,23 @@ paths:
         "200":
           description: Deleted category confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a product category
@@ -6548,23 +6563,23 @@ paths:
         "200":
           description: Category details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get product category by ID
@@ -6587,19 +6602,19 @@ paths:
         "201":
           description: Created category
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new product category
@@ -6622,23 +6637,23 @@ paths:
         "200":
           description: Updated category
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a product category
@@ -6689,23 +6704,23 @@ paths:
         "200":
           description: List of all categories
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all product categories'
@@ -6759,19 +6774,19 @@ paths:
         "200":
           description: List of categories
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all product categories
@@ -6795,23 +6810,23 @@ paths:
         "200":
           description: Deleted review confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Review not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a product review
@@ -6834,23 +6849,23 @@ paths:
         "200":
           description: Review details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Review not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get product review by ID
@@ -6873,19 +6888,19 @@ paths:
         "201":
           description: Created review
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a product review
@@ -6908,23 +6923,23 @@ paths:
         "200":
           description: Updated review
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Review not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update a product review
@@ -6949,23 +6964,23 @@ paths:
         "200":
           description: List of all reviews
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all product reviews'
@@ -6989,19 +7004,19 @@ paths:
         "200":
           description: List of reviews
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all product reviews
@@ -7051,23 +7066,23 @@ paths:
         "200":
           description: List of all products
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all products'
@@ -7121,19 +7136,19 @@ paths:
         "200":
           description: List of products
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all products
@@ -7157,19 +7172,19 @@ paths:
         "200":
           description: Filtered and sorted products
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get products by filters and sorting
@@ -7193,23 +7208,23 @@ paths:
         "201":
           description: Created role
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new role
@@ -7232,27 +7247,27 @@ paths:
         "200":
           description: Updated role
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Role not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update an existing role
@@ -7302,19 +7317,19 @@ paths:
         "200":
           description: List of all roles
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all roles
@@ -7338,27 +7353,27 @@ paths:
         "200":
           description: Role assigned to customer
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Role or customer not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Assign role to customer
@@ -7408,19 +7423,19 @@ paths:
         "200":
           description: List of all permissions
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all permissions
@@ -7470,23 +7485,23 @@ paths:
         "200":
           description: List of permissions for the role
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Role not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get role permissions
@@ -7510,27 +7525,27 @@ paths:
         "200":
           description: Role assigned to plan
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Role or plan not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Assign role to plan
@@ -7554,27 +7569,27 @@ paths:
         "200":
           description: Role assigned to user
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Role or user not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Assign role to user
@@ -7598,23 +7613,23 @@ paths:
         "200":
           description: Deleted site confirmation
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Site not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Delete a site
@@ -7635,23 +7650,23 @@ paths:
         "200":
           description: Site details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Site not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get site by ID
@@ -7674,19 +7689,19 @@ paths:
         "201":
           description: Created site
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new site
@@ -7709,23 +7724,23 @@ paths:
         "200":
           description: Updated site
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Site not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update an existing site
@@ -7775,23 +7790,23 @@ paths:
         "200":
           description: List of all sites
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all sites'
@@ -7841,19 +7856,19 @@ paths:
         "200":
           description: List of sites
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all sites
@@ -7875,23 +7890,23 @@ paths:
         "200":
           description: Ticket details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Ticket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get ticket by ID
@@ -7914,19 +7929,19 @@ paths:
         "201":
           description: Created ticket
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Create a new ticket
@@ -7976,23 +7991,23 @@ paths:
         "200":
           description: List of all tickets
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all tickets'
@@ -8016,27 +8031,27 @@ paths:
         "200":
           description: Updated ticket with admin reply
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Ticket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Reply to a ticket'
@@ -8086,19 +8101,19 @@ paths:
         "200":
           description: List of tickets
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all tickets
@@ -8122,23 +8137,23 @@ paths:
         "200":
           description: Updated ticket with reply
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Ticket not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Reply to a ticket
@@ -8162,23 +8177,23 @@ paths:
         "200":
           description: Updated unit price
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Unit price not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update unit price
@@ -8228,19 +8243,19 @@ paths:
         "200":
           description: List of unit prices
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get all unit prices
@@ -8257,19 +8272,19 @@ paths:
         "200":
           description: Calculated unit price
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Calculate unit price
@@ -8319,23 +8334,23 @@ paths:
         "200":
           description: List of all users
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "403":
           description: Forbidden - Admin access required
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: 'Admin: Get all users'
@@ -8359,19 +8374,19 @@ paths:
         "201":
           description: Created charge request
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Request credit charge
@@ -8395,19 +8410,19 @@ paths:
         "200":
           description: Authentication token and user details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Invalid credentials
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: User login
       tags:
       - user
@@ -8429,19 +8444,19 @@ paths:
         "201":
           description: Created plan upgrade request
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Request plan upgrade
@@ -8463,23 +8478,23 @@ paths:
         "200":
           description: User profile details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: User not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Get user profile
@@ -8502,19 +8517,19 @@ paths:
         "200":
           description: Updated user profile
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       security:
       - BearerAuth: []
       summary: Update user profile
@@ -8538,15 +8553,15 @@ paths:
         "201":
           description: Created user account
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Register new user
       tags:
       - user
@@ -8585,19 +8600,19 @@ paths:
         "200":
           description: User verified or password reset
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: User not found or invalid code
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Verify user
       tags:
       - user
@@ -8620,19 +8635,19 @@ paths:
         "201":
           description: Verification or reset request created
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: User not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Request verification or password reset
       tags:
       - user
@@ -8654,19 +8669,19 @@ paths:
         "200":
           description: Article details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Article not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get article by slug
       tags:
       - website
@@ -8726,19 +8741,19 @@ paths:
         "200":
           description: List of articles in the category
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get articles by category slug
       tags:
       - website
@@ -8818,15 +8833,15 @@ paths:
         "200":
           description: Article filters and sorting options
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get article filters and sorting options
       tags:
       - website
@@ -8849,19 +8864,19 @@ paths:
         "200":
           description: Header and footer content
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Domain not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get header and footer by domain
       tags:
       - website
@@ -8887,19 +8902,19 @@ paths:
         "200":
           description: Page content
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Page or domain not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get page by domain
       tags:
       - website
@@ -8921,19 +8936,19 @@ paths:
         "200":
           description: Product details
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Product not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get product by slug
       tags:
       - website
@@ -8993,19 +9008,19 @@ paths:
         "200":
           description: List of products in the category
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "404":
           description: Category not found
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get products by category slug
       tags:
       - website
@@ -9093,15 +9108,15 @@ paths:
         "200":
           description: Product filters and sorting options
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Get product filters and sorting options
       tags:
       - website
@@ -9156,16 +9171,24 @@ paths:
         "200":
           description: List of products matching search criteria
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "400":
           description: Validation error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/resp.Result'
+            $ref: '#/definitions/utils.Result'
       summary: Search products
       tags:
       - website
+security:
+- BearerAuth: []
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -26,12 +26,12 @@ func NewAddressHandler(usc *addressusecase.AddressUsecase) *AddressHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      address.CreateAddressCommand  true  "Address information"
-// @Success      201      {object}  resp.Result                   "Created address"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      201      {object}  utils.Result                   "Created address"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /address [post]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	var params address.CreateAddressCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -54,13 +54,13 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      address.UpdateAddressCommand  true  "Updated address information"
-// @Success      200      {object}  resp.Result                   "Updated address"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      404      {object}  resp.Result                   "Address not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Updated address"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      404      {object}  utils.Result                   "Address not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /address [put]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 	var params address.UpdateAddressCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -83,13 +83,13 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      address.DeleteAddressCommand  true  "Address ID to delete"
-// @Success      200      {object}  resp.Result                   "Deleted address confirmation"
-// @Failure      400      {object}  resp.Result                   "Validation error"
-// @Failure      401      {object}  resp.Result                   "Unauthorized"
-// @Failure      404      {object}  resp.Result                   "Address not found"
-// @Failure      500      {object}  resp.Result                   "Internal server error"
+// @Success      200      {object}  utils.Result                   "Deleted address confirmation"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      404      {object}  utils.Result                   "Address not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /address [delete]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 	var params address.DeleteAddressCommand
 	if !h.validator.ValidateCommand(c, &params) {
@@ -112,13 +112,13 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     address.GetByIdAddressQuery  true  "Address ID to retrieve"
-// @Success      200      {object}  resp.Result                  "Address details"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      401      {object}  resp.Result                  "Unauthorized"
-// @Failure      404      {object}  resp.Result                  "Address not found"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "Address details"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      404      {object}  utils.Result                  "Address not found"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /address [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 	var params address.GetByIdAddressQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -141,12 +141,12 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     address.GetAllAddressQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                 "List of addresses"
-// @Failure      400      {object}  resp.Result                 "Validation error"
-// @Failure      401      {object}  resp.Result                 "Unauthorized"
-// @Failure      500      {object}  resp.Result                 "Internal server error"
+// @Success      200      {object}  utils.Result                 "List of addresses"
+// @Failure      400      {object}  utils.Result                 "Validation error"
+// @Failure      401      {object}  utils.Result                 "Unauthorized"
+// @Failure      500      {object}  utils.Result                 "Internal server error"
 // @Router       /address/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 	var params address.GetAllAddressQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -169,12 +169,12 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     address.GetAllCityQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result              "List of cities"
-// @Failure      400      {object}  resp.Result              "Validation error"
-// @Failure      401      {object}  resp.Result              "Unauthorized"
-// @Failure      500      {object}  resp.Result              "Internal server error"
+// @Success      200      {object}  utils.Result              "List of cities"
+// @Failure      400      {object}  utils.Result              "Validation error"
+// @Failure      401      {object}  utils.Result              "Unauthorized"
+// @Failure      500      {object}  utils.Result              "Internal server error"
 // @Router       /address/city/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) GetAllCity(c *gin.Context) {
 	var params address.GetAllCityQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -197,12 +197,12 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     address.GetAllProvinceQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                  "List of provinces"
-// @Failure      400      {object}  resp.Result                  "Validation error"
-// @Failure      401      {object}  resp.Result                  "Unauthorized"
-// @Failure      500      {object}  resp.Result                  "Internal server error"
+// @Success      200      {object}  utils.Result                  "List of provinces"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /address/province/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 	var params address.GetAllProvinceQuery
 	if !h.validator.ValidateQuery(c, &params) {
@@ -225,13 +225,13 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     address.AdminGetAllAddressQuery  true  "Query parameters"
-// @Success      200      {object}  resp.Result                      "List of all addresses"
-// @Failure      400      {object}  resp.Result                      "Validation error"
-// @Failure      401      {object}  resp.Result                      "Unauthorized"
-// @Failure      403      {object}  resp.Result                      "Forbidden - Admin access required"
-// @Failure      500      {object}  resp.Result                      "Internal server error"
+// @Success      200      {object}  utils.Result                      "List of all addresses"
+// @Failure      400      {object}  utils.Result                      "Validation error"
+// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /address/admin/all [get]
-// @Security     BearerAuth
+// @Security BearerAuth
 func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 	var params address.AdminGetAllAddressQuery
 	if !h.validator.ValidateQuery(c, &params) {
