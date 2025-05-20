@@ -11,7 +11,11 @@ func HttpBootstrap(ctx context.Context) *Container {
 
 	cfg := serviceprovider.ConfigProvider(logger)
 
-	serviceprovider.ExternalServicesProvider(cfg, logger)
+	serviceprovider.MongoProvider(cfg, logger)
+
+	serviceprovider.RedisProvider(cfg, logger)
+
+	serviceprovider.MysqlProvider(cfg, logger)
 
 	serviceprovider.ServiceDiscoveryProvider(cfg, logger)
 

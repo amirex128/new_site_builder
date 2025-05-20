@@ -7,7 +7,7 @@ require (
 	git.snappfood.ir/backend/go/packages/sf-logger v0.0.22
 	git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3
 	git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3
-	git.snappfood.ir/backend/go/packages/sf-orm v0.0.8
+	git.snappfood.ir/backend/go/packages/sf-orm v0.0.9
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5
 	git.snappfood.ir/backend/go/packages/sf-redis v0.0.7
 	git.snappfood.ir/backend/go/packages/sf-routing v0.0.10

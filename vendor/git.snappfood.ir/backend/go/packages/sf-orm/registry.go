@@ -234,9 +234,6 @@ func WithRetryOptions(options *RetryOptions) RegistryOption {
 
 // RegisterConnection configures database connections with provided options
 func RegisterConnection(opts ...RegistryOption) error {
-	globalRegistry.mu.Lock()
-	defer globalRegistry.mu.Unlock()
-
 	// Apply options
 	for _, opt := range opts {
 		opt(globalRegistry)
