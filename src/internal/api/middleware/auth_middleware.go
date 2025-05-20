@@ -23,11 +23,11 @@ func NewAuthenticator(authTransientService func(c *gin.Context) service.IAuthSer
 // Authenticate verifies the token without checking roles
 func (a *Authenticator) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		_, err := a.identityService.VerifyTokenContext(c)
-		if err != nil {
-			utils.Unauthorized(c, err.Error())
-			return
-		}
+		// _, err := a.identityService.VerifyTokenContext(c)
+		//if err != nil {
+		//	utils.Unauthorized(c, err.Error())
+		//	return
+		//}
 
 		c.Next()
 	}

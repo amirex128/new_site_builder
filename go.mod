@@ -12,7 +12,6 @@ require (
 	git.snappfood.ir/backend/go/packages/sf-redis v0.0.7
 	git.snappfood.ir/backend/go/packages/sf-routing v0.0.11
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-zookeeper/zk v1.0.4
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/hashicorp/consul/api v1.32.1
@@ -55,6 +54,7 @@ require (
 	github.com/go-openapi/swag v0.23.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.9.2 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect

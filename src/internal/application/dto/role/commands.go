@@ -30,3 +30,8 @@ type UpdateRoleCommand struct {
 	Name          *string `json:"name,omitempty" validate:"optional_text=1 200"`
 	PermissionIDs []int64 `json:"permissionIds,omitempty" validate:"array_number_optional=0 100 1 0 false"`
 }
+
+// SiteID represents the site ID
+type SiteID struct {
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" validate:"required"`
+}

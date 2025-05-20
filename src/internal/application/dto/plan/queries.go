@@ -16,3 +16,8 @@ type GetByIDPlanQuery struct {
 type CalculatePlanPriceQuery struct {
 	PlanID *int64 `json:"planId" form:"planId" validate:"required,gt=0"`
 }
+
+// PlanSiteID represents the site ID for plan queries
+type PlanSiteID struct {
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
+}

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"log"
 	"net/url"
 	"reflect"
@@ -9,27 +8,28 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gin-gonic/gin"
+	"net/mail"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+
+	validationmessage "github.com/amirex128/new_site_builder/src/internal/api/utils/validation_message"
 )
 
 // ValidationHelper provides methods for handling validation in handlers
-type ValidationHelper struct {
-	validate *validator.Validate
-}
+type ValidationHelper struct{}
+
 type ValidationErrorBag struct {
-	Property string `json:"property"`
-	Tag      string `json:"tag"`
-	Value    string `json:"value"`
-	Message  string `json:"message"`
+	Property   string `json:"property"`
+	PropertyFa string `json:"propertyFa"`
+	Tag        string `json:"tag"`
+	Value      string `json:"value"`
+	Message    string `json:"message"`
 }
 
 // NewValidationHelper creates a new ValidationHelper instance
 func NewValidationHelper() *ValidationHelper {
-	return &ValidationHelper{
-		validate: initValidator(),
-	}
+	return &ValidationHelper{}
 }
 
 // ValidateCommand handles binding and validating the input struct
@@ -40,13 +40,11 @@ func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) b
 		return false
 	}
 
-	if err := h.validate.Struct(params); err != nil {
-		var validationErrors validator.ValidationErrors
-		errors.As(err, &validationErrors)
-		ValidationError(c, GetValidationErrorMessageBag(validationErrors)...)
+	errs := ValidateStruct(params)
+	if len(errs) > 0 {
+		ValidationError(c, errs...)
 		return false
 	}
-
 	return true
 }
 
@@ -57,69 +55,132 @@ func (h *ValidationHelper) ValidateQuery(c *gin.Context, params interface{}) boo
 		ValidationErrorString(c, err.Error())
 		return false
 	}
-
-	if err := h.validate.Struct(params); err != nil {
-		var validationErrors validator.ValidationErrors
-		errors.As(err, &validationErrors)
-		ValidationError(c, GetValidationErrorMessageBag(validationErrors)...)
+	errs := ValidateStruct(params)
+	if len(errs) > 0 {
+		ValidationError(c, errs...)
 		return false
 	}
-
 	return true
 }
 
-// GetValidationErrorMessageBag returns a slice of ValidationErrorBag with error messages for each field
-func GetValidationErrorMessageBag(err error) []ValidationErrorBag {
-	var validationErrors []ValidationErrorBag
-	var ve validator.ValidationErrors
-	if errors.As(err, &ve) {
-		for _, ferr := range ve {
-			var el ValidationErrorBag
-			el.Property = ferr.Field()
-			el.Tag = ferr.Tag()
-			el.Value = ferr.Param()
-
-			// Try to get custom error message from struct tag
-			customMsg := getCustomValidationMessage(ferr)
-			if customMsg != "" {
-				el.Message = customMsg
-			} else {
-				el.Message = ferr.Error() // fallback to default
-			}
-
-			validationErrors = append(validationErrors, el)
-		}
-		return validationErrors
+// ValidateStruct validates all fields and collects all errors for all rules
+func ValidateStruct(s interface{}) []ValidationErrorBag {
+	v := reflect.ValueOf(s)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
 	}
-	return nil
+	t := v.Type()
+	var errorsBag []ValidationErrorBag
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		fieldValue := v.Field(i)
+		validateTag := field.Tag.Get("validate")
+		if validateTag == "" {
+			continue
+		}
+		// Split by comma, but handle params with = or space
+		tags := parseValidateTag(validateTag)
+		errorsTag := field.Tag.Get("errors")
+		errorMsgs := parseErrorsTag(errorsTag)
+		nameFa := field.Tag.Get("nameFa")
+		if nameFa == "" {
+			nameFa = field.Name
+		}
+		for _, tag := range tags {
+			if tag == "" {
+				continue
+			}
+			tagName, tagParam := splitTagAndParam(tag)
+			ok := runCustomValidator(tagName, tagParam, fieldValue)
+			if !ok {
+				msg := errorMsgs[tagName]
+				if msg == "" {
+					// Use default message from ValidationMessages
+					msgTemplate, found := validationmessage.ValidationMessages[tagName]
+					if found {
+						// Prepare args for Sprintf: first is nameFa, then tagParam if present
+						args := []interface{}{nameFa}
+						if tagParam != "" {
+							params := splitValidatorParams(tagParam)
+							for _, p := range params {
+								args = append(args, p)
+							}
+						}
+						msg = sprintfWithArgs(msgTemplate, args)
+					} else {
+						msg = defaultErrorMessage(nameFa, tagName, tagParam)
+					}
+				}
+				errorsBag = append(errorsBag, ValidationErrorBag{
+					Property:   field.Name,
+					PropertyFa: nameFa,
+					Tag:        tagName,
+					Value:      tagParam,
+					Message:    msg,
+				})
+			}
+		}
+	}
+	return errorsBag
 }
 
-// getCustomValidationMessage tries to extract a custom error message from the struct tag for the given field/tag
-func getCustomValidationMessage(fe validator.FieldError) string {
-	// Try to get the struct type from the value
-	val := fe.Value()
-	valType := reflect.TypeOf(val)
-	if valType == nil {
+// sprintfWithArgs formats a string with a variable number of arguments, similar to fmt.Sprintf, but without importing fmt for performance.
+func sprintfWithArgs(format string, args []interface{}) string {
+	// Only support up to 3 %s for our use case
+	res := format
+	for _, arg := range args {
+		res = strings.Replace(res, "%s", toString(arg), 1)
+	}
+	return res
+}
+
+func toString(arg interface{}) string {
+	switch v := arg.(type) {
+	case string:
+		return v
+	case int:
+		return strconv.Itoa(v)
+	case int64:
+		return strconv.FormatInt(v, 10)
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64)
+	default:
 		return ""
 	}
-	if valType.Kind() == reflect.Ptr {
-		valType = valType.Elem()
-	}
-	// Try to find the field by name
-	parent := fe.StructField()
-	for i := 0; i < valType.NumField(); i++ {
-		field := valType.Field(i)
-		if field.Name == parent {
-			errorsTag := field.Tag.Get("errors")
-			if errorsTag != "" {
-				msgMap := parseErrorsTag(errorsTag)
-				if msg, ok := msgMap[fe.Tag()]; ok {
-					return msg
-				}
-			}
+}
+
+// parseValidateTag splits a validate tag into individual rules
+func parseValidateTag(tag string) []string {
+	var tags []string
+	var curr strings.Builder
+	inParam := false
+	for _, r := range tag {
+		if r == ',' && !inParam {
+			tags = append(tags, curr.String())
+			curr.Reset()
+			continue
 		}
+		if r == '=' || r == ' ' {
+			inParam = true
+		}
+		if inParam && r == ',' {
+			inParam = false
+		}
+		curr.WriteRune(r)
 	}
-	return ""
+	if curr.Len() > 0 {
+		tags = append(tags, curr.String())
+	}
+	return tags
+}
+
+// splitTagAndParam splits a tag like "required_text=1 100" into ("required_text", "1 100")
+func splitTagAndParam(tag string) (string, string) {
+	if idx := strings.Index(tag, "="); idx != -1 {
+		return tag[:idx], strings.TrimSpace(tag[idx+1:])
+	}
+	return tag, ""
 }
 
 // parseErrorsTag parses the errors struct tag into a map[tag]message
@@ -135,65 +196,662 @@ func parseErrorsTag(tag string) map[string]string {
 	return result
 }
 
-// initValidator initializes and configures the validator
-func initValidator() *validator.Validate {
-	v := validator.New(
-		validator.WithRequiredStructEnabled(),
-		validator.WithPrivateFieldValidation(),
-	)
-
-	// Register custom validation functions
-	_ = v.RegisterValidation("iranian_mobile", IranianMobileNumberValidator)
-	_ = v.RegisterValidation("required_text", RequiredTextValidator)
-	_ = v.RegisterValidation("optional_text", OptionalTextValidator)
-	_ = v.RegisterValidation("required_bool", RequiredBoolValidator)
-	_ = v.RegisterValidation("optional_bool", OptionalBoolValidator)
-	_ = v.RegisterValidation("domain", RequiredDomainValidator)
-	_ = v.RegisterValidation("domain_optional", OptionalDomainValidator)
-	_ = v.RegisterValidation("slug", RequiredSlugValidator)
-	_ = v.RegisterValidation("slug_optional", OptionalSlugValidator)
-	_ = v.RegisterValidation("comma_numbers", RequiredCommaSeparatedNumbersValidator)
-	_ = v.RegisterValidation("comma_numbers_optional", OptionalCommaSeparatedNumbersValidator)
-	_ = v.RegisterValidation("pattern", RequiredPatternValidator)
-	_ = v.RegisterValidation("pattern_optional", OptionalPatternValidator)
-	_ = v.RegisterValidation("array_string", RequiredArrayStringValidator)
-	_ = v.RegisterValidation("array_string_optional", OptionalArrayStringValidator)
-	_ = v.RegisterValidation("array_number", RequiredArrayNumberValidator)
-	_ = v.RegisterValidation("array_number_optional", OptionalArrayNumberValidator)
-	_ = v.RegisterValidation("enum", RequiredEnumValidator)
-	_ = v.RegisterValidation("enum_optional", OptionalEnumValidator)
-	_ = v.RegisterValidation("enum_string_map", EnumStringMapValidator)
-	_ = v.RegisterValidation("enum_string_map_optional", OptionalEnumStringMapValidator)
-
-	return v
+// runCustomValidator runs the custom validator by name
+func runCustomValidator(tag, param string, value reflect.Value) bool {
+	switch tag {
+	case "required":
+		return RequiredValidatorValue(value)
+	case "min":
+		return MinValidatorValue(value, param)
+	case "max":
+		return MaxValidatorValue(value, param)
+	case "len":
+		return LenValidatorValue(value, param)
+	case "email":
+		return EmailValidatorValue(value)
+	case "oneof":
+		return OneOfValidatorValue(value, param)
+	case "gt":
+		return GtValidatorValue(value, param)
+	case "lt":
+		return LtValidatorValue(value, param)
+	case "gte":
+		return GteValidatorValue(value, param)
+	case "lte":
+		return LteValidatorValue(value, param)
+	case "eq":
+		return EqValidatorValue(value, param)
+	case "ne":
+		return NeValidatorValue(value, param)
+	case "url":
+		return URLValidatorValue(value)
+	case "uuid":
+		return UUIDValidatorValue(value)
+	case "required_text":
+		return RequiredTextValidatorValue(value, param)
+	case "optional_text":
+		return OptionalTextValidatorValue(value, param)
+	case "required_bool":
+		return RequiredBoolValidatorValue(value)
+	case "optional_bool":
+		return true
+	case "domain":
+		return RequiredDomainValidatorValue(value)
+	case "domain_optional":
+		return OptionalDomainValidatorValue(value)
+	case "slug":
+		return RequiredSlugValidatorValue(value)
+	case "slug_optional":
+		return OptionalSlugValidatorValue(value)
+	case "comma_numbers":
+		return RequiredCommaSeparatedNumbersValidatorValue(value)
+	case "comma_numbers_optional":
+		return OptionalCommaSeparatedNumbersValidatorValue(value)
+	case "pattern":
+		return RequiredPatternValidatorValue(value, param)
+	case "pattern_optional":
+		return OptionalPatternValidatorValue(value, param)
+	case "array_string":
+		return RequiredArrayStringValidatorValue(value, param)
+	case "array_string_optional":
+		return OptionalArrayStringValidatorValue(value, param)
+	case "array_number":
+		return RequiredArrayNumberValidatorValue(value, param)
+	case "array_number_optional":
+		return OptionalArrayNumberValidatorValue(value, param)
+	case "enum":
+		return RequiredEnumValidatorValue(value)
+	case "enum_optional":
+		return OptionalEnumValidatorValue(value)
+	case "enum_string_map":
+		return EnumStringMapValidatorValue(value)
+	case "enum_string_map_optional":
+		return OptionalEnumStringMapValidatorValue(value)
+	case "iranian_mobile":
+		return IranianMobileNumberValidatorValue(value)
+	default:
+		return true // unknown tags are ignored
+	}
 }
 
-// IranianMobileNumberValidator validates Iranian mobile numbers
-func IranianMobileNumberValidator(fld validator.FieldLevel) bool {
-	iranianMobileNumberPattern := `^09(1[0-9]|2[0-2]|3[0-9]|9[0-9])[0-9]{7}$`
-	value, ok := fld.Field().Interface().(string)
+// defaultErrorMessage returns a default error message for a field/tag
+func defaultErrorMessage(field, tag, param string) string {
+	return "Validation failed for " + field + " with rule " + tag + " (" + param + ")"
+}
+
+// --- Custom validator helpers below ---
+
+func RequiredValidatorValue(value reflect.Value) bool {
+	if !value.IsValid() {
+		return false
+	}
+	switch value.Kind() {
+	case reflect.String:
+		return value.String() != ""
+	case reflect.Ptr, reflect.Interface:
+		return !value.IsNil()
+	case reflect.Slice, reflect.Array, reflect.Map:
+		return value.Len() > 0
+	default:
+		zero := reflect.Zero(value.Type())
+		return !reflect.DeepEqual(value.Interface(), zero.Interface())
+	}
+}
+
+func MinValidatorValue(value reflect.Value, param string) bool {
+	min, err := strconv.ParseFloat(param, 64)
+	if err != nil {
+		return true // ignore invalid param
+	}
+	switch value.Kind() {
+	case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
+		return float64(value.Len()) >= min
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return float64(value.Int()) >= min
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return float64(value.Uint()) >= min
+	case reflect.Float32, reflect.Float64:
+		return value.Float() >= min
+	}
+	return true
+}
+
+func MaxValidatorValue(value reflect.Value, param string) bool {
+	max, err := strconv.ParseFloat(param, 64)
+	if err != nil {
+		return true
+	}
+	switch value.Kind() {
+	case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
+		return float64(value.Len()) <= max
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return float64(value.Int()) <= max
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return float64(value.Uint()) <= max
+	case reflect.Float32, reflect.Float64:
+		return value.Float() <= max
+	}
+	return true
+}
+
+func LenValidatorValue(value reflect.Value, param string) bool {
+	l, err := strconv.Atoi(param)
+	if err != nil {
+		return true
+	}
+	switch value.Kind() {
+	case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
+		return value.Len() == l
+	}
+	return true
+}
+
+func EmailValidatorValue(value reflect.Value) bool {
+	s, ok := value.Interface().(string)
+	if !ok || s == "" {
+		return false
+	}
+	_, err := mail.ParseAddress(s)
+	return err == nil
+}
+
+func OneOfValidatorValue(value reflect.Value, param string) bool {
+	s := value.String()
+	options := strings.Fields(param)
+	for _, opt := range options {
+		if s == opt {
+			return true
+		}
+	}
+	return false
+}
+
+func GtValidatorValue(value reflect.Value, param string) bool {
+	return compareNumeric(value, param, ">")
+}
+
+func LtValidatorValue(value reflect.Value, param string) bool {
+	return compareNumeric(value, param, "<")
+}
+
+func GteValidatorValue(value reflect.Value, param string) bool {
+	return compareNumeric(value, param, ">=")
+}
+
+func LteValidatorValue(value reflect.Value, param string) bool {
+	return compareNumeric(value, param, "<=")
+}
+
+func EqValidatorValue(value reflect.Value, param string) bool {
+	return compareNumeric(value, param, "==")
+}
+
+func NeValidatorValue(value reflect.Value, param string) bool {
+	return compareNumeric(value, param, "!=")
+}
+
+func compareNumeric(value reflect.Value, param string, op string) bool {
+	p, err := strconv.ParseFloat(param, 64)
+	if err != nil {
+		return true
+	}
+	var v float64
+	switch value.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = float64(value.Int())
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		v = float64(value.Uint())
+	case reflect.Float32, reflect.Float64:
+		v = value.Float()
+	default:
+		return true
+	}
+	switch op {
+	case ">":
+		return v > p
+	case "<":
+		return v < p
+	case ">=":
+		return v >= p
+	case "<=":
+		return v <= p
+	case "==":
+		return v == p
+	case "!=":
+		return v != p
+	}
+	return true
+}
+
+func URLValidatorValue(value reflect.Value) bool {
+	s, ok := value.Interface().(string)
+	if !ok || s == "" {
+		return false
+	}
+	_, err := url.ParseRequestURI(s)
+	return err == nil
+}
+
+func UUIDValidatorValue(value reflect.Value) bool {
+	s, ok := value.Interface().(string)
+	if !ok || s == "" {
+		return false
+	}
+	_, err := uuid.Parse(s)
+	return err == nil
+}
+
+func RequiredTextValidatorValue(value reflect.Value, param string) bool {
+	v, ok := value.Interface().(string)
 	if !ok {
 		return false
 	}
+	if strings.TrimSpace(v) == "" {
+		return false
+	}
+	params := splitValidatorParams(param)
+	if len(params) >= 2 {
+		minLen, err1 := strconv.Atoi(params[0])
+		maxLen, err2 := strconv.Atoi(params[1])
+		if err1 == nil && len(v) < minLen {
+			return false
+		}
+		if err2 == nil && len(v) > maxLen {
+			return false
+		}
+	}
+	return true
+}
 
-	res, err := regexp.MatchString(iranianMobileNumberPattern, value)
+func OptionalTextValidatorValue(value reflect.Value, param string) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return true
+	}
+	if strings.TrimSpace(v) == "" {
+		return true
+	}
+	params := splitValidatorParams(param)
+	if len(params) >= 2 {
+		minLen, err1 := strconv.Atoi(params[0])
+		maxLen, err2 := strconv.Atoi(params[1])
+		if err1 == nil && len(v) < minLen {
+			return false
+		}
+		if err2 == nil && len(v) > maxLen {
+			return false
+		}
+	}
+	return true
+}
+
+func RequiredBoolValidatorValue(value reflect.Value) bool {
+	_, ok := value.Interface().(bool)
+	return ok
+}
+
+func RequiredDomainValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return false
+	}
+	if strings.TrimSpace(v) == "" {
+		return false
+	}
+	return validateDomain(v)
+}
+
+func OptionalDomainValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return true
+	}
+	if strings.TrimSpace(v) == "" {
+		return true
+	}
+	return validateDomain(v)
+}
+
+func RequiredSlugValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return false
+	}
+	if strings.TrimSpace(v) == "" {
+		return false
+	}
+	return validateSlug(v)
+}
+
+func OptionalSlugValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return true
+	}
+	if strings.TrimSpace(v) == "" {
+		return true
+	}
+	return validateSlug(v)
+}
+
+func RequiredCommaSeparatedNumbersValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return false
+	}
+	if strings.TrimSpace(v) == "" {
+		return false
+	}
+	return validateCommaSeparatedNumbers(v)
+}
+
+func OptionalCommaSeparatedNumbersValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return true
+	}
+	if strings.TrimSpace(v) == "" {
+		return true
+	}
+	return validateCommaSeparatedNumbers(v)
+}
+
+func RequiredPatternValidatorValue(value reflect.Value, param string) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return false
+	}
+	if strings.TrimSpace(v) == "" {
+		return false
+	}
+	pattern := param
+	if pattern == "" {
+		pattern = "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+	}
+	match, err := regexp.MatchString(pattern, v)
+	if err != nil {
+		return false
+	}
+	return match && len(v) <= 200
+}
+
+func OptionalPatternValidatorValue(value reflect.Value, param string) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return true
+	}
+	if strings.TrimSpace(v) == "" {
+		return true
+	}
+	pattern := param
+	if pattern == "" {
+		pattern = "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+	}
+	match, err := regexp.MatchString(pattern, v)
+	if err != nil {
+		return false
+	}
+	return match && len(v) <= 200
+}
+
+func RequiredArrayStringValidatorValue(value reflect.Value, param string) bool {
+	if value.Kind() != reflect.Slice && value.Kind() != reflect.Array {
+		return false
+	}
+	if value.IsNil() || value.Len() == 0 {
+		return false
+	}
+	params := splitValidatorParams(param)
+	var minLength, maxLength int
+	if len(params) >= 2 {
+		minLength, _ = strconv.Atoi(params[0])
+		maxLength, _ = strconv.Atoi(params[1])
+	}
+	for i := 0; i < value.Len(); i++ {
+		item := value.Index(i)
+		if item.Kind() != reflect.String {
+			return false
+		}
+		strValue := item.String()
+		if strValue == "" {
+			return false
+		}
+		if minLength > 0 && len(strValue) < minLength {
+			return false
+		}
+		if maxLength > 0 && len(strValue) > maxLength {
+			return false
+		}
+	}
+	return true
+}
+
+func OptionalArrayStringValidatorValue(value reflect.Value, param string) bool {
+	if value.Kind() != reflect.Slice && value.Kind() != reflect.Array {
+		return true
+	}
+	if value.IsNil() {
+		return true
+	}
+	if value.Len() == 0 {
+		return true
+	}
+	params := splitValidatorParams(param)
+	var minLength, maxLength int
+	if len(params) >= 2 {
+		minLength, _ = strconv.Atoi(params[0])
+		maxLength, _ = strconv.Atoi(params[1])
+	}
+	for i := 0; i < value.Len(); i++ {
+		item := value.Index(i)
+		if item.Kind() != reflect.String {
+			return false
+		}
+		strValue := item.String()
+		if minLength > 0 && len(strValue) < minLength {
+			return false
+		}
+		if maxLength > 0 && len(strValue) > maxLength {
+			return false
+		}
+	}
+	return true
+}
+
+func RequiredArrayNumberValidatorValue(value reflect.Value, param string) bool {
+	if value.Kind() != reflect.Slice && value.Kind() != reflect.Array {
+		return false
+	}
+	if value.IsNil() || value.Len() == 0 {
+		return false
+	}
+	params := splitValidatorParams(param)
+	var minValue, maxValue, minLength, maxLength int64
+	var canBeZero bool
+	if len(params) >= 5 {
+		minLength, _ = strconv.ParseInt(params[0], 10, 64)
+		maxLength, _ = strconv.ParseInt(params[1], 10, 64)
+		minValue, _ = strconv.ParseInt(params[2], 10, 64)
+		maxValue, _ = strconv.ParseInt(params[3], 10, 64)
+		canBeZero = params[4] == "true"
+	}
+	if minLength > 0 && int64(value.Len()) < minLength {
+		return false
+	}
+	if maxLength > 0 && int64(value.Len()) > maxLength {
+		return false
+	}
+	for i := 0; i < value.Len(); i++ {
+		item := value.Index(i)
+		var numValue int64
+		switch item.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			numValue = item.Int()
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			numValue = int64(item.Uint())
+		case reflect.Float32, reflect.Float64:
+			numValue = int64(item.Float())
+		default:
+			return false
+		}
+		if !canBeZero && numValue == 0 {
+			return false
+		}
+		if minValue != 0 && numValue < minValue {
+			return false
+		}
+		if maxValue != 0 && numValue > maxValue {
+			return false
+		}
+	}
+	return true
+}
+
+func OptionalArrayNumberValidatorValue(value reflect.Value, param string) bool {
+	if value.Kind() != reflect.Slice && value.Kind() != reflect.Array {
+		return true
+	}
+	if value.IsNil() {
+		return true
+	}
+	params := splitValidatorParams(param)
+	var minValue, maxValue, minLength, maxLength int64
+	var canBeZero bool
+	if len(params) >= 5 {
+		minLength, _ = strconv.ParseInt(params[0], 10, 64)
+		maxLength, _ = strconv.ParseInt(params[1], 10, 64)
+		minValue, _ = strconv.ParseInt(params[2], 10, 64)
+		maxValue, _ = strconv.ParseInt(params[3], 10, 64)
+		canBeZero = params[4] == "true"
+	}
+	if minLength > 0 && int64(value.Len()) < minLength {
+		return false
+	}
+	if maxLength > 0 && int64(value.Len()) > maxLength {
+		return false
+	}
+	if value.Len() == 0 {
+		return true
+	}
+	for i := 0; i < value.Len(); i++ {
+		item := value.Index(i)
+		var numValue int64
+		switch item.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			numValue = item.Int()
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			numValue = int64(item.Uint())
+		case reflect.Float32, reflect.Float64:
+			numValue = int64(item.Float())
+		default:
+			return false
+		}
+		if !canBeZero && numValue == 0 {
+			return false
+		}
+		if minValue != 0 && numValue < minValue {
+			return false
+		}
+		if maxValue != 0 && numValue > maxValue {
+			return false
+		}
+	}
+	return true
+}
+
+func RequiredEnumValidatorValue(value reflect.Value) bool {
+	if value.Kind() == reflect.Ptr {
+		if value.IsNil() {
+			return false
+		}
+		value = value.Elem()
+	}
+	return !value.IsZero()
+}
+
+func OptionalEnumValidatorValue(value reflect.Value) bool {
+	if value.Kind() == reflect.Ptr {
+		if value.IsNil() {
+			return true
+		}
+		value = value.Elem()
+	}
+	return true
+}
+
+func EnumStringMapValidatorValue(value reflect.Value) bool {
+	if value.Kind() != reflect.Map {
+		return false
+	}
+	if value.IsNil() || value.Len() == 0 {
+		return false
+	}
+	iter := value.MapRange()
+	for iter.Next() {
+		key := iter.Key()
+		val := iter.Value()
+		if val.Kind() != reflect.Slice && val.Kind() != reflect.Array {
+			return false
+		}
+		if !isValidEnumKey(key) {
+			return false
+		}
+		if val.Len() == 0 {
+			return false
+		}
+		for i := 0; i < val.Len(); i++ {
+			item := val.Index(i)
+			if item.Kind() != reflect.String || item.String() == "" {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func OptionalEnumStringMapValidatorValue(value reflect.Value) bool {
+	if value.Kind() != reflect.Map {
+		return true
+	}
+	if value.IsNil() || value.Len() == 0 {
+		return true
+	}
+	iter := value.MapRange()
+	for iter.Next() {
+		key := iter.Key()
+		val := iter.Value()
+		if val.Kind() != reflect.Slice && val.Kind() != reflect.Array {
+			return false
+		}
+		if !isValidEnumKey(key) {
+			return false
+		}
+		if val.Len() == 0 {
+			return false
+		}
+		for i := 0; i < val.Len(); i++ {
+			item := val.Index(i)
+			if item.Kind() != reflect.String || item.String() == "" {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func IranianMobileNumberValidatorValue(value reflect.Value) bool {
+	v, ok := value.Interface().(string)
+	if !ok {
+		return false
+	}
+	iranianMobileNumberPattern := `^09(1[0-9]|2[0-2]|3[0-9]|9[0-9])[0-9]{7}$`
+	res, err := regexp.MatchString(iranianMobileNumberPattern, v)
 	if err != nil {
 		log.Print(err.Error())
 	}
-
 	return res
 }
 
-// getValidatorParam extracts the parameter string after '=' if present, otherwise returns fld.Param()
-func getValidatorParam(fld validator.FieldLevel) string {
-	tag := fld.GetTag()
-	if idx := strings.Index(tag, "="); idx != -1 && idx+1 < len(tag) {
-		return tag[idx+1:]
-	}
-	return fld.Param()
-}
-
-// splitValidatorParams splits the param string by space (primary) and comma (for backward compatibility)
 func splitValidatorParams(param string) []string {
 	if strings.Contains(param, " ") {
 		return strings.Fields(param)
@@ -201,625 +859,54 @@ func splitValidatorParams(param string) []string {
 	return strings.Split(param, ",")
 }
 
-// RequiredTextValidator validates that a text field is not empty and meets length requirements
-func RequiredTextValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return false
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return false
-	}
-
-	params := splitValidatorParams(getValidatorParam(fld))
-	if len(params) >= 2 {
-		minLen, err1 := strconv.Atoi(params[0])
-		maxLen, err2 := strconv.Atoi(params[1])
-
-		if err1 == nil && len(value) < minLen {
-			return false
-		}
-		if err2 == nil && len(value) > maxLen {
-			return false
-		}
-	}
-
-	return true
-}
-
-// OptionalTextValidator validates that a text field meets length requirements if it's not empty
-func OptionalTextValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return true // Optional field can be of wrong type
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return true // Empty is valid for optional
-	}
-
-	params := splitValidatorParams(getValidatorParam(fld))
-	if len(params) >= 2 {
-		minLen, err1 := strconv.Atoi(params[0])
-		maxLen, err2 := strconv.Atoi(params[1])
-
-		if err1 == nil && len(value) < minLen {
-			return false
-		}
-		if err2 == nil && len(value) > maxLen {
-			return false
-		}
-	}
-
-	return true
-}
-
-// RequiredBoolValidator validates that a boolean field is not nil
-func RequiredBoolValidator(fld validator.FieldLevel) bool {
-	_, ok := fld.Field().Interface().(bool)
-	return ok
-}
-
-// OptionalBoolValidator always returns true for optional boolean fields
-func OptionalBoolValidator(fld validator.FieldLevel) bool {
-	return true
-}
-
-// RequiredDomainValidator validates required domain format
-func RequiredDomainValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return false
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return false
-	}
-
-	return validateDomain(value)
-}
-
-// OptionalDomainValidator validates optional domain format
-func OptionalDomainValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return true
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return true
-	}
-
-	return validateDomain(value)
-}
-
-// validateDomain is a helper function for domain validation
 func validateDomain(value string) bool {
-	// Check if domain starts with http://, https://, or www.
 	if strings.HasPrefix(value, "http://") || strings.HasPrefix(value, "https://") || strings.HasPrefix(value, "www.") {
 		return false
 	}
-
-	// Check domain format
 	domainPattern := `^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$`
 	match, err := regexp.MatchString(domainPattern, value)
 	if err != nil || !match {
 		return false
 	}
-
-	// Check if domain can be parsed as host
 	_, err = url.Parse("https://" + value)
 	return err == nil
 }
 
-// RequiredSlugValidator validates required slug format
-func RequiredSlugValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return false
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return false
-	}
-
-	return validateSlug(value)
-}
-
-// OptionalSlugValidator validates optional slug format
-func OptionalSlugValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return true
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return true
-	}
-
-	return validateSlug(value)
-}
-
-// validateSlug is a helper function for slug validation
 func validateSlug(value string) bool {
 	if len(value) > 200 {
 		return false
 	}
-
 	slugPattern := `^[a-z0-9]+(?:-[a-z0-9]+)*$`
 	match, err := regexp.MatchString(slugPattern, value)
 	if err != nil {
 		return false
 	}
-
 	return match
 }
 
-// RequiredCommaSeparatedNumbersValidator validates required comma-separated numbers
-func RequiredCommaSeparatedNumbersValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return false
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return false
-	}
-
-	return validateCommaSeparatedNumbers(value)
-}
-
-// OptionalCommaSeparatedNumbersValidator validates optional comma-separated numbers
-func OptionalCommaSeparatedNumbersValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return true
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return true
-	}
-
-	return validateCommaSeparatedNumbers(value)
-}
-
-// validateCommaSeparatedNumbers is a helper function for comma-separated numbers validation
 func validateCommaSeparatedNumbers(value string) bool {
 	items := strings.Split(value, ",")
 	if len(items) == 0 {
 		return false
 	}
-
 	for _, item := range items {
 		item = strings.TrimSpace(item)
 		if item == "" {
 			return false
 		}
-
 		num, err := strconv.ParseInt(item, 10, 64)
 		if err != nil || num <= 0 {
 			return false
 		}
 	}
-
 	return true
 }
 
-// RequiredPatternValidator validates a string against a required pattern
-func RequiredPatternValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return false
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return false
-	}
-
-	pattern := getValidatorParam(fld)
-	if pattern == "" {
-		pattern = "^[a-z0-9]+(?:-[a-z0-9]+)*$" // Default pattern
-	}
-
-	match, err := regexp.MatchString(pattern, value)
-	if err != nil {
-		return false
-	}
-
-	return match && len(value) <= 200
-}
-
-// OptionalPatternValidator validates a string against an optional pattern
-func OptionalPatternValidator(fld validator.FieldLevel) bool {
-	value, ok := fld.Field().Interface().(string)
-	if !ok {
-		return true
-	}
-
-	if strings.TrimSpace(value) == "" {
-		return true
-	}
-
-	pattern := getValidatorParam(fld)
-	if pattern == "" {
-		pattern = "^[a-z0-9]+(?:-[a-z0-9]+)*$" // Default pattern
-	}
-
-	match, err := regexp.MatchString(pattern, value)
-	if err != nil {
-		return false
-	}
-
-	return match && len(value) <= 200
-}
-
-// RequiredArrayStringValidator validates a required array of strings
-func RequiredArrayStringValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// Check if it's an array/slice
-	if field.Kind() != reflect.Slice && field.Kind() != reflect.Array {
-		return false
-	}
-
-	// Check if the array is not nil and not empty
-	if field.IsNil() || field.Len() == 0 {
-		return false
-	}
-
-	params := splitValidatorParams(getValidatorParam(fld))
-	var minLength, maxLength int
-	if len(params) >= 2 {
-		minLength, _ = strconv.Atoi(params[0])
-		maxLength, _ = strconv.Atoi(params[1])
-	}
-
-	// Check each element
-	for i := 0; i < field.Len(); i++ {
-		item := field.Index(i)
-		if item.Kind() != reflect.String {
-			return false
-		}
-
-		strValue := item.String()
-
-		if strValue == "" {
-			return false
-		}
-
-		if minLength > 0 && len(strValue) < minLength {
-			return false
-		}
-
-		if maxLength > 0 && len(strValue) > maxLength {
-			return false
-		}
-	}
-
-	return true
-}
-
-// OptionalArrayStringValidator validates an optional array of strings
-func OptionalArrayStringValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// Check if it's an array/slice
-	if field.Kind() != reflect.Slice && field.Kind() != reflect.Array {
-		return true // Accept non-slice types for optional
-	}
-
-	// If nil, it's valid (optional)
-	if field.IsNil() {
-		return true
-	}
-
-	// Empty array is valid for optional
-	if field.Len() == 0 {
-		return true
-	}
-
-	params := splitValidatorParams(getValidatorParam(fld))
-	var minLength, maxLength int
-	if len(params) >= 2 {
-		minLength, _ = strconv.Atoi(params[0])
-		maxLength, _ = strconv.Atoi(params[1])
-	}
-
-	// Check each element
-	for i := 0; i < field.Len(); i++ {
-		item := field.Index(i)
-		if item.Kind() != reflect.String {
-			return false
-		}
-
-		strValue := item.String()
-
-		if minLength > 0 && len(strValue) < minLength {
-			return false
-		}
-
-		if maxLength > 0 && len(strValue) > maxLength {
-			return false
-		}
-	}
-
-	return true
-}
-
-// RequiredArrayNumberValidator validates a required array of numbers
-func RequiredArrayNumberValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// Check if it's an array/slice
-	if field.Kind() != reflect.Slice && field.Kind() != reflect.Array {
-		return false
-	}
-
-	// Check if the array is not nil and not empty
-	if field.IsNil() || field.Len() == 0 {
-		return false
-	}
-
-	params := splitValidatorParams(getValidatorParam(fld))
-	var minValue, maxValue, minLength, maxLength int64
-	var canBeZero bool
-
-	if len(params) >= 5 {
-		// Format: minLength,maxLength,minValue,maxValue,canBeZero
-		minLength, _ = strconv.ParseInt(params[0], 10, 64)
-		maxLength, _ = strconv.ParseInt(params[1], 10, 64)
-		minValue, _ = strconv.ParseInt(params[2], 10, 64)
-		maxValue, _ = strconv.ParseInt(params[3], 10, 64)
-		canBeZero = params[4] == "true"
-	}
-
-	// Check array length constraints
-	if minLength > 0 && int64(field.Len()) < minLength {
-		return false
-	}
-
-	if maxLength > 0 && int64(field.Len()) > maxLength {
-		return false
-	}
-
-	// Check each element
-	for i := 0; i < field.Len(); i++ {
-		item := field.Index(i)
-		var numValue int64
-
-		switch item.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			numValue = item.Int()
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			numValue = int64(item.Uint())
-		case reflect.Float32, reflect.Float64:
-			numValue = int64(item.Float())
-		default:
-			return false
-		}
-
-		if !canBeZero && numValue == 0 {
-			return false
-		}
-
-		if minValue != 0 && numValue < minValue {
-			return false
-		}
-
-		if maxValue != 0 && numValue > maxValue {
-			return false
-		}
-	}
-
-	return true
-}
-
-// OptionalArrayNumberValidator validates an optional array of numbers
-func OptionalArrayNumberValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// Check if it's an array/slice
-	if field.Kind() != reflect.Slice && field.Kind() != reflect.Array {
-		return true
-	}
-
-	// If nil, it's valid (optional)
-	if field.IsNil() {
-		return true
-	}
-
-	params := splitValidatorParams(getValidatorParam(fld))
-	var minValue, maxValue, minLength, maxLength int64
-	var canBeZero bool
-
-	if len(params) >= 5 {
-		// Format: minLength,maxLength,minValue,maxValue,canBeZero
-		minLength, _ = strconv.ParseInt(params[0], 10, 64)
-		maxLength, _ = strconv.ParseInt(params[1], 10, 64)
-		minValue, _ = strconv.ParseInt(params[2], 10, 64)
-		maxValue, _ = strconv.ParseInt(params[3], 10, 64)
-		canBeZero = params[4] == "true"
-	}
-
-	// Check array length constraints
-	if minLength > 0 && int64(field.Len()) < minLength {
-		return false
-	}
-
-	if maxLength > 0 && int64(field.Len()) > maxLength {
-		return false
-	}
-
-	// Empty array is valid for optional
-	if field.Len() == 0 {
-		return true
-	}
-
-	// Check each element
-	for i := 0; i < field.Len(); i++ {
-		item := field.Index(i)
-		var numValue int64
-
-		switch item.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			numValue = item.Int()
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			numValue = int64(item.Uint())
-		case reflect.Float32, reflect.Float64:
-			numValue = int64(item.Float())
-		default:
-			return false
-		}
-
-		if !canBeZero && numValue == 0 {
-			return false
-		}
-
-		if minValue != 0 && numValue < minValue {
-			return false
-		}
-
-		if maxValue != 0 && numValue > maxValue {
-			return false
-		}
-	}
-
-	return true
-}
-
-// RequiredEnumValidator validates that a value is a valid enum and not nil/zero
-func RequiredEnumValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// If the field is a pointer, dereference it
-	if field.Kind() == reflect.Ptr {
-		if field.IsNil() {
-			return false
-		}
-		field = field.Elem()
-	}
-
-	// For enums, we simply check if it's not zero value since Go doesn't have a direct enum type
-	return !field.IsZero()
-}
-
-// OptionalEnumValidator validates that a value is a valid enum if not nil
-func OptionalEnumValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// If the field is a pointer, it can be nil for optional
-	if field.Kind() == reflect.Ptr {
-		if field.IsNil() {
-			return true
-		}
-		field = field.Elem()
-	}
-
-	// Zero is acceptable for optional enum
-	return true
-}
-
-// EnumStringMapValidator validates a map with enum keys to string array values
-func EnumStringMapValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// Check if it's a map
-	if field.Kind() != reflect.Map {
-		return false
-	}
-
-	// Check if the map is not nil and not empty
-	if field.IsNil() || field.Len() == 0 {
-		return false
-	}
-
-	// Get all keys in the map
-	iter := field.MapRange()
-	for iter.Next() {
-		key := iter.Key()
-		value := iter.Value()
-
-		// Check if value is a slice of strings
-		if value.Kind() != reflect.Slice && value.Kind() != reflect.Array {
-			return false
-		}
-
-		// Validate key is an int/enum (non-zero)
-		if !isValidEnumKey(key) {
-			return false
-		}
-
-		// Value must not be empty
-		if value.Len() == 0 {
-			return false
-		}
-
-		// All items in the slice must be non-empty strings
-		for i := 0; i < value.Len(); i++ {
-			item := value.Index(i)
-			if item.Kind() != reflect.String || item.String() == "" {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
-// OptionalEnumStringMapValidator validates an optional map with enum keys to string array values
-func OptionalEnumStringMapValidator(fld validator.FieldLevel) bool {
-	field := fld.Field()
-
-	// Check if it's a map
-	if field.Kind() != reflect.Map {
-		return true // Optional can be different type
-	}
-
-	// If nil or empty, it's valid for optional
-	if field.IsNil() || field.Len() == 0 {
-		return true
-	}
-
-	// Get all keys in the map
-	iter := field.MapRange()
-	for iter.Next() {
-		key := iter.Key()
-		value := iter.Value()
-
-		// Check if value is a slice of strings
-		if value.Kind() != reflect.Slice && value.Kind() != reflect.Array {
-			return false
-		}
-
-		// Validate key is an int/enum (non-zero)
-		if !isValidEnumKey(key) {
-			return false
-		}
-
-		// Value must not be empty
-		if value.Len() == 0 {
-			return false
-		}
-
-		// All items in the slice must be non-empty strings
-		for i := 0; i < value.Len(); i++ {
-			item := value.Index(i)
-			if item.Kind() != reflect.String || item.String() == "" {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
-// isValidEnumKey checks if a key is a valid enum (int type)
 func isValidEnumKey(key reflect.Value) bool {
 	switch key.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return true // Any integer type is valid for enum
+		return true
 	default:
 		return false
 	}

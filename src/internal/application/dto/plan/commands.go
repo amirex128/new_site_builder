@@ -41,3 +41,8 @@ type UpdatePlanCommand struct {
 	AiCredits        *int                    `json:"aiCredits,omitempty" validate:"omitempty,min=0"`
 	AiImageCredits   *int                    `json:"aiImageCredits,omitempty" validate:"omitempty,min=0"`
 }
+
+// SiteID represents the site ID for plan operations
+type SiteID struct {
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" validate:"required"`
+}

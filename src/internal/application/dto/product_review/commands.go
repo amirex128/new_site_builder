@@ -8,7 +8,7 @@ type CreateProductReviewCommand struct {
 	Approved   *bool   `json:"approved" validate:"required_bool"`
 	ReviewText *string `json:"reviewText" validate:"required_text=1 2000"`
 	ProductID  *int64  `json:"productId" validate:"required"`
-	SiteID     *int64  `json:"siteId" validate:"required"`
+	SiteID     *int64  `json:"siteId" nameFa:"شناسه سایت" validate:"required"`
 }
 
 // UpdateProductReviewCommand represents a command to update an existing article product_review

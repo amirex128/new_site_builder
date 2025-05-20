@@ -12,10 +12,10 @@ type AdminGetAllBasketUserQuery struct {
 // GetAllBasketUserQuery for listing user baskets by site ID with pagination
 type GetAllBasketUserQuery struct {
 	common.PaginationRequestDto
-	SiteID *int64 `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }
 
 // GetBasketQuery for retrieving a basket by site ID
 type GetBasketQuery struct {
-	SiteID *int64 `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }

@@ -6,7 +6,7 @@ import (
 
 // GetByIdCustomerTicketQuery represents a query to get a customer ticket by ID
 type GetByIdCustomerTicketQuery struct {
-	ID *int64 `json:"id" form:"id" validate:"required,gt=0"`
+	ID *int64 `json:"id" nameFa:"شناسه" form:"id" validate:"required,gt=0"`
 }
 
 // GetAllCustomerTicketQuery represents a query to get all customer tickets with pagination

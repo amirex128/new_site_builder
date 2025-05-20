@@ -13,7 +13,7 @@ type AdminGetAllProductQuery struct {
 // GetAllProductQuery for listing products by site ID with pagination
 type GetAllProductQuery struct {
 	common.PaginationRequestDto
-	SiteID *int64 `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }
 
 // GetByIdProductQuery for retrieving a single article by ID
@@ -24,14 +24,14 @@ type GetByIdProductQuery struct {
 // GetSingleProductQuery for retrieving a single article by slug
 type GetSingleProductQuery struct {
 	Slug   *string `json:"slug" form:"slug" validate:"required"`
-	SiteID *int64  `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64  `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }
 
 // GetProductByCategoryQuery for retrieving products by product_category with pagination
 type GetProductByCategoryQuery struct {
 	common.PaginationRequestDto
 	Slug   *string `json:"slug" form:"slug" validate:"required"`
-	SiteID *int64  `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64  `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }
 
 // GetByFiltersSortProductQuery for retrieving products with filtering and sorting
@@ -39,7 +39,7 @@ type GetByFiltersSortProductQuery struct {
 	common.PaginationRequestDto
 	SelectedFilters map[enums.ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
 	SelectedSort    *enums.ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
-	SiteID          *int64                               `json:"siteId" form:"siteId" validate:"required"`
+	SiteID          *int64                               `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }
 
 // CalculateProductsPriceQuery for calculating article prices

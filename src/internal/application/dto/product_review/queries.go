@@ -13,7 +13,7 @@ type AdminGetAllProductReviewQuery struct {
 type GetAllProductReviewQuery struct {
 	common.PaginationRequestDto
 	ProductID *int64 `json:"productId" form:"productId" validate:"required,gt=0"`
-	SiteID    *int64 `json:"siteId" form:"siteId" validate:"required,gt=0"`
+	SiteID    *int64 `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required,gt=0"`
 }
 
 // GetByIdProductReviewQuery for retrieving a single article product_review by ID

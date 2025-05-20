@@ -2196,7 +2196,7 @@ definitions:
     - domain
     - slug
     type: object
-host: localhost:8080
+host: localhost:8585
 info:
   contact:
     email: support@example.com

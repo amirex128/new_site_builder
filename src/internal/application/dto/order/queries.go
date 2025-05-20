@@ -7,7 +7,7 @@ import (
 // GetAllOrderUserQuery for getting all orders for a user with pagination
 type GetAllOrderUserQuery struct {
 	common.PaginationRequestDto
-	SiteID *int64 `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64 `json:"siteId" form:"siteId" nameFa:"شناسه سایت" validate:"required"`
 }
 
 // GetAllOrderCustomerQuery for getting all orders for a customer with pagination
@@ -24,10 +24,10 @@ type AdminGetAllOrderUserQuery struct {
 
 // GetOrderUserDetailsQuery for getting order details for a user
 type GetOrderUserDetailsQuery struct {
-	OrderID *int64 `json:"orderId" form:"orderId" validate:"required"`
+	OrderID *int64 `json:"orderId" form:"orderId" nameFa:"شناسه سفارش" validate:"required"`
 }
 
 // GetOrderCustomerDetailsQuery for getting order details for a customer
 type GetOrderCustomerDetailsQuery struct {
-	OrderID *int64 `json:"orderId" form:"orderId" validate:"required"`
+	OrderID *int64 `json:"orderId" form:"orderId" nameFa:"شناسه سفارش" validate:"required"`
 }

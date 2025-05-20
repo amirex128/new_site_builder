@@ -14,7 +14,7 @@ type CreateProductCommand struct {
 	LongDescription   *string                   `json:"longDescription,omitempty" validate:"optional_text=1 5000"`
 	Slug              *string                   `json:"slug" validate:"required,slug"`
 	SeoTags           []string                  `json:"seoTags,omitempty" validate:"array_string_optional=1 100"`
-	SiteID            *int64                    `json:"siteId" validate:"required"`
+	SiteID            *int64                    `json:"siteId" nameFa:"شناسه سایت" validate:"required"`
 	Coupon            *CouponCommand            `json:"coupon,omitempty" validate:"omitempty,dive"`
 	ProductVariants   []ProductVariantCommand   `json:"productVariants" validate:"required,min=1,dive"`
 	ProductAttributes []ProductAttributeCommand `json:"productAttributes,omitempty" validate:"omitempty,dive"`

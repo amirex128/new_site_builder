@@ -6,7 +6,7 @@ import (
 
 // GetByIdTicketQuery represents a query to get a ticket by ID
 type GetByIdTicketQuery struct {
-	ID *int64 `json:"id" form:"id" validate:"required,gt=0"`
+	ID *int64 `json:"id" form:"id" validate:"required,gt=0" nameFa="شناسه"`
 }
 
 // GetAllTicketQuery represents a query to get all tickets with pagination

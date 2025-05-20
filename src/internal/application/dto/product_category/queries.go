@@ -12,7 +12,7 @@ type AdminGetAllCategoryQuery struct {
 // GetAllCategoryQuery for listing article categories by site ID with pagination
 type GetAllCategoryQuery struct {
 	common.PaginationRequestDto
-	SiteID *int64 `json:"siteId" form:"siteId" validate:"required"`
+	SiteID *int64 `json:"siteId" nameFa:"شناسه سایت" form:"siteId" validate:"required"`
 }
 
 // GetByIdCategoryQuery for retrieving a single article product_category by ID

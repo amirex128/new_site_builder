@@ -12,17 +12,17 @@ type AdminGetAllUserQuery struct {
 
 // CalculatePlanPriceQuery represents a query to calculate plan price
 type CalculatePlanPriceQuery struct {
-	PlanID *int64 `json:"planId" validate:"required,gt=0"`
+	PlanID *int64 `json:"planId" validate:"required,gt=0" nameFa:"شناسه طرح"`
 }
 
 // GetProfileUserQuery represents a query to get user profile
 type GetProfileUserQuery struct {
-	UserID *int64 `json:"userId" form:"userId" validate:"required,gt=0"`
+	UserID *int64 `json:"userId" form:"userId" validate:"required,gt=0" nameFa:"شناسه کاربر"`
 }
 
 // VerifyUserQuery represents a query to verify user
 type VerifyUserQuery struct {
-	Email *string               `json:"email" form:"email" validate:"required,email"`
-	Code  *int                  `json:"code" form:"code" validate:"required"`
-	Type  *enums.VerifyTypeEnum `json:"type" validate:"required,enum"`
+	Email *string               `json:"email" form:"email" validate:"required,email" nameFa:"ایمیل"`
+	Code  *int                  `json:"code" form:"code" validate:"required" nameFa:"کد"`
+	Type  *enums.VerifyTypeEnum `json:"type" validate:"required,enum" nameFa:"نوع"`
 }
