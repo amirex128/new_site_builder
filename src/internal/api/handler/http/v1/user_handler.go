@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	userusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/user"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 
 	result, err := h.usecase.UpdateProfileUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // GetProfileUser godoc
@@ -70,11 +69,11 @@ func (h *UserHandler) GetProfileUser(c *gin.Context) {
 
 	result, err := h.usecase.GetProfileUserQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // ChargeCreditRequestUser godoc
@@ -98,11 +97,11 @@ func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 
 	result, err := h.usecase.ChargeCreditRequestUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpgradePlanRequestUser godoc
@@ -126,11 +125,11 @@ func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 
 	result, err := h.usecase.UpgradePlanRequestUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // RegisterUser godoc
@@ -152,11 +151,11 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 
 	result, err := h.usecase.RegisterUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // LoginUser godoc
@@ -179,11 +178,11 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 
 	result, err := h.usecase.LoginUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // RequestVerifyAndForgetUser godoc
@@ -206,11 +205,11 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 
 	result, err := h.usecase.RequestVerifyAndForgetUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // VerifyUser godoc
@@ -233,11 +232,11 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 
 	result, err := h.usecase.VerifyUserQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // AdminGetAllUser godoc
@@ -262,9 +261,9 @@ func (h *UserHandler) AdminGetAllUser(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllUserQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

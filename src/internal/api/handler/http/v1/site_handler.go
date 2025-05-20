@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/site"
 	siteusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/site"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *SiteHandler) CreateSite(c *gin.Context) {
 
 	result, err := h.usecase.CreateSiteCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateSite godoc
@@ -70,11 +69,11 @@ func (h *SiteHandler) UpdateSite(c *gin.Context) {
 
 	result, err := h.usecase.UpdateSiteCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteSite godoc
@@ -99,11 +98,11 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 
 	result, err := h.usecase.DeleteSiteCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdSite godoc
@@ -128,11 +127,11 @@ func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdSiteQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllSite godoc
@@ -156,11 +155,11 @@ func (h *SiteHandler) GetAllSite(c *gin.Context) {
 
 	result, err := h.usecase.GetAllSiteQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllSite godoc
@@ -185,9 +184,9 @@ func (h *SiteHandler) AdminGetAllSite(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllSiteQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

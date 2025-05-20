@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_review"
 	productreviewusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/product_review"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
 
 	result, err := h.usecase.CreateProductReviewCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateProductReview godoc
@@ -70,11 +69,11 @@ func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
 
 	result, err := h.usecase.UpdateProductReviewCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteProductReview godoc
@@ -99,11 +98,11 @@ func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 
 	result, err := h.usecase.DeleteProductReviewCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdProductReview godoc
@@ -128,11 +127,11 @@ func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdProductReviewQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllProductReview godoc
@@ -156,11 +155,11 @@ func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
 
 	result, err := h.usecase.GetAllProductReviewQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllProductReview godoc
@@ -185,9 +184,9 @@ func (h *ProductReviewHandler) AdminGetAllProductReview(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllProductReviewQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

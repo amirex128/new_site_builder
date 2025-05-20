@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/page"
 	pageusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/page"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 
 	result, err := h.usecase.CreatePageCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdatePage godoc
@@ -70,11 +69,11 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 
 	result, err := h.usecase.UpdatePageCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeletePage godoc
@@ -99,11 +98,11 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 
 	result, err := h.usecase.DeletePageCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdPage godoc
@@ -128,11 +127,11 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdPageQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllPage godoc
@@ -156,11 +155,11 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 
 	result, err := h.usecase.GetAllPageQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllPage godoc
@@ -185,9 +184,9 @@ func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllPageQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

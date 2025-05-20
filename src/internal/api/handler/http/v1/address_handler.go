@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/address"
 	addressusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/address"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	panic("s")
 	result, err := h.usecase.CreateAddressCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateAddress godoc
@@ -70,11 +69,11 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 
 	result, err := h.usecase.UpdateAddressCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteAddress godoc
@@ -99,11 +98,11 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 
 	result, err := h.usecase.DeleteAddressCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdAddress godoc
@@ -128,11 +127,11 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdAddressQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllAddress godoc
@@ -156,11 +155,11 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 
 	result, err := h.usecase.GetAllAddressQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllCity godoc
@@ -184,11 +183,11 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 
 	result, err := h.usecase.GetAllCityQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllProvince godoc
@@ -212,11 +211,11 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 
 	result, err := h.usecase.GetAllProvinceQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllAddress godoc
@@ -241,9 +240,9 @@ func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllAddressQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

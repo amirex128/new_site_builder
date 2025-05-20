@@ -4,7 +4,7 @@ package address
 type CreateAddressCommand struct {
 	CustomerID  *int64   `json:"customerId,omitempty" validate:"omitempty,gt=0"`
 	UserID      *int64   `json:"userId,omitempty" validate:"omitempty,gt=0"`
-	Title       *string  `json:"title" validate:"required_text=1 100"`
+	Title       *string  `json:"title" validate:"required_text=1 100" errors:"required_text=this field is required,min=this field must be at least 1 character,max=this field must be at most 100 characters,min=this field must be at least 1 character,max=this field must be at most 100 characters"`
 	Latitude    *float32 `json:"latitude" validate:"required,min=-90,max=90"`
 	Longitude   *float32 `json:"longitude" validate:"required,min=-180,max=180"`
 	AddressLine *string  `json:"addressLine" validate:"required_text=1 200"`

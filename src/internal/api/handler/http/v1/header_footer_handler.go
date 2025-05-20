@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/header_footer"
 	headerfooterusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/header_footer"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.CreateHeaderFooterCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateHeaderFooter godoc
@@ -70,11 +69,11 @@ func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.UpdateHeaderFooterCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteHeaderFooter godoc
@@ -99,11 +98,11 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.DeleteHeaderFooterCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdHeaderFooter godoc
@@ -128,11 +127,11 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdHeaderFooterQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllHeaderFooter godoc
@@ -156,11 +155,11 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.GetAllHeaderFooterQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllHeaderFooter godoc
@@ -185,9 +184,9 @@ func (h *HeaderFooterHandler) AdminGetAllHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllHeaderFooterQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

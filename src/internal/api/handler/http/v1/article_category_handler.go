@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article_category"
 	blogcategoryusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/article_category"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *ArticleCategoryHandler) CategoryCreate(c *gin.Context) {
 
 	result, err := h.usecase.CreateCategoryCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // CategoryUpdate godoc
@@ -70,11 +69,11 @@ func (h *ArticleCategoryHandler) CategoryUpdate(c *gin.Context) {
 
 	result, err := h.usecase.UpdateCategoryCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // CategoryDelete godoc
@@ -99,11 +98,11 @@ func (h *ArticleCategoryHandler) CategoryDelete(c *gin.Context) {
 
 	result, err := h.usecase.DeleteCategoryCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // CategoryGet godoc
@@ -128,11 +127,11 @@ func (h *ArticleCategoryHandler) CategoryGet(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdCategoryQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // CategoryGetAll godoc
@@ -156,11 +155,11 @@ func (h *ArticleCategoryHandler) CategoryGetAll(c *gin.Context) {
 
 	result, err := h.usecase.GetAllCategoryQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminCategoryGetAll godoc
@@ -185,9 +184,9 @@ func (h *ArticleCategoryHandler) AdminCategoryGetAll(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllCategoryQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

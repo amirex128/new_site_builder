@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"strings"
 
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func (a *Authenticator) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			resp.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error())
 			return
 		}
 
@@ -38,14 +38,14 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			resp.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error())
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			resp.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error())
 			return
 		}
 
@@ -66,7 +66,7 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 				}
 			}
 			if !hasRole {
-				resp.Forbidden(c, "Insufficient permissions for role: "+requiredRole)
+				utils.Forbidden(c, "Insufficient permissions for role: "+requiredRole)
 				return
 			}
 		}
@@ -85,14 +85,14 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			resp.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error())
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			resp.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error())
 			return
 		}
 
@@ -119,7 +119,7 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 			}
 
 			if !hasAnyRole {
-				resp.Forbidden(c, "Insufficient permissions, requires one of: "+strings.Join(roles, ", "))
+				utils.Forbidden(c, "Insufficient permissions, requires one of: "+strings.Join(roles, ", "))
 				return
 			}
 		}

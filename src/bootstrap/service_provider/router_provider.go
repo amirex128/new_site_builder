@@ -3,7 +3,6 @@ package serviceprovider
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfrouting "git.snappfood.ir/backend/go/packages/sf-routing"
-	"git.snappfood.ir/backend/go/packages/sf-routing/middlewares"
 	"github.com/amirex128/new_site_builder/src/bootstrap/exporter"
 	"github.com/amirex128/new_site_builder/src/bootstrap/healthcheck"
 	"github.com/gin-gonic/gin"
@@ -25,8 +24,6 @@ func RouterProvider(logger sflogger.Logger) {
 			BasePath: "/api/v1",
 			Schemes:  []string{"http", "https"},
 		}),
-		sfrouting.WithErrorHandler(sfrouting.DefaultErrorHandler),
-		sfrouting.WithGlobalMiddleware(middlewares.LoggedinMiddle),
 		sfrouting.WithCorsConfig(sfrouting.CorsConfig{
 			AllowOrigins:     []string{"*"},
 			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

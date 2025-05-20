@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/unit_price"
 	unitpriceusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/unit_price"
 	"github.com/gin-gonic/gin"
@@ -42,11 +41,11 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 
 	result, err := h.usecase.UpdateUnitPriceCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // CalculateUnitPrice godoc
@@ -70,11 +69,11 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 
 	result, err := h.usecase.CalculateUnitPriceQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllUnitPrice godoc
@@ -98,9 +97,9 @@ func (h *UnitPriceHandler) GetAllUnitPrice(c *gin.Context) {
 
 	result, err := h.usecase.GetAllUnitPriceQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

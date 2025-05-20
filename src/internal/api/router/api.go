@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/amirex128/new_site_builder/docs"
 	"github.com/amirex128/new_site_builder/src/bootstrap"
+	"github.com/amirex128/new_site_builder/src/internal/api/middleware"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"net/http"
 	"os"
@@ -20,7 +21,7 @@ import (
 )
 
 func InitServer(handlers *bootstrap.HandlerManager, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
-
+	sfrouting.AddGlobalMiddlewares(middleware.ErrorHandlerMiddleware(logger))
 	RegisterRoutes(handlers, container)
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	err := sfrouting.StartServer(fmt.Sprintf(":%s", cnf.GetString("app_port")))

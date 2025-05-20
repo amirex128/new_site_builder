@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/gin-gonic/gin"
 
 	"github.com/go-playground/validator/v10"
@@ -19,7 +18,7 @@ import (
 type ValidationHelper struct {
 	validate *validator.Validate
 }
-type ValidationError struct {
+type ValidationErrorBag struct {
 	Property string `json:"property"`
 	Tag      string `json:"tag"`
 	Value    string `json:"value"`
@@ -37,14 +36,14 @@ func NewValidationHelper() *ValidationHelper {
 // Returns true if validation passes, false otherwise
 func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindJSON(params); err != nil {
-		resp.ValidationError(c, err.Error())
+		ValidationErrorString(c, err.Error())
 		return false
 	}
 
 	if err := h.validate.Struct(params); err != nil {
 		var validationErrors validator.ValidationErrors
 		errors.As(err, &validationErrors)
-		resp.ValidationError(c, validationErrors.Error())
+		ValidationError(c, GetValidationErrorMessageBag(validationErrors)...)
 		return false
 	}
 
@@ -55,35 +54,85 @@ func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) b
 // Returns true if validation passes, false otherwise
 func (h *ValidationHelper) ValidateQuery(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindQuery(params); err != nil {
-		resp.ValidationError(c, err.Error())
+		ValidationErrorString(c, err.Error())
 		return false
 	}
 
 	if err := h.validate.Struct(params); err != nil {
 		var validationErrors validator.ValidationErrors
 		errors.As(err, &validationErrors)
-		resp.ValidationError(c, validationErrors.Error())
+		ValidationError(c, GetValidationErrorMessageBag(validationErrors)...)
 		return false
 	}
 
 	return true
 }
 
-func GetValidationErrors(err error) *[]ValidationError {
-	var validationErrors []ValidationError
+// GetValidationErrorMessageBag returns a slice of ValidationErrorBag with error messages for each field
+func GetValidationErrorMessageBag(err error) []ValidationErrorBag {
+	var validationErrors []ValidationErrorBag
 	var ve validator.ValidationErrors
 	if errors.As(err, &ve) {
-		for _, err := range err.(validator.ValidationErrors) {
-			var el ValidationError
-			el.Property = err.Field()
-			el.Tag = err.Tag()
-			el.Value = err.Param()
+		for _, ferr := range ve {
+			var el ValidationErrorBag
+			el.Property = ferr.Field()
+			el.Tag = ferr.Tag()
+			el.Value = ferr.Param()
+
+			// Try to get custom error message from struct tag
+			customMsg := getCustomValidationMessage(ferr)
+			if customMsg != "" {
+				el.Message = customMsg
+			} else {
+				el.Message = ferr.Error() // fallback to default
+			}
+
 			validationErrors = append(validationErrors, el)
 		}
-		return &validationErrors
+		return validationErrors
 	}
-
 	return nil
+}
+
+// getCustomValidationMessage tries to extract a custom error message from the struct tag for the given field/tag
+func getCustomValidationMessage(fe validator.FieldError) string {
+	// Try to get the struct type from the value
+	val := fe.Value()
+	valType := reflect.TypeOf(val)
+	if valType == nil {
+		return ""
+	}
+	if valType.Kind() == reflect.Ptr {
+		valType = valType.Elem()
+	}
+	// Try to find the field by name
+	parent := fe.StructField()
+	for i := 0; i < valType.NumField(); i++ {
+		field := valType.Field(i)
+		if field.Name == parent {
+			errorsTag := field.Tag.Get("errors")
+			if errorsTag != "" {
+				msgMap := parseErrorsTag(errorsTag)
+				if msg, ok := msgMap[fe.Tag()]; ok {
+					return msg
+				}
+			}
+		}
+	}
+	return ""
+}
+
+// parseErrorsTag parses the errors struct tag into a map[tag]message
+func parseErrorsTag(tag string) map[string]string {
+	result := make(map[string]string)
+	pairs := strings.Split(tag, ",")
+	for _, pair := range pairs {
+		kv := strings.SplitN(pair, "=", 2)
+		if len(kv) == 2 {
+			result[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
+		}
+	}
+	return result
 }
 
 // initValidator initializes and configures the validator
@@ -669,58 +718,6 @@ func OptionalEnumValidator(fld validator.FieldLevel) bool {
 
 	// Zero is acceptable for optional enum
 	return true
-}
-
-// hasValidValue checks if a reflect.Value contains a valid non-zero value
-func hasValidValue(field reflect.Value) bool {
-	if !field.IsValid() {
-		return false
-	}
-
-	// Check nil for interfaces, pointers, maps, slices, etc.
-	if field.Kind() == reflect.Ptr ||
-		field.Kind() == reflect.Interface ||
-		field.Kind() == reflect.Slice ||
-		field.Kind() == reflect.Map ||
-		field.Kind() == reflect.Chan {
-		if field.IsNil() {
-			return false
-		}
-	}
-
-	// Special cache for empty strings
-	if field.Kind() == reflect.String && field.String() == "" {
-		return false
-	}
-
-	// Special cache for zero numeric values
-	if (field.Kind() == reflect.Int ||
-		field.Kind() == reflect.Int8 ||
-		field.Kind() == reflect.Int16 ||
-		field.Kind() == reflect.Int32 ||
-		field.Kind() == reflect.Int64 ||
-		field.Kind() == reflect.Uint ||
-		field.Kind() == reflect.Uint8 ||
-		field.Kind() == reflect.Uint16 ||
-		field.Kind() == reflect.Uint32 ||
-		field.Kind() == reflect.Uint64 ||
-		field.Kind() == reflect.Float32 ||
-		field.Kind() == reflect.Float64) && field.IsZero() {
-		return false
-	}
-
-	// Special cache for slices - check if empty
-	if field.Kind() == reflect.Slice && field.Len() == 0 {
-		return false
-	}
-
-	// Special cache for booleans - only true is valid
-	if field.Kind() == reflect.Bool {
-		return field.Bool()
-	}
-
-	// For other types, non-zero value is considered valid
-	return !field.IsZero()
 }
 
 // EnumStringMapValidator validates a map with enum keys to string array values

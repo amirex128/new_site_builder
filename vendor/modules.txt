@@ -23,10 +23,9 @@ git.snappfood.ir/backend/go/packages/sf-rabbitmq
 # git.snappfood.ir/backend/go/packages/sf-redis v0.0.7
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-redis
-# git.snappfood.ir/backend/go/packages/sf-routing v0.0.10
+# git.snappfood.ir/backend/go/packages/sf-routing v0.0.11
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-routing
-git.snappfood.ir/backend/go/packages/sf-routing/middlewares
 # github.com/KyleBanks/depth v1.2.1
 ## explicit
 github.com/KyleBanks/depth

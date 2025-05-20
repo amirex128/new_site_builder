@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
 	articleusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/article"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 
 	result, err := h.usecase.CreateArticleCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // ArticleUpdate godoc
@@ -70,11 +69,11 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 
 	result, err := h.usecase.UpdateArticleCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // ArticleDelete godoc
@@ -99,11 +98,11 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 
 	result, err := h.usecase.DeleteArticleCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // ArticleGet godoc
@@ -128,11 +127,11 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdArticleQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // ArticleGetAll godoc
@@ -156,11 +155,11 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 
 	result, err := h.usecase.GetAllArticleQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // ArticleGetByFiltersSort godoc
@@ -184,11 +183,11 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 
 	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminArticleGetAll godoc
@@ -213,9 +212,9 @@ func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllArticleQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

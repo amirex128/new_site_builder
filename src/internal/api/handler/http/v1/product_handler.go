@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
 	productusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/product"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 
 	result, err := h.usecase.CreateProductCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateProduct godoc
@@ -70,11 +69,11 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 
 	result, err := h.usecase.UpdateProductCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteProduct godoc
@@ -99,11 +98,11 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 
 	result, err := h.usecase.DeleteProductCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdProduct godoc
@@ -128,11 +127,11 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdProductQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllProduct godoc
@@ -156,11 +155,11 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 
 	result, err := h.usecase.GetAllProductQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetByFiltersSortProduct godoc
@@ -184,11 +183,11 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 
 	result, err := h.usecase.GetByFiltersSortProductQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllProduct godoc
@@ -213,9 +212,9 @@ func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllProductQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

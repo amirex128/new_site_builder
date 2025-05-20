@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
 	planusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/plan"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 
 	result, err := h.usecase.CreatePlanCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdatePlan godoc
@@ -70,11 +69,11 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 
 	result, err := h.usecase.UpdatePlanCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeletePlan godoc
@@ -99,11 +98,11 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 
 	result, err := h.usecase.DeletePlanCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdPlan godoc
@@ -128,11 +127,11 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 
 	result, err := h.usecase.GetByIDPlanQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllPlan godoc
@@ -156,11 +155,11 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 
 	result, err := h.usecase.GetAllPlanQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // CalculatePlanPrice godoc
@@ -184,9 +183,9 @@ func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 
 	result, err := h.usecase.CalculatePlanPriceQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
 	discountusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/discount"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 
 	result, err := h.usecase.CreateDiscountCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateDiscount godoc
@@ -70,11 +69,11 @@ func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 
 	result, err := h.usecase.UpdateDiscountCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteDiscount godoc
@@ -99,11 +98,11 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 
 	result, err := h.usecase.DeleteDiscountCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdDiscount godoc
@@ -128,11 +127,11 @@ func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdDiscountQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllDiscount godoc
@@ -156,11 +155,11 @@ func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 
 	result, err := h.usecase.GetAllDiscountQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllDiscount godoc
@@ -185,9 +184,9 @@ func (h *DiscountHandler) AdminGetAllDiscount(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllDiscountQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

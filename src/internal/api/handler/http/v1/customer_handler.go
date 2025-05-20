@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer"
 	customerusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/customer"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 
 	result, err := h.usecase.UpdateProfileCustomerCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // GetProfileCustomer godoc
@@ -70,11 +69,11 @@ func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 
 	result, err := h.usecase.GetProfileCustomerQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // RegisterCustomer godoc
@@ -98,11 +97,11 @@ func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 
 	result, err := h.usecase.RegisterCustomerCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // LoginCustomer godoc
@@ -126,11 +125,11 @@ func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 
 	result, err := h.usecase.LoginCustomerCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // RequestVerifyAndForgetCustomer godoc
@@ -154,11 +153,11 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 
 	result, err := h.usecase.RequestVerifyAndForgetCustomerCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // VerifyCustomer godoc
@@ -182,11 +181,11 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 
 	result, err := h.usecase.VerifyCustomerQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // AdminGetAllCustomer godoc
@@ -211,9 +210,9 @@ func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllCustomerQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

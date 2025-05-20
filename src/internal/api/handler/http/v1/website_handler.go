@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/website"
 	websiteusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/website"
 	"github.com/gin-gonic/gin"
@@ -40,11 +39,11 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 
 	result, err := h.usecase.GetByDomainPageQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetByDomainHeaderFooter godoc
@@ -67,11 +66,11 @@ func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 
 	result, err := h.usecase.GetByDomainHeaderFooterQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // ProductSearchList godoc
@@ -93,11 +92,11 @@ func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 
 	result, err := h.usecase.ProductSearchListQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetFiltersSortArticle godoc
@@ -119,11 +118,11 @@ func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 
 	result, err := h.usecase.GetFiltersSortArticleQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetFiltersSortProduct godoc
@@ -145,11 +144,11 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 
 	result, err := h.usecase.GetFiltersSortProductQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetArticlesByCategorySlug godoc
@@ -172,11 +171,11 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetArticlesByCategorySlugQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetProductsByCategorySlug godoc
@@ -199,11 +198,11 @@ func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetProductsByCategorySlugQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetSingleArticleBySlug godoc
@@ -226,11 +225,11 @@ func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetSingleArticleBySlugQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetSingleProductBySlug godoc
@@ -253,9 +252,9 @@ func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
 
 	result, err := h.usecase.GetSingleProductBySlugQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

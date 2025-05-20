@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/payment"
 	paymentusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/payment"
 	"github.com/gin-gonic/gin"
@@ -42,11 +41,11 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 
 	result, err := h.usecase.VerifyPaymentCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // RequestGateway godoc
@@ -70,11 +69,11 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 
 	result, err := h.usecase.RequestGatewayCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.OK(c, result)
+	utils.OK(c, result)
 }
 
 // CreateOrUpdateGateway godoc
@@ -98,13 +97,13 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 
 	result, err := h.usecase.CreateOrUpdateGatewayCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
 	// Since there's no clear ID field to determine if this is an update or a create,
 	// we'll always respond with a generic success response
-	resp.OK(c, result)
+	utils.OK(c, result)
 }
 
 // GetByIdGateway godoc
@@ -129,11 +128,11 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdGatewayQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllGateway godoc
@@ -158,11 +157,11 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllGatewayQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllPayment godoc
@@ -187,9 +186,9 @@ func (h *PaymentHandler) AdminGetAllPayment(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllPaymentQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

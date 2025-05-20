@@ -1,4 +1,4 @@
-package resp
+package utils
 
 import (
 	"net/http"
@@ -8,11 +8,12 @@ import (
 
 // Result represents a standardized API response
 type Result struct {
-	Success    bool        `json:"success"`
-	Message    string      `json:"message,omitempty"`
-	Data       interface{} `json:"data,omitempty"`
-	Errors     []string    `json:"errors,omitempty"`
-	StatusCode int         `json:"statusCode"`
+	Success    bool     `json:"success"`
+	Message    string   `json:"message,omitempty"`
+	Data       any      `json:"data,omitempty"`
+	Errors     []string `json:"errors,omitempty"`
+	StatusCode int      `json:"statusCode"`
+	ErrorData  []any    `json:"errorData,omitempty"`
 }
 
 // Standard messages for API responses
@@ -43,8 +44,14 @@ func NewResponse(success bool, message string, statusCode int) *Result {
 }
 
 // WithData adds data to the Result
-func (r *Result) WithData(data interface{}) *Result {
+func (r *Result) WithData(data any) *Result {
 	r.Data = data
+	return r
+}
+
+// WithAnyErrors adds error messages to the Result
+func (r *Result) WithAnyErrors(errors ...any) *Result {
+	r.ErrorData = append(r.ErrorData, errors...)
 	return r
 }
 
@@ -67,28 +74,28 @@ func (r *Result) SendAndAbort(c *gin.Context) {
 // Success responses
 
 // OK creates a 200 OK response
-func OK(c *gin.Context, data interface{}) {
+func OK(c *gin.Context, data any) {
 	NewResponse(true, MsgSuccess, http.StatusOK).
 		WithData(data).
 		Send(c)
 }
 
 // Created creates a 201 Created response
-func Created(c *gin.Context, data interface{}) {
+func Created(c *gin.Context, data any) {
 	NewResponse(true, MsgCreated, http.StatusCreated).
 		WithData(data).
 		Send(c)
 }
 
 // Updated creates a 200 OK response for updates
-func Updated(c *gin.Context, data interface{}) {
+func Updated(c *gin.Context, data any) {
 	NewResponse(true, MsgUpdated, http.StatusOK).
 		WithData(data).
 		Send(c)
 }
 
 // Deleted creates a 200 OK response for deletions
-func Deleted(c *gin.Context, data ...interface{}) {
+func Deleted(c *gin.Context, data ...any) {
 	result := NewResponse(true, MsgDeleted, http.StatusOK)
 	if len(data) > 0 && data[0] != nil {
 		result.WithData(data[0])
@@ -97,7 +104,7 @@ func Deleted(c *gin.Context, data ...interface{}) {
 }
 
 // Retrieved creates a 200 OK response for data retrieval
-func Retrieved(c *gin.Context, data interface{}) {
+func Retrieved(c *gin.Context, data any) {
 	NewResponse(true, MsgRetrieved, http.StatusOK).
 		WithData(data).
 		Send(c)
@@ -118,7 +125,20 @@ func BadRequest(c *gin.Context, errors ...string) {
 }
 
 // ValidationError creates a 400 Bad Request response for validation errors
-func ValidationError(c *gin.Context, errors ...string) {
+func ValidationError(c *gin.Context, errors ...ValidationErrorBag) {
+	// Convert ValidationErrorBag slice to []any for WithAnyErrors
+	anyErrors := make([]any, len(errors))
+	for i, err := range errors {
+		anyErrors[i] = err
+	}
+
+	NewResponse(false, MsgValidationError, http.StatusBadRequest).
+		WithAnyErrors(anyErrors...).
+		SendAndAbort(c)
+}
+
+// ValidationErrorString creates a 400 Bad Request response for validation errors
+func ValidationErrorString(c *gin.Context, errors ...string) {
 	NewResponse(false, MsgValidationError, http.StatusBadRequest).
 		WithErrors(errors...).
 		SendAndAbort(c)

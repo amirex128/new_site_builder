@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"git.snappfood.ir/backend/go/packages/sf-routing/middlewares"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -39,12 +38,6 @@ type Router interface {
 type RouterGroup interface {
 	Routes(router *gin.RouterGroup)
 }
-
-// Middleware is a function that takes a gin.HandlerFunc and returns a gin.HandlerFunc
-type Middleware = middlewares.Middleware
-
-// ErrorHandler is a function that handles errors
-type ErrorHandler func(c *gin.Context, err error)
 
 // =============================================================================
 // Configuration Types
@@ -108,8 +101,7 @@ type Registry struct {
 	mu                 sync.RWMutex
 	engine             *gin.Engine
 	healthChecks       []Healthy
-	globalMiddlewares  []Middleware
-	errorHandler       ErrorHandler
+	globalMiddlewares  []gin.HandlerFunc
 	logger             Logger
 	SwaggerEnabled     bool
 	SwaggerTitle       string
@@ -127,9 +119,8 @@ type Registry struct {
 var globalRegistry = &Registry{
 	engine:            gin.Default(),
 	healthChecks:      make([]Healthy, 0),
-	globalMiddlewares: make([]Middleware, 0),
+	globalMiddlewares: make([]gin.HandlerFunc, 0),
 	logger:            nil,
-	errorHandler:      nil,
 	SwaggerEnabled:    false,
 	SwaggerTitle:      "API Documentation",
 	SwaggerVersion:    "1.0",
@@ -178,17 +169,17 @@ func WithSwagger(config SwaggerConfig) Option {
 	}
 }
 
-// WithErrorHandler sets a custom error handler
-func WithErrorHandler(handler ErrorHandler) Option {
+// WithGlobalMiddleware adds a global middleware
+func WithGlobalMiddleware(middleware gin.HandlerFunc) Option {
 	return func(r *Registry) {
-		r.errorHandler = handler
+		r.globalMiddlewares = append(r.globalMiddlewares, middleware)
 	}
 }
 
-// WithGlobalMiddleware adds a global middleware
-func WithGlobalMiddleware(middleware Middleware) Option {
+// WithGlobalMiddlewares adds multiple global middlewares at once
+func WithGlobalMiddlewares(middlewares ...gin.HandlerFunc) Option {
 	return func(r *Registry) {
-		r.globalMiddlewares = append(r.globalMiddlewares, middleware)
+		r.globalMiddlewares = append(r.globalMiddlewares, middlewares...)
 	}
 }
 
@@ -274,13 +265,7 @@ func RegisterConnection(opts ...Option) error {
 
 	// Apply global middlewares
 	for _, middleware := range globalRegistry.globalMiddlewares {
-		globalRegistry.engine.Use(func(c *gin.Context) {
-			// Create a handler function that calls c.Next()
-			nextHandler := func(c *gin.Context) {
-				c.Next()
-			}
-			middleware(nextHandler)(c)
-		})
+		globalRegistry.engine.Use(middleware)
 	}
 
 	// Register health check endpoint
@@ -349,16 +334,6 @@ func RegisterConnection(opts ...Option) error {
 		}
 	}
 
-	// Set custom error handler if provided
-	if globalRegistry.errorHandler != nil {
-		globalRegistry.engine.Use(func(c *gin.Context) {
-			c.Next()
-			if len(c.Errors) > 0 {
-				globalRegistry.errorHandler(c, c.Errors.Last().Err)
-			}
-		})
-	}
-
 	return nil
 }
 
@@ -420,21 +395,9 @@ func GetEngine() *gin.Engine {
 	return globalRegistry.engine
 }
 
-// DefaultErrorHandler is a default error handler
-func DefaultErrorHandler(c *gin.Context, err error) {
-	if globalRegistry.logger != nil {
-		extraMap := map[string]interface{}{
-			ExtraKey.Error.ErrorMessage: err.Error(),
-		}
-
-		globalRegistry.logger.ErrorWithCategory(
-			Category.Error.Error,
-			SubCategory.Status.Error,
-			"Request error",
-			extraMap,
-		)
-	}
-	c.JSON(http.StatusInternalServerError, gin.H{
-		"error": err.Error(),
-	})
+// AddGlobalMiddlewares immediately adds the provided middlewares to the Gin engine
+func AddGlobalMiddlewares(middlewares ...gin.HandlerFunc) {
+	globalRegistry.mu.Lock()
+	defer globalRegistry.mu.Unlock()
+	globalRegistry.engine.Use(middlewares...)
 }

@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/basket"
 	basketusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/basket"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 
 	result, err := h.usecase.UpdateBasketCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // GetBasket godoc
@@ -70,11 +69,11 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 
 	result, err := h.usecase.GetBasketQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllBasketUser godoc
@@ -98,11 +97,11 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 
 	result, err := h.usecase.GetAllBasketUserQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllBasketUser godoc
@@ -127,9 +126,9 @@ func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllBasketUserQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

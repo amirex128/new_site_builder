@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
 	fileitemusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/file_item"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 
 	result, err := h.usecase.CreateOrDirectoryItemCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // DeleteFileItem godoc
@@ -70,11 +69,11 @@ func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 
 	result, err := h.usecase.DeleteFileItemCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // ForceDeleteFileItem godoc
@@ -99,11 +98,11 @@ func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 
 	result, err := h.usecase.ForceDeleteFileItemCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // UpdateFileItem godoc
@@ -128,11 +127,11 @@ func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 
 	result, err := h.usecase.UpdateFileItemCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // FileOperation godoc
@@ -157,11 +156,11 @@ func (h *FileItemHandler) FileOperation(c *gin.Context) {
 
 	result, err := h.usecase.FileOperationCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // RestoreFileItem godoc
@@ -186,11 +185,11 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 
 	result, err := h.usecase.RestoreFileItemCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // GetByIds godoc
@@ -215,11 +214,11 @@ func (h *FileItemHandler) GetByIds(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdsQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetDeletedTreeDirectory godoc
@@ -243,11 +242,11 @@ func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 
 	result, err := h.usecase.GetDeletedTreeDirectoryQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetDownloadFileItemById godoc
@@ -272,11 +271,11 @@ func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 
 	result, err := h.usecase.GetDownloadFileItemByIdQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetTreeDirectory godoc
@@ -300,9 +299,9 @@ func (h *FileItemHandler) GetTreeDirectory(c *gin.Context) {
 
 	result, err := h.usecase.GetTreeDirectoryQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

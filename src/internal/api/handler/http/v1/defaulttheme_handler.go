@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/defaulttheme"
 	defaultthemeusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/default_theme"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.CreateDefaultThemeCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateDefaultTheme godoc
@@ -70,11 +69,11 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.UpdateDefaultThemeCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // DeleteDefaultTheme godoc
@@ -99,11 +98,11 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.DeleteDefaultThemeCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Deleted(c, result)
+	utils.Deleted(c, result)
 }
 
 // GetByIdDefaultTheme godoc
@@ -128,11 +127,11 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdDefaultThemeQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllDefaultTheme godoc
@@ -156,9 +155,9 @@ func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
 
 	result, err := h.usecase.GetAllDefaultThemeQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

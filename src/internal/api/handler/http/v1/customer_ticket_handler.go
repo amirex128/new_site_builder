@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer_ticket"
 	customerticketusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/customer_ticket"
 	"github.com/gin-gonic/gin"
@@ -41,11 +40,11 @@ func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.CreateCustomerTicketCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // ReplayCustomerTicket godoc
@@ -70,11 +69,11 @@ func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.ReplayCustomerTicketCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // AdminReplayCustomerTicket godoc
@@ -100,11 +99,11 @@ func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.AdminReplayCustomerTicketCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // GetByIdCustomerTicket godoc
@@ -129,11 +128,11 @@ func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.GetByIdCustomerTicketQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllCustomerTicket godoc
@@ -157,11 +156,11 @@ func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.GetAllCustomerTicketQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // AdminGetAllCustomerTicket godoc
@@ -186,9 +185,9 @@ func (h *CustomerTicketHandler) AdminGetAllCustomerTicket(c *gin.Context) {
 
 	result, err := h.usecase.AdminGetAllCustomerTicketQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }

@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/role"
 	roleusecase "github.com/amirex128/new_site_builder/src/internal/application/usecase/role"
 	"github.com/gin-gonic/gin"
@@ -42,11 +41,11 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 
 	result, err := h.usecase.CreateRoleCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Created(c, result)
+	utils.Created(c, result)
 }
 
 // UpdateRole godoc
@@ -72,11 +71,11 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 
 	result, err := h.usecase.UpdateRoleCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // SetRoleToCustomer godoc
@@ -102,11 +101,11 @@ func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 
 	result, err := h.usecase.SetRoleToCustomerCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // SetRoleToUser godoc
@@ -132,11 +131,11 @@ func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 
 	result, err := h.usecase.SetRoleToUserCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // SetRoleToPlan godoc
@@ -162,11 +161,11 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 
 	result, err := h.usecase.SetRoleToPlanCommand(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Updated(c, result)
+	utils.Updated(c, result)
 }
 
 // GetAllPermission godoc
@@ -190,11 +189,11 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 
 	result, err := h.usecase.GetAllPermissionQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetAllRole godoc
@@ -218,11 +217,11 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 
 	result, err := h.usecase.GetAllRoleQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
 
 // GetRolePermissions godoc
@@ -247,9 +246,9 @@ func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
 
 	result, err := h.usecase.GetRolePermissionsQuery(&params)
 	if err != nil {
-		resp.InternalError(c, err.Error())
+		utils.InternalError(c, err.Error())
 		return
 	}
 
-	resp.Retrieved(c, result)
+	utils.Retrieved(c, result)
 }
