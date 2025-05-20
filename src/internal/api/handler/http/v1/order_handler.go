@@ -35,7 +35,7 @@ func NewOrderHandler(usc *orderusecase.OrderUsecase) *OrderHandler {
 // @Security     BearerAuth
 func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 	var params order.CreateOrderRequestCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 // @Security     BearerAuth
 func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 	var params order.CreateOrderVerifyCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 // @Tags         order
 // @Accept       json
 // @Produce      json
-// @Param        request  body      order.GetAllOrderCustomerQuery  true  "Query parameters"
+// @Param        request  query     order.GetAllOrderCustomerQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                     "List of customer orders"
 // @Failure      400      {object}  resp.Result                     "Validation error"
 // @Failure      401      {object}  resp.Result                     "Unauthorized"
@@ -92,7 +92,7 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 // @Security     BearerAuth
 func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 	var params order.GetAllOrderCustomerQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -111,7 +111,7 @@ func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 // @Tags         order
 // @Accept       json
 // @Produce      json
-// @Param        request  body      order.GetOrderCustomerDetailsQuery  true  "Order ID to retrieve"
+// @Param        request  query     order.GetOrderCustomerDetailsQuery  true  "Order ID to retrieve"
 // @Success      200      {object}  resp.Result                         "Order details"
 // @Failure      400      {object}  resp.Result                         "Validation error"
 // @Failure      401      {object}  resp.Result                         "Unauthorized"
@@ -121,7 +121,7 @@ func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 	var params order.GetOrderCustomerDetailsQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -140,7 +140,7 @@ func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 // @Tags         order
 // @Accept       json
 // @Produce      json
-// @Param        request  body      order.GetAllOrderUserQuery  true  "Query parameters"
+// @Param        request  query     order.GetAllOrderUserQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                 "List of user orders"
 // @Failure      400      {object}  resp.Result                 "Validation error"
 // @Failure      401      {object}  resp.Result                 "Unauthorized"
@@ -149,7 +149,7 @@ func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 // @Security     BearerAuth
 func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 	var params order.GetAllOrderUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -168,7 +168,7 @@ func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 // @Tags         order
 // @Accept       json
 // @Produce      json
-// @Param        request  body      order.GetOrderUserDetailsQuery  true  "Order ID to retrieve"
+// @Param        request  query     order.GetOrderUserDetailsQuery  true  "Order ID to retrieve"
 // @Success      200      {object}  resp.Result                     "Order details"
 // @Failure      400      {object}  resp.Result                     "Validation error"
 // @Failure      401      {object}  resp.Result                     "Unauthorized"
@@ -178,7 +178,7 @@ func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 	var params order.GetOrderUserDetailsQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -197,7 +197,7 @@ func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 // @Tags         order
 // @Accept       json
 // @Produce      json
-// @Param        request  body      order.AdminGetAllOrderUserQuery  true  "Query parameters"
+// @Param        request  query     order.AdminGetAllOrderUserQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of all orders"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -207,7 +207,7 @@ func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 // @Security     BearerAuth
 func (h *OrderHandler) AdminGetAllOrderUser(c *gin.Context) {
 	var params order.AdminGetAllOrderUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

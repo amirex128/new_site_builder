@@ -35,13 +35,10 @@ const docTemplate = `{
                 "summary": "Get address by ID",
                 "parameters": [
                     {
-                        "description": "Address ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/address.GetByIdAddressQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -275,13 +272,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all addresses",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/address.AdminGetAllAddressQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -338,13 +373,51 @@ const docTemplate = `{
                 "summary": "Get all addresses",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/address.GetAllAddressQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -395,13 +468,51 @@ const docTemplate = `{
                 "summary": "Get all cities",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/address.GetAllCityQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -452,13 +563,51 @@ const docTemplate = `{
                 "summary": "Get all provinces",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/address.GetAllProvinceQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -509,13 +658,10 @@ const docTemplate = `{
                 "summary": "Get article by ID",
                 "parameters": [
                     {
-                        "description": "Article ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/article.GetByIdArticleQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -749,13 +895,10 @@ const docTemplate = `{
                 "summary": "Get article category by ID",
                 "parameters": [
                     {
-                        "description": "Category ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/article_category.GetByIdCategoryQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -989,13 +1132,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all article categories",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/article_category.AdminGetAllCategoryQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1052,13 +1233,57 @@ const docTemplate = `{
                 "summary": "Get all article categories",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/article_category.GetAllCategoryQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1109,13 +1334,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all articles",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/article.AdminGetAllArticleQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1172,13 +1435,57 @@ const docTemplate = `{
                 "summary": "Get all articles",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/article.GetAllArticleQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1286,13 +1593,10 @@ const docTemplate = `{
                 "summary": "Get current basket",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/basket.GetBasketQuery"
-                        }
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1404,13 +1708,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all user baskets",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/basket.AdminGetAllBasketUserQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1467,13 +1809,57 @@ const docTemplate = `{
                 "summary": "Get all user baskets",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/basket.GetAllBasketUserQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1524,13 +1910,10 @@ const docTemplate = `{
                 "summary": "Get customer ticket by ID",
                 "parameters": [
                     {
-                        "description": "Ticket ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/customer_ticket.GetByIdCustomerTicketQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1772,13 +2155,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all customer tickets",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/customer_ticket.AdminGetAllCustomerTicketQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1835,13 +2256,51 @@ const docTemplate = `{
                 "summary": "Get all customer tickets",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/customer_ticket.GetAllCustomerTicketQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1892,13 +2351,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all customers",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/customer.AdminGetAllCustomerQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2010,17 +2507,6 @@ const docTemplate = `{
                     "customer"
                 ],
                 "summary": "Get customer profile",
-                "parameters": [
-                    {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/customer.GetProfileCustomerQuery"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Customer profile",
@@ -2187,13 +2673,34 @@ const docTemplate = `{
                 "summary": "Verify customer email",
                 "parameters": [
                     {
-                        "description": "Verification token",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/customer.VerifyCustomerQuery"
-                        }
+                        "type": "integer",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "VerifyEmail",
+                            "VerifyPhone",
+                            "ForgetPasswordEmail",
+                            "ForgetPasswordPhone"
+                        ],
+                        "name": "type",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2301,13 +2808,10 @@ const docTemplate = `{
                 "summary": "Get default theme by ID",
                 "parameters": [
                     {
-                        "description": "Theme ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/defaulttheme.GetByIdDefaultThemeQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2541,13 +3045,51 @@ const docTemplate = `{
                 "summary": "Get all default themes",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/defaulttheme.GetAllDefaultThemeQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2598,13 +3140,10 @@ const docTemplate = `{
                 "summary": "Get discount by ID",
                 "parameters": [
                     {
-                        "description": "Discount ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/discount.GetByIdDiscountQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2838,13 +3377,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all discounts",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/discount.AdminGetAllDiscountQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2901,13 +3478,57 @@ const docTemplate = `{
                 "summary": "Get all discounts",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/discount.GetAllDiscountQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3263,13 +3884,15 @@ const docTemplate = `{
                 "summary": "Get files or directories by IDs",
                 "parameters": [
                     {
-                        "description": "File or directory IDs to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/fileitem.GetByIdsQuery"
-                        }
+                        "type": "integer",
+                        "name": "expireMinutes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "isTemporary",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3507,17 +4130,6 @@ const docTemplate = `{
                     "file-item"
                 ],
                 "summary": "Get deleted directory tree",
-                "parameters": [
-                    {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/fileitem.GetDeletedTreeDirectoryQuery"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Deleted directory tree",
@@ -3566,13 +4178,10 @@ const docTemplate = `{
                 "summary": "Get payment gateway by ID",
                 "parameters": [
                     {
-                        "description": "Gateway ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/payment.GetByIdGatewayQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3684,13 +4293,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all payment gateways",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/payment.AdminGetAllGatewayQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3747,13 +4394,37 @@ const docTemplate = `{
                 "summary": "Get header/footer by ID",
                 "parameters": [
                     {
-                        "description": "Header/footer ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/header_footer.GetByIdHeaderFooterQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "Header",
+                            "Footer"
+                        ],
+                        "name": "type",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3987,13 +4658,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all header/footers",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/header_footer.AdminGetAllHeaderFooterQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4050,13 +4759,70 @@ const docTemplate = `{
                 "summary": "Get all header/footers",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/header_footer.GetAllHeaderFooterQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "Header",
+                            "Footer"
+                        ],
+                        "name": "type",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4164,13 +4930,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all orders",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.AdminGetAllOrderUserQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4227,13 +5031,51 @@ const docTemplate = `{
                 "summary": "Get all customer orders",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.GetAllOrderCustomerQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4284,13 +5126,10 @@ const docTemplate = `{
                 "summary": "Get customer order details",
                 "parameters": [
                     {
-                        "description": "Order ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.GetOrderCustomerDetailsQuery"
-                        }
+                        "type": "integer",
+                        "name": "orderId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4347,13 +5186,57 @@ const docTemplate = `{
                 "summary": "Get all user orders",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.GetAllOrderUserQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4404,13 +5287,10 @@ const docTemplate = `{
                 "summary": "Get user order details",
                 "parameters": [
                     {
-                        "description": "Order ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.GetOrderUserDetailsQuery"
-                        }
+                        "type": "integer",
+                        "name": "orderId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4530,13 +5410,24 @@ const docTemplate = `{
                 "summary": "Get page by ID",
                 "parameters": [
                     {
-                        "description": "Page ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/page.GetByIdPageQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -4770,13 +5661,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all pages",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/page.AdminGetAllPageQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4833,13 +5762,57 @@ const docTemplate = `{
                 "summary": "Get all pages",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/page.GetAllPageQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4890,13 +5863,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all payments",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/payment.AdminGetAllPaymentQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -5073,13 +6084,10 @@ const docTemplate = `{
                 "summary": "Get plan by ID",
                 "parameters": [
                     {
-                        "description": "Plan ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/plan.GetByIDPlanQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5313,13 +6321,51 @@ const docTemplate = `{
                 "summary": "Get all subscription plans",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/plan.GetAllPlanQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -5370,13 +6416,10 @@ const docTemplate = `{
                 "summary": "Calculate plan price",
                 "parameters": [
                     {
-                        "description": "Plan calculation parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/plan.CalculatePlanPriceQuery"
-                        }
+                        "type": "integer",
+                        "name": "planId",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5427,13 +6470,10 @@ const docTemplate = `{
                 "summary": "Get product by ID",
                 "parameters": [
                     {
-                        "description": "Product ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product.GetByIdProductQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5667,13 +6707,10 @@ const docTemplate = `{
                 "summary": "Get product category by ID",
                 "parameters": [
                     {
-                        "description": "Category ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product_category.GetByIdCategoryQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -5907,13 +6944,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all product categories",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product_category.AdminGetAllCategoryQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -5970,13 +7045,57 @@ const docTemplate = `{
                 "summary": "Get all product categories",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product_category.GetAllCategoryQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6387,13 +7506,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all products",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product.AdminGetAllProductQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6450,13 +7607,57 @@ const docTemplate = `{
                 "summary": "Get all products",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product.GetAllProductQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6694,13 +7895,51 @@ const docTemplate = `{
                 "summary": "Get all roles",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/role.GetAllRoleQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6820,13 +8059,51 @@ const docTemplate = `{
                 "summary": "Get all permissions",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/role.GetAllPermissionQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -6877,13 +8154,51 @@ const docTemplate = `{
                 "summary": "Get role permissions",
                 "parameters": [
                     {
-                        "description": "Role ID to retrieve permissions for",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/role.GetRolePermissionsQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7078,13 +8393,10 @@ const docTemplate = `{
                 "summary": "Get site by ID",
                 "parameters": [
                     {
-                        "description": "Site ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/site.GetByIdSiteQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -7318,13 +8630,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all sites",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/site.AdminGetAllSiteQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7381,13 +8731,51 @@ const docTemplate = `{
                 "summary": "Get all sites",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/site.GetAllSiteQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7438,13 +8826,10 @@ const docTemplate = `{
                 "summary": "Get ticket by ID",
                 "parameters": [
                     {
-                        "description": "Ticket ID to retrieve",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ticket.GetByIdTicketQuery"
-                        }
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -7556,13 +8941,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all tickets",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ticket.AdminGetAllTicketQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7688,13 +9111,51 @@ const docTemplate = `{
                 "summary": "Get all tickets",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ticket.GetAllTicketQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7871,13 +9332,51 @@ const docTemplate = `{
                 "summary": "Get all unit prices",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/unit_price.GetAllUnitPriceQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -7926,17 +9425,6 @@ const docTemplate = `{
                     "unit-price"
                 ],
                 "summary": "Calculate unit price",
-                "parameters": [
-                    {
-                        "description": "Parameters for price calculation",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/unit_price.CalculateUnitPriceQuery"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Calculated unit price",
@@ -7985,13 +9473,51 @@ const docTemplate = `{
                 "summary": "Admin: Get all users",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.AdminGetAllUserQuery"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8212,17 +9738,6 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Get user profile",
-                "parameters": [
-                    {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.GetProfileUserQuery"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "User profile details",
@@ -8373,13 +9888,34 @@ const docTemplate = `{
                 "summary": "Verify user",
                 "parameters": [
                     {
-                        "description": "Verification details",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.VerifyUserQuery"
-                        }
+                        "type": "integer",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "VerifyEmail",
+                            "VerifyPhone",
+                            "ForgetPasswordEmail",
+                            "ForgetPasswordPhone"
+                        ],
+                        "name": "type",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -8529,13 +10065,68 @@ const docTemplate = `{
                 "summary": "Get articles by category slug",
                 "parameters": [
                     {
-                        "description": "Category slug and query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.GetArticlesByCategorySlugQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slug",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8581,13 +10172,91 @@ const docTemplate = `{
                 "summary": "Get article filters and sorting options",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.GetFiltersSortArticleQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "TitleAZ",
+                            "TitleZA",
+                            "RecentlyAdded",
+                            "RecentlyUpdated",
+                            "MostVisited",
+                            "LeastVisited",
+                            "MostRated",
+                            "LeastRated",
+                            "MostReviewed",
+                            "LeastReviewed"
+                        ],
+                        "name": "selectedSort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8627,13 +10296,15 @@ const docTemplate = `{
                 "summary": "Get header and footer by domain",
                 "parameters": [
                     {
-                        "description": "Domain parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.GetByDomainHeaderFooterQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8679,13 +10350,20 @@ const docTemplate = `{
                 "summary": "Get page by domain",
                 "parameters": [
                     {
-                        "description": "Domain and page parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.GetByDomainPageQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8783,13 +10461,68 @@ const docTemplate = `{
                 "summary": "Get products by category slug",
                 "parameters": [
                     {
-                        "description": "Category slug and query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.GetProductsByCategorySlugQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slug",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8835,13 +10568,99 @@ const docTemplate = `{
                 "summary": "Get product filters and sorting options",
                 "parameters": [
                     {
-                        "description": "Query parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.GetFiltersSortProductQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12,
+                            13
+                        ],
+                        "type": "integer",
+                        "x-enum-varnames": [
+                            "PriceLowToHigh",
+                            "PriceHighToLow",
+                            "CouponHighToLow",
+                            "NameAZ",
+                            "NameZA",
+                            "RecentlyAdded",
+                            "RecentlyUpdated",
+                            "MostSelling",
+                            "MostVisited",
+                            "MostRated",
+                            "MostReviewed",
+                            "LeastVisited",
+                            "LeastRated",
+                            "LeastReviewed"
+                        ],
+                        "name": "selectedSort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8881,13 +10700,62 @@ const docTemplate = `{
                 "summary": "Search products",
                 "parameters": [
                     {
-                        "description": "Search parameters",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/website.ProductSearchListQuery"
-                        }
+                        "type": "string",
+                        "name": "domain",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "searchBy",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "siteId",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "title",
+                            "description"
+                        ],
+                        "type": "string",
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8914,48 +10782,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "address.AdminGetAllAddressQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "address.CreateAddressCommand": {
             "type": "object",
             "required": [
@@ -9009,143 +10835,6 @@ const docTemplate = `{
                 }
             }
         },
-        "address.GetAllAddressQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "address.GetAllCityQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "address.GetAllProvinceQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "address.GetByIdAddressQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
         "address.UpdateAddressCommand": {
             "type": "object",
             "required": [
@@ -9181,48 +10870,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "article.AdminGetAllArticleQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         },
@@ -9305,52 +10952,6 @@ const docTemplate = `{
                 }
             }
         },
-        "article.GetAllArticleQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "article.GetByFiltersSortArticleQuery": {
             "type": "object",
             "required": [
@@ -9409,17 +11010,6 @@ const docTemplate = `{
                 }
             }
         },
-        "article.GetByIdArticleQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
         "article.UpdateArticleCommand": {
             "type": "object",
             "required": [
@@ -9462,48 +11052,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "article_category.AdminGetAllCategoryQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         },
@@ -9557,63 +11105,6 @@ const docTemplate = `{
                 }
             }
         },
-        "article_category.GetAllCategoryQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "article_category.GetByIdCategoryQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
         "article_category.UpdateCategoryCommand": {
             "type": "object",
             "required": [
@@ -9656,48 +11147,6 @@ const docTemplate = `{
                 }
             }
         },
-        "basket.AdminGetAllBasketUserQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "basket.BasketItemCommand": {
             "type": "object",
             "required": [
@@ -9717,63 +11166,6 @@ const docTemplate = `{
                 "quantity": {
                     "type": "integer",
                     "maximum": 1000
-                }
-            }
-        },
-        "basket.GetAllBasketUserQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "basket.GetBasketQuery": {
-            "type": "object",
-            "required": [
-                "siteId"
-            ],
-            "properties": {
-                "siteId": {
-                    "type": "integer"
                 }
             }
         },
@@ -9825,51 +11217,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "customer.AdminGetAllCustomerQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "customer.GetProfileCustomerQuery": {
-            "type": "object"
         },
         "customer.LoginCustomerCommand": {
             "type": "object",
@@ -9951,67 +11298,6 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
-                }
-            }
-        },
-        "customer.VerifyCustomerQuery": {
-            "type": "object",
-            "required": [
-                "code",
-                "email",
-                "type"
-            ],
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/user.VerifyTypeEnum"
-                }
-            }
-        },
-        "customer_ticket.AdminGetAllCustomerTicketQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         },
@@ -10145,59 +11431,6 @@ const docTemplate = `{
                 "Closed"
             ]
         },
-        "customer_ticket.GetAllCustomerTicketQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "customer_ticket.GetByIdCustomerTicketQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
         "customer_ticket.ReplayCustomerTicketCommand": {
             "type": "object",
             "required": [
@@ -10269,59 +11502,6 @@ const docTemplate = `{
                 }
             }
         },
-        "defaulttheme.GetAllDefaultThemeQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "defaulttheme.GetByIdDefaultThemeQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
         "defaulttheme.UpdateDefaultThemeCommand": {
             "type": "object",
             "required": [
@@ -10345,48 +11525,6 @@ const docTemplate = `{
                 },
                 "pages": {
                     "type": "string"
-                }
-            }
-        },
-        "discount.AdminGetAllDiscountQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         },
@@ -10422,63 +11560,6 @@ const docTemplate = `{
             }
         },
         "discount.DeleteDiscountCommand": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "discount.GetAllDiscountQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "discount.GetByIdDiscountQuery": {
             "type": "object",
             "required": [
                 "id"
@@ -10572,30 +11653,6 @@ const docTemplate = `{
                 }
             }
         },
-        "fileitem.GetByIdsQuery": {
-            "type": "object",
-            "required": [
-                "idsOrder",
-                "isTemporary"
-            ],
-            "properties": {
-                "expireMinutes": {
-                    "type": "integer"
-                },
-                "idsOrder": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/fileitem.MediaUrlRequest"
-                    }
-                },
-                "isTemporary": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "fileitem.GetDeletedTreeDirectoryQuery": {
-            "type": "object"
-        },
         "fileitem.GetDownloadFileItemByIdQuery": {
             "type": "object",
             "required": [
@@ -10671,48 +11728,6 @@ const docTemplate = `{
                 }
             }
         },
-        "header_footer.AdminGetAllHeaderFooterQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "header_footer.CreateHeaderFooterCommand": {
             "type": "object",
             "required": [
@@ -10746,78 +11761,6 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
-                }
-            }
-        },
-        "header_footer.GetAllHeaderFooterQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "type": {
-                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
-                }
-            }
-        },
-        "header_footer.GetByIdHeaderFooterQuery": {
-            "type": "object",
-            "required": [
-                "siteId"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
                 }
             }
         },
@@ -10933,48 +11876,6 @@ const docTemplate = `{
                 }
             }
         },
-        "order.AdminGetAllOrderUserQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "order.CourierEnum": {
             "type": "integer",
             "enum": [
@@ -11037,116 +11938,6 @@ const docTemplate = `{
                 }
             }
         },
-        "order.GetAllOrderCustomerQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "order.GetAllOrderUserQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "order.GetOrderCustomerDetailsQuery": {
-            "type": "object",
-            "required": [
-                "orderId"
-            ],
-            "properties": {
-                "orderId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "order.GetOrderUserDetailsQuery": {
-            "type": "object",
-            "required": [
-                "orderId"
-            ],
-            "properties": {
-                "orderId": {
-                    "type": "integer"
-                }
-            }
-        },
         "order.PaymentGatewaysEnum": {
             "type": "integer",
             "enum": [
@@ -11181,48 +11972,6 @@ const docTemplate = `{
                 "PayPing",
                 "ParbadVirtual"
             ]
-        },
-        "page.AdminGetAllPageQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
         },
         "page.CreatePageCommand": {
             "type": "object",
@@ -11276,72 +12025,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "page.GetAllPageQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "page.GetByIdPageQuery": {
-            "type": "object",
-            "required": [
-                "siteId"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "siteId": {
                     "type": "integer"
                 }
             }
@@ -11463,90 +12146,6 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.AdminGetAllGatewayQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "payment.AdminGetAllPaymentQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "payment.AsanPardakhtGateway": {
             "type": "object",
             "properties": {
@@ -11656,17 +12255,6 @@ const docTemplate = `{
                 },
                 "zarinPal": {
                     "$ref": "#/definitions/payment.ZarinPalGateway"
-                }
-            }
-        },
-        "payment.GetByIdGatewayQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
                 }
             }
         },
@@ -11957,17 +12545,6 @@ const docTemplate = `{
                 }
             }
         },
-        "plan.CalculatePlanPriceQuery": {
-            "type": "object",
-            "required": [
-                "planId"
-            ],
-            "properties": {
-                "planId": {
-                    "type": "integer"
-                }
-            }
-        },
         "plan.CreatePlanCommand": {
             "type": "object",
             "required": [
@@ -12041,59 +12618,6 @@ const docTemplate = `{
                 }
             }
         },
-        "plan.GetAllPlanQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "plan.GetByIDPlanQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
         "plan.UpdatePlanCommand": {
             "type": "object",
             "required": [
@@ -12150,48 +12674,6 @@ const docTemplate = `{
                 "storageMbCredits": {
                     "type": "integer",
                     "minimum": 0
-                }
-            }
-        },
-        "product.AdminGetAllProductQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         },
@@ -12317,52 +12799,6 @@ const docTemplate = `{
                 "Value"
             ]
         },
-        "product.GetAllProductQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "product.GetByFiltersSortProductQuery": {
             "type": "object",
             "required": [
@@ -12418,17 +12854,6 @@ const docTemplate = `{
                         "title",
                         "description"
                     ]
-                }
-            }
-        },
-        "product.GetByIdProductQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
                 }
             }
         },
@@ -12607,48 +13032,6 @@ const docTemplate = `{
                 }
             }
         },
-        "product_category.AdminGetAllCategoryQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "product_category.CreateCategoryCommand": {
             "type": "object",
             "required": [
@@ -12690,63 +13073,6 @@ const docTemplate = `{
             }
         },
         "product_category.DeleteCategoryCommand": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "product_category.GetAllCategoryQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "product_category.GetByIdCategoryQuery": {
             "type": "object",
             "required": [
                 "id"
@@ -13019,132 +13345,6 @@ const docTemplate = `{
                 }
             }
         },
-        "role.GetAllPermissionQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "role.GetAllRoleQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "role.GetRolePermissionsQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "role.SetRoleToCustomerCommand": {
             "type": "object",
             "required": [
@@ -13216,48 +13416,6 @@ const docTemplate = `{
                 }
             }
         },
-        "site.AdminGetAllSiteQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "site.CreateSiteCommand": {
             "type": "object",
             "required": [
@@ -13305,59 +13463,6 @@ const docTemplate = `{
                 "Domain",
                 "Subdomain"
             ]
-        },
-        "site.GetAllSiteQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "site.GetByIdSiteQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
         },
         "site.SiteTypeEnum": {
             "type": "integer",
@@ -13410,48 +13515,6 @@ const docTemplate = `{
                 },
                 "status": {
                     "$ref": "#/definitions/site.StatusEnum"
-                }
-            }
-        },
-        "ticket.AdminGetAllTicketQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         },
@@ -13530,59 +13593,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "ticket.GetAllTicketQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "ticket.GetByIdTicketQuery": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
                 }
             }
         },
@@ -13670,21 +13680,6 @@ const docTemplate = `{
                 "Closed"
             ]
         },
-        "unit_price.CalculateUnitPriceQuery": {
-            "type": "object",
-            "required": [
-                "unitPrices"
-            ],
-            "properties": {
-                "unitPrices": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "$ref": "#/definitions/unit_price.CalculateUnitPriceUnitPriceQuery"
-                    }
-                }
-            }
-        },
         "unit_price.CalculateUnitPriceUnitPriceQuery": {
             "type": "object",
             "required": [
@@ -13713,48 +13708,6 @@ const docTemplate = `{
                 "Fixed",
                 "Percentage"
             ]
-        },
-        "unit_price.GetAllUnitPriceQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
         },
         "unit_price.UnitPriceNameEnum": {
             "type": "integer",
@@ -13807,48 +13760,6 @@ const docTemplate = `{
                 }
             }
         },
-        "user.AdminGetAllUserQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
         "user.AiTypeEnum": {
             "type": "integer",
             "enum": [
@@ -13894,9 +13805,6 @@ const docTemplate = `{
                 "Fixed",
                 "Percentage"
             ]
-        },
-        "user.GetProfileUserQuery": {
-            "type": "object"
         },
         "user.LoginUserCommand": {
             "type": "object",
@@ -14106,25 +14014,6 @@ const docTemplate = `{
                 "ForgetPasswordPhone"
             ]
         },
-        "user.VerifyUserQuery": {
-            "type": "object",
-            "required": [
-                "code",
-                "email",
-                "type"
-            ],
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/user.VerifyTypeEnum"
-                }
-            }
-        },
         "website.ArticleSortEnum": {
             "type": "integer",
             "enum": [
@@ -14151,265 +14040,6 @@ const docTemplate = `{
                 "MostReviewed",
                 "LeastReviewed"
             ]
-        },
-        "website.GetArticlesByCategorySlugQuery": {
-            "type": "object",
-            "required": [
-                "domain",
-                "page",
-                "pageSize",
-                "slug"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "website.GetByDomainHeaderFooterQuery": {
-            "type": "object",
-            "required": [
-                "domain"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "siteId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "website.GetByDomainPageQuery": {
-            "type": "object",
-            "required": [
-                "domain"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "siteId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "website.GetFiltersSortArticleQuery": {
-            "type": "object",
-            "required": [
-                "domain",
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "selectedFilters": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "selectedSort": {
-                    "$ref": "#/definitions/website.ArticleSortEnum"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "website.GetFiltersSortProductQuery": {
-            "type": "object",
-            "required": [
-                "domain",
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "selectedFilters": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "selectedSort": {
-                    "$ref": "#/definitions/product.ProductSortEnum"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "website.GetProductsByCategorySlugQuery": {
-            "type": "object",
-            "required": [
-                "domain",
-                "page",
-                "pageSize",
-                "slug"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
         },
         "website.GetSingleArticleBySlugQuery": {
             "type": "object",
@@ -14444,55 +14074,6 @@ const docTemplate = `{
                 },
                 "slug": {
                     "type": "string"
-                }
-            }
-        },
-        "website.ProductSearchListQuery": {
-            "type": "object",
-            "required": [
-                "domain",
-                "page",
-                "pageSize"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
                 }
             }
         }

@@ -35,7 +35,7 @@ func NewFileItemHandler(usc *fileitemusecase.FileItemUsecase) *FileItemHandler {
 // @Security     BearerAuth
 func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 	var params fileitem.CreateOrDirectoryItemCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 	var params fileitem.DeleteFileItemCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 	var params fileitem.ForceDeleteFileItemCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -122,7 +122,7 @@ func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 	var params fileitem.UpdateFileItemCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -151,7 +151,7 @@ func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) FileOperation(c *gin.Context) {
 	var params fileitem.FileOperationCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -180,7 +180,7 @@ func (h *FileItemHandler) FileOperation(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 	var params fileitem.RestoreFileItemCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -199,7 +199,7 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 // @Tags         file-item
 // @Accept       json
 // @Produce      json
-// @Param        request  body      fileitem.GetByIdsQuery  true  "File or directory IDs to retrieve"
+// @Param        request  query     fileitem.GetByIdsQuery  true  "File or directory IDs to retrieve"
 // @Success      200      {object}  resp.Result            "Files or directories details"
 // @Failure      400      {object}  resp.Result            "Validation error"
 // @Failure      401      {object}  resp.Result            "Unauthorized"
@@ -209,7 +209,7 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) GetByIds(c *gin.Context) {
 	var params fileitem.GetByIdsQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -228,7 +228,7 @@ func (h *FileItemHandler) GetByIds(c *gin.Context) {
 // @Tags         file-item
 // @Accept       json
 // @Produce      json
-// @Param        request  body      fileitem.GetDeletedTreeDirectoryQuery  true  "Query parameters"
+// @Param        request  query     fileitem.GetDeletedTreeDirectoryQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                            "Deleted directory tree"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      401      {object}  resp.Result                            "Unauthorized"
@@ -237,7 +237,7 @@ func (h *FileItemHandler) GetByIds(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 	var params fileitem.GetDeletedTreeDirectoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -266,7 +266,7 @@ func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 	var params fileitem.GetDownloadFileItemByIdQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -294,7 +294,7 @@ func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 // @Security     BearerAuth
 func (h *FileItemHandler) GetTreeDirectory(c *gin.Context) {
 	var params fileitem.GetTreeDirectoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 

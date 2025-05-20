@@ -36,7 +36,7 @@ func NewPaymentHandler(usc *paymentusecase.PaymentUsecase) *PaymentHandler {
 // @Security     BearerAuth
 func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 	var params payment.VerifyPaymentCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 	var params payment.RequestGatewayCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 	var params payment.CreateOrUpdateGatewayCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -113,7 +113,7 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 // @Tags         gateway
 // @Accept       json
 // @Produce      json
-// @Param        request  body      payment.GetByIdGatewayQuery  true  "Gateway ID to retrieve"
+// @Param        request  query     payment.GetByIdGatewayQuery  true  "Gateway ID to retrieve"
 // @Success      200      {object}  resp.Result                  "Gateway details"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -123,7 +123,7 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 	var params payment.GetByIdGatewayQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -142,7 +142,7 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 // @Tags         gateway
 // @Accept       json
 // @Produce      json
-// @Param        request  body      payment.AdminGetAllGatewayQuery  true  "Query parameters"
+// @Param        request  query     payment.AdminGetAllGatewayQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of all gateways"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -152,7 +152,7 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 	var params payment.AdminGetAllGatewayQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -171,7 +171,7 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 // @Tags         payment
 // @Accept       json
 // @Produce      json
-// @Param        request  body      payment.AdminGetAllPaymentQuery  true  "Query parameters"
+// @Param        request  query     payment.AdminGetAllPaymentQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of all payments"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -181,7 +181,7 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PaymentHandler) AdminGetAllPayment(c *gin.Context) {
 	var params payment.AdminGetAllPaymentQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

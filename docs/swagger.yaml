@@ -1,34 +1,4 @@
 definitions:
-  address.AdminGetAllAddressQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   address.CreateAddressCommand:
     properties:
       addressLine:
@@ -66,103 +36,6 @@ definitions:
     required:
     - id
     type: object
-  address.GetAllAddressQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  address.GetAllCityQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  address.GetAllProvinceQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  address.GetByIdAddressQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   address.UpdateAddressCommand:
     properties:
       addressLine:
@@ -189,36 +62,6 @@ definitions:
     - cityId
     - id
     - provinceId
-    type: object
-  article.AdminGetAllArticleQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
     type: object
   article.ArticleSortEnum:
     enum:
@@ -278,39 +121,6 @@ definitions:
     required:
     - id
     type: object
-  article.GetAllArticleQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
   article.GetByFiltersSortArticleQuery:
     properties:
       page:
@@ -352,13 +162,6 @@ definitions:
     - pageSize
     - siteId
     type: object
-  article.GetByIdArticleQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   article.UpdateArticleCommand:
     properties:
       body:
@@ -388,36 +191,6 @@ definitions:
     required:
     - id
     - siteId
-    type: object
-  article_category.AdminGetAllCategoryQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
     type: object
   article_category.CreateCategoryCommand:
     properties:
@@ -452,46 +225,6 @@ definitions:
     required:
     - id
     type: object
-  article_category.GetAllCategoryQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  article_category.GetByIdCategoryQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   article_category.UpdateCategoryCommand:
     properties:
       description:
@@ -520,36 +253,6 @@ definitions:
     - id
     - siteId
     type: object
-  basket.AdminGetAllBasketUserQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   basket.BasketItemCommand:
     properties:
       basketItemId:
@@ -564,46 +267,6 @@ definitions:
     required:
     - productId
     - quantity
-    type: object
-  basket.GetAllBasketUserQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  basket.GetBasketQuery:
-    properties:
-      siteId:
-        type: integer
-    required:
-    - siteId
     type: object
   basket.UpdateBasketCommand:
     properties:
@@ -637,38 +300,6 @@ definitions:
         type: integer
       totalPages:
         type: integer
-    type: object
-  customer.AdminGetAllCustomerQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  customer.GetProfileCustomerQuery:
     type: object
   customer.LoginCustomerCommand:
     properties:
@@ -724,49 +355,6 @@ definitions:
         type: string
     required:
     - phone
-    type: object
-  customer.VerifyCustomerQuery:
-    properties:
-      code:
-        type: integer
-      email:
-        type: string
-      type:
-        $ref: '#/definitions/user.VerifyTypeEnum'
-    required:
-    - code
-    - email
-    - type
-    type: object
-  customer_ticket.AdminGetAllCustomerTicketQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
     type: object
   customer_ticket.AdminReplayCustomerTicketCommand:
     properties:
@@ -863,43 +451,6 @@ definitions:
     - New
     - InProgress
     - Closed
-  customer_ticket.GetAllCustomerTicketQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  customer_ticket.GetByIdCustomerTicketQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   customer_ticket.ReplayCustomerTicketCommand:
     properties:
       assignedTo:
@@ -948,43 +499,6 @@ definitions:
     required:
     - id
     type: object
-  defaulttheme.GetAllDefaultThemeQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  defaulttheme.GetByIdDefaultThemeQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   defaulttheme.UpdateDefaultThemeCommand:
     properties:
       demo:
@@ -1001,36 +515,6 @@ definitions:
         type: string
     required:
     - id
-    type: object
-  discount.AdminGetAllDiscountQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
     type: object
   discount.CreateDiscountCommand:
     properties:
@@ -1055,46 +539,6 @@ definitions:
     - value
     type: object
   discount.DeleteDiscountCommand:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
-  discount.GetAllDiscountQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  discount.GetByIdDiscountQuery:
     properties:
       id:
         type: integer
@@ -1156,22 +600,6 @@ definitions:
     required:
     - id
     type: object
-  fileitem.GetByIdsQuery:
-    properties:
-      expireMinutes:
-        type: integer
-      idsOrder:
-        items:
-          $ref: '#/definitions/fileitem.MediaUrlRequest'
-        type: array
-      isTemporary:
-        type: boolean
-    required:
-    - idsOrder
-    - isTemporary
-    type: object
-  fileitem.GetDeletedTreeDirectoryQuery:
-    type: object
   fileitem.GetDownloadFileItemByIdQuery:
     properties:
       id:
@@ -1222,36 +650,6 @@ definitions:
     required:
     - id
     type: object
-  header_footer.AdminGetAllHeaderFooterQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   header_footer.CreateHeaderFooterCommand:
     properties:
       body:
@@ -1275,56 +673,6 @@ definitions:
         type: integer
     required:
     - id
-    type: object
-  header_footer.GetAllHeaderFooterQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-      type:
-        $ref: '#/definitions/header_footer.HeaderFooterTypeEnum'
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  header_footer.GetByIdHeaderFooterQuery:
-    properties:
-      id:
-        type: integer
-      ids:
-        items:
-          type: integer
-        type: array
-      siteId:
-        type: integer
-      type:
-        $ref: '#/definitions/header_footer.HeaderFooterTypeEnum'
-    required:
-    - siteId
     type: object
   header_footer.HeaderFooterBody:
     properties:
@@ -1402,36 +750,6 @@ definitions:
     - siteId
     - type
     type: object
-  order.AdminGetAllOrderUserQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   order.CourierEnum:
     enum:
     - 0
@@ -1474,83 +792,6 @@ definitions:
     required:
     - orderData
     type: object
-  order.GetAllOrderCustomerQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  order.GetAllOrderUserQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  order.GetOrderCustomerDetailsQuery:
-    properties:
-      orderId:
-        type: integer
-    required:
-    - orderId
-    type: object
-  order.GetOrderUserDetailsQuery:
-    properties:
-      orderId:
-        type: integer
-    required:
-    - orderId
-    type: object
   order.PaymentGatewaysEnum:
     enum:
     - 0
@@ -1583,36 +824,6 @@ definitions:
     - YekPay
     - PayPing
     - ParbadVirtual
-  page.AdminGetAllPageQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   page.CreatePageCommand:
     properties:
       body:
@@ -1650,52 +861,6 @@ definitions:
         type: integer
     required:
     - id
-    type: object
-  page.GetAllPageQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  page.GetByIdPageQuery:
-    properties:
-      id:
-        type: integer
-      ids:
-        items:
-          type: integer
-        type: array
-      siteId:
-        type: integer
-    required:
-    - siteId
     type: object
   page.PageBody:
     properties:
@@ -1775,66 +940,6 @@ definitions:
     required:
     - id
     type: object
-  payment.AdminGetAllGatewayQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  payment.AdminGetAllPaymentQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   payment.AsanPardakhtGateway:
     properties:
       iv:
@@ -1908,13 +1013,6 @@ definitions:
         $ref: '#/definitions/payment.ZarinPalGateway'
     required:
     - siteId
-    type: object
-  payment.GetByIdGatewayQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
     type: object
   payment.IdPayGateway:
     properties:
@@ -2117,13 +1215,6 @@ definitions:
       merchantId:
         type: string
     type: object
-  plan.CalculatePlanPriceQuery:
-    properties:
-      planId:
-        type: integer
-    required:
-    - planId
-    type: object
   plan.CreatePlanCommand:
     properties:
       aiCredits:
@@ -2177,43 +1268,6 @@ definitions:
     required:
     - id
     type: object
-  plan.GetAllPlanQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  plan.GetByIDPlanQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   plan.UpdatePlanCommand:
     properties:
       aiCredits:
@@ -2255,36 +1309,6 @@ definitions:
         type: integer
     required:
     - id
-    type: object
-  product.AdminGetAllProductQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
     type: object
   product.CouponCommand:
     properties:
@@ -2370,39 +1394,6 @@ definitions:
     x-enum-varnames:
     - Percentage
     - Value
-  product.GetAllProductQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
   product.GetByFiltersSortProductQuery:
     properties:
       page:
@@ -2443,13 +1434,6 @@ definitions:
     - page
     - pageSize
     - siteId
-    type: object
-  product.GetByIdProductQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
     type: object
   product.ProductAttributeCommand:
     properties:
@@ -2578,36 +1562,6 @@ definitions:
     - id
     - siteId
     type: object
-  product_category.AdminGetAllCategoryQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   product_category.CreateCategoryCommand:
     properties:
       description:
@@ -2636,46 +1590,6 @@ definitions:
     - slug
     type: object
   product_category.DeleteCategoryCommand:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
-  product_category.GetAllCategoryQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  product_category.GetByIdCategoryQuery:
     properties:
       id:
         type: integer
@@ -2864,96 +1778,6 @@ definitions:
           type: integer
         type: array
     type: object
-  role.GetAllPermissionQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  role.GetAllRoleQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  role.GetRolePermissionsQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   role.SetRoleToCustomerCommand:
     properties:
       customerId:
@@ -3000,36 +1824,6 @@ definitions:
     required:
     - id
     type: object
-  site.AdminGetAllSiteQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   site.CreateSiteCommand:
     properties:
       domain:
@@ -3063,43 +1857,6 @@ definitions:
     x-enum-varnames:
     - Domain
     - Subdomain
-  site.GetAllSiteQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  site.GetByIdSiteQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
-    type: object
   site.SiteTypeEnum:
     enum:
     - 0
@@ -3138,36 +1895,6 @@ definitions:
         $ref: '#/definitions/site.StatusEnum'
     required:
     - id
-    type: object
-  ticket.AdminGetAllTicketQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
     type: object
   ticket.AdminReplayTicketCommand:
     properties:
@@ -3221,43 +1948,6 @@ definitions:
     - comment
     - priority
     - product_category
-    type: object
-  ticket.GetAllTicketQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
-  ticket.GetByIdTicketQuery:
-    properties:
-      id:
-        type: integer
-    required:
-    - id
     type: object
   ticket.ReplayTicketCommand:
     properties:
@@ -3323,16 +2013,6 @@ definitions:
     - New
     - InProgress
     - Closed
-  unit_price.CalculateUnitPriceQuery:
-    properties:
-      unitPrices:
-        items:
-          $ref: '#/definitions/unit_price.CalculateUnitPriceUnitPriceQuery'
-        minItems: 1
-        type: array
-    required:
-    - unitPrices
-    type: object
   unit_price.CalculateUnitPriceUnitPriceQuery:
     properties:
       unitPriceCount:
@@ -3353,36 +2033,6 @@ definitions:
     x-enum-varnames:
     - Fixed
     - Percentage
-  unit_price.GetAllUnitPriceQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   unit_price.UnitPriceNameEnum:
     enum:
     - 0
@@ -3422,36 +2072,6 @@ definitions:
     required:
     - id
     type: object
-  user.AdminGetAllUserQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    type: object
   user.AiTypeEnum:
     enum:
     - 0
@@ -3485,8 +2105,6 @@ definitions:
     x-enum-varnames:
     - Fixed
     - Percentage
-  user.GetProfileUserQuery:
-    type: object
   user.LoginUserCommand:
     properties:
       email:
@@ -3634,19 +2252,6 @@ definitions:
     - VerifyPhone
     - ForgetPasswordEmail
     - ForgetPasswordPhone
-  user.VerifyUserQuery:
-    properties:
-      code:
-        type: integer
-      email:
-        type: string
-      type:
-        $ref: '#/definitions/user.VerifyTypeEnum'
-    required:
-    - code
-    - email
-    - type
-    type: object
   website.ArticleSortEnum:
     enum:
     - 0
@@ -3671,188 +2276,6 @@ definitions:
     - LeastRated
     - MostReviewed
     - LeastReviewed
-  website.GetArticlesByCategorySlugQuery:
-    properties:
-      domain:
-        type: string
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      slug:
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - domain
-    - page
-    - pageSize
-    - slug
-    type: object
-  website.GetByDomainHeaderFooterQuery:
-    properties:
-      domain:
-        type: string
-      siteId:
-        type: integer
-    required:
-    - domain
-    type: object
-  website.GetByDomainPageQuery:
-    properties:
-      domain:
-        type: string
-      path:
-        type: string
-      siteId:
-        type: integer
-    required:
-    - domain
-    type: object
-  website.GetFiltersSortArticleQuery:
-    properties:
-      domain:
-        type: string
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      selectedFilters:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
-      selectedSort:
-        $ref: '#/definitions/website.ArticleSortEnum'
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - domain
-    - page
-    - pageSize
-    type: object
-  website.GetFiltersSortProductQuery:
-    properties:
-      domain:
-        type: string
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      selectedFilters:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
-      selectedSort:
-        $ref: '#/definitions/product.ProductSortEnum'
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - domain
-    - page
-    - pageSize
-    type: object
-  website.GetProductsByCategorySlugQuery:
-    properties:
-      domain:
-        type: string
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      slug:
-        type: string
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - domain
-    - page
-    - pageSize
-    - slug
-    type: object
   website.GetSingleArticleBySlugQuery:
     properties:
       domain:
@@ -3876,41 +2299,6 @@ definitions:
     required:
     - domain
     - slug
-    type: object
-  website.ProductSearchListQuery:
-    properties:
-      domain:
-        type: string
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - domain
-    - page
-    - pageSize
     type: object
 info:
   contact: {}
@@ -3960,12 +2348,10 @@ paths:
       - application/json
       description: Retrieves a specific address by its ID for the authenticated user
       parameters:
-      - description: Address ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/address.GetByIdAddressQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -4074,12 +2460,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all addresses in the system
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/address.AdminGetAllAddressQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4114,12 +2526,38 @@ paths:
       - application/json
       description: Retrieves all addresses for the authenticated user
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/address.GetAllAddressQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4150,12 +2588,38 @@ paths:
       - application/json
       description: Retrieves all available cities
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/address.GetAllCityQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4186,12 +2650,38 @@ paths:
       - application/json
       description: Retrieves all available provinces
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/address.GetAllProvinceQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4261,12 +2751,10 @@ paths:
       - application/json
       description: Retrieves a specific article by its ID
       parameters:
-      - description: Article ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/article.GetByIdArticleQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -4414,12 +2902,10 @@ paths:
       - application/json
       description: Retrieves a specific article category by its ID
       parameters:
-      - description: Category ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/article_category.GetByIdCategoryQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -4529,12 +3015,38 @@ paths:
       description: Admin endpoint to retrieve all article categories with additional
         information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/article_category.AdminGetAllCategoryQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4569,12 +3081,42 @@ paths:
       - application/json
       description: Retrieves all article categories with optional filtering
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/article_category.GetAllCategoryQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4605,12 +3147,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all articles with additional information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/article.AdminGetAllArticleQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4645,12 +3213,42 @@ paths:
       - application/json
       description: Retrieves all articles with optional filtering
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/article.GetAllArticleQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4717,12 +3315,10 @@ paths:
       - application/json
       description: Retrieves the current user's shopping basket
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        name: siteId
         required: true
-        schema:
-          $ref: '#/definitions/basket.GetBasketQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -4792,12 +3388,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all shopping baskets across all users
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/basket.AdminGetAllBasketUserQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4832,12 +3454,42 @@ paths:
       - application/json
       description: Retrieves all shopping baskets for the current user
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/basket.GetAllBasketUserQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -4868,12 +3520,10 @@ paths:
       - application/json
       description: Retrieves a specific customer support ticket by its ID
       parameters:
-      - description: Ticket ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/customer_ticket.GetByIdCustomerTicketQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -5027,12 +3677,38 @@ paths:
       description: Admin endpoint to retrieve all customer support tickets across
         all customers
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/customer_ticket.AdminGetAllCustomerTicketQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -5067,12 +3743,38 @@ paths:
       - application/json
       description: Retrieves all support tickets for the current customer
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/customer_ticket.GetAllCustomerTicketQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -5103,12 +3805,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all customers with additional information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/customer.AdminGetAllCustomerQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -5178,13 +3906,6 @@ paths:
       consumes:
       - application/json
       description: Retrieves the authenticated customer's profile information
-      parameters:
-      - description: Query parameters
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/customer.GetProfileCustomerQuery'
       produces:
       - application/json
       responses:
@@ -5290,12 +4011,28 @@ paths:
       - application/json
       description: Verifies a customer's email address using the verification token
       parameters:
-      - description: Verification token
-        in: body
-        name: request
+      - in: query
+        name: code
         required: true
-        schema:
-          $ref: '#/definitions/customer.VerifyCustomerQuery'
+        type: integer
+      - in: query
+        name: email
+        required: true
+        type: string
+      - enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        in: query
+        name: type
+        required: true
+        type: integer
+        x-enum-varnames:
+        - VerifyEmail
+        - VerifyPhone
+        - ForgetPasswordEmail
+        - ForgetPasswordPhone
       produces:
       - application/json
       responses:
@@ -5402,12 +4139,10 @@ paths:
       - application/json
       description: Retrieves a specific default theme template by its ID
       parameters:
-      - description: Theme ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/defaulttheme.GetByIdDefaultThemeQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -5516,12 +4251,38 @@ paths:
       - application/json
       description: Retrieves all default theme templates
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/defaulttheme.GetAllDefaultThemeQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -5591,12 +4352,10 @@ paths:
       - application/json
       description: Retrieves a specific discount by its ID
       parameters:
-      - description: Discount ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/discount.GetByIdDiscountQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -5706,12 +4465,38 @@ paths:
       description: Admin endpoint to retrieve all discount codes and promotions with
         additional information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/discount.AdminGetAllDiscountQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -5746,12 +4531,42 @@ paths:
       - application/json
       description: Retrieves all discount codes and promotions
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/discount.GetAllDiscountQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -5976,12 +4791,13 @@ paths:
       - application/json
       description: Retrieves multiple files or directories by their IDs
       parameters:
-      - description: File or directory IDs to retrieve
-        in: body
-        name: request
+      - in: query
+        name: expireMinutes
+        type: integer
+      - in: query
+        name: isTemporary
         required: true
-        schema:
-          $ref: '#/definitions/fileitem.GetByIdsQuery'
+        type: boolean
       produces:
       - application/json
       responses:
@@ -6131,13 +4947,6 @@ paths:
       consumes:
       - application/json
       description: Retrieves the tree structure of deleted files and directories
-      parameters:
-      - description: Query parameters
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/fileitem.GetDeletedTreeDirectoryQuery'
       produces:
       - application/json
       responses:
@@ -6168,12 +4977,10 @@ paths:
       - application/json
       description: Retrieves a specific payment gateway by its ID
       parameters:
-      - description: Gateway ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/payment.GetByIdGatewayQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -6243,12 +5050,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all payment gateways
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/payment.AdminGetAllGatewayQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -6322,12 +5155,28 @@ paths:
       - application/json
       description: Retrieves a specific header and footer template by its ID
       parameters:
-      - description: Header/footer ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
+        type: integer
+      - collectionFormat: csv
+        in: query
+        items:
+          type: integer
+        name: ids
+        type: array
+      - in: query
+        name: siteId
         required: true
-        schema:
-          $ref: '#/definitions/header_footer.GetByIdHeaderFooterQuery'
+        type: integer
+      - enum:
+        - 0
+        - 1
+        in: query
+        name: type
+        type: integer
+        x-enum-varnames:
+        - Header
+        - Footer
       produces:
       - application/json
       responses:
@@ -6437,12 +5286,38 @@ paths:
       description: Admin endpoint to retrieve all header and footer templates with
         additional information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/header_footer.AdminGetAllHeaderFooterQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -6477,12 +5352,51 @@ paths:
       - application/json
       description: Retrieves all header and footer templates
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/header_footer.GetAllHeaderFooterQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
+      - enum:
+        - 0
+        - 1
+        in: query
+        name: type
+        type: integer
+        x-enum-varnames:
+        - Header
+        - Footer
       produces:
       - application/json
       responses:
@@ -6549,12 +5463,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all orders across all users
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/order.AdminGetAllOrderUserQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -6589,12 +5529,38 @@ paths:
       - application/json
       description: Retrieves all orders for the authenticated customer
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/order.GetAllOrderCustomerQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -6625,12 +5591,10 @@ paths:
       - application/json
       description: Retrieves detailed information about a specific customer order
       parameters:
-      - description: Order ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: orderId
         required: true
-        schema:
-          $ref: '#/definitions/order.GetOrderCustomerDetailsQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -6665,12 +5629,42 @@ paths:
       - application/json
       description: Retrieves all orders for the authenticated user (seller)
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/order.GetAllOrderUserQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -6701,12 +5695,10 @@ paths:
       - application/json
       description: Retrieves detailed information about a specific user (seller) order
       parameters:
-      - description: Order ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: orderId
         required: true
-        schema:
-          $ref: '#/definitions/order.GetOrderUserDetailsQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -6820,12 +5812,19 @@ paths:
       - application/json
       description: Retrieves a specific web page by its ID
       parameters:
-      - description: Page ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
+        type: integer
+      - collectionFormat: csv
+        in: query
+        items:
+          type: integer
+        name: ids
+        type: array
+      - in: query
+        name: siteId
         required: true
-        schema:
-          $ref: '#/definitions/page.GetByIdPageQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -6934,12 +5933,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all web pages across all websites
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/page.AdminGetAllPageQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -6974,12 +5999,42 @@ paths:
       - application/json
       description: Retrieves all web pages for the authenticated user
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/page.GetAllPageQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -7010,12 +6065,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all payment transactions
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/payment.AdminGetAllPaymentQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -7166,12 +6247,10 @@ paths:
       - application/json
       description: Retrieves a specific subscription plan by its ID
       parameters:
-      - description: Plan ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/plan.GetByIDPlanQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -7280,12 +6359,38 @@ paths:
       - application/json
       description: Retrieves all available subscription plans
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/plan.GetAllPlanQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -7317,12 +6422,10 @@ paths:
       description: Calculates the price for a subscription plan based on selected
         options
       parameters:
-      - description: Plan calculation parameters
-        in: body
-        name: request
+      - in: query
+        name: planId
         required: true
-        schema:
-          $ref: '#/definitions/plan.CalculatePlanPriceQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -7392,12 +6495,10 @@ paths:
       - application/json
       description: Retrieves a specific product by its ID
       parameters:
-      - description: Product ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/product.GetByIdProductQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -7545,12 +6646,10 @@ paths:
       - application/json
       description: Retrieves a specific product category by its ID
       parameters:
-      - description: Category ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/product_category.GetByIdCategoryQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -7660,12 +6759,38 @@ paths:
       description: Admin endpoint to retrieve all product categories with additional
         information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/product_category.AdminGetAllCategoryQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -7700,12 +6825,42 @@ paths:
       - application/json
       description: Retrieves all product categories with optional filtering
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/product_category.GetAllCategoryQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -7966,12 +7121,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all products with additional information
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/product.AdminGetAllProductQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8006,12 +7187,42 @@ paths:
       - application/json
       description: Retrieves all products with optional filtering
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/product.GetAllProductQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        required: true
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8161,12 +7372,38 @@ paths:
       - application/json
       description: Retrieves all roles in the system
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/role.GetAllRoleQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8241,12 +7478,38 @@ paths:
       - application/json
       description: Retrieves all available permissions in the system
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/role.GetAllPermissionQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8277,12 +7540,38 @@ paths:
       - application/json
       description: Retrieves all permissions assigned to a specific role
       parameters:
-      - description: Role ID to retrieve permissions for
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/role.GetRolePermissionsQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8444,12 +7733,10 @@ paths:
       - application/json
       description: Retrieves a specific site by its ID for the authenticated user
       parameters:
-      - description: Site ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/site.GetByIdSiteQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -8558,12 +7845,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all sites in the system
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/site.AdminGetAllSiteQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8598,12 +7911,38 @@ paths:
       - application/json
       description: Retrieves all sites for the authenticated user
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/site.GetAllSiteQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8634,12 +7973,10 @@ paths:
       - application/json
       description: Retrieves a specific ticket by its ID for the authenticated user
       parameters:
-      - description: Ticket ID to retrieve
-        in: body
-        name: request
+      - in: query
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/ticket.GetByIdTicketQuery'
+        type: integer
       produces:
       - application/json
       responses:
@@ -8709,12 +8046,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all tickets in the system
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/ticket.AdminGetAllTicketQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8793,12 +8156,38 @@ paths:
       - application/json
       description: Retrieves all tickets for the authenticated user
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/ticket.GetAllTicketQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8909,12 +8298,38 @@ paths:
       - application/json
       description: Retrieves all unit price configurations
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/unit_price.GetAllUnitPriceQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -8944,13 +8359,6 @@ paths:
       consumes:
       - application/json
       description: Calculates the unit price based on provided parameters
-      parameters:
-      - description: Parameters for price calculation
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/unit_price.CalculateUnitPriceQuery'
       produces:
       - application/json
       responses:
@@ -8981,12 +8389,38 @@ paths:
       - application/json
       description: Admin endpoint to retrieve all users in the system
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        minimum: 1
+        name: page
         required: true
-        schema:
-          $ref: '#/definitions/user.AdminGetAllUserQuery'
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -9126,13 +8560,6 @@ paths:
       consumes:
       - application/json
       description: Retrieves the profile information for the authenticated user
-      parameters:
-      - description: Query parameters
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/user.GetProfileUserQuery'
       produces:
       - application/json
       responses:
@@ -9233,12 +8660,28 @@ paths:
       description: Verifies a user's email or resets password using a verification
         code
       parameters:
-      - description: Verification details
-        in: body
-        name: request
+      - in: query
+        name: code
         required: true
-        schema:
-          $ref: '#/definitions/user.VerifyUserQuery'
+        type: integer
+      - in: query
+        name: email
+        required: true
+        type: string
+      - enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        in: query
+        name: type
+        required: true
+        type: integer
+        x-enum-varnames:
+        - VerifyEmail
+        - VerifyPhone
+        - ForgetPasswordEmail
+        - ForgetPasswordPhone
       produces:
       - application/json
       responses:
@@ -9337,12 +8780,49 @@ paths:
       description: Retrieves articles belonging to a specific category identified
         by slug
       parameters:
-      - description: Category slug and query parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.GetArticlesByCategorySlugQuery'
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        type: integer
+      - in: query
+        name: slug
+        required: true
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -9371,12 +8851,70 @@ paths:
       - application/json
       description: Retrieves available filters and sorting options for articles
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.GetFiltersSortArticleQuery'
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        in: query
+        name: selectedSort
+        type: integer
+        x-enum-varnames:
+        - TitleAZ
+        - TitleZA
+        - RecentlyAdded
+        - RecentlyUpdated
+        - MostVisited
+        - LeastVisited
+        - MostRated
+        - LeastRated
+        - MostReviewed
+        - LeastReviewed
+      - in: query
+        name: siteId
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -9401,12 +8939,13 @@ paths:
       - application/json
       description: Retrieves header and footer content for a specific domain
       parameters:
-      - description: Domain parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.GetByDomainHeaderFooterQuery'
+        type: string
+      - in: query
+        name: siteId
+        type: integer
       produces:
       - application/json
       responses:
@@ -9435,12 +8974,16 @@ paths:
       - application/json
       description: Retrieves page content for a specific domain
       parameters:
-      - description: Domain and page parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.GetByDomainPageQuery'
+        type: string
+      - in: query
+        name: path
+        type: string
+      - in: query
+        name: siteId
+        type: integer
       produces:
       - application/json
       responses:
@@ -9504,12 +9047,49 @@ paths:
       description: Retrieves products belonging to a specific category identified
         by slug
       parameters:
-      - description: Category slug and query parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.GetProductsByCategorySlugQuery'
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        type: integer
+      - in: query
+        name: slug
+        required: true
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -9538,12 +9118,78 @@ paths:
       - application/json
       description: Retrieves available filters and sorting options for products
       parameters:
-      - description: Query parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.GetFiltersSortProductQuery'
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        in: query
+        name: selectedSort
+        type: integer
+        x-enum-varnames:
+        - PriceLowToHigh
+        - PriceHighToLow
+        - CouponHighToLow
+        - NameAZ
+        - NameZA
+        - RecentlyAdded
+        - RecentlyUpdated
+        - MostSelling
+        - MostVisited
+        - MostRated
+        - MostReviewed
+        - LeastVisited
+        - LeastRated
+        - LeastReviewed
+      - in: query
+        name: siteId
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:
@@ -9568,12 +9214,45 @@ paths:
       - application/json
       description: Searches for products based on provided criteria
       parameters:
-      - description: Search parameters
-        in: body
-        name: request
+      - in: query
+        name: domain
         required: true
-        schema:
-          $ref: '#/definitions/website.ProductSearchListQuery'
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: searchBy
+        type: string
+      - in: query
+        name: siteId
+        type: integer
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sort
+        type: string
+      - enum:
+        - title
+        - description
+        in: query
+        name: sortBy
+        type: string
       produces:
       - application/json
       responses:

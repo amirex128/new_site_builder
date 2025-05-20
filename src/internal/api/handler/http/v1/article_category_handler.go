@@ -35,7 +35,7 @@ func NewBlogCategoryHandler(usc *blogcategoryusecase.ArticleCategoryUsecase) *Ar
 // @Security     BearerAuth
 func (h *ArticleCategoryHandler) CategoryCreate(c *gin.Context) {
 	var params article_category.CreateCategoryCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *ArticleCategoryHandler) CategoryCreate(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleCategoryHandler) CategoryUpdate(c *gin.Context) {
 	var params article_category.UpdateCategoryCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *ArticleCategoryHandler) CategoryUpdate(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleCategoryHandler) CategoryDelete(c *gin.Context) {
 	var params article_category.DeleteCategoryCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *ArticleCategoryHandler) CategoryDelete(c *gin.Context) {
 // @Tags         article-category
 // @Accept       json
 // @Produce      json
-// @Param        request  body      article_category.GetByIdCategoryQuery  true  "Category ID to retrieve"
+// @Param        request  query     article_category.GetByIdCategoryQuery  true  "Category ID to retrieve"
 // @Success      200      {object}  resp.Result                            "Category details"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      401      {object}  resp.Result                            "Unauthorized"
@@ -122,7 +122,7 @@ func (h *ArticleCategoryHandler) CategoryDelete(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleCategoryHandler) CategoryGet(c *gin.Context) {
 	var params article_category.GetByIdCategoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *ArticleCategoryHandler) CategoryGet(c *gin.Context) {
 // @Tags         article-category
 // @Accept       json
 // @Produce      json
-// @Param        request  body      article_category.GetAllCategoryQuery  true  "Query parameters"
+// @Param        request  query     article_category.GetAllCategoryQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                           "List of categories"
 // @Failure      400      {object}  resp.Result                           "Validation error"
 // @Failure      401      {object}  resp.Result                           "Unauthorized"
@@ -150,7 +150,7 @@ func (h *ArticleCategoryHandler) CategoryGet(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleCategoryHandler) CategoryGetAll(c *gin.Context) {
 	var params article_category.GetAllCategoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *ArticleCategoryHandler) CategoryGetAll(c *gin.Context) {
 // @Tags         article-category
 // @Accept       json
 // @Produce      json
-// @Param        request  body      article_category.AdminGetAllCategoryQuery  true  "Query parameters"
+// @Param        request  query     article_category.AdminGetAllCategoryQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                                "List of all categories"
 // @Failure      400      {object}  resp.Result                                "Validation error"
 // @Failure      401      {object}  resp.Result                                "Unauthorized"
@@ -179,7 +179,7 @@ func (h *ArticleCategoryHandler) CategoryGetAll(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleCategoryHandler) AdminCategoryGetAll(c *gin.Context) {
 	var params article_category.AdminGetAllCategoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

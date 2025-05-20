@@ -35,7 +35,7 @@ func NewArticleHandler(usc *articleusecase.ArticleUsecase) *ArticleHandler {
 // @Security     BearerAuth
 func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	var params article.CreateArticleCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	var params article.UpdateArticleCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	var params article.DeleteArticleCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 // @Tags         article
 // @Accept       json
 // @Produce      json
-// @Param        request  body      article.GetByIdArticleQuery  true  "Article ID to retrieve"
+// @Param        request  query     article.GetByIdArticleQuery  true  "Article ID to retrieve"
 // @Success      200      {object}  resp.Result                  "Article details"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -122,7 +122,7 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	var params article.GetByIdArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 // @Tags         article
 // @Accept       json
 // @Produce      json
-// @Param        request  body      article.GetAllArticleQuery  true  "Query parameters"
+// @Param        request  query     article.GetAllArticleQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                 "List of articles"
 // @Failure      400      {object}  resp.Result                 "Validation error"
 // @Failure      401      {object}  resp.Result                 "Unauthorized"
@@ -150,7 +150,7 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	var params article.GetAllArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -178,7 +178,7 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 	var params article.GetByFiltersSortArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -197,7 +197,7 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 // @Tags         article
 // @Accept       json
 // @Produce      json
-// @Param        request  body      article.AdminGetAllArticleQuery  true  "Query parameters"
+// @Param        request  query     article.AdminGetAllArticleQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of all articles"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -207,7 +207,7 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
 	var params article.AdminGetAllArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

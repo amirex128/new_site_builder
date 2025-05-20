@@ -35,7 +35,7 @@ func NewAddressHandler(usc *addressusecase.AddressUsecase) *AddressHandler {
 // @Security     BearerAuth
 func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	var params address.CreateAddressCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 	var params address.UpdateAddressCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 	var params address.DeleteAddressCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 // @Tags         address
 // @Accept       json
 // @Produce      json
-// @Param        request  body      address.GetByIdAddressQuery  true  "Address ID to retrieve"
+// @Param        request  query     address.GetByIdAddressQuery  true  "Address ID to retrieve"
 // @Success      200      {object}  resp.Result                  "Address details"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -122,7 +122,7 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 	var params address.GetByIdAddressQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 // @Tags         address
 // @Accept       json
 // @Produce      json
-// @Param        request  body      address.GetAllAddressQuery  true  "Query parameters"
+// @Param        request  query     address.GetAllAddressQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                 "List of addresses"
 // @Failure      400      {object}  resp.Result                 "Validation error"
 // @Failure      401      {object}  resp.Result                 "Unauthorized"
@@ -150,7 +150,7 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 	var params address.GetAllAddressQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 // @Tags         address
 // @Accept       json
 // @Produce      json
-// @Param        request  body      address.GetAllCityQuery  true  "Query parameters"
+// @Param        request  query     address.GetAllCityQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result              "List of cities"
 // @Failure      400      {object}  resp.Result              "Validation error"
 // @Failure      401      {object}  resp.Result              "Unauthorized"
@@ -178,7 +178,7 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) GetAllCity(c *gin.Context) {
 	var params address.GetAllCityQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -197,7 +197,7 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 // @Tags         address
 // @Accept       json
 // @Produce      json
-// @Param        request  body      address.GetAllProvinceQuery  true  "Query parameters"
+// @Param        request  query     address.GetAllProvinceQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                  "List of provinces"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -206,7 +206,7 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 	var params address.GetAllProvinceQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -225,7 +225,7 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 // @Tags         address
 // @Accept       json
 // @Produce      json
-// @Param        request  body      address.AdminGetAllAddressQuery  true  "Query parameters"
+// @Param        request  query     address.AdminGetAllAddressQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of all addresses"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -235,7 +235,7 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 // @Security     BearerAuth
 func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 	var params address.AdminGetAllAddressQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

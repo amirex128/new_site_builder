@@ -35,7 +35,7 @@ func NewProductHandler(usc *productusecase.ProductUsecase) *ProductHandler {
 // @Security     BearerAuth
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	var params product.CreateProductCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	var params product.UpdateProductCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	var params product.DeleteProductCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 // @Tags         product
 // @Accept       json
 // @Produce      json
-// @Param        request  body      product.GetByIdProductQuery  true  "Product ID to retrieve"
+// @Param        request  query     product.GetByIdProductQuery  true  "Product ID to retrieve"
 // @Success      200      {object}  resp.Result                  "Product details"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -122,7 +122,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 	var params product.GetByIdProductQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 // @Tags         product
 // @Accept       json
 // @Produce      json
-// @Param        request  body      product.GetAllProductQuery  true  "Query parameters"
+// @Param        request  query     product.GetAllProductQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                 "List of products"
 // @Failure      400      {object}  resp.Result                 "Validation error"
 // @Failure      401      {object}  resp.Result                 "Unauthorized"
@@ -150,7 +150,7 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 	var params product.GetAllProductQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -178,7 +178,7 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 	var params product.GetByFiltersSortProductQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -197,7 +197,7 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 // @Tags         product
 // @Accept       json
 // @Produce      json
-// @Param        request  body      product.AdminGetAllProductQuery  true  "Query parameters"
+// @Param        request  query     product.AdminGetAllProductQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of all products"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -207,7 +207,7 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 	var params product.AdminGetAllProductQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

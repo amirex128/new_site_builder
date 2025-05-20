@@ -6,12 +6,12 @@ import (
 
 // GetByIdSiteQuery represents a query to get a site by ID
 type GetByIdSiteQuery struct {
-	ID *int64 `json:"id" validate:"required,gt=0"`
+	ID *int64 `json:"id" form:"id" validate:"required,gt=0"`
 }
 
 // GetByDomainSiteQuery represents a query to get a site by domain
 type GetByDomainSiteQuery struct {
-	Domain *string `json:"domain" validate:"required,domain"`
+	Domain *string `json:"domain" form:"domain" validate:"required,domain"`
 }
 
 // GetAllSiteQuery represents a query to get all sites with pagination

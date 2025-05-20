@@ -11,7 +11,7 @@ type AdminGetAllGatewayQuery struct {
 
 // GetByIdGatewayQuery for getting gateway details by ID
 type GetByIdGatewayQuery struct {
-	ID *int64 `json:"id" validate:"required"`
+	ID *int64 `json:"id" form:"id" validate:"required,gt=0"`
 }
 
 // AdminGetAllPaymentQuery for admin to get all payments with pagination

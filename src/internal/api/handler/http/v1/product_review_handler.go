@@ -35,7 +35,7 @@ func NewProductReviewHandler(usc *productreviewusecase.ProductReviewUsecase) *Pr
 // @Security     BearerAuth
 func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
 	var params product_review.CreateProductReviewCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
 	var params product_review.UpdateProductReviewCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 	var params product_review.DeleteProductReviewCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -122,7 +122,7 @@ func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
 	var params product_review.GetByIdProductReviewQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -150,7 +150,7 @@ func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
 	var params product_review.GetAllProductReviewQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -179,7 +179,7 @@ func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductReviewHandler) AdminGetAllProductReview(c *gin.Context) {
 	var params product_review.AdminGetAllProductReviewQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 

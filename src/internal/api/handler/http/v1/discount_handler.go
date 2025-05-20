@@ -35,7 +35,7 @@ func NewDiscountHandler(usc *discountusecase.DiscountUsecase) *DiscountHandler {
 // @Security     BearerAuth
 func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 	var params discount.CreateDiscountCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 	var params discount.UpdateDiscountCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 	var params discount.DeleteDiscountCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 // @Tags         discount
 // @Accept       json
 // @Produce      json
-// @Param        request  body      discount.GetByIdDiscountQuery  true  "Discount ID to retrieve"
+// @Param        request  query     discount.GetByIdDiscountQuery  true  "Discount ID to retrieve"
 // @Success      200      {object}  resp.Result                    "Discount details"
 // @Failure      400      {object}  resp.Result                    "Validation error"
 // @Failure      401      {object}  resp.Result                    "Unauthorized"
@@ -122,7 +122,7 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 	var params discount.GetByIdDiscountQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 // @Tags         discount
 // @Accept       json
 // @Produce      json
-// @Param        request  body      discount.GetAllDiscountQuery  true  "Query parameters"
+// @Param        request  query     discount.GetAllDiscountQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                   "List of discounts"
 // @Failure      400      {object}  resp.Result                   "Validation error"
 // @Failure      401      {object}  resp.Result                   "Unauthorized"
@@ -150,7 +150,7 @@ func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 	var params discount.GetAllDiscountQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 // @Tags         discount
 // @Accept       json
 // @Produce      json
-// @Param        request  body      discount.AdminGetAllDiscountQuery  true  "Query parameters"
+// @Param        request  query     discount.AdminGetAllDiscountQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                        "List of all discounts"
 // @Failure      400      {object}  resp.Result                        "Validation error"
 // @Failure      401      {object}  resp.Result                        "Unauthorized"
@@ -179,7 +179,7 @@ func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DiscountHandler) AdminGetAllDiscount(c *gin.Context) {
 	var params discount.AdminGetAllDiscountQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

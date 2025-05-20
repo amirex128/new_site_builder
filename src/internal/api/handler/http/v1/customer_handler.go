@@ -35,7 +35,7 @@ func NewCustomerHandler(usc *customerusecase.CustomerUsecase) *CustomerHandler {
 // @Security     BearerAuth
 func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 	var params customer.UpdateProfileCustomerCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 // @Tags         customer
 // @Accept       json
 // @Produce      json
-// @Param        request  body      customer.GetProfileCustomerQuery  true  "Query parameters"
+// @Param        request  query     customer.GetProfileCustomerQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                       "Customer profile"
 // @Failure      400      {object}  resp.Result                       "Validation error"
 // @Failure      401      {object}  resp.Result                       "Unauthorized"
@@ -64,7 +64,7 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 	var params customer.GetProfileCustomerQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 	var params customer.RegisterCustomerCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -120,7 +120,7 @@ func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 	var params customer.LoginCustomerCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -148,7 +148,7 @@ func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 	var params customer.RequestVerifyAndForgetCustomerCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -167,7 +167,7 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 // @Tags         customer
 // @Accept       json
 // @Produce      json
-// @Param        request  body      customer.VerifyCustomerQuery  true  "Verification token"
+// @Param        request  query     customer.VerifyCustomerQuery  true  "Verification token"
 // @Success      200      {object}  resp.Result                   "Verification successful"
 // @Failure      400      {object}  resp.Result                   "Validation error"
 // @Failure      401      {object}  resp.Result                   "Invalid token"
@@ -176,7 +176,7 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 	var params customer.VerifyCustomerQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -195,7 +195,7 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 // @Tags         customer
 // @Accept       json
 // @Produce      json
-// @Param        request  body      customer.AdminGetAllCustomerQuery  true  "Query parameters"
+// @Param        request  query     customer.AdminGetAllCustomerQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                        "List of all customers"
 // @Failure      400      {object}  resp.Result                        "Validation error"
 // @Failure      401      {object}  resp.Result                        "Unauthorized"
@@ -205,7 +205,7 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
 	var params customer.AdminGetAllCustomerQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

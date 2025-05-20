@@ -35,7 +35,7 @@ func NewBasketHandler(usc *basketusecase.BasketUsecase) *BasketHandler {
 // @Security     BearerAuth
 func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 	var params basket.UpdateBasketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 // @Tags         basket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      basket.GetBasketQuery  true  "Query parameters"
+// @Param        request  query     basket.GetBasketQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result            "Basket details"
 // @Failure      400      {object}  resp.Result            "Validation error"
 // @Failure      401      {object}  resp.Result            "Unauthorized"
@@ -64,7 +64,7 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *BasketHandler) GetBasket(c *gin.Context) {
 	var params basket.GetBasketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 // @Tags         basket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      basket.GetAllBasketUserQuery  true  "Query parameters"
+// @Param        request  query     basket.GetAllBasketUserQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                   "List of user baskets"
 // @Failure      400      {object}  resp.Result                   "Validation error"
 // @Failure      401      {object}  resp.Result                   "Unauthorized"
@@ -92,7 +92,7 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 	var params basket.GetAllBasketUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -111,7 +111,7 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 // @Tags         basket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      basket.AdminGetAllBasketUserQuery  true  "Query parameters"
+// @Param        request  query     basket.AdminGetAllBasketUserQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                        "List of all user baskets"
 // @Failure      400      {object}  resp.Result                        "Validation error"
 // @Failure      401      {object}  resp.Result                        "Unauthorized"
@@ -121,7 +121,7 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 	var params basket.AdminGetAllBasketUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

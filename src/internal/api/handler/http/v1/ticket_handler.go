@@ -35,7 +35,7 @@ func NewTicketHandler(usc *ticketusecase.TicketUsecase) *TicketHandler {
 // @Security     BearerAuth
 func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	var params ticket.CreateTicketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *TicketHandler) ReplayTicket(c *gin.Context) {
 	var params ticket.ReplayTicketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -94,7 +94,7 @@ func (h *TicketHandler) ReplayTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 	var params ticket.AdminReplayTicketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -113,7 +113,7 @@ func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 // @Tags         ticket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      ticket.GetByIdTicketQuery  true  "Ticket ID to retrieve"
+// @Param        request  query     ticket.GetByIdTicketQuery  true  "Ticket ID to retrieve"
 // @Success      200      {object}  resp.Result               "Ticket details"
 // @Failure      400      {object}  resp.Result               "Validation error"
 // @Failure      401      {object}  resp.Result               "Unauthorized"
@@ -123,7 +123,7 @@ func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 	var params ticket.GetByIdTicketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -142,7 +142,7 @@ func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 // @Tags         ticket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      ticket.GetAllTicketQuery  true  "Query parameters"
+// @Param        request  query     ticket.GetAllTicketQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result              "List of tickets"
 // @Failure      400      {object}  resp.Result              "Validation error"
 // @Failure      401      {object}  resp.Result              "Unauthorized"
@@ -151,7 +151,7 @@ func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 	var params ticket.GetAllTicketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -170,7 +170,7 @@ func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 // @Tags         ticket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      ticket.AdminGetAllTicketQuery  true  "Query parameters"
+// @Param        request  query     ticket.AdminGetAllTicketQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                   "List of all tickets"
 // @Failure      400      {object}  resp.Result                   "Validation error"
 // @Failure      401      {object}  resp.Result                   "Unauthorized"
@@ -180,7 +180,7 @@ func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *TicketHandler) AdminGetAllTicket(c *gin.Context) {
 	var params ticket.AdminGetAllTicketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

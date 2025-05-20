@@ -35,7 +35,7 @@ func NewCustomerTicketHandler(usc *customerticketusecase.CustomerTicketUsecase) 
 // @Security     BearerAuth
 func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 	var params customer_ticket.CreateCustomerTicketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 	var params customer_ticket.ReplayCustomerTicketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -94,7 +94,7 @@ func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 	var params customer_ticket.AdminReplayCustomerTicketCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -113,7 +113,7 @@ func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 // @Tags         customer-ticket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      customer_ticket.GetByIdCustomerTicketQuery  true  "Ticket ID to retrieve"
+// @Param        request  query     customer_ticket.GetByIdCustomerTicketQuery  true  "Ticket ID to retrieve"
 // @Success      200      {object}  resp.Result                                 "Ticket details"
 // @Failure      400      {object}  resp.Result                                 "Validation error"
 // @Failure      401      {object}  resp.Result                                 "Unauthorized"
@@ -123,7 +123,7 @@ func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 	var params customer_ticket.GetByIdCustomerTicketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -142,7 +142,7 @@ func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 // @Tags         customer-ticket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      customer_ticket.GetAllCustomerTicketQuery  true  "Query parameters"
+// @Param        request  query     customer_ticket.GetAllCustomerTicketQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                                "List of customer tickets"
 // @Failure      400      {object}  resp.Result                                "Validation error"
 // @Failure      401      {object}  resp.Result                                "Unauthorized"
@@ -151,7 +151,7 @@ func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 	var params customer_ticket.GetAllCustomerTicketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -170,7 +170,7 @@ func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 // @Tags         customer-ticket
 // @Accept       json
 // @Produce      json
-// @Param        request  body      customer_ticket.AdminGetAllCustomerTicketQuery  true  "Query parameters"
+// @Param        request  query     customer_ticket.AdminGetAllCustomerTicketQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                                     "List of all customer tickets"
 // @Failure      400      {object}  resp.Result                                     "Validation error"
 // @Failure      401      {object}  resp.Result                                     "Unauthorized"
@@ -180,7 +180,7 @@ func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 // @Security     BearerAuth
 func (h *CustomerTicketHandler) AdminGetAllCustomerTicket(c *gin.Context) {
 	var params customer_ticket.AdminGetAllCustomerTicketQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

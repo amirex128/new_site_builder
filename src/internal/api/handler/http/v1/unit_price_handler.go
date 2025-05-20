@@ -36,7 +36,7 @@ func NewUnitPriceHandler(usc *unitpriceusecase.UnitPriceUsecase) *UnitPriceHandl
 // @Security     BearerAuth
 func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 	var params unit_price.UpdateUnitPriceCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 // @Tags         unit-price
 // @Accept       json
 // @Produce      json
-// @Param        request  body      unit_price.CalculateUnitPriceQuery  true  "Parameters for price calculation"
+// @Param        request  query     unit_price.CalculateUnitPriceQuery  true  "Parameters for price calculation"
 // @Success      200      {object}  resp.Result                         "Calculated unit price"
 // @Failure      400      {object}  resp.Result                         "Validation error"
 // @Failure      401      {object}  resp.Result                         "Unauthorized"
@@ -64,7 +64,7 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 // @Security     BearerAuth
 func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 	var params unit_price.CalculateUnitPriceQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 // @Tags         unit-price
 // @Accept       json
 // @Produce      json
-// @Param        request  body      unit_price.GetAllUnitPriceQuery  true  "Query parameters"
+// @Param        request  query     unit_price.GetAllUnitPriceQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                      "List of unit prices"
 // @Failure      400      {object}  resp.Result                      "Validation error"
 // @Failure      401      {object}  resp.Result                      "Unauthorized"
@@ -92,7 +92,7 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 // @Security     BearerAuth
 func (h *UnitPriceHandler) GetAllUnitPrice(c *gin.Context) {
 	var params unit_price.GetAllUnitPriceQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

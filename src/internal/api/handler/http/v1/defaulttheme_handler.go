@@ -35,7 +35,7 @@ func NewDefaultThemeHandler(usc *defaultthemeusecase.DefaultThemeUsecase) *Defau
 // @Security     BearerAuth
 func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 	var params defaulttheme.CreateDefaultThemeCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 	var params defaulttheme.UpdateDefaultThemeCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 	var params defaulttheme.DeleteDefaultThemeCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 // @Tags         default-theme
 // @Accept       json
 // @Produce      json
-// @Param        request  body      defaulttheme.GetByIdDefaultThemeQuery  true  "Theme ID to retrieve"
+// @Param        request  query     defaulttheme.GetByIdDefaultThemeQuery  true  "Theme ID to retrieve"
 // @Success      200      {object}  resp.Result                            "Theme details"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      401      {object}  resp.Result                            "Unauthorized"
@@ -122,7 +122,7 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 	var params defaulttheme.GetByIdDefaultThemeQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 // @Tags         default-theme
 // @Accept       json
 // @Produce      json
-// @Param        request  body      defaulttheme.GetAllDefaultThemeQuery  true  "Query parameters"
+// @Param        request  query     defaulttheme.GetAllDefaultThemeQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                           "List of themes"
 // @Failure      400      {object}  resp.Result                           "Validation error"
 // @Failure      401      {object}  resp.Result                           "Unauthorized"
@@ -150,7 +150,7 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 // @Security     BearerAuth
 func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
 	var params defaulttheme.GetAllDefaultThemeQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

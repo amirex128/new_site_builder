@@ -35,7 +35,7 @@ func NewUserHandler(usc *userusecase.UserUsecase) *UserHandler {
 // @Security     BearerAuth
 func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 	var params user.UpdateProfileUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        request  body      user.GetProfileUserQuery  true  "Query parameters"
+// @Param        request  query     user.GetProfileUserQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result               "User profile details"
 // @Failure      400      {object}  resp.Result               "Validation error"
 // @Failure      401      {object}  resp.Result               "Unauthorized"
@@ -64,7 +64,7 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *UserHandler) GetProfileUser(c *gin.Context) {
 	var params user.GetProfileUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *UserHandler) GetProfileUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 	var params user.ChargeCreditRequestUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -120,7 +120,7 @@ func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 	var params user.UpgradePlanRequestUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -146,7 +146,7 @@ func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 // @Router       /user/register [post]
 func (h *UserHandler) RegisterUser(c *gin.Context) {
 	var params user.RegisterUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -173,7 +173,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 // @Router       /user/login [post]
 func (h *UserHandler) LoginUser(c *gin.Context) {
 	var params user.LoginUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -200,7 +200,7 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 // @Router       /user/verify-forget/request [post]
 func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 	var params user.RequestVerifyAndForgetUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -219,7 +219,7 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        request  body      user.VerifyUserQuery  true  "Verification details"
+// @Param        request  query     user.VerifyUserQuery  true  "Verification details"
 // @Success      200      {object}  resp.Result           "User verified or password reset"
 // @Failure      400      {object}  resp.Result           "Validation error"
 // @Failure      404      {object}  resp.Result           "User not found or invalid code"
@@ -227,7 +227,7 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 // @Router       /user/verify [get]
 func (h *UserHandler) VerifyUser(c *gin.Context) {
 	var params user.VerifyUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -246,7 +246,7 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        request  body      user.AdminGetAllUserQuery  true  "Query parameters"
+// @Param        request  query     user.AdminGetAllUserQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result               "List of all users"
 // @Failure      400      {object}  resp.Result               "Validation error"
 // @Failure      401      {object}  resp.Result               "Unauthorized"
@@ -256,7 +256,7 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *UserHandler) AdminGetAllUser(c *gin.Context) {
 	var params user.AdminGetAllUserQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

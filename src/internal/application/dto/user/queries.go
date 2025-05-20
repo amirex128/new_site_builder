@@ -16,11 +16,12 @@ type CalculatePlanPriceQuery struct {
 
 // GetProfileUserQuery represents a query to get user profile
 type GetProfileUserQuery struct {
+	UserID *int64 `json:"userId" form:"userId" validate:"required,gt=0"`
 }
 
 // VerifyUserQuery represents a query to verify user
 type VerifyUserQuery struct {
-	Email *string         `json:"email" validate:"required,email"`
-	Code  *int            `json:"code" validate:"required"`
+	Email *string         `json:"email" form:"email" validate:"required,email"`
+	Code  *int            `json:"code" form:"code" validate:"required"`
 	Type  *VerifyTypeEnum `json:"type" validate:"required,enum"`
 }

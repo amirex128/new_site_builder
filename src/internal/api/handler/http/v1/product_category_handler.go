@@ -35,7 +35,7 @@ func NewProductCategoryHandler(usc *productcategoryusecase.ProductCategoryUsecas
 // @Security     BearerAuth
 func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 	var params product_category.CreateCategoryCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 	var params product_category.UpdateCategoryCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 	var params product_category.DeleteCategoryCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 // @Tags         product-category
 // @Accept       json
 // @Produce      json
-// @Param        request  body      product_category.GetByIdCategoryQuery  true  "Category ID to retrieve"
+// @Param        request  query     product_category.GetByIdCategoryQuery  true  "Category ID to retrieve"
 // @Success      200      {object}  resp.Result                            "Category details"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      401      {object}  resp.Result                            "Unauthorized"
@@ -122,7 +122,7 @@ func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 	var params product_category.GetByIdCategoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 // @Tags         product-category
 // @Accept       json
 // @Produce      json
-// @Param        request  body      product_category.GetAllCategoryQuery  true  "Query parameters"
+// @Param        request  query     product_category.GetAllCategoryQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                           "List of categories"
 // @Failure      400      {object}  resp.Result                           "Validation error"
 // @Failure      401      {object}  resp.Result                           "Unauthorized"
@@ -150,7 +150,7 @@ func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 	var params product_category.GetAllCategoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 // @Tags         product-category
 // @Accept       json
 // @Produce      json
-// @Param        request  body      product_category.AdminGetAllCategoryQuery  true  "Query parameters"
+// @Param        request  query     product_category.AdminGetAllCategoryQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                                "List of all categories"
 // @Failure      400      {object}  resp.Result                                "Validation error"
 // @Failure      401      {object}  resp.Result                                "Unauthorized"
@@ -179,7 +179,7 @@ func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 // @Security     BearerAuth
 func (h *ProductCategoryHandler) AdminGetAllCategory(c *gin.Context) {
 	var params product_category.AdminGetAllCategoryQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

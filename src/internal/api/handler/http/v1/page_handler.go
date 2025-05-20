@@ -35,7 +35,7 @@ func NewPageHandler(usc *pageusecase.PageUsecase) *PageHandler {
 // @Security     BearerAuth
 func (h *PageHandler) CreatePage(c *gin.Context) {
 	var params page.CreatePageCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PageHandler) UpdatePage(c *gin.Context) {
 	var params page.UpdatePageCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PageHandler) DeletePage(c *gin.Context) {
 	var params page.DeletePageCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 // @Tags         page
 // @Accept       json
 // @Produce      json
-// @Param        request  body      page.GetByIdPageQuery  true  "Page ID to retrieve"
+// @Param        request  query     page.GetByIdPageQuery  true  "Page ID to retrieve"
 // @Success      200      {object}  resp.Result           "Page details"
 // @Failure      400      {object}  resp.Result           "Validation error"
 // @Failure      401      {object}  resp.Result           "Unauthorized"
@@ -122,7 +122,7 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PageHandler) GetByIdPage(c *gin.Context) {
 	var params page.GetByIdPageQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 // @Tags         page
 // @Accept       json
 // @Produce      json
-// @Param        request  body      page.GetAllPageQuery  true  "Query parameters"
+// @Param        request  query     page.GetAllPageQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result          "List of pages"
 // @Failure      400      {object}  resp.Result          "Validation error"
 // @Failure      401      {object}  resp.Result          "Unauthorized"
@@ -150,7 +150,7 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PageHandler) GetAllPage(c *gin.Context) {
 	var params page.GetAllPageQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 // @Tags         page
 // @Accept       json
 // @Produce      json
-// @Param        request  body      page.AdminGetAllPageQuery  true  "Query parameters"
+// @Param        request  query     page.AdminGetAllPageQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result               "List of all pages"
 // @Failure      400      {object}  resp.Result               "Validation error"
 // @Failure      401      {object}  resp.Result               "Unauthorized"
@@ -179,7 +179,7 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 	var params page.AdminGetAllPageQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

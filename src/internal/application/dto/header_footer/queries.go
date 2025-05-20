@@ -6,10 +6,10 @@ import (
 
 // GetByIdHeaderFooterQuery represents a query to get a header/footer by ID
 type GetByIdHeaderFooterQuery struct {
-	ID     *int64                `json:"id,omitempty" validate:"omitempty,gt=0"`
-	IDs    []int64               `json:"ids,omitempty" validate:"array_number_optional=0,100,1,0,false"`
-	SiteID *int64                `json:"siteId" validate:"required,gt=0"`
-	Type   *HeaderFooterTypeEnum `json:"type,omitempty" validate:"enum_optional"`
+	ID     *int64                `json:"id,omitempty" form:"id" validate:"omitempty,gt=0"`
+	IDs    []int64               `json:"ids,omitempty" form:"ids" validate:"array_number_optional=0,100,1,0,false"`
+	SiteID *int64                `json:"siteId" form:"siteId" validate:"required,gt=0"`
+	Type   *HeaderFooterTypeEnum `json:"type,omitempty" form:"type" validate:"enum_optional"`
 }
 
 // GetHeaderFooterByDomainOrSiteIdQuery represents a query to get a header/footer by domain or site ID

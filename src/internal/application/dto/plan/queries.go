@@ -9,10 +9,10 @@ type GetAllPlanQuery struct {
 
 // GetByIDPlanQuery represents a query to get a plan by ID
 type GetByIDPlanQuery struct {
-	ID *int64 `json:"id" validate:"required,gt=0"`
+	ID *int64 `json:"id" form:"id" validate:"required,gt=0"`
 }
 
 // CalculatePlanPriceQuery represents a query to calculate plan price
 type CalculatePlanPriceQuery struct {
-	PlanID *int64 `json:"planId" validate:"required,gt=0"`
+	PlanID *int64 `json:"planId" form:"planId" validate:"required,gt=0"`
 }

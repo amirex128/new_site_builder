@@ -35,7 +35,7 @@ func NewSiteHandler(usc *siteusecase.SiteUsecase) *SiteHandler {
 // @Security     BearerAuth
 func (h *SiteHandler) CreateSite(c *gin.Context) {
 	var params site.CreateSiteCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *SiteHandler) CreateSite(c *gin.Context) {
 // @Security     BearerAuth
 func (h *SiteHandler) UpdateSite(c *gin.Context) {
 	var params site.UpdateSiteCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *SiteHandler) UpdateSite(c *gin.Context) {
 // @Security     BearerAuth
 func (h *SiteHandler) DeleteSite(c *gin.Context) {
 	var params site.DeleteSiteCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 // @Tags         site
 // @Accept       json
 // @Produce      json
-// @Param        request  body      site.GetByIdSiteQuery  true  "Site ID to retrieve"
+// @Param        request  query     site.GetByIdSiteQuery  true  "Site ID to retrieve"
 // @Success      200      {object}  resp.Result           "Site details"
 // @Failure      400      {object}  resp.Result           "Validation error"
 // @Failure      401      {object}  resp.Result           "Unauthorized"
@@ -122,7 +122,7 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 // @Security     BearerAuth
 func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 	var params site.GetByIdSiteQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 // @Tags         site
 // @Accept       json
 // @Produce      json
-// @Param        request  body      site.GetAllSiteQuery  true  "Query parameters"
+// @Param        request  query     site.GetAllSiteQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result          "List of sites"
 // @Failure      400      {object}  resp.Result          "Validation error"
 // @Failure      401      {object}  resp.Result          "Unauthorized"
@@ -150,7 +150,7 @@ func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 // @Security     BearerAuth
 func (h *SiteHandler) GetAllSite(c *gin.Context) {
 	var params site.GetAllSiteQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *SiteHandler) GetAllSite(c *gin.Context) {
 // @Tags         site
 // @Accept       json
 // @Produce      json
-// @Param        request  body      site.AdminGetAllSiteQuery  true  "Query parameters"
+// @Param        request  query     site.AdminGetAllSiteQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result               "List of all sites"
 // @Failure      400      {object}  resp.Result               "Validation error"
 // @Failure      401      {object}  resp.Result               "Unauthorized"
@@ -179,7 +179,7 @@ func (h *SiteHandler) GetAllSite(c *gin.Context) {
 // @Security     BearerAuth
 func (h *SiteHandler) AdminGetAllSite(c *gin.Context) {
 	var params site.AdminGetAllSiteQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

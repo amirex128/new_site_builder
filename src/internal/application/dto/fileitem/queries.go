@@ -2,9 +2,9 @@ package fileitem
 
 // GetByIdsQuery for retrieving multiple file items by IDs
 type GetByIdsQuery struct {
-	IdsOrder      []MediaUrlRequest `json:"idsOrder" validate:"required"`
-	IsTemporary   *bool             `json:"isTemporary" validate:"required"`
-	ExpireMinutes *int              `json:"expireMinutes,omitempty" validate:"required_if=IsTemporary true"`
+	IdsOrder      []MediaUrlRequest `json:"idsOrder" form:"idsOrder" validate:"required"`
+	IsTemporary   *bool             `json:"isTemporary" form:"isTemporary" validate:"required"`
+	ExpireMinutes *int              `json:"expireMinutes,omitempty" form:"expireMinutes" validate:"required_if=IsTemporary true"`
 }
 
 // GetDeletedTreeDirectoryQuery for retrieving a tree of deleted directories
@@ -14,10 +14,10 @@ type GetDeletedTreeDirectoryQuery struct {
 
 // GetDownloadFileItemByIdQuery for downloading a file item by ID
 type GetDownloadFileItemByIdQuery struct {
-	ID *int64 `json:"id" validate:"required"`
+	ID *int64 `json:"id" form:"id" validate:"required"`
 }
 
 // GetTreeDirectoryQuery for retrieving a directory tree
 type GetTreeDirectoryQuery struct {
-	ParentFileItemID *int64 `json:"parentFileItemId,omitempty" validate:"optional"`
+	ParentFileItemID *int64 `json:"parentFileItemId,omitempty" form:"parentFileItemId" validate:"optional"`
 }

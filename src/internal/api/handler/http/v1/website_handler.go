@@ -26,7 +26,7 @@ func NewWebsiteHandler(usc *websiteusecase.WebsiteUsecase) *WebsiteHandler {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.GetByDomainPageQuery  true  "Domain and page parameters"
+// @Param        request  query     website.GetByDomainPageQuery  true  "Domain and page parameters"
 // @Success      200      {object}  resp.Result                  "Page content"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      404      {object}  resp.Result                  "Page or domain not found"
@@ -34,7 +34,7 @@ func NewWebsiteHandler(usc *websiteusecase.WebsiteUsecase) *WebsiteHandler {
 // @Router       /website/page [get]
 func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 	var params website.GetByDomainPageQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -53,7 +53,7 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.GetByDomainHeaderFooterQuery  true  "Domain parameters"
+// @Param        request  query     website.GetByDomainHeaderFooterQuery  true  "Domain parameters"
 // @Success      200      {object}  resp.Result                          "Header and footer content"
 // @Failure      400      {object}  resp.Result                          "Validation error"
 // @Failure      404      {object}  resp.Result                          "Domain not found"
@@ -61,7 +61,7 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 // @Router       /website/header-footer [get]
 func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 	var params website.GetByDomainHeaderFooterQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -80,14 +80,14 @@ func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.ProductSearchListQuery  true  "Search parameters"
+// @Param        request  query     website.ProductSearchListQuery  true  "Search parameters"
 // @Success      200      {object}  resp.Result                    "List of products matching search criteria"
 // @Failure      400      {object}  resp.Result                    "Validation error"
 // @Failure      500      {object}  resp.Result                    "Internal server error"
 // @Router       /website/product/search [get]
 func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 	var params website.ProductSearchListQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -106,14 +106,14 @@ func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.GetFiltersSortArticleQuery  true  "Query parameters"
+// @Param        request  query     website.GetFiltersSortArticleQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                        "Article filters and sorting options"
 // @Failure      400      {object}  resp.Result                        "Validation error"
 // @Failure      500      {object}  resp.Result                        "Internal server error"
 // @Router       /website/article/filters-sort [get]
 func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 	var params website.GetFiltersSortArticleQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -132,14 +132,14 @@ func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.GetFiltersSortProductQuery  true  "Query parameters"
+// @Param        request  query     website.GetFiltersSortProductQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                        "Product filters and sorting options"
 // @Failure      400      {object}  resp.Result                        "Validation error"
 // @Failure      500      {object}  resp.Result                        "Internal server error"
 // @Router       /website/product/filters-sort [get]
 func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 	var params website.GetFiltersSortProductQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -158,7 +158,7 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.GetArticlesByCategorySlugQuery  true  "Category slug and query parameters"
+// @Param        request  query     website.GetArticlesByCategorySlugQuery  true  "Category slug and query parameters"
 // @Success      200      {object}  resp.Result                            "List of articles in the category"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      404      {object}  resp.Result                            "Category not found"
@@ -166,7 +166,7 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 // @Router       /website/article/category [get]
 func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 	var params website.GetArticlesByCategorySlugQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -185,7 +185,7 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 // @Tags         website
 // @Accept       json
 // @Produce      json
-// @Param        request  body      website.GetProductsByCategorySlugQuery  true  "Category slug and query parameters"
+// @Param        request  query     website.GetProductsByCategorySlugQuery  true  "Category slug and query parameters"
 // @Success      200      {object}  resp.Result                            "List of products in the category"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      404      {object}  resp.Result                            "Category not found"
@@ -193,7 +193,7 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 // @Router       /website/product/category [get]
 func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 	var params website.GetProductsByCategorySlugQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -220,7 +220,7 @@ func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 // @Router       /website/article [get]
 func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 	var params website.GetSingleArticleBySlugQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -247,7 +247,7 @@ func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 // @Router       /website/product [get]
 func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
 	var params website.GetSingleProductBySlugQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 

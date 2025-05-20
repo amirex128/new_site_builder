@@ -35,7 +35,7 @@ func NewHeaderFooterHandler(usc *headerfooterusecase.HeaderFooterUsecase) *Heade
 // @Security     BearerAuth
 func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 	var params header_footer.CreateHeaderFooterCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 // @Security     BearerAuth
 func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 	var params header_footer.UpdateHeaderFooterCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 // @Security     BearerAuth
 func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 	var params header_footer.DeleteHeaderFooterCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 // @Tags         header-footer
 // @Accept       json
 // @Produce      json
-// @Param        request  body      header_footer.GetByIdHeaderFooterQuery  true  "Header/footer ID to retrieve"
+// @Param        request  query     header_footer.GetByIdHeaderFooterQuery  true  "Header/footer ID to retrieve"
 // @Success      200      {object}  resp.Result                             "Header/footer details"
 // @Failure      400      {object}  resp.Result                             "Validation error"
 // @Failure      401      {object}  resp.Result                             "Unauthorized"
@@ -122,7 +122,7 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 // @Security     BearerAuth
 func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 	var params header_footer.GetByIdHeaderFooterQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 // @Tags         header-footer
 // @Accept       json
 // @Produce      json
-// @Param        request  body      header_footer.GetAllHeaderFooterQuery  true  "Query parameters"
+// @Param        request  query     header_footer.GetAllHeaderFooterQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                            "List of header/footers"
 // @Failure      400      {object}  resp.Result                            "Validation error"
 // @Failure      401      {object}  resp.Result                            "Unauthorized"
@@ -150,7 +150,7 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 // @Security     BearerAuth
 func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 	var params header_footer.GetAllHeaderFooterQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 // @Tags         header-footer
 // @Accept       json
 // @Produce      json
-// @Param        request  body      header_footer.AdminGetAllHeaderFooterQuery  true  "Query parameters"
+// @Param        request  query     header_footer.AdminGetAllHeaderFooterQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                                 "List of all header/footers"
 // @Failure      400      {object}  resp.Result                                 "Validation error"
 // @Failure      401      {object}  resp.Result                                 "Unauthorized"
@@ -179,7 +179,7 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 // @Security     BearerAuth
 func (h *HeaderFooterHandler) AdminGetAllHeaderFooter(c *gin.Context) {
 	var params header_footer.AdminGetAllHeaderFooterQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

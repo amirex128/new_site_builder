@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -18,16 +19,17 @@ func NewValidationHelper() *ValidationHelper {
 	}
 }
 
-// ValidateRequest handles binding and validating the input struct
+// ValidateCommand handles binding and validating the input struct
 // Returns true if validation passes, false otherwise
-func (h *ValidationHelper) ValidateRequest(c *gin.Context, params interface{}) bool {
+func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindJSON(params); err != nil {
 		resp.ValidationError(c, err.Error())
 		return false
 	}
 
 	if err := h.validate.Struct(params); err != nil {
-		validationErrors := err.(validator.ValidationErrors)
+		var validationErrors validator.ValidationErrors
+		errors.As(err, &validationErrors)
 		resp.ValidationError(c, validationErrors.Error())
 		return false
 	}
@@ -44,7 +46,8 @@ func (h *ValidationHelper) ValidateQuery(c *gin.Context, params interface{}) boo
 	}
 
 	if err := h.validate.Struct(params); err != nil {
-		validationErrors := err.(validator.ValidationErrors)
+		var validationErrors validator.ValidationErrors
+		errors.As(err, &validationErrors)
 		resp.ValidationError(c, validationErrors.Error())
 		return false
 	}

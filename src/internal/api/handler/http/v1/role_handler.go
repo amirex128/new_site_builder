@@ -36,7 +36,7 @@ func NewRoleHandler(usc *roleusecase.RoleUsecase) *RoleHandler {
 // @Security     BearerAuth
 func (h *RoleHandler) CreateRole(c *gin.Context) {
 	var params role.CreateRoleCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -66,7 +66,7 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	var params role.UpdateRoleCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -96,7 +96,7 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 	var params role.SetRoleToCustomerCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -126,7 +126,7 @@ func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 	var params role.SetRoleToUserCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -156,7 +156,7 @@ func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 	var params role.SetRoleToPlanCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -175,7 +175,7 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 // @Tags         role
 // @Accept       json
 // @Produce      json
-// @Param        request  body      role.GetAllPermissionQuery  true  "Query parameters"
+// @Param        request  query     role.GetAllPermissionQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result                "List of all permissions"
 // @Failure      400      {object}  resp.Result                "Validation error"
 // @Failure      401      {object}  resp.Result                "Unauthorized"
@@ -184,7 +184,7 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 	var params role.GetAllPermissionQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -203,7 +203,7 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 // @Tags         role
 // @Accept       json
 // @Produce      json
-// @Param        request  body      role.GetAllRoleQuery  true  "Query parameters"
+// @Param        request  query     role.GetAllRoleQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result          "List of all roles"
 // @Failure      400      {object}  resp.Result          "Validation error"
 // @Failure      401      {object}  resp.Result          "Unauthorized"
@@ -212,7 +212,7 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) GetAllRole(c *gin.Context) {
 	var params role.GetAllRoleQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -231,7 +231,7 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 // @Tags         role
 // @Accept       json
 // @Produce      json
-// @Param        request  body      role.GetRolePermissionsQuery  true  "Role ID to retrieve permissions for"
+// @Param        request  query     role.GetRolePermissionsQuery  true  "Role ID to retrieve permissions for"
 // @Success      200      {object}  resp.Result                  "List of permissions for the role"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -241,7 +241,7 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 // @Security     BearerAuth
 func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
 	var params role.GetRolePermissionsQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 

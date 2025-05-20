@@ -12,10 +12,11 @@ type AdminGetAllProductReviewQuery struct {
 // GetAllProductReviewQuery for listing article reviews by site ID with pagination
 type GetAllProductReviewQuery struct {
 	common.PaginationRequestDto
-	SiteID *int64 `json:"siteId" validate:"required"`
+	ProductID *int64 `json:"productId" form:"productId" validate:"required,gt=0"`
+	SiteID    *int64 `json:"siteId" form:"siteId" validate:"required,gt=0"`
 }
 
 // GetByIdProductReviewQuery for retrieving a single article product_review by ID
 type GetByIdProductReviewQuery struct {
-	ID *int64 `json:"id" validate:"required,gt=0"`
+	ID *int64 `json:"id" form:"id" validate:"required,gt=0"`
 }

@@ -35,7 +35,7 @@ func NewPlanHandler(usc *planusecase.PlanUsecase) *PlanHandler {
 // @Security     BearerAuth
 func (h *PlanHandler) CreatePlan(c *gin.Context) {
 	var params plan.CreatePlanCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 	var params plan.UpdatePlanCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -93,7 +93,7 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PlanHandler) DeletePlan(c *gin.Context) {
 	var params plan.DeletePlanCommand
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 // @Tags         plan
 // @Accept       json
 // @Produce      json
-// @Param        request  body      plan.GetByIDPlanQuery  true  "Plan ID to retrieve"
+// @Param        request  query     plan.GetByIDPlanQuery  true  "Plan ID to retrieve"
 // @Success      200      {object}  resp.Result           "Plan details"
 // @Failure      400      {object}  resp.Result           "Validation error"
 // @Failure      401      {object}  resp.Result           "Unauthorized"
@@ -122,7 +122,7 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 	var params plan.GetByIDPlanQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 // @Tags         plan
 // @Accept       json
 // @Produce      json
-// @Param        request  body      plan.GetAllPlanQuery  true  "Query parameters"
+// @Param        request  query     plan.GetAllPlanQuery  true  "Query parameters"
 // @Success      200      {object}  resp.Result          "List of plans"
 // @Failure      400      {object}  resp.Result          "Validation error"
 // @Failure      401      {object}  resp.Result          "Unauthorized"
@@ -150,7 +150,7 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 	var params plan.GetAllPlanQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
@@ -169,7 +169,7 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 // @Tags         plan
 // @Accept       json
 // @Produce      json
-// @Param        request  body      plan.CalculatePlanPriceQuery  true  "Plan calculation parameters"
+// @Param        request  query     plan.CalculatePlanPriceQuery  true  "Plan calculation parameters"
 // @Success      200      {object}  resp.Result                  "Calculated plan price"
 // @Failure      400      {object}  resp.Result                  "Validation error"
 // @Failure      401      {object}  resp.Result                  "Unauthorized"
@@ -178,7 +178,7 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 // @Security     BearerAuth
 func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 	var params plan.CalculatePlanPriceQuery
-	if !h.validator.ValidateRequest(c, &params) {
+	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
 
