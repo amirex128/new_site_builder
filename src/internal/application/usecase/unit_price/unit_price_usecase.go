@@ -2,6 +2,7 @@ package unitpriceusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -118,7 +119,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 	var data []map[string]interface{}
 	for _, unitPriceParam := range params.UnitPrices {
 		// Find the matching unit price
-		var matchingUnitPrice *unit_price.UnitPriceNameEnum
+		var matchingUnitPrice *enums.UnitPriceNameEnum
 		for _, up := range allUnitPrices {
 			if up.Name == string(*unitPriceParam.UnitPriceName) {
 				matchingUnitPrice = unitPriceParam.UnitPriceName

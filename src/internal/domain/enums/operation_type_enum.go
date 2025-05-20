@@ -8,9 +8,9 @@ import (
 type OperationType string
 
 const (
-	CopyOperation   OperationType = "copy"
-	MoveOperation   OperationType = "move"
-	RenameOperation OperationType = "rename"
+	FileItemCopyOperation   OperationType = "copy"
+	FileItemMoveOperation   OperationType = "move"
+	FileItemRenameOperation OperationType = "rename"
 )
 
 func (e *OperationType) Scan(src interface{}) error {
@@ -41,9 +41,9 @@ func (e OperationType) Value() (driver.Value, error) {
 
 func (e OperationType) IsValid() bool {
 	var operationTypes = []string{
-		string(CopyOperation),
-		string(MoveOperation),
-		string(RenameOperation),
+		string(FileItemCopyOperation),
+		string(FileItemMoveOperation),
+		string(FileItemRenameOperation),
 	}
 	for _, operationType := range operationTypes {
 		if operationType == string(e) {

@@ -8,6 +8,10 @@ import (
 type FileItemPermissionEnum string
 
 const (
+	FileItemPrivatePermission FileItemPermissionEnum = "private"
+	FileItemPublicPermission  FileItemPermissionEnum = "public"
+
+	// Keep old names for backward compatibility
 	PrivatePermission FileItemPermissionEnum = "private"
 	PublicPermission  FileItemPermissionEnum = "public"
 )
@@ -40,8 +44,8 @@ func (e FileItemPermissionEnum) Value() (driver.Value, error) {
 
 func (e FileItemPermissionEnum) IsValid() bool {
 	var permissionTypes = []string{
-		string(PrivatePermission),
-		string(PublicPermission),
+		string(FileItemPrivatePermission),
+		string(FileItemPublicPermission),
 	}
 	for _, permissionType := range permissionTypes {
 		if permissionType == string(e) {

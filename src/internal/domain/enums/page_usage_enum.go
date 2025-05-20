@@ -8,9 +8,9 @@ import (
 type PageUsageEnum string
 
 const (
-	ProductUsage      PageUsageEnum = "product"
-	ArticleUsage      PageUsageEnum = "article"
-	HeaderFooterUsage PageUsageEnum = "header_footer"
+	PageProductUsage      PageUsageEnum = "product"
+	PageArticleUsage      PageUsageEnum = "article"
+	PageHeaderFooterUsage PageUsageEnum = "header_footer"
 )
 
 func (e *PageUsageEnum) Scan(src interface{}) error {
@@ -41,9 +41,9 @@ func (e PageUsageEnum) Value() (driver.Value, error) {
 
 func (e PageUsageEnum) IsValid() bool {
 	var usageTypes = []string{
-		string(ProductUsage),
-		string(ArticleUsage),
-		string(HeaderFooterUsage),
+		string(PageProductUsage),
+		string(PageArticleUsage),
+		string(PageHeaderFooterUsage),
 	}
 	for _, usageType := range usageTypes {
 		if usageType == string(e) {

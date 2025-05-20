@@ -8,20 +8,20 @@ import (
 type ProductSortEnum string
 
 const (
-	PriceLowToHighSort  ProductSortEnum = "price_low_to_high"
-	PriceHighToLowSort  ProductSortEnum = "price_high_to_low"
-	CouponHighToLowSort ProductSortEnum = "coupon_high_to_low"
-	NameAZSort          ProductSortEnum = "name_a_z"
-	NameZASort          ProductSortEnum = "name_z_a"
-	RecentlyAddedSort   ProductSortEnum = "recently_added"
-	RecentlyUpdatedSort ProductSortEnum = "recently_updated"
-	MostSellingSort     ProductSortEnum = "most_selling"
-	MostVisitedSort     ProductSortEnum = "most_visited"
-	MostRatedSort       ProductSortEnum = "most_rated"
-	MostReviewedSort    ProductSortEnum = "most_reviewed"
-	LeastVisitedSort    ProductSortEnum = "least_visited"
-	LeastRatedSort      ProductSortEnum = "least_rated"
-	LeastReviewedSort   ProductSortEnum = "least_reviewed"
+	ProductPriceLowToHighSort  ProductSortEnum = "price_low_to_high"
+	ProductPriceHighToLowSort  ProductSortEnum = "price_high_to_low"
+	ProductCouponHighToLowSort ProductSortEnum = "coupon_high_to_low"
+	ProductNameAZSort          ProductSortEnum = "name_a_z"
+	ProductNameZASort          ProductSortEnum = "name_z_a"
+	ProductRecentlyAddedSort   ProductSortEnum = "recently_added"
+	ProductRecentlyUpdatedSort ProductSortEnum = "recently_updated"
+	ProductMostSellingSort     ProductSortEnum = "most_selling"
+	ProductMostVisitedSort     ProductSortEnum = "most_visited"
+	ProductMostRatedSort       ProductSortEnum = "most_rated"
+	ProductMostReviewedSort    ProductSortEnum = "most_reviewed"
+	ProductLeastVisitedSort    ProductSortEnum = "least_visited"
+	ProductLeastRatedSort      ProductSortEnum = "least_rated"
+	ProductLeastReviewedSort   ProductSortEnum = "least_reviewed"
 )
 
 func (e *ProductSortEnum) Scan(src interface{}) error {
@@ -52,20 +52,20 @@ func (e ProductSortEnum) Value() (driver.Value, error) {
 
 func (e ProductSortEnum) IsValid() bool {
 	var sortTypes = []string{
-		string(PriceLowToHighSort),
-		string(PriceHighToLowSort),
-		string(CouponHighToLowSort),
-		string(NameAZSort),
-		string(NameZASort),
-		string(RecentlyAddedSort),
-		string(RecentlyUpdatedSort),
-		string(MostSellingSort),
-		string(MostVisitedSort),
-		string(MostRatedSort),
-		string(MostReviewedSort),
-		string(LeastVisitedSort),
-		string(LeastRatedSort),
-		string(LeastReviewedSort),
+		string(ProductPriceLowToHighSort),
+		string(ProductPriceHighToLowSort),
+		string(ProductCouponHighToLowSort),
+		string(ProductNameAZSort),
+		string(ProductNameZASort),
+		string(ProductRecentlyAddedSort),
+		string(ProductRecentlyUpdatedSort),
+		string(ProductMostSellingSort),
+		string(ProductMostVisitedSort),
+		string(ProductMostRatedSort),
+		string(ProductMostReviewedSort),
+		string(ProductLeastVisitedSort),
+		string(ProductLeastRatedSort),
+		string(ProductLeastReviewedSort),
 	}
 
 	for _, sortType := range sortTypes {

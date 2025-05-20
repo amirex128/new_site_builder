@@ -8,14 +8,14 @@ import (
 type ArticleFilterEnum string
 
 const (
-	RateRangeFilter    ArticleFilterEnum = "rate_range"
-	ReviewRangeFilter  ArticleFilterEnum = "review_range"
-	VisitedRangeFilter ArticleFilterEnum = "visited_range"
-	AddedRangeFilter   ArticleFilterEnum = "added_range"
-	UpdatedRangeFilter ArticleFilterEnum = "updated_range"
-	CategoryIdsFilter  ArticleFilterEnum = "category_ids"
-	ArticleIdsFilter   ArticleFilterEnum = "article_ids"
-	BadgesFilter       ArticleFilterEnum = "badges"
+	ArticleRateRangeFilter    ArticleFilterEnum = "rate_range"
+	ArticleReviewRangeFilter  ArticleFilterEnum = "review_range"
+	ArticleVisitedRangeFilter ArticleFilterEnum = "visited_range"
+	ArticleAddedRangeFilter   ArticleFilterEnum = "added_range"
+	ArticleUpdatedRangeFilter ArticleFilterEnum = "updated_range"
+	ArticleCategoryIdsFilter  ArticleFilterEnum = "category_ids"
+	ArticleArticleIdsFilter   ArticleFilterEnum = "article_ids"
+	ArticleBadgesFilter       ArticleFilterEnum = "badges"
 )
 
 func (e *ArticleFilterEnum) Scan(src interface{}) error {
@@ -46,14 +46,14 @@ func (e ArticleFilterEnum) Value() (driver.Value, error) {
 
 func (e ArticleFilterEnum) IsValid() bool {
 	var filterTypes = []string{
-		string(RateRangeFilter),
-		string(ReviewRangeFilter),
-		string(VisitedRangeFilter),
-		string(AddedRangeFilter),
-		string(UpdatedRangeFilter),
-		string(CategoryIdsFilter),
-		string(ArticleIdsFilter),
-		string(BadgesFilter),
+		string(ArticleRateRangeFilter),
+		string(ArticleReviewRangeFilter),
+		string(ArticleVisitedRangeFilter),
+		string(ArticleAddedRangeFilter),
+		string(ArticleUpdatedRangeFilter),
+		string(ArticleCategoryIdsFilter),
+		string(ArticleArticleIdsFilter),
+		string(ArticleBadgesFilter),
 	}
 
 	for _, filterType := range filterTypes {

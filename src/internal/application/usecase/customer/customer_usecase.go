@@ -3,6 +3,7 @@ package customerusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"net/url"
 	"os"
 	"time"
@@ -13,7 +14,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer"
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -144,7 +144,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 	})
 
 	// Handle phone verification/forget
-	if *params.Type == user.VerifyPhoneType || *params.Type == user.ForgetPasswordPhoneType {
+	if *params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType {
 		existingCustomer, err := u.repo.GetByPhone(*params.Phone)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -179,7 +179,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 	}
 
 	// Handle email verification/forget
-	if *params.Type == user.VerifyEmailType || *params.Type == user.ForgetPasswordEmailType {
+	if *params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType {
 		existingCustomer, err := u.repo.GetByEmail(*params.Email)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -331,7 +331,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 
 	// Handle different verification types
 	switch *params.Type {
-	case user.VerifyEmailType:
+	case enums.VerifyEmailType:
 		existingCustomer.VerifyEmail = "1"
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
@@ -339,7 +339,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 		}
 		return "success", nil
 
-	case user.VerifyPhoneType:
+	case enums.VerifyPhoneType:
 		existingCustomer.VerifyPhone = "1"
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
@@ -347,7 +347,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 		}
 		return "success", nil
 
-	case user.ForgetPasswordEmailType:
+	case enums.ForgetPasswordEmailType:
 		// Generate token for password reset
 		token := u.identitySvc.TokenForCustomer(existingCustomer).Make()
 		err = u.repo.Update(existingCustomer)
@@ -364,7 +364,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 			"url": redirectURL + "?" + queryParams.Encode(),
 		}, nil
 
-	case user.ForgetPasswordPhoneType:
+	case enums.ForgetPasswordPhoneType:
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
 			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")

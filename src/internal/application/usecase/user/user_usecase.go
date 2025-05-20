@@ -2,6 +2,7 @@ package userusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"time"
 
@@ -216,12 +217,12 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	var err error
 
 	// Get user by email or phone based on the verification type
-	if params.Type != nil && (*params.Type == user.VerifyEmailType || *params.Type == user.ForgetPasswordEmailType) {
+	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) {
 		if params.Email == nil {
 			return nil, fmt.Errorf("email is required for email verification")
 		}
 		existingUser, err = u.userRepo.GetByEmail(*params.Email)
-	} else if params.Type != nil && (*params.Type == user.VerifyPhoneType || *params.Type == user.ForgetPasswordPhoneType) {
+	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) {
 		if params.Phone == nil {
 			return nil, fmt.Errorf("phone is required for phone verification")
 		}
@@ -238,9 +239,9 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	verificationCode := "123456" // Example code, in a real implementation generate a random code
 
 	// Store verification code based on type
-	if params.Type != nil && (*params.Type == user.VerifyEmailType || *params.Type == user.ForgetPasswordEmailType) {
+	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) {
 		existingUser.VerifyEmail = verificationCode
-	} else if params.Type != nil && (*params.Type == user.VerifyPhoneType || *params.Type == user.ForgetPasswordPhoneType) {
+	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) {
 		existingUser.VerifyPhone = verificationCode
 	}
 
@@ -268,25 +269,25 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error)
 	codeStr := strconv.Itoa(*params.Code)
 
 	// Check verification code based on type
-	if params.Type != nil && *params.Type == user.VerifyEmailType {
+	if params.Type != nil && *params.Type == enums.VerifyEmailType {
 		if existingUser.VerifyEmail != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
 		existingUser.IsActive = "1" // Activate the user
 		existingUser.VerifyEmail = ""
-	} else if params.Type != nil && *params.Type == user.VerifyPhoneType {
+	} else if params.Type != nil && *params.Type == enums.VerifyPhoneType {
 		if existingUser.VerifyPhone != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
 		existingUser.IsActive = "1" // Activate the user
 		existingUser.VerifyPhone = ""
-	} else if params.Type != nil && *params.Type == user.ForgetPasswordEmailType {
+	} else if params.Type != nil && *params.Type == enums.ForgetPasswordEmailType {
 		if existingUser.VerifyEmail != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
 		// In a real implementation, provide a token for password reset instead
 		existingUser.VerifyEmail = ""
-	} else if params.Type != nil && *params.Type == user.ForgetPasswordPhoneType {
+	} else if params.Type != nil && *params.Type == enums.ForgetPasswordPhoneType {
 		if existingUser.VerifyPhone != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
@@ -383,10 +384,10 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 
 	// Apply discount if available
 	if plan.Discount != nil && *plan.Discount > 0 {
-		if plan.DiscountType == string(user.FixedDiscountType) {
+		if plan.DiscountType == string(enums.FixedDiscountType) {
 			discountAmount = *plan.Discount
 			finalPrice = plan.Price - discountAmount
-		} else if plan.DiscountType == string(user.PercentageDiscountType) {
+		} else if plan.DiscountType == string(enums.PercentageDiscountType) {
 			discountAmount = (plan.Price * (*plan.Discount)) / 100
 			finalPrice = plan.Price - discountAmount
 		}

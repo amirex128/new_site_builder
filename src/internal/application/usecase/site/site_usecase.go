@@ -341,10 +341,10 @@ func enhanceSiteResponse(site domain.Site) map[string]interface{} {
 	response := map[string]interface{}{
 		"id":         site.ID,
 		"domain":     site.Domain,
-		"domainType": getDomainTypeEnum(site.DomainType),
+		"domainType": site.DomainType,
 		"name":       site.Name,
-		"status":     getStatusEnum(site.Status),
-		"siteType":   getSiteTypeEnum(site.SiteType),
+		"status":     site.Status,
+		"siteType":   site.SiteType,
 		"userId":     site.UserID,
 		"createdAt":  site.CreatedAt,
 		"updatedAt":  site.UpdatedAt,
@@ -361,84 +361,4 @@ func enhanceSiteResponse(site domain.Site) map[string]interface{} {
 	}
 
 	return response
-}
-
-// Helper functions to convert enum values between Go and .NET versions
-
-func getDomainTypeString(domainType site.DomainTypeEnum) string {
-	switch domainType {
-	case site.DomainType:
-		return "Domain"
-	case site.SubdomainType:
-		return "Subdomain"
-	default:
-		return "Domain"
-	}
-}
-
-func getDomainTypeEnum(domainType string) site.DomainTypeEnum {
-	switch domainType {
-	case "Domain":
-		return site.DomainType
-	case "Subdomain":
-		return site.SubdomainType
-	default:
-		return site.DomainType
-	}
-}
-
-func getSiteTypeString(siteType site.SiteTypeEnum) string {
-	switch siteType {
-	case site.ShopType:
-		return "Shop"
-	case site.BlogType:
-		return "Blog"
-	case site.BusinessType:
-		return "Business"
-	default:
-		return "Shop"
-	}
-}
-
-func getSiteTypeEnum(siteType string) site.SiteTypeEnum {
-	switch siteType {
-	case "Shop":
-		return site.ShopType
-	case "Blog":
-		return site.BlogType
-	case "Business":
-		return site.BusinessType
-	default:
-		return site.ShopType
-	}
-}
-
-func getStatusString(status site.StatusEnum) string {
-	switch status {
-	case site.ActiveStatus:
-		return "Active"
-	case site.InactiveStatus:
-		return "Inactive"
-	case site.PendingStatus:
-		return "Pending"
-	case site.DeletedStatus:
-		return "Deleted"
-	default:
-		return "Active"
-	}
-}
-
-func getStatusEnum(status string) site.StatusEnum {
-	switch status {
-	case "Active":
-		return site.ActiveStatus
-	case "Inactive":
-		return site.InactiveStatus
-	case "Pending":
-		return site.PendingStatus
-	case "Deleted":
-		return site.DeletedStatus
-	default:
-		return site.ActiveStatus
-	}
 }

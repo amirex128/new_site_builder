@@ -90,7 +90,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 
 	// Handle different types of usages
 	switch params.Type {
-	case enums.ArticleUsage:
+	case enums.PageArticleUsage:
 		// Delete existing usages
 		err = u.pageArticleUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -123,7 +123,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 			}
 		}
 
-	case enums.ProductUsage:
+	case enums.PageProductUsage:
 		// Delete existing usages
 		err = u.pageProductUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -156,7 +156,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 			}
 		}
 
-	case enums.HeaderFooterUsage:
+	case enums.PageHeaderFooterUsage:
 		// Delete existing usages
 		err = u.pageHeaderFooterUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -216,7 +216,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 	// Find usages based on type
 	switch params.Type {
-	case enums.ArticleUsage:
+	case enums.PageArticleUsage:
 		usages, err := u.pageArticleUsageRepo.GetByArticleIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err
@@ -244,7 +244,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 		return enhancePageUsageResponse(pages), nil
 
-	case enums.ProductUsage:
+	case enums.PageProductUsage:
 		usages, err := u.pageProductUsageRepo.GetByProductIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err
@@ -272,7 +272,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 		return enhancePageUsageResponse(pages), nil
 
-	case enums.HeaderFooterUsage:
+	case enums.PageHeaderFooterUsage:
 		usages, err := u.pageHeaderFooterUsageRepo.GetByHeaderFooterIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err

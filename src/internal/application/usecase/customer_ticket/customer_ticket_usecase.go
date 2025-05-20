@@ -2,6 +2,7 @@ package customerticketusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
@@ -55,7 +56,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	newTicket := domain.CustomerTicket{
 		Title:      *params.Title,
 		CustomerID: *params.OwnerUserID,
-		Status:     string(customer_ticket.NewStatus), // Default to New status
+		Status:     string(enums.CustomerTicketNewStatus), // Default to New status
 		Category:   string(*params.Category),
 		Priority:   string(*params.Priority),
 		UserID:     userID,
@@ -149,7 +150,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == customer_ticket.ClosedStatus {
+	if *params.Status == enums.CustomerTicketClosedStatus {
 		respondentID := *params.Comment.RespondentID
 		now := time.Now()
 		existingTicket.ClosedBy = &respondentID
@@ -247,7 +248,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == customer_ticket.ClosedStatus {
+	if *params.Status == enums.CustomerTicketClosedStatus {
 		now := time.Now()
 		existingTicket.ClosedBy = &userID
 		existingTicket.ClosedAt = &now

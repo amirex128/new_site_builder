@@ -2,6 +2,7 @@ package planusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -10,7 +11,6 @@ import (
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -230,10 +230,10 @@ func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQue
 
 	// Calculate discount based on discount type
 	if plan.Discount != nil && *plan.Discount > 0 {
-		if plan.DiscountType == string(user.FixedDiscountType) {
+		if plan.DiscountType == string(enums.FixedDiscountType) {
 			discountAmount = *plan.Discount
 			finalPrice = plan.Price - discountAmount
-		} else if plan.DiscountType == string(user.PercentageDiscountType) {
+		} else if plan.DiscountType == string(enums.PercentageDiscountType) {
 			discountAmount = (plan.Price * (*plan.Discount)) / 100
 			finalPrice = plan.Price - discountAmount
 		}

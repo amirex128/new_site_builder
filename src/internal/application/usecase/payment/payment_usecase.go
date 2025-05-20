@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"time"
 
@@ -184,7 +185,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.SamanPassword = *params.Saman.Password
 	}
 	if params.IsActiveSaman != nil {
-		if *params.IsActiveSaman == payment.ActiveStatus {
+		if *params.IsActiveSaman == enums.ActiveStatus {
 			gateway.IsActiveSaman = "Active"
 		} else {
 			gateway.IsActiveSaman = "Inactive"
@@ -198,7 +199,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.MellatUserPassword = *params.Mellat.UserPassword
 	}
 	if params.IsActiveMellat != nil {
-		if *params.IsActiveMellat == payment.ActiveStatus {
+		if *params.IsActiveMellat == enums.ActiveStatus {
 			gateway.IsActiveMellat = "Active"
 		} else {
 			gateway.IsActiveMellat = "Inactive"
@@ -210,7 +211,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.ParsianLoginAccount = *params.Parsian.LoginAccount
 	}
 	if params.IsActiveParsian != nil {
-		if *params.IsActiveParsian == payment.ActiveStatus {
+		if *params.IsActiveParsian == enums.ActiveStatus {
 			gateway.IsActiveParsian = "Active"
 		} else {
 			gateway.IsActiveParsian = "Inactive"
@@ -224,7 +225,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.PasargadPrivateKey = *params.Pasargad.PrivateKey
 	}
 	if params.IsActivePasargad != nil {
-		if *params.IsActivePasargad == payment.ActiveStatus {
+		if *params.IsActivePasargad == enums.ActiveStatus {
 			gateway.IsActivePasargad = "Active"
 		} else {
 			gateway.IsActivePasargad = "Inactive"
@@ -239,7 +240,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.IranKishPublicKey = *params.IranKish.PublicKey
 	}
 	if params.IsActiveIranKish != nil {
-		if *params.IsActiveIranKish == payment.ActiveStatus {
+		if *params.IsActiveIranKish == enums.ActiveStatus {
 			gateway.IsActiveIranKish = "Active"
 		} else {
 			gateway.IsActiveIranKish = "Inactive"
@@ -253,7 +254,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.MelliTerminalKey = *params.Melli.TerminalKey
 	}
 	if params.IsActiveMelli != nil {
-		if *params.IsActiveMelli == payment.ActiveStatus {
+		if *params.IsActiveMelli == enums.ActiveStatus {
 			gateway.IsActiveMelli = "Active"
 		} else {
 			gateway.IsActiveMelli = "Inactive"
@@ -269,7 +270,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.AsanPardakhtIV = *params.AsanPardakht.IV
 	}
 	if params.IsActiveAsanPardakht != nil {
-		if *params.IsActiveAsanPardakht == payment.ActiveStatus {
+		if *params.IsActiveAsanPardakht == enums.ActiveStatus {
 			gateway.IsActiveAsanPardakht = "Active"
 		} else {
 			gateway.IsActiveAsanPardakht = "Inactive"
@@ -281,7 +282,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.SepehrTerminalId = params.Sepehr.TerminalID
 	}
 	if params.IsActiveSepehr != nil {
-		if *params.IsActiveSepehr == payment.ActiveStatus {
+		if *params.IsActiveSepehr == enums.ActiveStatus {
 			gateway.IsActiveSepehr = "Active"
 		} else {
 			gateway.IsActiveSepehr = "Inactive"
@@ -299,7 +300,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		}
 	}
 	if params.IsActiveZarinPal != nil {
-		if *params.IsActiveZarinPal == payment.ActiveStatus {
+		if *params.IsActiveZarinPal == enums.ActiveStatus {
 			gateway.IsActiveZarinPal = "Active"
 		} else {
 			gateway.IsActiveZarinPal = "Inactive"
@@ -314,7 +315,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		}
 	}
 	if params.IsActivePayIr != nil {
-		if *params.IsActivePayIr == payment.ActiveStatus {
+		if *params.IsActivePayIr == enums.ActiveStatus {
 			gateway.IsActivePayIr = "Active"
 		} else {
 			gateway.IsActivePayIr = "Inactive"
@@ -329,7 +330,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		}
 	}
 	if params.IsActiveIdPay != nil {
-		if *params.IsActiveIdPay == payment.ActiveStatus {
+		if *params.IsActiveIdPay == enums.ActiveStatus {
 			gateway.IsActiveIdPay = "Active"
 		} else {
 			gateway.IsActiveIdPay = "Inactive"
@@ -341,7 +342,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.YekPayMerchantId = *params.YekPay.MerchantID
 	}
 	if params.IsActiveYekPay != nil {
-		if *params.IsActiveYekPay == payment.ActiveStatus {
+		if *params.IsActiveYekPay == enums.ActiveStatus {
 			gateway.IsActiveYekPay = "Active"
 		} else {
 			gateway.IsActiveYekPay = "Inactive"
@@ -353,7 +354,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 		gateway.PayPingAccessToken = *params.PayPing.AccessToken
 	}
 	if params.IsActivePayPing != nil {
-		if *params.IsActivePayPing == payment.ActiveStatus {
+		if *params.IsActivePayPing == enums.ActiveStatus {
 			gateway.IsActivePayPing = "Active"
 		} else {
 			gateway.IsActivePayPing = "Inactive"
@@ -362,7 +363,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 
 	// ParbadVirtual Gateway
 	if params.IsActiveParbadVirtual != nil {
-		if *params.IsActiveParbadVirtual == payment.ActiveStatus {
+		if *params.IsActiveParbadVirtual == enums.ActiveStatus {
 			gateway.IsActiveParbadVirtual = "Active"
 		} else {
 			gateway.IsActiveParbadVirtual = "Inactive"
@@ -460,16 +461,16 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 	paymentData := domain.Payment{
 		SiteID:             *params.SiteID,
 		PaymentStatusEnum:  "Processing",
-		UserType:           u.mapUserTypeToString(*params.UserType),
+		UserType:           string(*params.UserType),
 		TrackingNumber:     time.Now().UnixNano(),
-		Gateway:            u.mapGatewayToString(*params.Gateway),
+		Gateway:            string(*params.Gateway),
 		GatewayAccountName: gatewayAccountName,
 		Amount:             *params.Amount,
 		ServiceName:        *params.ServiceName,
 		ServiceAction:      *params.ServiceAction,
 		OrderID:            *params.OrderID,
 		ReturnUrl:          *params.ReturnURL,
-		CallVerifyUrl:      u.mapVerifyEndpointToString(*params.CallVerifyURL),
+		CallVerifyUrl:      string(*params.CallVerifyURL),
 		ClientIp:           *params.ClientIP,
 		UserID:             *params.UserID,
 		CustomerID:         0, // Set appropriate customer ID if applicable
@@ -485,7 +486,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 	paymentData.OrderData = string(orderDataJSON)
 
 	// Set CustomerID if user type is Customer
-	if *params.UserType == payment.CustomerTypeValue {
+	if *params.UserType == enums.CustomerTypeValue {
 		paymentData.CustomerID = *params.UserID
 		paymentData.UserID = 0 // Clear user ID for customers
 	}
@@ -550,99 +551,38 @@ func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaym
 
 // Helper methods
 
-func (u *PaymentUsecase) isGatewayActive(gateway domain.Gateway, gatewayType payment.PaymentGatewaysEnum) bool {
+func (u *PaymentUsecase) isGatewayActive(gateway domain.Gateway, gatewayType enums.PaymentGatewaysEnum) bool {
 	switch gatewayType {
-	case payment.SamanGatewayEnum:
+	case enums.SamanGatewayEnum:
 		return gateway.IsActiveSaman == "Active"
-	case payment.MellatGatewayEnum:
+	case enums.MellatGatewayEnum:
 		return gateway.IsActiveMellat == "Active"
-	case payment.ParsianGatewayEnum:
+	case enums.ParsianGatewayEnum:
 		return gateway.IsActiveParsian == "Active"
-	case payment.PasargadGatewayEnum:
+	case enums.PasargadGatewayEnum:
 		return gateway.IsActivePasargad == "Active"
-	case payment.IranKishGatewayEnum:
+	case enums.IranKishGatewayEnum:
 		return gateway.IsActiveIranKish == "Active"
-	case payment.MelliGatewayEnum:
+	case enums.MelliGatewayEnum:
 		return gateway.IsActiveMelli == "Active"
-	case payment.AsanPardakhtGatewayEnum:
+	case enums.AsanPardakhtGatewayEnum:
 		return gateway.IsActiveAsanPardakht == "Active"
-	case payment.SepehrGatewayEnum:
+	case enums.SepehrGatewayEnum:
 		return gateway.IsActiveSepehr == "Active"
-	case payment.ZarinPalGatewayEnum:
+	case enums.ZarinPalGatewayEnum:
 		return gateway.IsActiveZarinPal == "Active"
-	case payment.PayIrGatewayEnum:
+	case enums.PayIrGatewayEnum:
 		return gateway.IsActivePayIr == "Active"
-	case payment.IdPayGatewayEnum:
+	case enums.IdPayGatewayEnum:
 		return gateway.IsActiveIdPay == "Active"
-	case payment.YekPayGatewayEnum:
+	case enums.YekPayGatewayEnum:
 		return gateway.IsActiveYekPay == "Active"
-	case payment.PayPingGatewayEnum:
+	case enums.PayPingGatewayEnum:
 		return gateway.IsActivePayPing == "Active"
-	case payment.ParbadVirtualGatewayEnum:
+	case enums.ParbadVirtualGatewayEnum:
 		return gateway.IsActiveParbadVirtual == "Active"
 	default:
 		return false
-	}
-}
-
-func (u *PaymentUsecase) mapUserTypeToString(userType payment.UserTypeEnum) string {
-	switch userType {
-	case payment.UserTypeValue:
-		return "User"
-	case payment.CustomerTypeValue:
-		return "Customer"
-	case payment.GuestTypeValue:
-		return "Guest"
-	default:
-		return "Unknown"
-	}
-}
-
-func (u *PaymentUsecase) mapGatewayToString(gateway payment.PaymentGatewaysEnum) string {
-	switch gateway {
-	case payment.SamanGatewayEnum:
-		return "Saman"
-	case payment.MellatGatewayEnum:
-		return "Mellat"
-	case payment.ParsianGatewayEnum:
-		return "Parsian"
-	case payment.PasargadGatewayEnum:
-		return "Pasargad"
-	case payment.IranKishGatewayEnum:
-		return "IranKish"
-	case payment.MelliGatewayEnum:
-		return "Melli"
-	case payment.AsanPardakhtGatewayEnum:
-		return "AsanPardakht"
-	case payment.SepehrGatewayEnum:
-		return "Sepehr"
-	case payment.ZarinPalGatewayEnum:
-		return "ZarinPal"
-	case payment.PayIrGatewayEnum:
-		return "PayIr"
-	case payment.IdPayGatewayEnum:
-		return "IdPay"
-	case payment.YekPayGatewayEnum:
-		return "YekPay"
-	case payment.PayPingGatewayEnum:
-		return "PayPing"
-	case payment.ParbadVirtualGatewayEnum:
-		return "ParbadVirtual"
-	default:
-		return "Unknown"
-	}
-}
-
-func (u *PaymentUsecase) mapVerifyEndpointToString(endpoint payment.VerifyPaymentEndpointEnum) string {
-	switch endpoint {
-	case payment.ChargeCreditVerifyEndpoint:
-		return "ChargeCreditVerify"
-	case payment.UpgradePlanVerifyEndpoint:
-		return "UpgradePlanVerify"
-	case payment.CreateOrderVerifyEndpoint:
-		return "CreateOrderVerify"
-	default:
-		return "Unknown"
 	}
 }
 

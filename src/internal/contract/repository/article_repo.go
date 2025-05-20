@@ -1,16 +1,16 @@
 package repository
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 type IArticleRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
 	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
 	GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
-	GetAllByFilterAndSort(siteID int64, filters map[article.ArticleFilterEnum][]string, sort *article.ArticleSortEnum, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
+	GetAllByFilterAndSort(siteID int64, filters map[enums.ArticleFilterEnum][]string, sort *enums.ArticleSortEnum, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
 	GetByID(id int64) (domain.Article, error)
 	GetBySlug(slug string) (domain.Article, error)
 	GetBySlugAndSiteID(slug string, siteID int64) (domain.Article, error)

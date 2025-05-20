@@ -40,9 +40,9 @@ func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 // Add helper function to convert fileitem.FileItemPermissionEnum to service.FileItemPermissionEnum
 func toServicePermissionEnum(p enums.FileItemPermissionEnum) contractStorage.FileItemPermissionEnum {
 	switch p {
-	case enums.PrivatePermission:
+	case enums.FileItemPrivatePermission:
 		return contractStorage.Private
-	case enums.PublicPermission:
+	case enums.FileItemPublicPermission:
 		return contractStorage.Public
 	default:
 		return contractStorage.Private // default fallback
@@ -348,7 +348,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 	var newFullPath string
 
 	switch params.OperationType {
-	case fileitem.RenameOperation:
+	case enums.FileItemRenameOperation:
 		if params.NewName == nil {
 			return nil, fmt.Errorf("new name is required for rename operation")
 		}
@@ -369,7 +369,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			toServicePermissionEnum(fileitem.FileItemPermissionEnum(permission)))
+			toServicePermissionEnum(enums.FileItemPermissionEnum(permission)))
 		if err != nil {
 			return nil, fmt.Errorf("error renaming in storage: %v", err)
 		}
@@ -386,7 +386,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			// Implementation depends on additional methods to update file paths
 		}
 
-	case fileitem.MoveOperation:
+	case enums.FileItemMoveOperation:
 		if params.NewParentID == nil {
 			return nil, fmt.Errorf("new parent ID is required for move operation")
 		}
@@ -422,7 +422,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			toServicePermissionEnum(fileitem.FileItemPermissionEnum(permission)))
+			toServicePermissionEnum(enums.FileItemPermissionEnum(permission)))
 		if err != nil {
 			return nil, fmt.Errorf("error moving in storage: %v", err)
 		}
@@ -458,7 +458,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			// Implementation depends on additional methods to update file paths
 		}
 
-	case fileitem.CopyOperation:
+	case enums.FileItemCopyOperation:
 		if params.NewParentID == nil {
 			return nil, fmt.Errorf("new parent ID is required for copy operation")
 		}
@@ -509,7 +509,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			toServicePermissionEnum(fileitem.FileItemPermissionEnum(permission)))
+			toServicePermissionEnum(enums.FileItemPermissionEnum(permission)))
 		if err != nil {
 			return nil, fmt.Errorf("error copying in storage: %v", err)
 		}

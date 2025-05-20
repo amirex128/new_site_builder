@@ -8,16 +8,16 @@ import (
 type ArticleSortEnum string
 
 const (
-	TitleAZSort         ArticleSortEnum = "title_a_z"
-	TitleZASort         ArticleSortEnum = "title_z_a"
-	RecentlyAddedSort   ArticleSortEnum = "recently_added"
-	RecentlyUpdatedSort ArticleSortEnum = "recently_updated"
-	MostVisitedSort     ArticleSortEnum = "most_visited"
-	LeastVisitedSort    ArticleSortEnum = "least_visited"
-	MostRatedSort       ArticleSortEnum = "most_rated"
-	LeastRatedSort      ArticleSortEnum = "least_rated"
-	MostReviewedSort    ArticleSortEnum = "most_reviewed"
-	LeastReviewedSort   ArticleSortEnum = "least_reviewed"
+	ArticleTitleAZSort         ArticleSortEnum = "title_a_z"
+	ArticleTitleZASort         ArticleSortEnum = "title_z_a"
+	ArticleRecentlyAddedSort   ArticleSortEnum = "recently_added"
+	ArticleRecentlyUpdatedSort ArticleSortEnum = "recently_updated"
+	ArticleMostVisitedSort     ArticleSortEnum = "most_visited"
+	ArticleLeastVisitedSort    ArticleSortEnum = "least_visited"
+	ArticleMostRatedSort       ArticleSortEnum = "most_rated"
+	ArticleLeastRatedSort      ArticleSortEnum = "least_rated"
+	ArticleMostReviewedSort    ArticleSortEnum = "most_reviewed"
+	ArticleLeastReviewedSort   ArticleSortEnum = "least_reviewed"
 )
 
 func (e *ArticleSortEnum) Scan(src interface{}) error {
@@ -48,16 +48,16 @@ func (e ArticleSortEnum) Value() (driver.Value, error) {
 
 func (e ArticleSortEnum) IsValid() bool {
 	var sortTypes = []string{
-		string(TitleAZSort),
-		string(TitleZASort),
-		string(RecentlyAddedSort),
-		string(RecentlyUpdatedSort),
-		string(MostVisitedSort),
-		string(LeastVisitedSort),
-		string(MostRatedSort),
-		string(LeastRatedSort),
-		string(MostReviewedSort),
-		string(LeastReviewedSort),
+		string(ArticleTitleAZSort),
+		string(ArticleTitleZASort),
+		string(ArticleRecentlyAddedSort),
+		string(ArticleRecentlyUpdatedSort),
+		string(ArticleMostVisitedSort),
+		string(ArticleLeastVisitedSort),
+		string(ArticleMostRatedSort),
+		string(ArticleLeastRatedSort),
+		string(ArticleMostReviewedSort),
+		string(ArticleLeastReviewedSort),
 	}
 
 	for _, sortType := range sortTypes {

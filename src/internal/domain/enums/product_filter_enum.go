@@ -8,21 +8,21 @@ import (
 type ProductFilterEnum string
 
 const (
-	PriceRangeFilter        ProductFilterEnum = "price_range"
-	RatingRangeFilter       ProductFilterEnum = "rating_range"
-	CouponRangeFilter       ProductFilterEnum = "coupon_range"
-	SellingRangeFilter      ProductFilterEnum = "selling_range"
-	VisitedRangeFilter      ProductFilterEnum = "visited_range"
-	ReviewRangeFilter       ProductFilterEnum = "review_range"
-	UpdatedRangeFilter      ProductFilterEnum = "updated_range"
-	AddedRangeFilter        ProductFilterEnum = "added_range"
-	WeightRangeFilter       ProductFilterEnum = "weight_range"
-	CategoryIdsFilter       ProductFilterEnum = "category_ids"
-	ProductIdsFilter        ProductFilterEnum = "product_ids"
-	ProductAttributesFilter ProductFilterEnum = "product_attributes"
-	ProductVariantFilter    ProductFilterEnum = "product_variant"
-	BadgesFilter            ProductFilterEnum = "badges"
-	FreeSendFilter          ProductFilterEnum = "free_send"
+	ProductPriceRangeFilter   ProductFilterEnum = "price_range"
+	ProductRatingRangeFilter  ProductFilterEnum = "rating_range"
+	ProductCouponRangeFilter  ProductFilterEnum = "coupon_range"
+	ProductSellingRangeFilter ProductFilterEnum = "selling_range"
+	ProductVisitedRangeFilter ProductFilterEnum = "visited_range"
+	ProductReviewRangeFilter  ProductFilterEnum = "review_range"
+	ProductUpdatedRangeFilter ProductFilterEnum = "updated_range"
+	ProductAddedRangeFilter   ProductFilterEnum = "added_range"
+	ProductWeightRangeFilter  ProductFilterEnum = "weight_range"
+	ProductCategoryIdsFilter  ProductFilterEnum = "category_ids"
+	ProductProductIdsFilter   ProductFilterEnum = "product_ids"
+	ProductAttributesFilter   ProductFilterEnum = "product_attributes"
+	ProductVariantFilter      ProductFilterEnum = "product_variant"
+	ProductBadgesFilter       ProductFilterEnum = "badges"
+	ProductFreeSendFilter     ProductFilterEnum = "free_send"
 )
 
 func (e *ProductFilterEnum) Scan(src interface{}) error {
@@ -53,21 +53,21 @@ func (e ProductFilterEnum) Value() (driver.Value, error) {
 
 func (e ProductFilterEnum) IsValid() bool {
 	var filterTypes = []string{
-		string(PriceRangeFilter),
-		string(RatingRangeFilter),
-		string(CouponRangeFilter),
-		string(SellingRangeFilter),
-		string(VisitedRangeFilter),
-		string(ReviewRangeFilter),
-		string(UpdatedRangeFilter),
-		string(AddedRangeFilter),
-		string(WeightRangeFilter),
-		string(CategoryIdsFilter),
-		string(ProductIdsFilter),
+		string(ProductPriceRangeFilter),
+		string(ProductRatingRangeFilter),
+		string(ProductCouponRangeFilter),
+		string(ProductSellingRangeFilter),
+		string(ProductVisitedRangeFilter),
+		string(ProductReviewRangeFilter),
+		string(ProductUpdatedRangeFilter),
+		string(ProductAddedRangeFilter),
+		string(ProductWeightRangeFilter),
+		string(ProductCategoryIdsFilter),
+		string(ProductProductIdsFilter),
 		string(ProductAttributesFilter),
 		string(ProductVariantFilter),
-		string(BadgesFilter),
-		string(FreeSendFilter),
+		string(ProductBadgesFilter),
+		string(ProductFreeSendFilter),
 	}
 
 	for _, filterType := range filterTypes {
