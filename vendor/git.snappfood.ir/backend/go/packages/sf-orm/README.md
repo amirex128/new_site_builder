@@ -7,7 +7,7 @@ A resilient GORM database connection registry for Go.
 
 This library provides a registry for managing multiple GORM database connections in Go applications:
 
-- **Resilient Connection Management**: Automatic retry and reconnection
+- **Resilient Connection Management**: Automatic retry and reconnection with exponential backoff, panic recovery, and error logging
 - **Multiple Database Support**: MySQL, PostgreSQL, SQLite, SQL Server
 - **Type-Safe Configuration**: Strongly typed connection configs with validation
 - **Service Registry Integration**: Works with SF Service Registry
@@ -18,6 +18,7 @@ This library provides a registry for managing multiple GORM database connections
 
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Retry Options and Exponential Backoff](#retry-options-and-exponential-backoff)
 - [Connection Registry](#connection-registry)
 - [Connection Configuration](#connection-configuration)
 - [Service Connector](#service-connector)
@@ -88,6 +89,12 @@ func main() {
         }),
         sform.WithConnectionDetails("main", mysqlConfig),
         sform.WithConnectionDetails("secondary", pgConfig),
+        sform.WithRetryOptions(&sform.RetryOptions{
+            MaxRetries:     5,
+            InitialBackoff: time.Second,
+            MaxBackoff:     15 * time.Second,
+            BackoffFactor:  1.5,
+        }),
     )
     
     if err != nil {
@@ -106,6 +113,52 @@ func main() {
     
     fmt.Printf("Found %d users\n", len(users))
 }
+```
+
+## Retry Options and Exponential Backoff
+
+SF-ORM supports robust retry logic with exponential backoff and panic recovery for all external data source connections. You can configure retry behavior globally for all connections using `WithRetryOptions`:
+
+```go
+err := sform.RegisterConnection(
+    sform.WithConnectionDetails("main", mysqlConfig),
+    sform.WithRetryOptions(&sform.RetryOptions{
+        MaxRetries:     5,                // Maximum number of retry attempts
+        InitialBackoff: time.Second,      // Initial waiting time between retries
+        MaxBackoff:     15 * time.Second, // Maximum waiting time between retries
+        BackoffFactor:  1.5,              // Exponential backoff multiplier
+    }),
+)
+```
+
+- **MaxRetries**: Maximum number of retry attempts before giving up
+- **InitialBackoff**: Initial delay before the first retry
+- **MaxBackoff**: Maximum delay between retries
+- **BackoffFactor**: Multiplier for exponential backoff
+
+All connection attempts are protected with panic recovery and errors are logged using the provided logger.
+
+### ServiceConnector with Retry Options
+
+You can also use retry options with the ServiceConnector:
+
+```go
+connector := sform.GetConnector()
+err := connector.RegisterConnection(
+    sform.WithConnectionName("main"),
+    sform.WithDriver(sform.MySQL),
+    sform.WithHost("localhost"),
+    sform.WithPort(3306),
+    sform.WithUser("user"),
+    sform.WithPassword("password"),
+    sform.WithDatabase("mydb"),
+    sform.WithRetryOptions(&sform.RetryOptions{
+        MaxRetries:     5,
+        InitialBackoff: time.Second,
+        MaxBackoff:     10 * time.Second,
+        BackoffFactor:  2.0,
+    }),
+)
 ```
 
 ## Connection Registry
@@ -154,6 +207,12 @@ func main() {
         }),
         sform.WithConnectionDetails("main", mainConfig),
         sform.WithConnectionDetails("analytics", analyticsConfig),
+        sform.WithRetryOptions(&sform.RetryOptions{
+            MaxRetries:     5,
+            InitialBackoff: time.Second,
+            MaxBackoff:     15 * time.Second,
+            BackoffFactor:  1.5,
+        }),
     )
     
     if err != nil {
@@ -424,6 +483,7 @@ func main() {
 - **APM Integration** - Built-in support for Elastic APM
 - **Health Checks** - Comprehensive health check functionality
 - **Service Registry Integration** - Works with SF Service Registry
+- **Resilient Connection Management** - Automatic retry and reconnection with exponential backoff, panic recovery, and error logging
 
 ## Database Operations
 
@@ -569,6 +629,7 @@ sform.RegisterConnection(
 - `WithLogger(logger Logger) RegistryOption`
 - `WithGlobalOptions(options ...DBOption) RegistryOption`
 - `WithConnectionDetails(name string, driverOrConfig interface{}, dsnOrOptions ...interface{}) RegistryOption`
+- `WithRetryOptions(options *RetryOptions) RegistryOption` — Set global retry options for all connections
 
 ### Service Connector
 
@@ -593,6 +654,17 @@ sform.RegisterConnection(
 - `WithMaxOpenConns(maxOpen int) ServiceConnectorOption`
 - `WithMaxIdleConns(maxIdle int) ServiceConnectorOption`
 - `WithMaxLifetime(maxLife int) ServiceConnectorOption`
+
+### RetryOptions struct
+
+```
+type RetryOptions struct {
+    MaxRetries     int           // Maximum number of retry attempts
+    InitialBackoff time.Duration // Initial waiting time between retries
+    MaxBackoff     time.Duration // Maximum waiting time between retries
+    BackoffFactor  float64       // Exponential backoff multiplier
+}
+```
 
 ## Implementation Notes
 

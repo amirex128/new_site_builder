@@ -169,6 +169,7 @@ type Registry struct {
 	connections   map[string]*Connection
 	globalOptions []DBOption
 	logger        Logger
+	retryOptions  *RetryOptions
 }
 
 // Connection represents a registered database connection
@@ -220,6 +221,13 @@ func WithConnectionDetails(name string, config ConnectionConfig, options ...DBOp
 	}
 }
 
+// WithRetryOptions adds retry options to the registry
+func WithRetryOptions(options *RetryOptions) RegistryOption {
+	return func(r *Registry) {
+		r.retryOptions = options
+	}
+}
+
 // =============================================================================
 // Connection Management
 // =============================================================================
@@ -234,6 +242,11 @@ func RegisterConnection(opts ...RegistryOption) error {
 		opt(globalRegistry)
 	}
 
+	// Set default retry options if not set
+	if globalRegistry.retryOptions == nil {
+		globalRegistry.retryOptions = DefaultRetryOptions()
+	}
+
 	// Start connections for all registered connections
 	for name := range globalRegistry.connections {
 		go connectWithRetry(name)
@@ -244,32 +257,23 @@ func RegisterConnection(opts ...RegistryOption) error {
 
 // connectWithRetry attempts to establish a connection with infinite retry
 func connectWithRetry(name string) {
-	retryInterval := 5 * time.Second
-
-	for {
-		// Check if we're still supposed to be connecting
+	operation := func() error {
 		globalRegistry.mu.RLock()
 		conn, exists := globalRegistry.connections[name]
-		if !exists || conn.db != nil {
-			globalRegistry.mu.RUnlock()
-			return
-		}
-
-		// Mark that we're connecting
-		if !conn.connecting {
-			globalRegistry.mu.RUnlock()
-			globalRegistry.mu.Lock()
-			conn.connecting = true
-			globalRegistry.mu.Unlock()
-			globalRegistry.mu.RLock()
-		}
 		globalRegistry.mu.RUnlock()
+		if !exists || conn.db != nil {
+			return nil // Already connected or removed
+		}
+		// Mark that we're connecting
+		globalRegistry.mu.Lock()
+		if !conn.connecting {
+			conn.connecting = true
+			globalRegistry.connections[name] = conn
+		}
+		globalRegistry.mu.Unlock()
 
-		// Try to connect
 		db, err := initializeConnection(name)
-
 		if err == nil && db != nil {
-			// Connection successful
 			globalRegistry.mu.Lock()
 			conn, stillExists := globalRegistry.connections[name]
 			if stillExists {
@@ -278,27 +282,22 @@ func connectWithRetry(name string) {
 				globalRegistry.connections[name] = conn
 			}
 			globalRegistry.mu.Unlock()
-
 			if globalRegistry.logger != nil {
 				extras := map[string]interface{}{
 					ExtraKey.Database.Table: name,
 				}
 				globalRegistry.logger.InfoWithCategory(Category.Database.Database, SubCategory.Status.Success, "Successfully connected to database", extras)
 			}
-			return
+			return nil
 		}
-
-		// Connection failed, wait and retry
-		if globalRegistry.logger != nil {
-			extras := map[string]interface{}{
-				ExtraKey.Database.Table:       name,
-				ExtraKey.Error.ErrorMessage:   err.Error(),
-				ExtraKey.Performance.Duration: retryInterval.String(),
-			}
-			globalRegistry.logger.ErrorWithCategory(Category.Database.Database, SubCategory.Status.Error, "Failed to connect to database", extras)
-		}
-		time.Sleep(retryInterval)
+		return err
 	}
+	_ = WithRetry(
+		operation,
+		globalRegistry.retryOptions,
+		globalRegistry.logger,
+		"connectWithRetry("+name+")",
+	)
 }
 
 // initializeConnection attempts to initialize a database connection
@@ -446,10 +445,7 @@ func GetConnection(name string) (*gorm.DB, error) {
 
 // MustDB returns a GORM DB instance or panics if it cannot be retrieved
 func MustDB(name string) *gorm.DB {
-	db, err := GetConnection(name)
-	if err != nil {
-		panic(err)
-	}
+	db, _ := GetConnection(name)
 	return db
 }
 

@@ -79,7 +79,32 @@ func NewVaultManager(config Config, log Logger) (configManager, error) {
 	}, nil
 }
 
-func (vm *vaultManager) Load(target interface{}) error {
+func (vm *vaultManager) Load(target interface{}) (err error) {
+	// Setup panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = fmt.Errorf("vault manager panic: %s", x)
+			case error:
+				err = fmt.Errorf("vault manager panic: %w", x)
+			default:
+				err = fmt.Errorf("vault manager panic: %v", x)
+			}
+
+			if vm.log != nil {
+				vm.log.ErrorWithCategory(
+					Category.System.General,
+					SubCategory.Status.Error,
+					"Recovered from panic in Vault manager",
+					map[string]interface{}{
+						"error": err.Error(),
+					},
+				)
+			}
+		}
+	}()
+
 	// Get all secrets from the specified path
 	secret, err := vm.client.Logical().Read(vm.config.SecretPath)
 	if err != nil {

@@ -3,6 +3,7 @@ package serviceprovider
 import (
 	"github.com/amirex128/new_site_builder/src/config"
 	"os"
+	"time"
 
 	sfconfigmanager "git.snappfood.ir/backend/go/packages/sf-config-manager"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
@@ -20,7 +21,12 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 	result, err := sfconfigmanager.RegisterConnection(
 		sfconfigmanager.WithConfig(cfg),
 		sfconfigmanager.WithLogger(logger),
-
+		sfconfigmanager.WithRetryOptions(&sfconfigmanager.RetryOptions{
+			MaxRetries:     5,                // Maximum number of retry attempts
+			InitialBackoff: time.Second,      // Initial waiting time between retries
+			MaxBackoff:     15 * time.Second, // Maximum waiting time between retries
+			BackoffFactor:  1.5,              // Exponential backoff multiplier
+		}),
 		// First try Vault
 		sfconfigmanager.WithVaultOptions(
 			"http://localhost:8200",
@@ -31,16 +37,16 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 			},
 		),
 
-		// Then try file configuration
-		//sfconfigmanager.WithFileOptions(
-		//	getConfigPath(os.Getenv("APP_ENV")),
-		//	&sfconfigmanager.FileOptions{
-		//		Type: "yml",
-		//	},
-		//),
+		//Then try file configuration
+		sfconfigmanager.WithFileOptions(
+			getConfigPath(os.Getenv("APP_ENV")),
+			&sfconfigmanager.FileOptions{
+				Type: "yml",
+			},
+		),
 
-		// Finally try environment variables
-		//sfconfigmanager.WithEnvOptions(nil),
+		//Finally try environment variables
+		sfconfigmanager.WithEnvOptions(nil),
 	)
 
 	if err != nil {

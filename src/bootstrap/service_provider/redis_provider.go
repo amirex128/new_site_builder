@@ -6,10 +6,17 @@ import (
 	sfredis "git.snappfood.ir/backend/go/packages/sf-redis"
 	"github.com/amirex128/new_site_builder/src/config"
 	"log"
+	"time"
 )
 
 func RedisProvider(cfg *config.Config, logger sflogger.Logger) {
 	err := sfredis.RegisterConnection(
+		sfredis.WithRetryOptions(&sfredis.RetryOptions{
+			MaxRetries:     5,
+			InitialBackoff: time.Second,
+			MaxBackoff:     15 * time.Second,
+			BackoffFactor:  1.5,
+		}),
 		sfredis.WithGlobalOptions(func(options *sfredis.Options) {
 			options.PoolSize = 20
 			options.MinIdleConns = 5

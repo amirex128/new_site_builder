@@ -75,7 +75,33 @@ func NewEtcdManager(config Config, log Logger) (configManager, error) {
 	}, nil
 }
 
-func (em *etcdManager) Load(target interface{}) error {
+func (em *etcdManager) Load(target interface{}) (err error) {
+	// Setup panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = fmt.Errorf("etcd manager panic: %s", x)
+			case error:
+				err = fmt.Errorf("etcd manager panic: %w", x)
+			default:
+				err = fmt.Errorf("etcd manager panic: %v", x)
+			}
+
+			if em.log != nil {
+				em.log.ErrorWithCategory(
+					Category.System.General,
+					SubCategory.Status.Error,
+					"Recovered from panic in etcd manager",
+					map[string]interface{}{
+						"error":     err.Error(),
+						"endpoints": fmt.Sprintf("%v", em.config.Endpoints),
+					},
+				)
+			}
+		}
+	}()
+
 	ctx, cancel := context.WithTimeout(context.Background(), em.config.Timeout)
 	defer cancel()
 

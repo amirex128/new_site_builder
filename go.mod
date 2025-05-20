@@ -3,15 +3,13 @@ module github.com/amirex128/new_site_builder
 go 1.24.2
 
 require (
-	git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.4
-	git.snappfood.ir/backend/go/packages/sf-elasticsearch-client v0.0.5
+	git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.5
 	git.snappfood.ir/backend/go/packages/sf-logger v0.0.21
 	git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.2
-	git.snappfood.ir/backend/go/packages/sf-orm v0.0.4
+	git.snappfood.ir/backend/go/packages/sf-orm v0.0.6
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.3
-	git.snappfood.ir/backend/go/packages/sf-redis v0.0.4
+	git.snappfood.ir/backend/go/packages/sf-redis v0.0.5
 	git.snappfood.ir/backend/go/packages/sf-routing v0.0.9
-	github.com/elastic/go-elasticsearch/v8 v8.17.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-zookeeper/zk v1.0.4
@@ -39,7 +37,6 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/elastic/elastic-transport-go/v8 v8.6.1 // indirect
 	github.com/elastic/go-sysinfo v1.15.3 // indirect
 	github.com/elastic/go-windows v1.0.2 // indirect
 	github.com/fatih/color v1.16.0 // indirect
@@ -49,8 +46,6 @@ require (
 	github.com/go-co-op/gocron/v2 v2.16.1 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.1 // indirect
-	github.com/go-logr/logr v1.4.2 // indirect
-	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.21.1 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
@@ -104,6 +99,7 @@ require (
 	github.com/prometheus/procfs v0.16.0 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
+	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
@@ -125,10 +121,6 @@ require (
 	go.etcd.io/etcd/api/v3 v3.5.21 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
-	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/otel v1.34.0 // indirect
-	go.opentelemetry.io/otel/metric v1.34.0 // indirect
-	go.opentelemetry.io/otel/trace v1.34.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.17.0 // indirect

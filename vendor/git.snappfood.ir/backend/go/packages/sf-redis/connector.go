@@ -30,7 +30,7 @@ type ServiceConnector struct {
 	logger  Logger
 }
 
-// RegisterConnection implements the serviceregistry.ServiceConnector interface
+// Accepts RegistryOption (including WithRetryOptions) and ServiceConnectorOption
 func (c *ServiceConnector) RegisterConnection(opts ...interface{}) error {
 	// Initialize connection parameters
 	params := &connectionParams{}

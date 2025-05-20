@@ -34,7 +34,32 @@ func NewEnvManager(config Config, log Logger) (configManager, error) {
 	}, nil
 }
 
-func (em *envManager) Load(target interface{}) error {
+func (em *envManager) Load(target interface{}) (err error) {
+	// Setup panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = fmt.Errorf("environment manager panic: %s", x)
+			case error:
+				err = fmt.Errorf("environment manager panic: %w", x)
+			default:
+				err = fmt.Errorf("environment manager panic: %v", x)
+			}
+
+			if em.log != nil {
+				em.log.ErrorWithCategory(
+					Category.System.General,
+					SubCategory.Status.Error,
+					"Recovered from panic in Environment manager",
+					map[string]interface{}{
+						"error": err.Error(),
+					},
+				)
+			}
+		}
+	}()
+
 	// Get all environment variables
 	envVars := make(map[string]interface{})
 

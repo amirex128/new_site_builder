@@ -37,21 +37,47 @@ type OperationContext struct {
 // MustClient creates a new SfRedis client for the named connection
 func MustClient(ctx context.Context, name string) *SfRedis {
 	client, err := getConnection(name)
-	if err != nil {
-		panic(err)
-	}
-
-	// Get the logger from global registry if available
 	var logger Logger
 	globalRegistry.mu.RLock()
 	logger = globalRegistry.logger
 	globalRegistry.mu.RUnlock()
-
+	if err != nil {
+		if logger != nil {
+			logger.ErrorWithCategory(Category.Database.Database, SubCategory.Status.Error, "Failed to get connection in MustClient", map[string]interface{}{
+				"connection_name": name,
+				"error":           err.Error(),
+			})
+		}
+		return nil
+	}
 	return &SfRedis{
 		client: client,
 		ctx:    ctx,
 		logger: logger,
 	}
+}
+
+// SafeClient returns a SfRedis client or error for the named connection
+func SafeClient(ctx context.Context, name string) (*SfRedis, error) {
+	client, err := getConnection(name)
+	var logger Logger
+	globalRegistry.mu.RLock()
+	logger = globalRegistry.logger
+	globalRegistry.mu.RUnlock()
+	if err != nil {
+		if logger != nil {
+			logger.ErrorWithCategory(Category.Database.Database, SubCategory.Status.Error, "Failed to get connection in SafeClient", map[string]interface{}{
+				"connection_name": name,
+				"error":           err.Error(),
+			})
+		}
+		return nil, err
+	}
+	return &SfRedis{
+		client: client,
+		ctx:    ctx,
+		logger: logger,
+	}, nil
 }
 
 // =============================================================================

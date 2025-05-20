@@ -68,7 +68,33 @@ func NewConsulManager(config Config, log Logger) (configManager, error) {
 	}, nil
 }
 
-func (cm *consulManager) Load(target interface{}) error {
+func (cm *consulManager) Load(target interface{}) (err error) {
+	// Setup panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = fmt.Errorf("consul manager panic: %s", x)
+			case error:
+				err = fmt.Errorf("consul manager panic: %w", x)
+			default:
+				err = fmt.Errorf("consul manager panic: %v", x)
+			}
+
+			if cm.log != nil {
+				cm.log.ErrorWithCategory(
+					Category.System.General,
+					SubCategory.Status.Error,
+					"Recovered from panic in Consul manager",
+					map[string]interface{}{
+						"error":   err.Error(),
+						"address": cm.config.Address,
+					},
+				)
+			}
+		}
+	}()
+
 	// Get all keys from Consul KV store with the specified prefix
 	kv := cm.client.KV()
 	pairs, _, err := kv.List(cm.config.Prefix, nil)

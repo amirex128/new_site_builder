@@ -15,6 +15,7 @@ The `sfconfigmanager` package provides a flexible configuration system for Go ap
 - **Fallback Support**: Define priority order for configuration sources
 - **Type Conversion**: Built-in helpers for retrieving config values
 - **Struct Binding**: Load configuration directly into Go structs
+- **Retry Mechanism**: Built-in retry with exponential backoff for resilient configuration loading
 
 ## Installation
 
@@ -108,6 +109,34 @@ config, err := sfconfigmanager.RegisterConnection(
 	sfconfigmanager.WithFileOptions("config.json", nil),
 )
 ```
+
+### Configuring Retry Behavior
+
+You can configure the retry behavior for connection attempts to each configuration source:
+
+```go
+config, err := sfconfigmanager.RegisterConnection(
+	sfconfigmanager.WithConfig(config),
+	// Configure retry options
+	sfconfigmanager.WithRetryOptions(&sfconfigmanager.RetryOptions{
+		MaxRetries:     5,            // Maximum number of retry attempts
+		InitialBackoff: time.Second,  // Initial waiting time between retries
+		MaxBackoff:     15 * time.Second, // Maximum waiting time between retries
+		BackoffFactor:  1.5,         // Exponential backoff multiplier
+	}),
+	// Now define your configuration sources
+	sfconfigmanager.WithVaultOptions("http://vault:8200", "vault-token", nil),
+	sfconfigmanager.WithFileOptions("config.json", nil),
+)
+```
+
+If no retry options are provided, the system uses the following defaults:
+- 3 maximum retries
+- 500ms initial backoff
+- 10s maximum backoff
+- 2.0 backoff factor (doubles the wait time after each failure)
+
+Each configuration provider will be retried according to the specified options before moving on to the next provider in the fallback chain.
 
 ### Available Configuration Options
 

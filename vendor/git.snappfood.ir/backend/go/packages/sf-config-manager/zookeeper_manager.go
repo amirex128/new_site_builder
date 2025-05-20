@@ -105,7 +105,33 @@ func (zm *zookeeperManager) getChildren(path string) (map[string]interface{}, er
 	return result, nil
 }
 
-func (zm *zookeeperManager) Load(target interface{}) error {
+func (zm *zookeeperManager) Load(target interface{}) (err error) {
+	// Setup panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = fmt.Errorf("zookeeper manager panic: %s", x)
+			case error:
+				err = fmt.Errorf("zookeeper manager panic: %w", x)
+			default:
+				err = fmt.Errorf("zookeeper manager panic: %v", x)
+			}
+
+			if zm.log != nil {
+				zm.log.ErrorWithCategory(
+					Category.System.General,
+					SubCategory.Status.Error,
+					"Recovered from panic in ZooKeeper manager",
+					map[string]interface{}{
+						"error":   err.Error(),
+						"servers": fmt.Sprintf("%v", zm.config.Servers),
+					},
+				)
+			}
+		}
+	}()
+
 	// Get all keys recursively from the base path
 	data, err := zm.getChildren(zm.config.BasePath)
 	if err != nil {

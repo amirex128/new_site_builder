@@ -41,9 +41,10 @@ type connectionDetails struct {
 
 // configLoader represents the main configuration loader
 type configLoader struct {
-	managers []configManager
-	log      Logger
-	config   interface{}
+	managers     []configManager
+	log          Logger
+	config       interface{}
+	retryOptions *RetryOptions
 }
 
 // configManager defines the interface for configuration manager operations
@@ -92,17 +93,33 @@ func RegisterConnection(options ...ConfigOption) (interface{}, error) {
 		return nil, fmt.Errorf("no configuration struct provided")
 	}
 
+	// If no retry options were provided, use defaults
+	if loader.retryOptions == nil {
+		loader.retryOptions = DefaultRetryOptions()
+	}
+
 	// Try to load from each manager in order
 	var lastErr error
 	for _, manager := range loader.managers {
-		err := manager.Load(loader.config)
+		// Create a load operation wrapped with retry logic
+		operationName := fmt.Sprintf("load configuration from %T", manager)
+
+		err := WithRetry(
+			func() error {
+				return manager.Load(loader.config)
+			},
+			loader.retryOptions,
+			loader.log,
+			operationName,
+		)
+
 		if err != nil {
 			lastErr = err
 			if loader.log != nil {
 				extraMap := map[string]interface{}{
 					"error": err.Error(),
 				}
-				loader.log.WarnWithCategory(Category.System.General, SubCategory.Operation.Startup, "Failed to load from manager", extraMap)
+				loader.log.WarnWithCategory(Category.System.General, SubCategory.Operation.Startup, "Failed to load from manager after retries", extraMap)
 			}
 			continue
 		}
@@ -603,3 +620,19 @@ func setConfigFields(target interface{}, data map[string]interface{}, log Logger
 
 // Config is a type conversion helper
 type Config config
+
+// WithRetryOptions sets the retry options for all configuration managers
+func WithRetryOptions(options *RetryOptions) ConfigOption {
+	return func(loader *configLoader) {
+		loader.retryOptions = options
+		if loader.log != nil {
+			extraMap := map[string]interface{}{
+				"maxRetries":     options.MaxRetries,
+				"initialBackoff": options.InitialBackoff.String(),
+				"maxBackoff":     options.MaxBackoff.String(),
+				"backoffFactor":  options.BackoffFactor,
+			}
+			loader.log.InfoWithCategory(Category.System.General, SubCategory.Operation.Configuration, "Retry options configured", extraMap)
+		}
+	}
+}

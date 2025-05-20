@@ -7,7 +7,7 @@ A resilient Redis connection registry for Go.
 
 This library provides a registry for managing multiple Redis connections in Go applications:
 
-- **Resilient Connection Management**: Automatic retry and reconnection
+- **Resilient Connection Management**: Automatic retry and reconnection with exponential backoff, panic recovery, and structured logging
 - **Multiple Redis Support**: Connect to multiple Redis instances
 - **Service Registry Integration**: Works with SF Service Registry
 - **Health Checks**: Comprehensive health check functionality
@@ -17,6 +17,7 @@ This library provides a registry for managing multiple Redis connections in Go a
 
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Retry Options & Resilience](#retry-options--resilience)
 - [Connection Registry](#connection-registry)
 - [Service Connector](#service-connector)
 - [Health Checks](#health-checks)
@@ -32,18 +33,13 @@ This library provides a registry for managing multiple Redis connections in Go a
 go get git.snappfood.ir/backend/go/packages/sf-redis
 ```
 
-## Connection Registry
-The connection registry is the core of SF-Redis. It allows you to register Redis connections by name in one place (typically in main.go), then reuse them throughout your application without creating new connections each time.
-
-
-### Quick Start
+## Quick Start
 
 ```go
 package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -51,15 +47,20 @@ import (
 )
 
 func main() {
-	// Register your Redis connections with meaningful names and options
 	ctx := context.Background()
 
-	// Register SfRedis connections with meaningful names and options
+	// Register SfRedis connections with retry options for resilience
 	err := sfredis.RegisterConnection(
 		sfredis.WithGlobalOptions(func(options *sfredis.Options) {
 			options.PoolSize = 20
 			options.MinIdleConns = 5
 			options.MaxRetries = 3
+		}),
+		sfredis.WithRetryOptions(&sfredis.RetryOptions{
+			MaxRetries:     5,
+			InitialBackoff: time.Second,
+			MaxBackoff:     15 * time.Second,
+			BackoffFactor:  1.5,
 		}),
 		sfredis.WithConnectionDetails("cache", "localhost:6379", "", 0),
 		sfredis.WithConnectionDetails("session", "localhost:6380", "password", 1),
@@ -75,21 +76,54 @@ func main() {
 
 	cacheClient.Set(ctx, "key1", "value1", time.Hour)
 	value, err := cacheClient.Get(ctx, "key1")
-    if err != nil {
+	if err != nil {
 		log.Printf("Get failed: %v\n", err)
 	}
-
 
 	// Close all connections when application exits
 	defer sfredis.CloseConnections()
 }
-
 ```
 
+## Retry Options & Resilience
+
+SF-Redis provides a robust retry mechanism for all connection attempts to external data sources. This includes:
+
+- **Exponential Backoff**: Retry intervals increase exponentially up to a maximum.
+- **Panic Recovery**: All panics during connection attempts are caught and logged as errors, preventing application crashes.
+- **Structured Logging**: All retry attempts, successes, failures, and panics are logged with categories and extra context.
+
+You can configure retry behavior globally for all connections using `WithRetryOptions`:
+
+```go
+sfredis.WithRetryOptions(&sfredis.RetryOptions{
+	MaxRetries:     5,                // Maximum number of retry attempts
+	InitialBackoff: time.Second,      // Initial waiting time between retries
+	MaxBackoff:     15 * time.Second, // Maximum waiting time between retries
+	BackoffFactor:  1.5,              // Exponential backoff multiplier
+})
+```
+
+**Example:**
+
+```go
+err := sfredis.RegisterConnection(
+	sfredis.WithRetryOptions(&sfredis.RetryOptions{
+		MaxRetries:     5,
+		InitialBackoff: time.Second,
+		MaxBackoff:     15 * time.Second,
+		BackoffFactor:  1.5,
+	}),
+	// ... other options ...
+)
+```
+
+## Connection Registry
+The connection registry is the core of SF-Redis. It allows you to register Redis connections by name in one place (typically in main.go), then reuse them throughout your application without creating new connections each time.
 
 ## Service Connector
 
-SF-Redis provides a ServiceConnector that implements the serviceregistry.ServiceConnector interface, making it easy to integrate with the SF Service Registry.
+SF-Redis provides a ServiceConnector that implements the serviceregistry.ServiceConnector interface, making it easy to integrate with the SF Service Registry. You can also pass retry options through the connector:
 
 ```go
 package main
@@ -97,6 +131,7 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	"git.snappfood.ir/backend/go/packages/sf-service-registry"
 	sfredis "git.snappfood.ir/backend/go/packages/sf-redis"
@@ -104,10 +139,8 @@ import (
 
 func main() {
 	ctx := context.Background()
-	// Get the connector from sf-redis
 	connector := sfredis.GetConnector()
 
-	// Register services with the service registry
 	err := serviceregistry.RegisterServices(
 		nil,       // No MySQL
 		connector, // Redis
@@ -119,9 +152,21 @@ func main() {
 		log.Fatalf("Failed to register services: %v", err)
 	}
 
-	// Now you can use the Redis connections
-	cacheClient := sfredis.MustClient(ctx, "cache")
+	// Register connections with retry options
+	err = connector.RegisterConnection(
+		sfredis.WithRetryOptions(&sfredis.RetryOptions{
+			MaxRetries:     5,
+			InitialBackoff: time.Second,
+			MaxBackoff:     15 * time.Second,
+			BackoffFactor:  1.5,
+		}),
+		// ... other options ...
+	)
+	if err != nil {
+		log.Fatalf("Failed to register SfRedis connections: %v", err)
+	}
 
+	cacheClient := sfredis.MustClient(ctx, "cache")
 	// Use the connection...
 }
 ```
@@ -217,6 +262,7 @@ func main() {
 - **Health Checks** - Comprehensive health check functionality
 - **Service Registry Integration** - Works with SF Service Registry
 - **Application Performance Monitoring (APM) integration**
+- **Resilient Retry System** - Exponential backoff, panic recovery, and structured logging for all connection attempts
 
 ## SfRedis custom Operations
 
@@ -256,7 +302,8 @@ sf_redis.RegisterConnection(
 ### Connection Registration and Management
 
 - `RegisterConnection(opts ...RegistryOption) error`
-- `MustClient(name string) *SfRedis`
+- `MustClient(ctx context.Context, name string) *SfRedis` (returns nil and logs error if connection fails)
+- `SafeClient(ctx context.Context, name string) (*SfRedis, error)`
 - `CloseConnection(name string) error`
 - `CloseConnections()`
 - `Health(ctx context.Context) error`
@@ -266,16 +313,32 @@ sf_redis.RegisterConnection(
 - `GetConnector() *ServiceConnector`
 - `ServiceConnector.WithOptions(opts ...RegistryOption) *ServiceConnector`
 - `ServiceConnector.Health(ctx context.Context) error`
+- `ServiceConnector.RegisterConnection(opts ...interface{}) error` (supports WithRetryOptions)
 
 ### Options
 
 - `WithLogger(logger Logger) RegistryOption`
 - `WithGlobalOptions(options ...RedisOption) RegistryOption`
 - `WithConnectionDetails(name, addr, password string, db int, options ...RedisOption) RegistryOption`
+- `WithRetryOptions(options *RetryOptions) RegistryOption`
+
+#### RetryOptions struct
+
+```go
+type RetryOptions struct {
+	MaxRetries     int           // Maximum number of retry attempts
+	InitialBackoff time.Duration // Starting backoff duration
+	MaxBackoff     time.Duration // Maximum backoff duration
+	BackoffFactor  float64       // Multiplier for each subsequent retry
+}
+```
 
 ## Implementation Notes
 
-The library uses the `github.com/go-redis/redis/v8` package for Redis operations.
+- The retry system is implemented with exponential backoff and panic recovery for all connection attempts.
+- All panics during connection attempts are caught and logged as errors, preventing application crashes.
+- All retry attempts, successes, failures, and panics are logged using the provided logger and categories.
+- The library uses the `github.com/go-redis/redis/v8` package for Redis operations.
 
 ### Configuration
 

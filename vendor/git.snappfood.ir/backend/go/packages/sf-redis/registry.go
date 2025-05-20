@@ -27,6 +27,7 @@ type Registry struct {
 	connections   map[string]*Connection
 	globalOptions []RedisOption
 	logger        Logger
+	retryOptions  *RetryOptions
 }
 
 // Connection represents a registered SfRedis connection
@@ -84,6 +85,13 @@ func WithConnectionDetails(name, addr, password string, db int, options ...Redis
 	}
 }
 
+// WithRetryOptions sets custom retry options for the registry
+func WithRetryOptions(options *RetryOptions) RegistryOption {
+	return func(r *Registry) {
+		r.retryOptions = options
+	}
+}
+
 // =============================================================================
 // Connection Management
 // =============================================================================
@@ -108,59 +116,58 @@ func RegisterConnection(opts ...RegistryOption) error {
 
 // connectWithRetry attempts to establish a connection with infinite retry
 func connectWithRetry(name string) {
-	retryInterval := 5 * time.Second
+	globalRegistry.mu.RLock()
+	logger := globalRegistry.logger
+	retryOptions := globalRegistry.retryOptions
+	globalRegistry.mu.RUnlock()
 
-	for {
-		// Check if we're still supposed to be connecting
-		globalRegistry.mu.RLock()
-		conn, exists := globalRegistry.connections[name]
-		if !exists || conn.client != nil {
-			globalRegistry.mu.RUnlock()
-			return
-		}
+	if retryOptions == nil {
+		retryOptions = DefaultRetryOptions()
+	}
 
-		// Mark that we're connecting
-		if !conn.connecting {
-			globalRegistry.mu.RUnlock()
-			globalRegistry.mu.Lock()
-			conn.connecting = true
-			globalRegistry.mu.Unlock()
+	WithRetry(
+		func() error {
 			globalRegistry.mu.RLock()
-		}
-		globalRegistry.mu.RUnlock()
+			conn, exists := globalRegistry.connections[name]
+			globalRegistry.mu.RUnlock()
+			if !exists || conn.client != nil {
+				return nil // Already connected or removed
+			}
 
-		// Try to connect
-		client, err := initializeConnection(name)
-
-		if err == nil && client != nil {
-			// Connection successful
+			// Mark that we're connecting
 			globalRegistry.mu.Lock()
 			conn, stillExists := globalRegistry.connections[name]
-			if stillExists {
-				conn.client = client
-				conn.connecting = false
+			if stillExists && !conn.connecting {
+				conn.connecting = true
 				globalRegistry.connections[name] = conn
 			}
 			globalRegistry.mu.Unlock()
 
-			if globalRegistry.logger != nil {
-				globalRegistry.logger.InfoWithCategory(Category.Database.Database, Category.System.Startup, "Successfully connected to SfRedis", map[string]interface{}{
-					"connection_name": name,
-				})
-			}
-			return
-		}
+			client, err := initializeConnection(name)
+			if err == nil && client != nil {
+				globalRegistry.mu.Lock()
+				conn, stillExists := globalRegistry.connections[name]
+				if stillExists {
+					conn.client = client
+					conn.connecting = false
+					globalRegistry.connections[name] = conn
+				}
+				globalRegistry.mu.Unlock()
 
-		// Connection failed, wait and retry
-		if globalRegistry.logger != nil {
-			globalRegistry.logger.ErrorWithCategory(Category.Database.Database, Category.Error.Error, "Failed to connect to SfRedis", map[string]interface{}{
-				"connection_name": name,
-				"error":           err.Error(),
-				"retry_interval":  retryInterval.String(),
-			})
-		}
-		time.Sleep(retryInterval)
-	}
+				if logger != nil {
+					logger.InfoWithCategory(Category.Database.Database, SubCategory.Status.Success, "Successfully connected to SfRedis", map[string]interface{}{
+						"connection_name": name,
+					})
+				}
+				return nil
+			}
+
+			return fmt.Errorf("failed to connect to Redis: %w", err)
+		},
+		retryOptions,
+		logger,
+		"connectWithRetry",
+	)
 }
 
 // applyOptions applies the given options to a Redis client

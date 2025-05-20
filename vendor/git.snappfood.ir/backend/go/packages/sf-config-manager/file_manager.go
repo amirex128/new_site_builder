@@ -119,7 +119,33 @@ func (fm *fileManager) loadFile() error {
 }
 
 // Load configuration data from the file
-func (fm *fileManager) Load(target interface{}) error {
+func (fm *fileManager) Load(target interface{}) (err error) {
+	// Setup panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			switch x := r.(type) {
+			case string:
+				err = fmt.Errorf("file manager panic: %s", x)
+			case error:
+				err = fmt.Errorf("file manager panic: %w", x)
+			default:
+				err = fmt.Errorf("file manager panic: %v", x)
+			}
+
+			if fm.log != nil {
+				fm.log.ErrorWithCategory(
+					Category.System.General,
+					SubCategory.Status.Error,
+					"Recovered from panic in File manager",
+					map[string]interface{}{
+						"error": err.Error(),
+						"path":  fm.config.Path,
+					},
+				)
+			}
+		}
+	}()
+
 	fm.log.InfoWithCategory(Category.System.General, SubCategory.Operation.Startup, "Loading configuration from file", map[string]interface{}{
 		"path": fm.config.Path,
 		"type": fm.config.Type,

@@ -16,6 +16,12 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 	// Register your database connections with meaningful names and options
 	err := sform.RegisterConnection(
 		sform.WithLogger(logger),
+		sform.WithRetryOptions(&sform.RetryOptions{
+			MaxRetries:     5,
+			InitialBackoff: time.Second,
+			MaxBackoff:     15 * time.Second,
+			BackoffFactor:  1.5,
+		}),
 		sform.WithGlobalOptions(func(db *gorm.DB) {
 			db.Debug()
 			err := db.AutoMigrate(
