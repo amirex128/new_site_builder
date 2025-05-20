@@ -3,9 +3,10 @@ package headerfooterusecase
 import (
 	"encoding/json"
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -70,7 +71,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 		Title:     *params.Title,
 		IsMain:    *params.IsMain,
 		Body:      string(bodyJSON),
-		Type:      int(*params.Type),
+		Type:      string(*params.Type),
 		UserID:    userID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -135,7 +136,7 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 	// Update fields
 	existingHeaderFooter.SiteID = *params.SiteID
 	existingHeaderFooter.IsMain = *params.IsMain
-	existingHeaderFooter.Type = int(*params.Type)
+	existingHeaderFooter.Type = string(*params.Type)
 
 	if params.Title != nil {
 		existingHeaderFooter.Title = *params.Title
@@ -228,7 +229,7 @@ func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.Get
 		}
 
 		// Check if type matches if specified
-		if params.Type != nil && headerFooter.Type != int(*params.Type) {
+		if params.Type != nil && headerFooter.Type != string(*params.Type) {
 			return nil, errors.New("نوع هدر/فوتر مطابقت ندارد")
 		}
 
@@ -269,7 +270,7 @@ func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetA
 	if params.Type != nil {
 		var filteredHeaderFooters []domain.HeaderFooter
 		for _, hf := range headerFooters {
-			if hf.Type == int(*params.Type) {
+			if hf.Type == string(*params.Type) {
 				filteredHeaderFooters = append(filteredHeaderFooters, hf)
 			}
 		}

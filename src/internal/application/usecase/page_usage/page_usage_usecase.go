@@ -2,6 +2,7 @@ package pageusageusecase
 
 import (
 	"errors"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
@@ -88,7 +89,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 
 	// Handle different types of usages
 	switch *params.Type {
-	case page_usage.Article:
+	case page_usage.ArticleUsage:
 		// Delete existing usages
 		err = u.pageArticleUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -121,7 +122,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 			}
 		}
 
-	case page_usage.Product:
+	case page_usage.ProductUsage:
 		// Delete existing usages
 		err = u.pageProductUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -154,7 +155,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 			}
 		}
 
-	case page_usage.HeaderFooter:
+	case page_usage.HeaderFooterUsage:
 		// Delete existing usages
 		err = u.pageHeaderFooterUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -214,7 +215,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 	// Find usages based on type
 	switch *params.Type {
-	case page_usage.Article:
+	case page_usage.ArticleUsage:
 		usages, err := u.pageArticleUsageRepo.GetByArticleIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err
@@ -242,7 +243,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 		return enhancePageUsageResponse(pages), nil
 
-	case page_usage.Product:
+	case page_usage.ProductUsage:
 		usages, err := u.pageProductUsageRepo.GetByProductIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err
@@ -270,7 +271,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 		return enhancePageUsageResponse(pages), nil
 
-	case page_usage.HeaderFooter:
+	case page_usage.HeaderFooterUsage:
 		usages, err := u.pageHeaderFooterUsageRepo.GetByHeaderFooterIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err

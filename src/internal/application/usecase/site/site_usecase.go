@@ -2,11 +2,12 @@ package siteusecase
 
 import (
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/gin-gonic/gin"
-	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/site"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -53,9 +54,16 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 	}
 
 	// Convert enum values to strings
-	domainType := getDomainTypeString(*params.DomainType)
-	siteType := getSiteTypeString(*params.SiteType)
-	status := getStatusString(*params.Status)
+	var domainType, siteType, status string
+	if params.DomainType != nil {
+		domainType = string(*params.DomainType)
+	}
+	if params.SiteType != nil {
+		siteType = string(*params.SiteType)
+	}
+	if params.Status != nil {
+		status = string(*params.Status)
+	}
 
 	// Create the Site entity
 	site := domain.Site{
@@ -149,7 +157,7 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 
 	// Update domain type if provided
 	if params.DomainType != nil {
-		existingSite.DomainType = getDomainTypeString(*params.DomainType)
+		existingSite.DomainType = string(*params.DomainType)
 	}
 
 	// Update name if provided
@@ -159,12 +167,12 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 
 	// Update status if provided
 	if params.Status != nil {
-		existingSite.Status = getStatusString(*params.Status)
+		existingSite.Status = string(*params.Status)
 	}
 
 	// Update site type if provided
 	if params.SiteType != nil {
-		existingSite.SiteType = getSiteTypeString(*params.SiteType)
+		existingSite.SiteType = string(*params.SiteType)
 	}
 
 	existingSite.UpdatedAt = time.Now()
@@ -359,9 +367,9 @@ func enhanceSiteResponse(site domain.Site) map[string]interface{} {
 
 func getDomainTypeString(domainType site.DomainTypeEnum) string {
 	switch domainType {
-	case site.Domain:
+	case site.DomainType:
 		return "Domain"
-	case site.Subdomain:
+	case site.SubdomainType:
 		return "Subdomain"
 	default:
 		return "Domain"
@@ -371,21 +379,21 @@ func getDomainTypeString(domainType site.DomainTypeEnum) string {
 func getDomainTypeEnum(domainType string) site.DomainTypeEnum {
 	switch domainType {
 	case "Domain":
-		return site.Domain
+		return site.DomainType
 	case "Subdomain":
-		return site.Subdomain
+		return site.SubdomainType
 	default:
-		return site.Domain
+		return site.DomainType
 	}
 }
 
 func getSiteTypeString(siteType site.SiteTypeEnum) string {
 	switch siteType {
-	case site.Shop:
+	case site.ShopType:
 		return "Shop"
-	case site.Blog:
+	case site.BlogType:
 		return "Blog"
-	case site.Business:
+	case site.BusinessType:
 		return "Business"
 	default:
 		return "Shop"
@@ -395,25 +403,25 @@ func getSiteTypeString(siteType site.SiteTypeEnum) string {
 func getSiteTypeEnum(siteType string) site.SiteTypeEnum {
 	switch siteType {
 	case "Shop":
-		return site.Shop
+		return site.ShopType
 	case "Blog":
-		return site.Blog
+		return site.BlogType
 	case "Business":
-		return site.Business
+		return site.BusinessType
 	default:
-		return site.Shop
+		return site.ShopType
 	}
 }
 
 func getStatusString(status site.StatusEnum) string {
 	switch status {
-	case site.Active:
+	case site.ActiveStatus:
 		return "Active"
-	case site.Inactive:
+	case site.InactiveStatus:
 		return "Inactive"
-	case site.Pending:
+	case site.PendingStatus:
 		return "Pending"
-	case site.Deleted:
+	case site.DeletedStatus:
 		return "Deleted"
 	default:
 		return "Active"
@@ -423,14 +431,14 @@ func getStatusString(status site.StatusEnum) string {
 func getStatusEnum(status string) site.StatusEnum {
 	switch status {
 	case "Active":
-		return site.Active
+		return site.ActiveStatus
 	case "Inactive":
-		return site.Inactive
+		return site.InactiveStatus
 	case "Pending":
-		return site.Pending
+		return site.PendingStatus
 	case "Deleted":
-		return site.Deleted
+		return site.DeletedStatus
 	default:
-		return site.Active
+		return site.ActiveStatus
 	}
 }

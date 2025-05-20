@@ -2,12 +2,13 @@ package productusecase
 
 import (
 	"errors"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
@@ -75,7 +76,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 
 	// Convert status enum to string
-	statusStr := strconv.Itoa(int(*params.Status))
+	statusStr := string(*params.Status)
 
 	// Create product entity
 	newProduct := domain.Product{
@@ -132,7 +133,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 			attr := domain.ProductAttribute{
 				Name:      *attrDTO.Name,
 				Value:     *attrDTO.Value,
-				Type:      strconv.Itoa(int(*attrDTO.Type)),
+				Type:      string(*attrDTO.Type),
 				ProductID: newProduct.ID,
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
@@ -152,7 +153,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	if params.Coupon != nil {
 		coupon := domain.Coupon{
 			Quantity:   *params.Coupon.Quantity,
-			Type:       strconv.Itoa(int(*params.Coupon.Type)),
+			Type:       string(*params.Coupon.Type),
 			Value:      *params.Coupon.Value,
 			ExpiryDate: *params.Coupon.ExpiryDate,
 			ProductID:  newProduct.ID,
@@ -262,7 +263,7 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	}
 
 	if params.Status != nil {
-		existingProduct.Status = strconv.Itoa(int(*params.Status))
+		existingProduct.Status = string(*params.Status)
 	}
 
 	if params.Weight != nil {
@@ -479,7 +480,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 		// Process all filter types
 		for filterType, values := range params.SelectedFilters {
 			switch filterType {
-			case product.PriceRange:
+			case "price_range":
 				if len(values) == 2 {
 					minPrice, errMin := strconv.ParseInt(values[0], 10, 64)
 					maxPrice, errMax := strconv.ParseInt(values[1], 10, 64)
@@ -487,7 +488,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addPriceRangeFilter(minPrice, maxPrice)
 					}
 				}
-			case product.RatingRange:
+			case "rating_range":
 				if len(values) == 2 {
 					minRating, errMin := strconv.Atoi(values[0])
 					maxRating, errMax := strconv.Atoi(values[1])
@@ -495,7 +496,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addRatingRangeFilter(minRating, maxRating)
 					}
 				}
-			case product.SellingRange:
+			case "selling_range":
 				if len(values) == 2 {
 					minSelling, errMin := strconv.Atoi(values[0])
 					maxSelling, errMax := strconv.Atoi(values[1])
@@ -503,7 +504,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addSellingRangeFilter(minSelling, maxSelling)
 					}
 				}
-			case product.VisitedRange:
+			case "visited_range":
 				if len(values) == 2 {
 					minVisited, errMin := strconv.Atoi(values[0])
 					maxVisited, errMax := strconv.Atoi(values[1])
@@ -511,7 +512,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addVisitedRangeFilter(minVisited, maxVisited)
 					}
 				}
-			case product.ReviewRange:
+			case "review_range":
 				if len(values) == 2 {
 					minReview, errMin := strconv.Atoi(values[0])
 					maxReview, errMax := strconv.Atoi(values[1])
@@ -519,7 +520,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addReviewRangeFilter(minReview, maxReview)
 					}
 				}
-			case product.WeightRange:
+			case "weight_range":
 				if len(values) == 2 {
 					minWeight, errMin := strconv.Atoi(values[0])
 					maxWeight, errMax := strconv.Atoi(values[1])
@@ -527,7 +528,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addWeightRangeFilter(minWeight, maxWeight)
 					}
 				}
-			case product.CategoryIds:
+			case "category_ids":
 				if len(values) > 0 {
 					var categoryIDs []int64
 					for _, val := range values {
@@ -540,7 +541,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addCategoryIDsFilter(categoryIDs)
 					}
 				}
-			case product.ProductIds:
+			case "product_ids":
 				if len(values) > 0 {
 					var productIDs []int64
 					for _, val := range values {
@@ -553,14 +554,14 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addProductIDsFilter(productIDs)
 					}
 				}
-			case product.FreeSend:
+			case "free_send":
 				if len(values) > 0 {
 					freeSend, err := strconv.ParseBool(values[0])
 					if err == nil {
 						queryBuilder.addFreeSendFilter(freeSend)
 					}
 				}
-			case product.UpdatedRange:
+			case "updated_range":
 				if len(values) == 2 {
 					minUpdated, errMin := time.Parse(time.RFC3339, values[0])
 					maxUpdated, errMax := time.Parse(time.RFC3339, values[1])
@@ -568,7 +569,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 						queryBuilder.addUpdatedRangeFilter(minUpdated, maxUpdated)
 					}
 				}
-			case product.AddedRange:
+			case "added_range":
 				if len(values) == 2 {
 					minAdded, errMin := time.Parse(time.RFC3339, values[0])
 					maxAdded, errMax := time.Parse(time.RFC3339, values[1])
@@ -582,7 +583,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 
 	// Apply sorting if specified
 	if params.SelectedSort != nil {
-		queryBuilder.addSorting(*params.SelectedSort)
+		queryBuilder.addSorting(string(*params.SelectedSort))
 	}
 
 	// In a real implementation, we would use the query builder to construct a complex SQL query
@@ -605,19 +606,19 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 	if params.SelectedSort != nil {
 		// In a real implementation, this would be handled by the database ORDER BY
 		switch *params.SelectedSort {
-		case product.NameAZ:
+		case "name_az":
 			sort.Slice(filteredProducts, func(i, j int) bool {
 				return filteredProducts[i].Name < filteredProducts[j].Name
 			})
-		case product.NameZA:
+		case "name_za":
 			sort.Slice(filteredProducts, func(i, j int) bool {
 				return filteredProducts[i].Name > filteredProducts[j].Name
 			})
-		case product.RecentlyAdded:
+		case "recently_added":
 			sort.Slice(filteredProducts, func(i, j int) bool {
 				return filteredProducts[i].CreatedAt.After(filteredProducts[j].CreatedAt)
 			})
-		case product.MostVisited:
+		case "most_visited":
 			sort.Slice(filteredProducts, func(i, j int) bool {
 				return filteredProducts[i].VisitedCount > filteredProducts[j].VisitedCount
 			})
@@ -710,7 +711,7 @@ type filterQueryBuilder struct {
 	freeSend     *bool
 	updatedRange []time.Time
 	addedRange   []time.Time
-	selectedSort *product.ProductSortEnum
+	selectedSort *string
 	logger       sflogger.Logger
 }
 
@@ -762,7 +763,7 @@ func (qb *filterQueryBuilder) addAddedRangeFilter(min, max time.Time) {
 	qb.addedRange = []time.Time{min, max}
 }
 
-func (qb *filterQueryBuilder) addSorting(sortType product.ProductSortEnum) {
+func (qb *filterQueryBuilder) addSorting(sortType string) {
 	qb.selectedSort = &sortType
 }
 

@@ -2,13 +2,13 @@ package fileitemusecase
 
 import (
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"path/filepath"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -33,6 +33,18 @@ func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 		storageRepo:    c.GetStorageRepo(),
 		storageService: c.GetStorageService(),
 		userID:         1, // Placeholder, should come from the user context
+	}
+}
+
+// Add helper function to convert fileitem.FileItemPermissionEnum to service.FileItemPermissionEnum
+func toServicePermissionEnum(p fileitem.FileItemPermissionEnum) contractStorage.FileItemPermissionEnum {
+	switch p {
+	case fileitem.PrivatePermission:
+		return contractStorage.Private
+	case fileitem.PublicPermission:
+		return contractStorage.Public
+	default:
+		return contractStorage.Private // default fallback
 	}
 }
 
@@ -91,7 +103,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 	fileItem.UpdatedAt = time.Now()
 	fileItem.IsDeleted = false
 	fileItem.IsDirectory = *params.IsDirectory
-	fileItem.Permission = strconv.Itoa(int(*params.Permission))
+	fileItem.Permission = string(*params.Permission)
 
 	if params.ParentID != nil {
 		fileItem.ParentID = params.ParentID
@@ -120,7 +132,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 			serverKey,
 			bucketName,
 			fullPath,
-			contractStorage.FileItemPermissionEnum(int(*params.Permission)),
+			toServicePermissionEnum(*params.Permission),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("error creating directory in storage: %v", err)
@@ -159,7 +171,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 			serverKey,
 			bucketName,
 			fullPath,
-			contractStorage.FileItemPermissionEnum(*params.Permission),
+			toServicePermissionEnum(*params.Permission),
 			src,
 		)
 		if err != nil {
@@ -294,7 +306,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 
 	// Update permission if requested
 	if *params.IsChangePermission && params.Permission != nil {
-		newPermission := strconv.Itoa(int(*params.Permission))
+		newPermission := string(*params.Permission)
 		fileItem.Permission = newPermission
 
 		// Update permission in storage
@@ -303,7 +315,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			fullPath,
-			contractStorage.FileItemPermissionEnum(*params.Permission),
+			toServicePermissionEnum(*params.Permission),
 			false); err != nil {
 			return nil, fmt.Errorf("error updating permission in storage: %v", err)
 		}
@@ -335,7 +347,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 	var newFullPath string
 
 	switch params.OperationType {
-	case fileitem.Rename:
+	case fileitem.RenameOperation:
 		if params.NewName == nil {
 			return nil, fmt.Errorf("new name is required for rename operation")
 		}
@@ -350,13 +362,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		newPath := filepath.Join(filepath.Dir(oldFullPath), newName)
 		newFullPath = newPath
 
-		permission, _ := strconv.Atoi(fileItem.Permission)
+		permission := string(fileItem.Permission)
 		_, err := u.storageService.RenameOrMoveFileOrDirectory(
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			contractStorage.FileItemPermissionEnum(permission))
+			toServicePermissionEnum(fileitem.FileItemPermissionEnum(permission)))
 		if err != nil {
 			return nil, fmt.Errorf("error renaming in storage: %v", err)
 		}
@@ -373,7 +385,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			// Implementation depends on additional methods to update file paths
 		}
 
-	case fileitem.Move:
+	case fileitem.MoveOperation:
 		if params.NewParentID == nil {
 			return nil, fmt.Errorf("new parent ID is required for move operation")
 		}
@@ -403,13 +415,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		newFullPath = filepath.Join(newParentPath, fileItem.Name)
 
 		// Move in storage
-		permission, _ := strconv.Atoi(fileItem.Permission)
+		permission := string(fileItem.Permission)
 		_, err := u.storageService.RenameOrMoveFileOrDirectory(
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			contractStorage.FileItemPermissionEnum(permission))
+			toServicePermissionEnum(fileitem.FileItemPermissionEnum(permission)))
 		if err != nil {
 			return nil, fmt.Errorf("error moving in storage: %v", err)
 		}
@@ -445,7 +457,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			// Implementation depends on additional methods to update file paths
 		}
 
-	case fileitem.Copy:
+	case fileitem.CopyOperation:
 		if params.NewParentID == nil {
 			return nil, fmt.Errorf("new parent ID is required for copy operation")
 		}
@@ -490,13 +502,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		newFullPath = filepath.Join(newParentPath, fileItem.Name)
 
 		// Copy in storage
-		permission, _ := strconv.Atoi(fileItem.Permission)
+		permission := string(fileItem.Permission)
 		success, err := u.storageService.CopyFileOrDirectory(
 			fileItem.ServerKey,
 			fileItem.BucketName,
 			oldFullPath,
 			newFullPath,
-			contractStorage.FileItemPermissionEnum(permission))
+			toServicePermissionEnum(fileitem.FileItemPermissionEnum(permission)))
 		if err != nil {
 			return nil, fmt.Errorf("error copying in storage: %v", err)
 		}

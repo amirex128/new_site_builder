@@ -2,9 +2,9 @@ package unitpriceusecase
 
 import (
 	"fmt"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -64,7 +64,7 @@ func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitP
 	}
 
 	if params.DiscountType != nil {
-		existingUnitPrice.DiscountType = strconv.Itoa(int(*params.DiscountType))
+		existingUnitPrice.DiscountType = string(*params.DiscountType)
 	}
 
 	if params.Discount != nil {
@@ -96,7 +96,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 	// Get all unit prices by name
 	var unitPriceNames []string
 	for _, up := range params.UnitPrices {
-		unitPriceNames = append(unitPriceNames, strconv.Itoa(int(*up.UnitPriceName)))
+		unitPriceNames = append(unitPriceNames, string(*up.UnitPriceName))
 	}
 
 	// In a real implementation, we would need to add a method to get unit prices by names
@@ -120,21 +120,21 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 		// Find the matching unit price
 		var matchingUnitPrice *unit_price.UnitPriceNameEnum
 		for _, up := range allUnitPrices {
-			if up.Name == strconv.Itoa(int(*unitPriceParam.UnitPriceName)) {
+			if up.Name == string(*unitPriceParam.UnitPriceName) {
 				matchingUnitPrice = unitPriceParam.UnitPriceName
 
 				// Calculate price based on unit price type
-				if *unitPriceParam.UnitPriceName == unit_price.StorageMbCredits && unitPriceParam.UnitPriceDay != nil {
+				if *unitPriceParam.UnitPriceName == "storage_mb_credits" && unitPriceParam.UnitPriceDay != nil {
 					// For storage, we need to consider days and existing credits
 					var finalPrice int64 = up.Price * int64(*unitPriceParam.UnitPriceCount) * int64(*unitPriceParam.UnitPriceDay)
 					var discountAmount int64 = 0
 
 					// Apply discount if available
 					if up.Discount != nil && *up.Discount > 0 {
-						if up.DiscountType == strconv.Itoa(int(unit_price.Fixed)) {
+						if up.DiscountType == "fixed" {
 							discountAmount = *up.Discount
 							finalPrice = finalPrice - discountAmount
-						} else if up.DiscountType == strconv.Itoa(int(unit_price.Percentage)) {
+						} else if up.DiscountType == "percentage" {
 							discountAmount = (finalPrice * (*up.Discount)) / 100
 							finalPrice = finalPrice - discountAmount
 						}
@@ -159,10 +159,10 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 
 					// Apply discount if available
 					if up.Discount != nil && *up.Discount > 0 {
-						if up.DiscountType == strconv.Itoa(int(unit_price.Fixed)) {
+						if up.DiscountType == "fixed" {
 							discountAmount = *up.Discount
 							finalPrice = finalPrice - discountAmount
-						} else if up.DiscountType == strconv.Itoa(int(unit_price.Percentage)) {
+						} else if up.DiscountType == "percentage" {
 							discountAmount = (finalPrice * (*up.Discount)) / 100
 							finalPrice = finalPrice - discountAmount
 						}

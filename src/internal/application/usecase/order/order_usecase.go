@@ -3,10 +3,11 @@ package orderusecase
 import (
 	"errors"
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
@@ -106,16 +107,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		}
 
 		if params.Courier != nil {
-			var courierName string
-			switch *params.Courier {
-			case order.Post:
-				courierName = "Post"
-			case order.Tipax:
-				courierName = "Tipax"
-			default:
-				courierName = "Post"
-			}
-			newOrder.Courier = courierName
+			newOrder.Courier = string(*params.Courier)
 		} else {
 			newOrder.Courier = "Post"
 		}
@@ -164,16 +156,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		}
 
 		if params.Courier != nil {
-			var courierName string
-			switch *params.Courier {
-			case order.Post:
-				courierName = "Post"
-			case order.Tipax:
-				courierName = "Tipax"
-			default:
-				courierName = "Post"
-			}
-			existingOrder.Courier = courierName
+			existingOrder.Courier = string(*params.Courier)
 		}
 
 		if err := u.orderRepo.Update(existingOrder); err != nil {
@@ -219,7 +202,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		newOrder.TotalFinalPrice,
 		newOrder.ID,
 		customerID,
-		strconv.Itoa(int(*params.Gateway)),
+		string(*params.Gateway),
 		orderData,
 	)
 

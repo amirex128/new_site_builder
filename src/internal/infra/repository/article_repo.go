@@ -3,7 +3,6 @@ package repository
 import (
 	"strings"
 
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 
@@ -84,8 +83,8 @@ func (r *ArticleRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto 
 
 func (r *ArticleRepo) GetAllByFilterAndSort(
 	siteID int64,
-	filters map[article.ArticleFilterEnum][]string,
-	sort *article.ArticleSortEnum,
+	filters map[string][]string,
+	sort *string,
 	paginationRequestDto common.PaginationRequestDto,
 ) ([]domain.Article, int64, error) {
 	var articles []domain.Article
@@ -100,7 +99,7 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 	if filters != nil {
 		for filterType, values := range filters {
 			switch filterType {
-			case article.RateRange:
+			case "rate_range":
 				// Expects min,max format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
@@ -108,7 +107,7 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 						query = query.Where("rate BETWEEN ? AND ?", parts[0], parts[1])
 					}
 				}
-			case article.ReviewRange:
+			case "review_range":
 				// Expects min,max format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
@@ -116,7 +115,7 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 						query = query.Where("review_count BETWEEN ? AND ?", parts[0], parts[1])
 					}
 				}
-			case article.VisitedRange:
+			case "visited_range":
 				// Expects min,max format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
@@ -124,7 +123,7 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 						query = query.Where("visited_count BETWEEN ? AND ?", parts[0], parts[1])
 					}
 				}
-			case article.AddedRange:
+			case "added_range":
 				// Expects start,end date format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
@@ -132,7 +131,7 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 						query = query.Where("created_at BETWEEN ? AND ?", parts[0], parts[1])
 					}
 				}
-			case article.UpdatedRange:
+			case "updated_range":
 				// Expects start,end date format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
@@ -140,20 +139,20 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 						query = query.Where("updated_at BETWEEN ? AND ?", parts[0], parts[1])
 					}
 				}
-			case article.CategoryIds:
+			case "category_ids":
 				// Join with category table to filter by categoryIds
 				if len(values) > 0 {
 					categoryIds := strings.Join(values, ",")
 					query = query.Joins("JOIN article_category ac ON ac.article_id = articles.id").
 						Where("ac.category_id IN (?)", categoryIds)
 				}
-			case article.ArticleIds:
+			case "article_ids":
 				// Filter by article IDs
 				if len(values) > 0 {
 					articleIds := strings.Join(values, ",")
 					query = query.Where("id IN (?)", articleIds)
 				}
-			case article.Badges:
+			case "badges":
 				// Filter by badges (which are comma-separated in a single field)
 				if len(values) > 0 {
 					for _, badge := range values {
@@ -167,25 +166,25 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 	// Apply sorting if specified
 	if sort != nil {
 		switch *sort {
-		case article.TitleAZ:
+		case "title_az":
 			query = query.Order("title ASC")
-		case article.TitleZA:
+		case "title_za":
 			query = query.Order("title DESC")
-		case article.RecentlyAdded:
+		case "recently_added":
 			query = query.Order("created_at DESC")
-		case article.RecentlyUpdated:
+		case "recently_updated":
 			query = query.Order("updated_at DESC")
-		case article.MostVisited:
+		case "most_visited":
 			query = query.Order("visited_count DESC")
-		case article.LeastVisited:
+		case "least_visited":
 			query = query.Order("visited_count ASC")
-		case article.MostRated:
+		case "most_rated":
 			query = query.Order("rate DESC")
-		case article.LeastRated:
+		case "least_rated":
 			query = query.Order("rate ASC")
-		case article.MostReviewed:
+		case "most_reviewed":
 			query = query.Order("review_count DESC")
-		case article.LeastReviewed:
+		case "least_reviewed":
 			query = query.Order("review_count ASC")
 		}
 	} else {

@@ -3,11 +3,12 @@ package customerusecase
 import (
 	"errors"
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
@@ -143,7 +144,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 	})
 
 	// Handle phone verification/forget
-	if *params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone {
+	if *params.Type == user.VerifyPhoneType || *params.Type == user.ForgetPasswordPhoneType {
 		existingCustomer, err := u.repo.GetByPhone(*params.Phone)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -178,7 +179,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 	}
 
 	// Handle email verification/forget
-	if *params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail {
+	if *params.Type == user.VerifyEmailType || *params.Type == user.ForgetPasswordEmailType {
 		existingCustomer, err := u.repo.GetByEmail(*params.Email)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -207,7 +208,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 			gatewayURL = "http://localhost"
 		}
 
-		resetLink := generatePasswordResetLink(gatewayURL, existingCustomer.ID, verifyCode, int(*params.Type))
+		resetLink := generatePasswordResetLink(gatewayURL, existingCustomer.ID, verifyCode, string(*params.Type))
 
 		// In a real implementation, we would send an email here
 		// For now, we'll just log the link
@@ -330,7 +331,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 
 	// Handle different verification types
 	switch *params.Type {
-	case user.VerifyEmail:
+	case user.VerifyEmailType:
 		existingCustomer.VerifyEmail = "1"
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
@@ -338,7 +339,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 		}
 		return "success", nil
 
-	case user.VerifyPhone:
+	case user.VerifyPhoneType:
 		existingCustomer.VerifyPhone = "1"
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
@@ -346,7 +347,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 		}
 		return "success", nil
 
-	case user.ForgetPasswordEmail:
+	case user.ForgetPasswordEmailType:
 		// Generate token for password reset
 		token := u.identitySvc.TokenForCustomer(existingCustomer).Make()
 		err = u.repo.Update(existingCustomer)
@@ -363,7 +364,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 			"url": redirectURL + "?" + queryParams.Encode(),
 		}, nil
 
-	case user.ForgetPasswordPhone:
+	case user.ForgetPasswordPhoneType:
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
 			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
@@ -526,8 +527,8 @@ func generateVerificationCode() int {
 }
 
 // Helper function to generate a password reset link
-func generatePasswordResetLink(baseURL string, customerID int64, code int, verifyType int) string {
+func generatePasswordResetLink(baseURL string, customerID int64, code int, verifyType string) string {
 	// In a real implementation, we might encrypt or sign the parameters
-	return fmt.Sprintf("%s/reset-password?id=%d&code=%d&type=%d",
+	return fmt.Sprintf("%s/reset-password?id=%d&code=%d&type=%s",
 		baseURL, customerID, code, verifyType)
 }

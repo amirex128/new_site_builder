@@ -2,10 +2,11 @@ package userusecase
 
 import (
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
@@ -79,11 +80,11 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 	}
 
 	if params.AiTypeEnum != nil {
-		existingUser.AiTypeEnum = strconv.Itoa(int(*params.AiTypeEnum))
+		existingUser.AiTypeEnum = string(*params.AiTypeEnum)
 	}
 
 	if params.UseCustomEmailSmtp != nil {
-		existingUser.UseCustomEmailSmtp = strconv.Itoa(int(*params.UseCustomEmailSmtp))
+		existingUser.UseCustomEmailSmtp = string(*params.UseCustomEmailSmtp)
 	}
 
 	if params.Smtp != nil {
@@ -215,12 +216,12 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	var err error
 
 	// Get user by email or phone based on the verification type
-	if params.Type != nil && (*params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail) {
+	if params.Type != nil && (*params.Type == user.VerifyEmailType || *params.Type == user.ForgetPasswordEmailType) {
 		if params.Email == nil {
 			return nil, fmt.Errorf("email is required for email verification")
 		}
 		existingUser, err = u.userRepo.GetByEmail(*params.Email)
-	} else if params.Type != nil && (*params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone) {
+	} else if params.Type != nil && (*params.Type == user.VerifyPhoneType || *params.Type == user.ForgetPasswordPhoneType) {
 		if params.Phone == nil {
 			return nil, fmt.Errorf("phone is required for phone verification")
 		}
@@ -237,9 +238,9 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	verificationCode := "123456" // Example code, in a real implementation generate a random code
 
 	// Store verification code based on type
-	if params.Type != nil && (*params.Type == user.VerifyEmail || *params.Type == user.ForgetPasswordEmail) {
+	if params.Type != nil && (*params.Type == user.VerifyEmailType || *params.Type == user.ForgetPasswordEmailType) {
 		existingUser.VerifyEmail = verificationCode
-	} else if params.Type != nil && (*params.Type == user.VerifyPhone || *params.Type == user.ForgetPasswordPhone) {
+	} else if params.Type != nil && (*params.Type == user.VerifyPhoneType || *params.Type == user.ForgetPasswordPhoneType) {
 		existingUser.VerifyPhone = verificationCode
 	}
 
@@ -267,25 +268,25 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error)
 	codeStr := strconv.Itoa(*params.Code)
 
 	// Check verification code based on type
-	if params.Type != nil && *params.Type == user.VerifyEmail {
+	if params.Type != nil && *params.Type == user.VerifyEmailType {
 		if existingUser.VerifyEmail != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
 		existingUser.IsActive = "1" // Activate the user
 		existingUser.VerifyEmail = ""
-	} else if params.Type != nil && *params.Type == user.VerifyPhone {
+	} else if params.Type != nil && *params.Type == user.VerifyPhoneType {
 		if existingUser.VerifyPhone != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
 		existingUser.IsActive = "1" // Activate the user
 		existingUser.VerifyPhone = ""
-	} else if params.Type != nil && *params.Type == user.ForgetPasswordEmail {
+	} else if params.Type != nil && *params.Type == user.ForgetPasswordEmailType {
 		if existingUser.VerifyEmail != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
 		// In a real implementation, provide a token for password reset instead
 		existingUser.VerifyEmail = ""
-	} else if params.Type != nil && *params.Type == user.ForgetPasswordPhone {
+	} else if params.Type != nil && *params.Type == user.ForgetPasswordPhoneType {
 		if existingUser.VerifyPhone != codeStr {
 			return nil, fmt.Errorf("invalid verification code")
 		}
@@ -326,14 +327,14 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 		var itemPrice int64 = 1000 * int64(*unitPrice.UnitPriceCount)
 
 		// For storage, multiply by days if provided
-		if *unitPrice.UnitPriceName == user.StorageMbCredits && unitPrice.UnitPriceDay != nil {
+		if string(*unitPrice.UnitPriceName) == "storage_mb_credits" && unitPrice.UnitPriceDay != nil {
 			itemPrice = itemPrice * int64(*unitPrice.UnitPriceDay)
 		}
 
 		totalAmount += itemPrice
 
 		// Add unit price details to order data
-		orderData[fmt.Sprintf("unitPrice_%d_name", i)] = strconv.Itoa(int(*unitPrice.UnitPriceName))
+		orderData[fmt.Sprintf("unitPrice_%d_name", i)] = string(*unitPrice.UnitPriceName)
 		orderData[fmt.Sprintf("unitPrice_%d_count", i)] = strconv.Itoa(*unitPrice.UnitPriceCount)
 		if unitPrice.UnitPriceDay != nil {
 			orderData[fmt.Sprintf("unitPrice_%d_days", i)] = strconv.Itoa(*unitPrice.UnitPriceDay)
@@ -349,7 +350,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	orderData["finalFrontReturnUrl"] = *params.FinalFrontReturnUrl
 
 	// Request payment from gateway
-	paymentUrl, err := u.paymentRepo.RequestPayment(totalAmount, orderID, userID, strconv.Itoa(int(*params.Gateway)), orderData)
+	paymentUrl, err := u.paymentRepo.RequestPayment(totalAmount, orderID, userID, string(*params.Gateway), orderData)
 	if err != nil {
 		return nil, err
 	}
@@ -382,10 +383,10 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 
 	// Apply discount if available
 	if plan.Discount != nil && *plan.Discount > 0 {
-		if plan.DiscountType == strconv.Itoa(int(user.Fixed)) {
+		if plan.DiscountType == string(user.FixedDiscountType) {
 			discountAmount = *plan.Discount
 			finalPrice = plan.Price - discountAmount
-		} else if plan.DiscountType == strconv.Itoa(int(user.Percentage)) {
+		} else if plan.DiscountType == string(user.PercentageDiscountType) {
 			discountAmount = (plan.Price * (*plan.Discount)) / 100
 			finalPrice = plan.Price - discountAmount
 		}
@@ -409,7 +410,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	orderID := time.Now().Unix() // Dummy order ID
 
 	// Request payment from gateway
-	paymentUrl, err := u.paymentRepo.RequestPayment(finalPrice, orderID, userID, strconv.Itoa(int(*params.Gateway)), orderData)
+	paymentUrl, err := u.paymentRepo.RequestPayment(finalPrice, orderID, userID, string(*params.Gateway), orderData)
 	if err != nil {
 		return nil, err
 	}

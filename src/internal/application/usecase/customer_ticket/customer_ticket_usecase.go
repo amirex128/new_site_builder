@@ -2,10 +2,10 @@ package customerticketusecase
 
 import (
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -55,9 +55,9 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	newTicket := domain.CustomerTicket{
 		Title:      *params.Title,
 		CustomerID: *params.OwnerUserID,
-		Status:     strconv.Itoa(int(customer_ticket.New)), // Default to New status
-		Category:   strconv.Itoa(int(*params.Category)),
-		Priority:   strconv.Itoa(int(*params.Priority)),
+		Status:     string(customer_ticket.NewStatus), // Default to New status
+		Category:   string(*params.Category),
+		Priority:   string(*params.Priority),
 		UserID:     userID,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
@@ -142,14 +142,14 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	}
 
 	// Update the ticket
-	existingTicket.Status = strconv.Itoa(int(*params.Status))
-	existingTicket.Category = strconv.Itoa(int(*params.Category))
+	existingTicket.Status = string(*params.Status)
+	existingTicket.Category = string(*params.Category)
 	existingTicket.AssignedTo = params.AssignedTo
-	existingTicket.Priority = strconv.Itoa(int(*params.Priority))
+	existingTicket.Priority = string(*params.Priority)
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == customer_ticket.Closed {
+	if *params.Status == customer_ticket.ClosedStatus {
 		respondentID := *params.Comment.RespondentID
 		now := time.Now()
 		existingTicket.ClosedBy = &respondentID
@@ -240,14 +240,14 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	}
 
 	// Update the ticket
-	existingTicket.Status = strconv.Itoa(int(*params.Status))
-	existingTicket.Category = strconv.Itoa(int(*params.Category))
+	existingTicket.Status = string(*params.Status)
+	existingTicket.Category = string(*params.Category)
 	existingTicket.AssignedTo = params.AssignedTo
-	existingTicket.Priority = strconv.Itoa(int(*params.Priority))
+	existingTicket.Priority = string(*params.Priority)
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == customer_ticket.Closed {
+	if *params.Status == customer_ticket.ClosedStatus {
 		now := time.Now()
 		existingTicket.ClosedBy = &userID
 		existingTicket.ClosedAt = &now
@@ -419,17 +419,13 @@ func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_
 
 // Helper function to enhance customer ticket response with structured data
 func enhanceCustomerTicketResponse(t domain.CustomerTicket) map[string]interface{} {
-	statusEnum, _ := strconv.Atoi(t.Status)
-	categoryEnum, _ := strconv.Atoi(t.Category)
-	priorityEnum, _ := strconv.Atoi(t.Priority)
-
 	response := map[string]interface{}{
 		"id":         t.ID,
 		"title":      t.Title,
-		"status":     customer_ticket.CustomerTicketStatusEnum(statusEnum),
-		"category":   customer_ticket.CustomerTicketCategoryEnum(categoryEnum),
+		"status":     t.Status,
+		"category":   t.Category,
 		"assignedTo": t.AssignedTo,
-		"priority":   customer_ticket.CustomerTicketPriorityEnum(priorityEnum),
+		"priority":   t.Priority,
 		"userId":     t.UserID,
 		"customerId": t.CustomerID,
 		"createdAt":  t.CreatedAt,

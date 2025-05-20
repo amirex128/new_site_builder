@@ -11,7 +11,7 @@ type HeaderFooter struct {
 	Title     string     `json:"title" gorm:"column:title;type:longtext;not null"`
 	IsMain    bool       `json:"is_main" gorm:"column:is_main;type:tinyint(1);not null"`
 	Body      string     `json:"body" gorm:"column:body;type:longtext;null"`
-	Type      int        `json:"type" gorm:"column:type;type:int;not null"`
+	Type      string     `json:"type" gorm:"column:type;type:varchar(255);not null"`
 	UserID    int64      `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
 	UpdatedAt time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`

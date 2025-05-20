@@ -4,36 +4,6 @@ import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 )
 
-// ArticleSortEnum matches the .NET ArticleSortEnum
-type ArticleSortEnum int
-
-const (
-	TitleAZ ArticleSortEnum = iota
-	TitleZA
-	RecentlyAdded
-	RecentlyUpdated
-	MostVisited
-	LeastVisited
-	MostRated
-	LeastRated
-	MostReviewed
-	LeastReviewed
-)
-
-// ArticleFilterEnum matches the .NET ArticleFilterEnum
-type ArticleFilterEnum int
-
-const (
-	RateRange ArticleFilterEnum = iota
-	ReviewRange
-	VisitedRange
-	AddedRange
-	UpdatedRange
-	CategoryIds
-	ArticleIds
-	Badges
-)
-
 // GetByIdArticleQuery for retrieving a single article by ID
 type GetByIdArticleQuery struct {
 	ID *int64 `json:"id" form:"id" validate:"required"`

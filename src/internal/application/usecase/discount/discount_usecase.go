@@ -2,10 +2,10 @@ package discountusecase
 
 import (
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -61,7 +61,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	newDiscount := domain.Discount{
 		Code:       *params.Code,
 		Quantity:   *params.Quantity,
-		Type:       strconv.Itoa(int(*params.Type)),
+		Type:       string(*params.Type),
 		Value:      *params.Value,
 		ExpiryDate: *params.ExpiryDate,
 		SiteID:     *params.SiteID,
@@ -135,7 +135,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	}
 
 	if params.Type != nil {
-		existingDiscount.Type = strconv.Itoa(int(*params.Type))
+		existingDiscount.Type = string(*params.Type)
 	}
 
 	if params.Value != nil {
@@ -230,15 +230,12 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 		})
 	}
 
-	// Parse type string to enum
-	typeEnum, _ := strconv.Atoi(discount.Type)
-
 	// Prepare response
 	response := map[string]interface{}{
 		"id":         discount.ID,
 		"code":       discount.Code,
 		"quantity":   discount.Quantity,
-		"type":       typeEnum,
+		"type":       discount.Type,
 		"value":      discount.Value,
 		"expiryDate": discount.ExpiryDate,
 		"siteId":     discount.SiteID,
@@ -268,14 +265,11 @@ func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQue
 	// Prepare response items
 	var items []map[string]interface{}
 	for _, discount := range discounts {
-		// Parse type string to enum
-		typeEnum, _ := strconv.Atoi(discount.Type)
-
 		item := map[string]interface{}{
 			"id":         discount.ID,
 			"code":       discount.Code,
 			"quantity":   discount.Quantity,
-			"type":       typeEnum,
+			"type":       discount.Type,
 			"value":      discount.Value,
 			"expiryDate": discount.ExpiryDate,
 			"siteId":     discount.SiteID,
@@ -321,14 +315,11 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 	// Prepare response items
 	var items []map[string]interface{}
 	for _, discount := range discounts {
-		// Parse type string to enum
-		typeEnum, _ := strconv.Atoi(discount.Type)
-
 		item := map[string]interface{}{
 			"id":         discount.ID,
 			"code":       discount.Code,
 			"quantity":   discount.Quantity,
-			"type":       typeEnum,
+			"type":       discount.Type,
 			"value":      discount.Value,
 			"expiryDate": discount.ExpiryDate,
 			"siteId":     discount.SiteID,

@@ -2,9 +2,9 @@ package planusecase
 
 import (
 	"fmt"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -62,7 +62,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 
 	// Set optional fields if provided
 	if params.DiscountType != nil {
-		newPlan.DiscountType = strconv.Itoa(int(*params.DiscountType))
+		newPlan.DiscountType = string(*params.DiscountType)
 	}
 
 	if params.Discount != nil {
@@ -118,7 +118,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 	}
 
 	if params.DiscountType != nil {
-		existingPlan.DiscountType = strconv.Itoa(int(*params.DiscountType))
+		existingPlan.DiscountType = string(*params.DiscountType)
 	}
 
 	if params.Discount != nil {
@@ -230,10 +230,10 @@ func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQue
 
 	// Calculate discount based on discount type
 	if plan.Discount != nil && *plan.Discount > 0 {
-		if plan.DiscountType == strconv.Itoa(int(user.Fixed)) {
+		if plan.DiscountType == string(user.FixedDiscountType) {
 			discountAmount = *plan.Discount
 			finalPrice = plan.Price - discountAmount
-		} else if plan.DiscountType == strconv.Itoa(int(user.Percentage)) {
+		} else if plan.DiscountType == string(user.PercentageDiscountType) {
 			discountAmount = (plan.Price * (*plan.Discount)) / 100
 			finalPrice = plan.Price - discountAmount
 		}
