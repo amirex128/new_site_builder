@@ -2,7 +2,8 @@ package utils
 
 import (
 	"errors"
-	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/url"
 	"reflect"
@@ -13,9 +14,10 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// use a single instance of Validate, it caches struct info
-var validate *validator.Validate
-
+// ValidationHelper provides methods for handling validation in handlers
+type ValidationHelper struct {
+	validate *validator.Validate
+}
 type ValidationError struct {
 	Property string `json:"property"`
 	Tag      string `json:"tag"`
@@ -23,22 +25,47 @@ type ValidationError struct {
 	Message  string `json:"message"`
 }
 
-func ValidateStruct(s interface{}) error {
-	if validate == nil {
-		validate = initValidator()
+// NewValidationHelper creates a new ValidationHelper instance
+func NewValidationHelper() *ValidationHelper {
+	return &ValidationHelper{
+		validate: initValidator(),
 	}
-
-	err := validate.Struct(s)
-
-	return err
 }
 
-func Validate(field any, rule string) error {
-	if validate == nil {
-		validate = initValidator()
+// ValidateCommand handles binding and validating the input struct
+// Returns true if validation passes, false otherwise
+func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) bool {
+	if err := c.ShouldBindJSON(params); err != nil {
+		resp.ValidationError(c, err.Error())
+		return false
 	}
 
-	return validate.Var(field, rule)
+	if err := h.validate.Struct(params); err != nil {
+		var validationErrors validator.ValidationErrors
+		errors.As(err, &validationErrors)
+		resp.ValidationError(c, validationErrors.Error())
+		return false
+	}
+
+	return true
+}
+
+// ValidateQuery handles binding and validating query parameters
+// Returns true if validation passes, false otherwise
+func (h *ValidationHelper) ValidateQuery(c *gin.Context, params interface{}) bool {
+	if err := c.ShouldBindQuery(params); err != nil {
+		resp.ValidationError(c, err.Error())
+		return false
+	}
+
+	if err := h.validate.Struct(params); err != nil {
+		var validationErrors validator.ValidationErrors
+		errors.As(err, &validationErrors)
+		resp.ValidationError(c, validationErrors.Error())
+		return false
+	}
+
+	return true
 }
 
 func GetValidationErrors(err error) *[]ValidationError {
@@ -626,128 +653,6 @@ func OptionalEnumValidator(fld validator.FieldLevel) bool {
 	return true
 }
 
-// ValidateRequiredText validates a required text field with optional min and max length
-func ValidateRequiredText(field string, value string, entityName string, minLength, maxLength *int) error {
-	if strings.TrimSpace(value) == "" {
-		return fmt.Errorf("%s الزامی است", entityName)
-	}
-
-	if minLength != nil && len(value) < *minLength {
-		return fmt.Errorf("%s باید حداقل %d کاراکتر باشد", entityName, *minLength)
-	}
-
-	if maxLength != nil && len(value) > *maxLength {
-		return fmt.Errorf("%s نمی‌تواند بیشتر از %d کاراکتر باشد", entityName, *maxLength)
-	}
-
-	return nil
-}
-
-// ValidateOptionalText validates an optional text field with optional min and max length
-func ValidateOptionalText(field string, value string, entityName string, minLength, maxLength *int) error {
-	if strings.TrimSpace(value) == "" {
-		return nil
-	}
-
-	if minLength != nil && len(value) < *minLength {
-		return fmt.Errorf("%s باید حداقل %d کاراکتر باشد", entityName, *minLength)
-	}
-
-	if maxLength != nil && len(value) > *maxLength {
-		return fmt.Errorf("%s نمی‌تواند بیشتر از %d کاراکتر باشد", entityName, *maxLength)
-	}
-
-	return nil
-}
-
-// ValidateArrayString validates an array of strings
-func ValidateArrayString(value []string, entityName string, required bool, minLength, maxLength *int) error {
-	if required && (value == nil || len(value) == 0) {
-		return fmt.Errorf("%s الزامی است", entityName)
-	}
-
-	if value == nil {
-		return nil
-	}
-
-	for i, item := range value {
-		if item == "" && required {
-			return fmt.Errorf("آیتم %d از %s نمی‌تواند خالی باشد", i+1, entityName)
-		}
-
-		if minLength != nil && len(item) < *minLength {
-			return fmt.Errorf("آیتم %d از %s باید حداقل %d کاراکتر باشد", i+1, entityName, *minLength)
-		}
-
-		if maxLength != nil && len(item) > *maxLength {
-			return fmt.Errorf("آیتم %d از %s نمی‌تواند بیشتر از %d کاراکتر باشد", i+1, entityName, *maxLength)
-		}
-	}
-
-	return nil
-}
-
-// ValidateRequiredEnum validates that an enum value is valid and not nil
-func ValidateRequiredEnum(field string, value interface{}, entityName string) error {
-	if value == nil {
-		return fmt.Errorf("%s الزامی است", entityName)
-	}
-
-	// Check if enum value is zero (default)
-	v := reflect.ValueOf(value)
-	if v.IsZero() {
-		return fmt.Errorf("%s نامعتبر است", entityName)
-	}
-
-	return nil
-}
-
-// ValidateOneOfPropertiesRequired checks if at least one of the provided properties has a valid value
-func ValidateOneOfPropertiesRequired(object interface{}, properties []string, propertyNames []string) error {
-	if object == nil {
-		return fmt.Errorf("حداقل یکی از فیلدها باید مقدار داشته باشد")
-	}
-
-	objValue := reflect.ValueOf(object)
-	if objValue.Kind() == reflect.Ptr {
-		if objValue.IsNil() {
-			return fmt.Errorf("حداقل یکی از فیلدها باید مقدار داشته باشد")
-		}
-		objValue = objValue.Elem()
-	}
-
-	if objValue.Kind() != reflect.Struct {
-		return fmt.Errorf("ورودی باید یک ساختار باشد")
-	}
-
-	hasValidProperty := false
-
-	for _, propName := range properties {
-		field := objValue.FieldByName(propName)
-		if !field.IsValid() {
-			continue
-		}
-
-		if hasValidValue(field) {
-			hasValidProperty = true
-			break
-		}
-	}
-
-	if !hasValidProperty {
-		var displayNames string
-		if propertyNames != nil && len(propertyNames) == len(properties) {
-			displayNames = strings.Join(propertyNames, "، ")
-		} else {
-			displayNames = strings.Join(properties, "، ")
-		}
-
-		return fmt.Errorf("حداقل یکی از فیلدهای %s باید مقدار داشته باشد", displayNames)
-	}
-
-	return nil
-}
-
 // hasValidValue checks if a reflect.Value contains a valid non-zero value
 func hasValidValue(field reflect.Value) bool {
 	if !field.IsValid() {
@@ -798,88 +703,6 @@ func hasValidValue(field reflect.Value) bool {
 
 	// For other types, non-zero value is considered valid
 	return !field.IsZero()
-}
-
-// ValidateStructCustom validates a struct and returns custom validation errors
-func ValidateStructCustom(s interface{}) *[]ValidationError {
-	err := ValidateStruct(s)
-	if err != nil {
-		return GetValidationErrors(err)
-	}
-	return nil
-}
-
-// Helper functions for use in struct tags
-
-// Required returns a string for the required validator tag
-func Required(entityName string) string {
-	return "required"
-}
-
-// OptionalText returns a string for the optional text validator tag with min and max length
-func OptionalText(minLength, maxLength int) string {
-	return fmt.Sprintf("optional_text=%d,%d", minLength, maxLength)
-}
-
-// RequiredText returns a string for the required text validator tag with min and max length
-func RequiredText(minLength, maxLength int) string {
-	return fmt.Sprintf("required_text=%d,%d", minLength, maxLength)
-}
-
-// Slug returns a string for the slug validator tag
-func Slug(optional bool) string {
-	if optional {
-		return "slug_optional"
-	}
-	return "slug"
-}
-
-// Domain returns a string for the domain validator tag
-func Domain(optional bool) string {
-	if optional {
-		return "domain_optional"
-	}
-	return "domain"
-}
-
-// CommaSeparatedNumbers returns a string for the comma-separated numbers validator tag
-func CommaSeparatedNumbers(optional bool) string {
-	if optional {
-		return "comma_numbers_optional"
-	}
-	return "comma_numbers"
-}
-
-// Pattern returns a string for the pattern validator tag
-func Pattern(optional bool, pattern string) string {
-	if optional {
-		return fmt.Sprintf("pattern_optional=%s", pattern)
-	}
-	return fmt.Sprintf("pattern=%s", pattern)
-}
-
-// Enum returns a string for the enum validator tag
-func Enum(optional bool) string {
-	if optional {
-		return "enum_optional"
-	}
-	return "enum"
-}
-
-// ArrayString returns a string for the array string validator tag
-func ArrayString(optional bool, minLength, maxLength int) string {
-	if optional {
-		return fmt.Sprintf("array_string_optional=%d,%d", minLength, maxLength)
-	}
-	return fmt.Sprintf("array_string=%d,%d", minLength, maxLength)
-}
-
-// ArrayNumber returns a string for the array number validator tag
-func ArrayNumber(optional bool, minLength, maxLength, minValue, maxValue int, canBeZero bool) string {
-	if optional {
-		return fmt.Sprintf("array_number_optional=%d,%d,%d,%d,%t", minLength, maxLength, minValue, maxValue, canBeZero)
-	}
-	return fmt.Sprintf("array_number=%d,%d,%d,%d,%t", minLength, maxLength, minValue, maxValue, canBeZero)
 }
 
 // EnumStringMapValidator validates a map with enum keys to string array values
@@ -985,12 +808,4 @@ func isValidEnumKey(key reflect.Value) bool {
 	default:
 		return false
 	}
-}
-
-// EnumStringMap returns a string for the enum string map validator tag
-func EnumStringMap(optional bool) string {
-	if optional {
-		return "enum_string_map_optional"
-	}
-	return "enum_string_map"
 }

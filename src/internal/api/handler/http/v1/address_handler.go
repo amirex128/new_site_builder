@@ -38,7 +38,7 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	panic("s")
 	result, err := h.usecase.CreateAddressCommand(&params)
 	if err != nil {
 		resp.InternalError(c, err.Error())

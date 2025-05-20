@@ -5,15 +5,15 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/main"
-  cmd = "go build -o ./tmp/main ."
+  cmd = "go build -o ./tmp/main ./src/cmd/server"
   delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata"]
+  exclude_dir = ["assets", "tmp", "vendor", "testdata", "logs", "docs"]
   exclude_file = []
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
-  include_dir = []
+  include_dir = ["src"]
   include_ext = ["go", "tpl", "tmpl", "html"]
   include_file = []
   kill_delay = "0s"
@@ -48,5 +48,5 @@ tmp_dir = "tmp"
   proxy_port = 0
 
 [screen]
-  clear_on_rebuild = false
+  clear_on_rebuild = true
   keep_scroll = true

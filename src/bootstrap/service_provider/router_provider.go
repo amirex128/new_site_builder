@@ -34,20 +34,7 @@ func RouterProvider(logger sflogger.Logger) {
 			AllowCredentials: true,
 		}),
 		sfrouting.WithGinConfig(func(engine *gin.Engine) {
-			// Set Gin to release mode
-			gin.SetMode(gin.ReleaseMode)
-
-			// Configure custom recovery middleware
-			engine.Use(gin.Recovery())
-
-			// Configure custom static files
-			engine.Static("/static", "./static")
-
-			// Add a custom middleware to all routes
-			engine.Use(func(c *gin.Context) {
-				c.Set("custom_middleware", "applied")
-				c.Next()
-			})
+			gin.SetMode(gin.DebugMode)
 		}),
 	)
 

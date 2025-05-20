@@ -9738,6 +9738,14 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Get user profile",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "User profile details",
@@ -13221,6 +13229,7 @@ const docTemplate = `{
             "required": [
                 "page",
                 "pageSize",
+                "productId",
                 "siteId"
             ],
             "properties": {
@@ -13232,6 +13241,9 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 100,
                     "minimum": 1
+                },
+                "productId": {
+                    "type": "integer"
                 },
                 "search": {
                     "type": "string"

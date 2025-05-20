@@ -1698,6 +1698,8 @@ definitions:
         maximum: 100
         minimum: 1
         type: integer
+      productId:
+        type: integer
       search:
         type: string
       searchBy:
@@ -1720,6 +1722,7 @@ definitions:
     required:
     - page
     - pageSize
+    - productId
     - siteId
     type: object
   product_review.GetByIdProductReviewQuery:
@@ -8560,6 +8563,11 @@ paths:
       consumes:
       - application/json
       description: Retrieves the profile information for the authenticated user
+      parameters:
+      - in: query
+        name: userId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
