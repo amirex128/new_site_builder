@@ -14,14 +14,14 @@ type CouponCommand struct {
 type ProductAttributeCommand struct {
 	ID    *int64                    `json:"id,omitempty" validate:"omitempty"`
 	Type  *ProductAttributeTypeEnum `json:"type" validate:"required,enum"`
-	Name  *string                   `json:"name" validate:"required_text=1,100"`
-	Value *string                   `json:"value" validate:"required_text=1,500"`
+	Name  *string                   `json:"name" validate:"required_text=1 100"`
+	Value *string                   `json:"value" validate:"required_text=1 500"`
 }
 
 // ProductVariantCommand represents a article variant
 type ProductVariantCommand struct {
 	ID    *int64  `json:"id,omitempty" validate:"omitempty"`
-	Name  *string `json:"name" validate:"required_text=1,200"`
+	Name  *string `json:"name" validate:"required_text=1 200"`
 	Price *int64  `json:"price" validate:"required"`
 	Stock *int    `json:"stock" validate:"required"`
 }

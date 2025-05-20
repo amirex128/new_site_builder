@@ -2,14 +2,15 @@ package utils
 
 import (
 	"errors"
-	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/amirex128/new_site_builder/src/internal/api/utils/resp"
+	"github.com/gin-gonic/gin"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -134,6 +135,23 @@ func IranianMobileNumberValidator(fld validator.FieldLevel) bool {
 	return res
 }
 
+// getValidatorParam extracts the parameter string after '=' if present, otherwise returns fld.Param()
+func getValidatorParam(fld validator.FieldLevel) string {
+	tag := fld.GetTag()
+	if idx := strings.Index(tag, "="); idx != -1 && idx+1 < len(tag) {
+		return tag[idx+1:]
+	}
+	return fld.Param()
+}
+
+// splitValidatorParams splits the param string by space (primary) and comma (for backward compatibility)
+func splitValidatorParams(param string) []string {
+	if strings.Contains(param, " ") {
+		return strings.Fields(param)
+	}
+	return strings.Split(param, ",")
+}
+
 // RequiredTextValidator validates that a text field is not empty and meets length requirements
 func RequiredTextValidator(fld validator.FieldLevel) bool {
 	value, ok := fld.Field().Interface().(string)
@@ -145,7 +163,7 @@ func RequiredTextValidator(fld validator.FieldLevel) bool {
 		return false
 	}
 
-	params := strings.Split(fld.Param(), ",")
+	params := splitValidatorParams(getValidatorParam(fld))
 	if len(params) >= 2 {
 		minLen, err1 := strconv.Atoi(params[0])
 		maxLen, err2 := strconv.Atoi(params[1])
@@ -172,7 +190,7 @@ func OptionalTextValidator(fld validator.FieldLevel) bool {
 		return true // Empty is valid for optional
 	}
 
-	params := strings.Split(fld.Param(), ",")
+	params := splitValidatorParams(getValidatorParam(fld))
 	if len(params) >= 2 {
 		minLen, err1 := strconv.Atoi(params[0])
 		maxLen, err2 := strconv.Atoi(params[1])
@@ -350,7 +368,7 @@ func RequiredPatternValidator(fld validator.FieldLevel) bool {
 		return false
 	}
 
-	pattern := fld.Param()
+	pattern := getValidatorParam(fld)
 	if pattern == "" {
 		pattern = "^[a-z0-9]+(?:-[a-z0-9]+)*$" // Default pattern
 	}
@@ -374,7 +392,7 @@ func OptionalPatternValidator(fld validator.FieldLevel) bool {
 		return true
 	}
 
-	pattern := fld.Param()
+	pattern := getValidatorParam(fld)
 	if pattern == "" {
 		pattern = "^[a-z0-9]+(?:-[a-z0-9]+)*$" // Default pattern
 	}
@@ -401,7 +419,7 @@ func RequiredArrayStringValidator(fld validator.FieldLevel) bool {
 		return false
 	}
 
-	params := strings.Split(fld.Param(), ",")
+	params := splitValidatorParams(getValidatorParam(fld))
 	var minLength, maxLength int
 	if len(params) >= 2 {
 		minLength, _ = strconv.Atoi(params[0])
@@ -452,7 +470,7 @@ func OptionalArrayStringValidator(fld validator.FieldLevel) bool {
 		return true
 	}
 
-	params := strings.Split(fld.Param(), ",")
+	params := splitValidatorParams(getValidatorParam(fld))
 	var minLength, maxLength int
 	if len(params) >= 2 {
 		minLength, _ = strconv.Atoi(params[0])
@@ -494,7 +512,7 @@ func RequiredArrayNumberValidator(fld validator.FieldLevel) bool {
 		return false
 	}
 
-	params := strings.Split(fld.Param(), ",")
+	params := splitValidatorParams(getValidatorParam(fld))
 	var minValue, maxValue, minLength, maxLength int64
 	var canBeZero bool
 
@@ -562,7 +580,7 @@ func OptionalArrayNumberValidator(fld validator.FieldLevel) bool {
 		return true
 	}
 
-	params := strings.Split(fld.Param(), ",")
+	params := splitValidatorParams(getValidatorParam(fld))
 	var minValue, maxValue, minLength, maxLength int64
 	var canBeZero bool
 

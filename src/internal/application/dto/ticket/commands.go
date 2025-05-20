@@ -6,7 +6,7 @@ type CreateTicketCommand struct {
 	Category *TicketCategoryEnum `json:"product_category" validate:"required,enum"`
 	Priority *TicketPriorityEnum `json:"priority" validate:"required,enum"`
 	Comment  *CommentCommand     `json:"comment" validate:"required"`
-	MediaIDs []int64             `json:"mediaIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	MediaIDs []int64             `json:"mediaIds,omitempty" validate:"array_number_optional=0 100 1 0 false"`
 }
 
 // ReplayTicketCommand represents a command to reply to a ticket
@@ -17,7 +17,7 @@ type ReplayTicketCommand struct {
 	AssignedTo *int64              `json:"assignedTo" validate:"required,gt=0"`
 	Priority   *TicketPriorityEnum `json:"priority" validate:"required,enum"`
 	Comment    *CommentCommand     `json:"comment" validate:"required"`
-	MediaIDs   []int64             `json:"mediaIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	MediaIDs   []int64             `json:"mediaIds,omitempty" validate:"array_number_optional=0 100 1 0 false"`
 }
 
 // AdminReplayTicketCommand represents a command for an admin to reply to a ticket
@@ -28,5 +28,5 @@ type AdminReplayTicketCommand struct {
 	AssignedTo *int64              `json:"assignedTo,omitempty" validate:"omitempty,gt=0"`
 	Priority   *TicketPriorityEnum `json:"priority" validate:"required,enum"`
 	Comment    *CommentCommand     `json:"comment" validate:"required"`
-	MediaIDs   []int64             `json:"mediaIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	MediaIDs   []int64             `json:"mediaIds,omitempty" validate:"array_number_optional=0 100 1 0 false"`
 }

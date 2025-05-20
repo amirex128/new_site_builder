@@ -6,7 +6,7 @@ type CreateProductReviewCommand struct {
 	Like       *int    `json:"like" validate:"required,min=0"`
 	Dislike    *int    `json:"dislike" validate:"required,min=0"`
 	Approved   *bool   `json:"approved" validate:"required_bool"`
-	ReviewText *string `json:"reviewText" validate:"required_text=1,2000"`
+	ReviewText *string `json:"reviewText" validate:"required_text=1 2000"`
 	ProductID  *int64  `json:"productId" validate:"required"`
 	SiteID     *int64  `json:"siteId" validate:"required"`
 }
@@ -18,7 +18,7 @@ type UpdateProductReviewCommand struct {
 	Like       *int    `json:"like,omitempty" validate:"omitempty,min=0"`
 	Dislike    *int    `json:"dislike,omitempty" validate:"omitempty,min=0"`
 	Approved   *bool   `json:"approved,omitempty" validate:"optional_bool"`
-	ReviewText *string `json:"reviewText,omitempty" validate:"optional_text=1,2000"`
+	ReviewText *string `json:"reviewText,omitempty" validate:"optional_text=1 2000"`
 	ProductID  *int64  `json:"productId" validate:"required"`
 	SiteID     *int64  `json:"siteId,omitempty" validate:"omitempty"`
 }

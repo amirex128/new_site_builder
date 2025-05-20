@@ -4,14 +4,14 @@ import "github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 
 // CreatePlanCommand represents a command to create a new plan
 type CreatePlanCommand struct {
-	Name             *string            `json:"name" validate:"required_text=1,100"`
-	ShowStatus       *string            `json:"showStatus" validate:"required_text=1,50"`
-	Description      *string            `json:"description" validate:"required_text=1,500"`
+	Name             *string            `json:"name" validate:"required_text=1 100"`
+	ShowStatus       *string            `json:"showStatus" validate:"required_text=1 50"`
+	Description      *string            `json:"description" validate:"required_text=1 500"`
 	Price            *int               `json:"price" validate:"required,min=0"`
 	DiscountType     *user.DiscountType `json:"discountType,omitempty" validate:"required_with=Discount,enum_optional"`
 	Discount         *int               `json:"discount,omitempty" validate:"omitempty,min=0,max=100"`
 	Duration         *int               `json:"duration" validate:"required,min=1"`
-	Feature          *string            `json:"feature,omitempty" validate:"optional_text=1,1000"`
+	Feature          *string            `json:"feature,omitempty" validate:"optional_text=1 1000"`
 	SmsCredits       *int               `json:"smsCredits" validate:"required,min=0"`
 	EmailCredits     *int               `json:"emailCredits" validate:"required,min=0"`
 	StorageMbCredits *int               `json:"storageMbCredits" validate:"required,min=0"`
@@ -27,14 +27,14 @@ type DeletePlanCommand struct {
 // UpdatePlanCommand represents a command to update a plan
 type UpdatePlanCommand struct {
 	ID               *int64             `json:"id" validate:"required,gt=0"`
-	Name             *string            `json:"name,omitempty" validate:"optional_text=1,100"`
-	ShowStatus       *string            `json:"showStatus,omitempty" validate:"optional_text=1,50"`
-	Description      *string            `json:"description,omitempty" validate:"optional_text=1,500"`
+	Name             *string            `json:"name,omitempty" validate:"optional_text=1 100"`
+	ShowStatus       *string            `json:"showStatus,omitempty" validate:"optional_text=1 50"`
+	Description      *string            `json:"description,omitempty" validate:"optional_text=1 500"`
 	Price            *int               `json:"price,omitempty" validate:"omitempty,min=0"`
 	DiscountType     *user.DiscountType `json:"discountType,omitempty" validate:"required_with=Discount,enum_optional"`
 	Discount         *int               `json:"discount,omitempty" validate:"omitempty,min=0,max=100"`
 	Duration         *int               `json:"duration,omitempty" validate:"omitempty,min=1"`
-	Feature          *string            `json:"feature,omitempty" validate:"optional_text=1,1000"`
+	Feature          *string            `json:"feature,omitempty" validate:"optional_text=1 1000"`
 	SmsCredits       *int               `json:"smsCredits,omitempty" validate:"omitempty,min=0"`
 	EmailCredits     *int               `json:"emailCredits,omitempty" validate:"omitempty,min=0"`
 	StorageMbCredits *int               `json:"storageMbCredits,omitempty" validate:"omitempty,min=0"`

@@ -26,11 +26,11 @@ type RegisterCustomerCommand struct {
 
 // UpdateProfileCustomerCommand represents a command to update a customer's profile
 type UpdateProfileCustomerCommand struct {
-	FirstName    *string `json:"firstName,omitempty" validate:"optional_text=1,100"`
-	LastName     *string `json:"lastName,omitempty" validate:"optional_text=1,100"`
+	FirstName    *string `json:"firstName,omitempty" validate:"optional_text=1 100"`
+	LastName     *string `json:"lastName,omitempty" validate:"optional_text=1 100"`
 	Email        *string `json:"email,omitempty" validate:"omitempty,email"`
-	Password     *string `json:"password,omitempty" validate:"optional_text=8,100"`
-	NationalCode *string `json:"nationalCode,omitempty" validate:"optional_text=1,100"`
+	Password     *string `json:"password,omitempty" validate:"optional_text=8 100"`
+	NationalCode *string `json:"nationalCode,omitempty" validate:"optional_text=1 100"`
 	Phone        *string `json:"phone" validate:"required,iranian_mobile"`
-	AddressIDs   []int64 `json:"addressIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	AddressIDs   []int64 `json:"addressIds,omitempty" validate:"array_number_optional=0 100 1 0 false"`
 }

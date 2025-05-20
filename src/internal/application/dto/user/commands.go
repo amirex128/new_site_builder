@@ -3,13 +3,13 @@ package user
 // LoginUserCommand represents a command to log in a user
 type LoginUserCommand struct {
 	Email    *string `json:"email" validate:"required,email"`
-	Password *string `json:"password" validate:"required_text=8,100"`
+	Password *string `json:"password" validate:"required_text=8 100"`
 }
 
 // RegisterUserCommand represents a command to register a new user
 type RegisterUserCommand struct {
 	Email    *string `json:"email" validate:"required,email"`
-	Password *string `json:"password" validate:"required_text=8,100"`
+	Password *string `json:"password" validate:"required_text=8 100"`
 }
 
 // RequestVerifyAndForgetUserCommand represents a command to request verification or password reset
@@ -29,13 +29,13 @@ type SmptSettings struct {
 
 // UpdateProfileUserCommand represents a command to update a user's profile
 type UpdateProfileUserCommand struct {
-	FirstName          *string       `json:"firstName,omitempty" validate:"optional_text=1,100"`
-	LastName           *string       `json:"lastName,omitempty" validate:"optional_text=1,100"`
+	FirstName          *string       `json:"firstName,omitempty" validate:"optional_text=1 100"`
+	LastName           *string       `json:"lastName,omitempty" validate:"optional_text=1 100"`
 	Email              *string       `json:"email,omitempty" validate:"omitempty,email"`
-	Password           *string       `json:"password,omitempty" validate:"optional_text=6,100"`
-	NationalCode       *string       `json:"nationalCode,omitempty" validate:"optional_text=1,100"`
+	Password           *string       `json:"password,omitempty" validate:"optional_text=6 100"`
+	NationalCode       *string       `json:"nationalCode,omitempty" validate:"optional_text=1 100"`
 	Phone              *string       `json:"phone" validate:"required,iranian_mobile"`
-	AddressIDs         []int64       `json:"addressIds,omitempty" validate:"array_number_optional=0,100,1,0,false"`
+	AddressIDs         []int64       `json:"addressIds,omitempty" validate:"array_number_optional=0 100 1 0 false"`
 	AiTypeEnum         *AiTypeEnum   `json:"aiTypeEnum,omitempty" validate:"enum_optional"`
 	UseCustomEmailSmtp *StatusEnum   `json:"useCustomEmailSmtp,omitempty" validate:"enum_optional"`
 	Smtp               *SmptSettings `json:"smtp,omitempty" validate:"omitempty"`
@@ -51,13 +51,13 @@ type UnitPriceQuery struct {
 // ChargeCreditRequestUserCommand represents a command to request charging credit
 type ChargeCreditRequestUserCommand struct {
 	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
-	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
+	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required_text=1 500"`
 	UnitPrices          []UnitPriceQuery     `json:"unitPrices" validate:"required,min=1,dive"`
 }
 
 // ChargeCreditVerifyUserCommand represents a command to verify charge credit
 type ChargeCreditVerifyUserCommand struct {
-	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1,50"`
+	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1 50"`
 	IsSuccess     *bool             `json:"isSuccess" validate:"required_bool"`
 	OrderData     map[string]string `json:"orderData" validate:"required"`
 }
@@ -65,13 +65,13 @@ type ChargeCreditVerifyUserCommand struct {
 // UpgradePlanRequestUserCommand represents a command to request plan upgrade
 type UpgradePlanRequestUserCommand struct {
 	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
-	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
+	FinalFrontReturnUrl *string              `json:"finalFrontReturnUrl" validate:"required_text=1 500"`
 	PlanID              *int64               `json:"planId" validate:"required,gt=0"`
 }
 
 // UpgradePlanVerifyUserCommand represents a command to verify plan upgrade
 type UpgradePlanVerifyUserCommand struct {
-	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1,50"`
+	PaymentStatus *string           `json:"paymentStatus" validate:"required_text=1 50"`
 	IsSuccess     *bool             `json:"isSuccess" validate:"required_bool"`
 	OrderData     map[string]string `json:"orderData" validate:"required"`
 }

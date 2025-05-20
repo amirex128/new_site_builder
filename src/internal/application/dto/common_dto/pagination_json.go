@@ -7,4 +7,5 @@ type PaginationJson struct {
 	TotalCount      int64         `json:"totalCount"`
 	HasPreviousPage bool          `json:"hasPreviousPage"`
 	HasNextPage     bool          `json:"hasNextPage"`
+	Search          string        `form:"search" json:"search" validate:"optional_text=0 100"`
 }

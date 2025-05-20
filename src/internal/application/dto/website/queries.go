@@ -23,7 +23,7 @@ type GetByDomainHeaderFooterQuery struct {
 type GetByDomainPageQuery struct {
 	Domain *string `json:"domain" form:"domain" validate:"required,domain"`
 	SiteID *int64  `json:"siteId,omitempty" form:"siteId" validate:"omitempty"`
-	Path   *string `json:"path" form:"path" validate:"required_text=1,200"`
+	Path   *string `json:"path" form:"path" validate:"required_text=1 200"`
 }
 
 // GetFiltersSortArticleQuery for retrieving articles with filtering and sorting

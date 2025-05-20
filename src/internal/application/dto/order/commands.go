@@ -4,7 +4,7 @@ package order
 type CreateOrderRequestCommand struct {
 	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
 	FinalFrontReturnURL *string              `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
-	Description         *string              `json:"description,omitempty" validate:"optional_text=0,1000"`
+	Description         *string              `json:"description,omitempty" validate:"optional_text=0 1000"`
 	SiteID              *int64               `json:"siteId" validate:"required"`
 	AddressID           *int64               `json:"addressId" validate:"required"`
 	Courier             *CourierEnum         `json:"courier,omitempty" validate:"enum_optional"`

@@ -7,7 +7,7 @@ import (
 // GetByIdPageQuery represents a query to get page(s) by ID
 type GetByIdPageQuery struct {
 	ID     *int64  `json:"id,omitempty" form:"id" validate:"omitempty,gt=0"`
-	IDs    []int64 `json:"ids,omitempty" form:"ids" validate:"array_number_optional=0,100,1,0,false"`
+	IDs    []int64 `json:"ids,omitempty" form:"ids" validate:"array_number_optional=0 100 1 0 false"`
 	SiteID *int64  `json:"siteId" form:"siteId" validate:"required,gt=0"`
 }
 

@@ -7,7 +7,7 @@ import (
 // CreateOrDirectoryItemCommand represents a command to create a file or directory
 type CreateOrDirectoryItemCommand struct {
 	File        *multipart.FileHeader   `json:"file,omitempty" validate:"required_if=IsDirectory false"`
-	Name        *string                 `json:"name,omitempty" validate:"required_if=IsDirectory true,optional_text=0,255"`
+	Name        *string                 `json:"name,omitempty" validate:"required_if=IsDirectory true,optional_text=0 255"`
 	IsDirectory *bool                   `json:"isDirectory" validate:"required_bool"`
 	Permission  *FileItemPermissionEnum `json:"permission" validate:"required,enum"`
 	ParentID    *int64                  `json:"parentId,omitempty" validate:"omitempty"`
@@ -32,7 +32,7 @@ type RestoreFileItemCommand struct {
 type FileOperationCommand struct {
 	ID            *int64        `json:"id" validate:"required"`
 	OperationType OperationType `json:"operationType" validate:"required,enum"`
-	NewName       *string       `json:"newName,omitempty" validate:"required_if=OperationType 2,optional_text=0,200"`
+	NewName       *string       `json:"newName,omitempty" validate:"required_if=OperationType 2,optional_text=0 200"`
 	NewParentID   *int64        `json:"newParentId,omitempty" validate:"required_if=OperationType 0 OperationType 1"`
 }
 
