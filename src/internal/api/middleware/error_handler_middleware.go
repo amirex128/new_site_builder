@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"fmt"
+
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
+	"github.com/amirex128/new_site_builder/src/internal/api/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func ErrorHandlerMiddleware(logger sflogger.Logger) gin.HandlerFunc {
@@ -26,10 +27,9 @@ func ErrorHandlerMiddleware(logger sflogger.Logger) gin.HandlerFunc {
 				}
 
 				// Return error response
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"error": "Internal server error",
-				})
-				c.Abort()
+				if !c.Writer.Written() {
+					utils.InternalError(c, fmt.Sprintf("%v", err))
+				}
 			}
 		}()
 
