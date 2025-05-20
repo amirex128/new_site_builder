@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // AdminGetAllUserQuery represents a query to get all users with pagination for admin
@@ -21,7 +22,7 @@ type GetProfileUserQuery struct {
 
 // VerifyUserQuery represents a query to verify user
 type VerifyUserQuery struct {
-	Email *string         `json:"email" form:"email" validate:"required,email"`
-	Code  *int            `json:"code" form:"code" validate:"required"`
-	Type  *VerifyTypeEnum `json:"type" validate:"required,enum"`
+	Email *string               `json:"email" form:"email" validate:"required,email"`
+	Code  *int                  `json:"code" form:"code" validate:"required"`
+	Type  *enums.VerifyTypeEnum `json:"type" validate:"required,enum"`
 }

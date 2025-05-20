@@ -1,21 +1,25 @@
 package product
 
-import "time"
+import (
+	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+)
 
 // CouponCommand represents a coupon for a article
 type CouponCommand struct {
-	Quantity   *int              `json:"quantity" validate:"required"`
-	Type       *DiscountTypeEnum `json:"type" validate:"required,enum"`
-	Value      *int64            `json:"value" validate:"required"`
-	ExpiryDate *time.Time        `json:"expiryDate" validate:"required,gtfield=time.Now"`
+	Quantity   *int                    `json:"quantity" validate:"required"`
+	Type       *enums.DiscountTypeEnum `json:"type" validate:"required,enum"`
+	Value      *int64                  `json:"value" validate:"required"`
+	ExpiryDate *time.Time              `json:"expiryDate" validate:"required,gtfield=time.Now"`
 }
 
 // ProductAttributeCommand represents a article attribute
 type ProductAttributeCommand struct {
-	ID    *int64                    `json:"id,omitempty" validate:"omitempty"`
-	Type  *ProductAttributeTypeEnum `json:"type" validate:"required,enum"`
-	Name  *string                   `json:"name" validate:"required_text=1 100"`
-	Value *string                   `json:"value" validate:"required_text=1 500"`
+	ID    *int64                          `json:"id,omitempty" validate:"omitempty"`
+	Type  *enums.ProductAttributeTypeEnum `json:"type" validate:"required,enum"`
+	Name  *string                         `json:"name" validate:"required_text=1 100"`
+	Value *string                         `json:"value" validate:"required_text=1 500"`
 }
 
 // ProductVariantCommand represents a article variant

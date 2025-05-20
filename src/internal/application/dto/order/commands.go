@@ -1,13 +1,15 @@
 package order
 
+import "github.com/amirex128/new_site_builder/src/internal/domain/enums"
+
 // CreateOrderRequestCommand represents a command to create an order request
 type CreateOrderRequestCommand struct {
-	Gateway             *PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
-	FinalFrontReturnURL *string              `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
-	Description         *string              `json:"description,omitempty" validate:"optional_text=0 1000"`
-	SiteID              *int64               `json:"siteId" validate:"required"`
-	AddressID           *int64               `json:"addressId" validate:"required"`
-	Courier             *CourierEnum         `json:"courier,omitempty" validate:"enum_optional"`
+	Gateway             *enums.PaymentGatewaysEnum `json:"gateway" validate:"required,enum"`
+	FinalFrontReturnURL *string                    `json:"finalFrontReturnUrl" validate:"required_text=1,500"`
+	Description         *string                    `json:"description,omitempty" validate:"optional_text=0 1000"`
+	SiteID              *int64                     `json:"siteId" validate:"required"`
+	AddressID           *int64                     `json:"addressId" validate:"required"`
+	Courier             *enums.CourierEnum         `json:"courier,omitempty" validate:"enum_optional"`
 }
 
 // CreateOrderVerifyCommand represents a command to verify an order

@@ -3,15 +3,16 @@ package pageusageusecase
 import (
 	"errors"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/page_usage"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/page_usage"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"gorm.io/gorm"
 )
 
@@ -49,7 +50,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	u.Logger.Info("SyncPageUsageCommand called", map[string]interface{}{
 		"pageId":    *params.PageID,
 		"siteId":    *params.SiteID,
-		"type":      *params.Type,
+		"type":      params.Type,
 		"entityIds": params.EntityIDs,
 	})
 
@@ -88,8 +89,8 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	}
 
 	// Handle different types of usages
-	switch *params.Type {
-	case page_usage.ArticleUsage:
+	switch params.Type {
+	case enums.ArticleUsage:
 		// Delete existing usages
 		err = u.pageArticleUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -122,7 +123,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 			}
 		}
 
-	case page_usage.ProductUsage:
+	case enums.ProductUsage:
 		// Delete existing usages
 		err = u.pageProductUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -155,7 +156,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 			}
 		}
 
-	case page_usage.HeaderFooterUsage:
+	case enums.HeaderFooterUsage:
 		// Delete existing usages
 		err = u.pageHeaderFooterUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
@@ -201,7 +202,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 	u.Logger.Info("FindPageUsagesQuery called", map[string]interface{}{
 		"entityIds": params.EntityIDs,
 		"siteId":    *params.SiteID,
-		"type":      *params.Type,
+		"type":      params.Type,
 	})
 
 	// Check if site exists
@@ -214,8 +215,8 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 	}
 
 	// Find usages based on type
-	switch *params.Type {
-	case page_usage.ArticleUsage:
+	switch params.Type {
+	case enums.ArticleUsage:
 		usages, err := u.pageArticleUsageRepo.GetByArticleIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err
@@ -243,7 +244,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 		return enhancePageUsageResponse(pages), nil
 
-	case page_usage.ProductUsage:
+	case enums.ProductUsage:
 		usages, err := u.pageProductUsageRepo.GetByProductIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err
@@ -271,7 +272,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 
 		return enhancePageUsageResponse(pages), nil
 
-	case page_usage.HeaderFooterUsage:
+	case enums.HeaderFooterUsage:
 		usages, err := u.pageHeaderFooterUsageRepo.GetByHeaderFooterIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
 			return nil, err

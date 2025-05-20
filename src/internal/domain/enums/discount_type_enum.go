@@ -1,16 +1,15 @@
-package plan
+package enums
 
 import (
 	"database/sql/driver"
 	"errors"
 )
 
-// DiscountTypeEnum defines discount types
 type DiscountTypeEnum string
 
 const (
-	FixedDiscount      DiscountTypeEnum = "fixed"
-	PercentageDiscount DiscountTypeEnum = "percentage"
+	FixedDiscountType      DiscountTypeEnum = "fixed"
+	PercentageDiscountType DiscountTypeEnum = "percentage"
 )
 
 func (e *DiscountTypeEnum) Scan(src interface{}) error {
@@ -39,13 +38,11 @@ func (e DiscountTypeEnum) Value() (driver.Value, error) {
 	return string(e), nil
 }
 
-// IsValid try to validate enum value on this type
 func (e DiscountTypeEnum) IsValid() bool {
 	var discountTypes = []string{
-		string(FixedDiscount),
-		string(PercentageDiscount),
+		string(FixedDiscountType),
+		string(PercentageDiscountType),
 	}
-
 	for _, discountType := range discountTypes {
 		if discountType == string(e) {
 			return true

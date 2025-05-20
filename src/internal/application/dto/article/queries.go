@@ -2,6 +2,7 @@ package article
 
 import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // GetByIdArticleQuery for retrieving a single article by ID
@@ -36,7 +37,7 @@ type GetArticleByCategoryQuery struct {
 // GetByFiltersSortArticleQuery for retrieving articles with filtering and sorting
 type GetByFiltersSortArticleQuery struct {
 	common.PaginationRequestDto
-	SelectedFilters map[ArticleFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
-	SelectedSort    *ArticleSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
-	SiteID          *int64                         `json:"siteId" form:"siteId" validate:"required"`
+	SelectedFilters map[enums.ArticleFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
+	SelectedSort    *enums.ArticleSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
+	SiteID          *int64                               `json:"siteId" form:"siteId" validate:"required"`
 }

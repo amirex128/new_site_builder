@@ -1,8 +1,8 @@
 package website
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // GetArticlesByCategorySlugQuery for retrieving articles by product_category slug
@@ -29,19 +29,19 @@ type GetByDomainPageQuery struct {
 // GetFiltersSortArticleQuery for retrieving articles with filtering and sorting
 type GetFiltersSortArticleQuery struct {
 	common.PaginationRequestDto
-	SelectedFilters map[ArticleFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
-	SelectedSort    *ArticleSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
-	SiteID          *int64                         `json:"siteId,omitempty" form:"siteId" validate:"omitempty"`
-	Domain          *string                        `json:"domain" form:"domain" validate:"required,domain"`
+	SelectedFilters map[enums.ArticleFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
+	SelectedSort    *enums.ArticleSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
+	SiteID          *int64                               `json:"siteId,omitempty" form:"siteId" validate:"omitempty"`
+	Domain          *string                              `json:"domain" form:"domain" validate:"required,domain"`
 }
 
 // GetFiltersSortProductQuery for retrieving products with filtering and sorting
 type GetFiltersSortProductQuery struct {
 	common.PaginationRequestDto
-	SelectedFilters map[product.ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
-	SelectedSort    *product.ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
-	SiteID          *int64                                 `json:"siteId,omitempty" form:"siteId" validate:"omitempty"`
-	Domain          *string                                `json:"domain" form:"domain" validate:"required,domain"`
+	SelectedFilters map[enums.ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
+	SelectedSort    *enums.ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
+	SiteID          *int64                               `json:"siteId,omitempty" form:"siteId" validate:"omitempty"`
+	Domain          *string                              `json:"domain" form:"domain" validate:"required,domain"`
 }
 
 // GetProductsByCategorySlugQuery for retrieving products by product_category slug

@@ -1,7 +1,7 @@
 package customer
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // LoginCustomerCommand represents a command to log in a customer
@@ -12,9 +12,9 @@ type LoginCustomerCommand struct {
 
 // RequestVerifyAndForgetCustomerCommand represents a command to request verification or password reset
 type RequestVerifyAndForgetCustomerCommand struct {
-	Email *string              `json:"email" validate:"required,email"`
-	Phone *string              `json:"phone" validate:"required,iranian_mobile"`
-	Type  *user.VerifyTypeEnum `json:"type" validate:"required,enum"`
+	Email *string               `json:"email" validate:"required,email"`
+	Phone *string               `json:"phone" validate:"required,iranian_mobile"`
+	Type  *enums.VerifyTypeEnum `json:"type" validate:"required,enum"`
 }
 
 // RegisterCustomerCommand represents a command to register a new customer

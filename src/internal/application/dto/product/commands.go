@@ -1,10 +1,14 @@
 package product
 
+import (
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+)
+
 // CreateProductCommand represents a command to create a new article
 type CreateProductCommand struct {
 	Name              *string                   `json:"name" validate:"required_text=1 200"`
 	Description       *string                   `json:"description,omitempty" validate:"optional_text=1 2000"`
-	Status            *StatusEnum               `json:"status" validate:"required,enum"`
+	Status            *enums.StatusEnum         `json:"status" validate:"required,enum"`
 	Weight            *int                      `json:"weight" validate:"required,max=1000"`
 	FreeSend          *bool                     `json:"freeSend" validate:"required_bool"`
 	LongDescription   *string                   `json:"longDescription,omitempty" validate:"optional_text=1 5000"`
@@ -25,7 +29,7 @@ type UpdateProductCommand struct {
 	SiteID            *int64                    `json:"siteId" validate:"required"`
 	Name              *string                   `json:"name,omitempty" validate:"optional_text=1 200"`
 	Description       *string                   `json:"description,omitempty" validate:"optional_text=1 2000"`
-	Status            *StatusEnum               `json:"status,omitempty" validate:"enum_optional"`
+	Status            *enums.StatusEnum         `json:"status,omitempty" validate:"enum_optional"`
 	Weight            *int                      `json:"weight,omitempty" validate:"omitempty"`
 	FreeSend          *bool                     `json:"freeSend,omitempty" validate:"optional_bool"`
 	LongDescription   *string                   `json:"longDescription,omitempty" validate:"optional_text=1 5000"`

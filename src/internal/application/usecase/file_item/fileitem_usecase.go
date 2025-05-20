@@ -14,6 +14,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 type FileItemUsecase struct {
@@ -37,11 +38,11 @@ func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 }
 
 // Add helper function to convert fileitem.FileItemPermissionEnum to service.FileItemPermissionEnum
-func toServicePermissionEnum(p fileitem.FileItemPermissionEnum) contractStorage.FileItemPermissionEnum {
+func toServicePermissionEnum(p enums.FileItemPermissionEnum) contractStorage.FileItemPermissionEnum {
 	switch p {
-	case fileitem.PrivatePermission:
+	case enums.PrivatePermission:
 		return contractStorage.Private
-	case fileitem.PublicPermission:
+	case enums.PublicPermission:
 		return contractStorage.Public
 	default:
 		return contractStorage.Private // default fallback

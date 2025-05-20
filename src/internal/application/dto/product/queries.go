@@ -2,6 +2,7 @@ package product
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // AdminGetAllProductQuery for admin listing of all products with pagination
@@ -36,9 +37,9 @@ type GetProductByCategoryQuery struct {
 // GetByFiltersSortProductQuery for retrieving products with filtering and sorting
 type GetByFiltersSortProductQuery struct {
 	common.PaginationRequestDto
-	SelectedFilters map[ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"omitempty"`
-	SelectedSort    *ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"omitempty"`
-	SiteID          *int64                         `json:"siteId" form:"siteId" validate:"required"`
+	SelectedFilters map[enums.ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional"`
+	SelectedSort    *enums.ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional"`
+	SiteID          *int64                               `json:"siteId" form:"siteId" validate:"required"`
 }
 
 // CalculateProductsPriceQuery for calculating article prices

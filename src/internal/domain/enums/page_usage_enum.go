@@ -1,11 +1,10 @@
-package page_usage
+package enums
 
 import (
 	"database/sql/driver"
 	"errors"
 )
 
-// PageUsageEnum defines usage types for pages
 type PageUsageEnum string
 
 const (
@@ -40,14 +39,12 @@ func (e PageUsageEnum) Value() (driver.Value, error) {
 	return string(e), nil
 }
 
-// IsValid try to validate enum value on this type
 func (e PageUsageEnum) IsValid() bool {
 	var usageTypes = []string{
 		string(ProductUsage),
 		string(ArticleUsage),
 		string(HeaderFooterUsage),
 	}
-
 	for _, usageType := range usageTypes {
 		if usageType == string(e) {
 			return true
