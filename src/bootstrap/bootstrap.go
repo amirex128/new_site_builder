@@ -5,9 +5,9 @@ import (
 	"github.com/amirex128/new_site_builder/src/bootstrap/service_provider"
 )
 
-func HttpServerBootstrap(ctx context.Context) *Container {
+func HttpServerBootstrap(ctx *context.Context) *Container {
 
-	logger := serviceprovider.LoggerProvider(ctx)
+	logger := serviceprovider.LoggerProvider()
 
 	cfg := serviceprovider.ConfigProvider(logger)
 
@@ -34,9 +34,9 @@ func HttpServerBootstrap(ctx context.Context) *Container {
 	return container
 }
 
-func ConsumerServerBootstrap(ctx context.Context) *Container {
+func ConsumerServerBootstrap(ctx *context.Context) *Container {
 
-	logger := serviceprovider.LoggerProvider(ctx)
+	logger := serviceprovider.LoggerProvider()
 
 	cfg := serviceprovider.ConfigProvider(logger)
 

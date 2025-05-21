@@ -1,11 +1,10 @@
 package serviceprovider
 
 import (
-	"context"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
-func LoggerProvider(ctx context.Context) sflogger.Logger {
+func LoggerProvider() sflogger.Logger {
 	// Define logger options
 	loggerOpts := []sflogger.Option{
 		// Core logger configuration

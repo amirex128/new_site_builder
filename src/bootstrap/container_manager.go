@@ -4,10 +4,7 @@ import (
 	"context"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/infra/repository"
-	"github.com/amirex128/new_site_builder/src/internal/infra/service/auth"
-	"github.com/amirex128/new_site_builder/src/internal/infra/service/cache"
-	"github.com/amirex128/new_site_builder/src/internal/infra/service/payment"
-	"github.com/amirex128/new_site_builder/src/internal/infra/service/storage"
+	service2 "github.com/amirex128/new_site_builder/src/internal/infra/service"
 	"github.com/gin-gonic/gin"
 
 	"time"
@@ -18,31 +15,33 @@ import (
 	"github.com/amirex128/new_site_builder/src/config"
 )
 
-func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
+func ContainerProvider(ctx *context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
 	mainDB := sform.MustDB("main")
 
 	paymentRepo := repository.NewPaymentRepository(mainDB)
 	gatewayRepo := repository.NewGatewayRepository(mainDB)
 
-	identityService := auth.NewIdentityService(cfg.JwtSecretToken, cfg.JwtIssuer, cfg.JwtAudience, 24*time.Hour)
+	identityService := service2.NewIdentityService(cfg.JwtSecretToken, cfg.JwtIssuer, cfg.JwtAudience, 24*time.Hour)
 	return &Container{
-		Config: cfg,
-		Logger: logger,
+		Ctx: ctx,
+		Config:  cfg,
+		Logger:  logger,
 
-		MainCache:       cache.NewRedis(sfredis.MustClient(ctx, "cache")),
+		MainCache:       service2.NewRedis(sfredis.MustClient(*ctx, "cache")),
 		IdentityService: identityService,
-		StorageService: storage.NewStorageService(
-			storage.NewStorageClient(cfg.StorageS1Host, cfg.StorageS1AccessKey, cfg.StorageS1SecretKey),
-			storage.NewStorageClient(cfg.StorageS2Host, cfg.StorageS2AccessKey, cfg.StorageS2SecretKey),
-			storage.NewStorageClient(cfg.StorageS3Host, cfg.StorageS3AccessKey, cfg.StorageS3SecretKey),
+		StorageService: service2.NewStorageService(
+			service2.NewStorageClient(cfg.StorageS1Host, cfg.StorageS1AccessKey, cfg.StorageS1SecretKey),
+			service2.NewStorageClient(cfg.StorageS2Host, cfg.StorageS2AccessKey, cfg.StorageS2SecretKey),
+			service2.NewStorageClient(cfg.StorageS3Host, cfg.StorageS3AccessKey, cfg.StorageS3SecretKey),
 		),
-		PaymentService: payment.NewPaymentService(paymentRepo, gatewayRepo),
+		PaymentService: service2.NewPaymentService(paymentRepo, gatewayRepo),
+		MessageService: service2.NewRabbitMqService(ctx, logger),
 		// for transient
 		AuthTransientService: func(c *gin.Context) service.IAuthService {
-			return auth.NewAuthContextService(c, identityService)
+			return service2.NewAuthContextService(c, identityService)
 		},
 		stockCacheTransient: func() service.ICacheService {
-			return cache.NewRedis(sfredis.MustClient(ctx, "stock"))
+			return service2.NewRedis(sfredis.MustClient(*ctx, "stock"))
 		},
 
 		// Repositories

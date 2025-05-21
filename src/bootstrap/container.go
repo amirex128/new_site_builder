@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"context"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -12,14 +13,16 @@ import (
 
 // Container
 type Container struct {
+	Ctx                  *context.Context
 	Config               contract.IConfig
-	MemoryLoader         service.IMemoryLoader
+	MemoryLoader         service.IMemoryLoaderService
 	MainCache            service.ICacheService
 	AuthTransientService func(c *gin.Context) service.IAuthService
 	IdentityService      service.IIdentityService
 	StorageService       service.IStorageService
 	stockCacheTransient  func() service.ICacheService
 	PaymentService       service.IPaymentService
+	MessageService       service.IMessageService
 
 	Logger                    sflogger.Logger
 	ArticleRepo               repository.IArticleRepository
@@ -69,6 +72,9 @@ type Container struct {
 	PageHeaderFooterUsageRepo repository.IPageHeaderFooterUsageRepository
 }
 
+func (c *Container) GetCtx() *context.Context {
+	return c.Ctx
+}
 func (c *Container) GetCommentRepo() repository.ICommentRepository {
 	return c.CommentRepo
 }
@@ -283,4 +289,8 @@ func (c *Container) GetDB() *gorm.DB {
 
 func (c *Container) GetPaymentService() service.IPaymentService {
 	return c.PaymentService
+}
+
+func (c *Container) GetMessageService() service.IMessageService {
+	return c.MessageService
 }

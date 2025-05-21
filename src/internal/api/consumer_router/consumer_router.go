@@ -7,9 +7,9 @@ import (
 	"github.com/amirex128/new_site_builder/src/bootstrap"
 )
 
-func BindConsumers(ctx context.Context, handlers *bootstrap.ConsumerHandlerManager, logger sflogger.Logger) {
+func BindConsumers(ctx *context.Context, handlers *bootstrap.ConsumerHandlerManager, logger sflogger.Logger) {
 	err := sfrabbitmq.Consume(
-		ctx,
+		*ctx,
 		"main",
 		"sms",
 		handlers.NotificationHandler.SmsHandler,
@@ -30,7 +30,7 @@ func BindConsumers(ctx context.Context, handlers *bootstrap.ConsumerHandlerManag
 	}
 
 	err = sfrabbitmq.Consume(
-		ctx,
+		*ctx,
 		"main",
 		"email",
 		handlers.NotificationHandler.SmsHandler,

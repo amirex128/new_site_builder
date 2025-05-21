@@ -1,6 +1,7 @@
 package contract
 
 import (
+	"context"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -10,6 +11,7 @@ import (
 
 // IContainer provides methods to access all dependencies
 type IContainer interface {
+	GetCtx() *context.Context
 	GetLogger() sflogger.Logger
 
 	// Services
@@ -21,6 +23,7 @@ type IContainer interface {
 	GetStorageService() service.IStorageService
 	GetIdentityService() service.IIdentityService
 	GetPaymentService() service.IPaymentService
+	GetMessageService() service.IMessageService
 
 	// Repositories
 	GetAddressRepo() repository.IAddressRepository

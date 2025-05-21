@@ -1,4 +1,4 @@
-package cache
+package service
 
 import sfredis "git.snappfood.ir/backend/go/packages/sf-redis"
 

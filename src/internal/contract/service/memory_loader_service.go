@@ -1,5 +1,5 @@
 package service
 
-type IMemoryLoader interface {
+type IMemoryLoaderService interface {
 	GetSampleFromCache(id string) (interface{}, bool)
 }
