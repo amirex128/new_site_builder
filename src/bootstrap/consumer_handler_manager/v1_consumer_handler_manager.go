@@ -8,6 +8,6 @@ import (
 
 func NotificationInit(c contract.IContainer) *consumer.NotificationConsumerHandler {
 	usecase := notificationusecase.NewNotificationUsecase(c)
-	handler := consumer.NewNotificationConsumerHandler(usecase)
+	handler := consumer.NewNotificationConsumerHandler(usecase, c.GetLogger())
 	return handler
 }

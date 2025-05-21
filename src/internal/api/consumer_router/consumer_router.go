@@ -8,45 +8,53 @@ import (
 )
 
 func BindConsumers(ctx *context.Context, handlers *bootstrap.ConsumerHandlerManager, logger sflogger.Logger) {
-	err := sfrabbitmq.Consume(
-		*ctx,
-		"main",
-		"sms",
-		handlers.NotificationHandler.SmsHandler,
-		&sfrabbitmq.ConsumeConfig{
-			QueueName:     "",
-			ConsumerName:  "",
-			AutoAck:       false,
-			Exclusive:     false,
-			NoLocal:       false,
-			NoWait:        false,
-			Args:          nil,
-			MaxRetries:    0,
-			RetryInterval: 0,
-		},
-	)
-	if err != nil {
-		logger.Errorf("Failed to start single message consumption: %v", err)
-	}
 
-	err = sfrabbitmq.Consume(
-		*ctx,
-		"main",
-		"email",
-		handlers.NotificationHandler.SmsHandler,
-		&sfrabbitmq.ConsumeConfig{
-			QueueName:     "",
-			ConsumerName:  "",
-			AutoAck:       false,
-			Exclusive:     false,
-			NoLocal:       false,
-			NoWait:        false,
-			Args:          nil,
-			MaxRetries:    0,
-			RetryInterval: 0,
-		},
-	)
-	if err != nil {
-		logger.Errorf("Failed to start single message consumption: %v", err)
-	}
+	go func() {
+		logger.Infof("Binding consumers successfully")
+		err := sfrabbitmq.Consume(
+			*ctx,
+			"main",
+			"sms",
+			handlers.NotificationHandler.SmsHandler,
+			&sfrabbitmq.ConsumeConfig{
+				QueueName:     "",
+				ConsumerName:  "",
+				AutoAck:       false,
+				Exclusive:     false,
+				NoLocal:       false,
+				NoWait:        false,
+				Args:          nil,
+				MaxRetries:    0,
+				RetryInterval: 0,
+			},
+		)
+		if err != nil {
+			logger.Errorf("Failed to start single message consumption: %v", err)
+		}
+	}()
+
+	go func() {
+		logger.Infof("Binding consumers successfully")
+		err := sfrabbitmq.Consume(
+			*ctx,
+			"main",
+			"email",
+			handlers.NotificationHandler.SmsHandler,
+			&sfrabbitmq.ConsumeConfig{
+				QueueName:     "",
+				ConsumerName:  "",
+				AutoAck:       false,
+				Exclusive:     false,
+				NoLocal:       false,
+				NoWait:        false,
+				Args:          nil,
+				MaxRetries:    0,
+				RetryInterval: 0,
+			},
+		)
+		if err != nil {
+			logger.Errorf("Failed to start single message consumption: %v", err)
+		}
+	}()
+
 }

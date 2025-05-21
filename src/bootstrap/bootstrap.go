@@ -8,7 +8,10 @@ import (
 func HttpServerBootstrap(ctx *context.Context) *Container {
 
 	logger := serviceprovider.LoggerProvider()
-
+	logger.InfoContext(*ctx, "xxxxxxxxxxxxxxxxxxxxxxxx HTTP Server", map[string]interface{}{
+		"port": 111,
+	})
+	logger.Infof("Starting HTTP Server")
 	cfg := serviceprovider.ConfigProvider(logger)
 
 	serviceprovider.MongoProvider(cfg, logger)

@@ -23,9 +23,9 @@ func ContainerProvider(ctx *context.Context, cfg *config.Config, logger sflogger
 
 	identityService := service2.NewIdentityService(cfg.JwtSecretToken, cfg.JwtIssuer, cfg.JwtAudience, 24*time.Hour)
 	return &Container{
-		Ctx: ctx,
-		Config:  cfg,
-		Logger:  logger,
+		Ctx:    ctx,
+		Config: cfg,
+		Logger: logger,
 
 		MainCache:       service2.NewRedis(sfredis.MustClient(*ctx, "cache")),
 		IdentityService: identityService,
