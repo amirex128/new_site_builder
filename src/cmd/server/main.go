@@ -30,9 +30,9 @@ import (
 func main() {
 	ctx := context.Background()
 
-	container := bootstrap.HttpBootstrap(ctx)
+	container := bootstrap.HttpServerBootstrap(ctx)
 
-	handlers := bootstrap.HandlerBootstrap(container)
+	handlers := bootstrap.HttpHandlerBootstrap(container)
 
-	router.InitServer(handlers, container, container.Logger, container.Config)
+	router.RunServer(handlers, container, container.Logger, container.Config)
 }

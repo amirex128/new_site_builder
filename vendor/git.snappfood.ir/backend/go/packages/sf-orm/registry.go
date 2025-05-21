@@ -349,51 +349,59 @@ func initializeConnection(name string) (*gorm.DB, error) {
 		option(db)
 	}
 
-	// Apply connection pool settings if available
+	// Apply connection pool settings and check connectivity
 	sqlDB, err := db.DB()
-	if err == nil {
-		switch cfg := conn.config.(type) {
-		case *MySQLConfig:
-			if cfg.MaxOpenConns > 0 {
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
-			}
-			if cfg.MaxIdleConns > 0 {
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
-			}
-			if cfg.MaxLifetime > 0 {
-				sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
-			}
-		case *PostgresConfig:
-			if cfg.MaxOpenConns > 0 {
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
-			}
-			if cfg.MaxIdleConns > 0 {
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
-			}
-			if cfg.MaxLifetime > 0 {
-				sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
-			}
-		case *SQLiteConfig:
-			if cfg.MaxOpenConns > 0 {
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
-			}
-			if cfg.MaxIdleConns > 0 {
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
-			}
-			if cfg.MaxLifetime > 0 {
-				sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
-			}
-		case *SQLServerConfig:
-			if cfg.MaxOpenConns > 0 {
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
-			}
-			if cfg.MaxIdleConns > 0 {
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
-			}
-			if cfg.MaxLifetime > 0 {
-				sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
-			}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get underlying sql.DB: %w", err)
+	}
+
+	switch cfg := conn.config.(type) {
+	case *MySQLConfig:
+		if cfg.MaxOpenConns > 0 {
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
 		}
+		if cfg.MaxIdleConns > 0 {
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+		}
+		if cfg.MaxLifetime > 0 {
+			sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
+		}
+	case *PostgresConfig:
+		if cfg.MaxOpenConns > 0 {
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+		}
+		if cfg.MaxIdleConns > 0 {
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+		}
+		if cfg.MaxLifetime > 0 {
+			sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
+		}
+	case *SQLiteConfig:
+		if cfg.MaxOpenConns > 0 {
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+		}
+		if cfg.MaxIdleConns > 0 {
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+		}
+		if cfg.MaxLifetime > 0 {
+			sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
+		}
+	case *SQLServerConfig:
+		if cfg.MaxOpenConns > 0 {
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+		}
+		if cfg.MaxIdleConns > 0 {
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+		}
+		if cfg.MaxLifetime > 0 {
+			sqlDB.SetConnMaxLifetime(cfg.MaxLifetime)
+		}
+	}
+
+	// Check database connectivity with Ping
+	if pingErr := sqlDB.Ping(); pingErr != nil {
+		sqlDB.Close() // Clean up the connection if ping fails
+		return nil, fmt.Errorf("database ping failed: %w", pingErr)
 	}
 
 	return db, nil

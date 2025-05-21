@@ -14,7 +14,7 @@ git.snappfood.ir/backend/go/packages/sf-memory-loader
 # git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-mongo
-# git.snappfood.ir/backend/go/packages/sf-orm v0.0.9
+# git.snappfood.ir/backend/go/packages/sf-orm v0.0.10
 ## explicit; go 1.24.2
 git.snappfood.ir/backend/go/packages/sf-orm
 # git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5

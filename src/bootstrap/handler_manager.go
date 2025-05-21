@@ -6,7 +6,33 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 )
 
-func HandlerBootstrap(c contract.IContainer) *HandlerManager {
+type HandlerManager struct {
+	ArticleHandlerV1         *v1.ArticleHandler
+	ArticleCategoryHandlerV1 *v1.ArticleCategoryHandler
+	AddressHandlerV1         *v1.AddressHandler
+	BasketHandlerV1          *v1.BasketHandler
+	CustomerHandlerV1        *v1.CustomerHandler
+	CustomerTicketHandlerV1  *v1.CustomerTicketHandler
+	DefaultThemeHandlerV1    *v1.DefaultThemeHandler
+	DiscountHandlerV1        *v1.DiscountHandler
+	FileItemHandlerV1        *v1.FileItemHandler
+	HeaderFooterHandlerV1    *v1.HeaderFooterHandler
+	OrderHandlerV1           *v1.OrderHandler
+	PageHandlerV1            *v1.PageHandler
+	PaymentHandlerV1         *v1.PaymentHandler
+	PlanHandlerV1            *v1.PlanHandler
+	ProductHandlerV1         *v1.ProductHandler
+	ProductCategoryHandlerV1 *v1.ProductCategoryHandler
+	ProductReviewHandlerV1   *v1.ProductReviewHandler
+	RoleHandlerV1            *v1.RoleHandler
+	SiteHandlerV1            *v1.SiteHandler
+	TicketHandlerV1          *v1.TicketHandler
+	UnitPriceHandlerV1       *v1.UnitPriceHandler
+	UserHandlerV1            *v1.UserHandler
+	WebsiteHandlerV1         *v1.WebsiteHandler
+}
+
+func HttpHandlerBootstrap(c contract.IContainer) *HandlerManager {
 
 	return &HandlerManager{
 		ArticleHandlerV1:         handlermanager.ArticleInit(c),
@@ -33,30 +59,4 @@ func HandlerBootstrap(c contract.IContainer) *HandlerManager {
 		UserHandlerV1:            handlermanager.UserInit(c),
 		WebsiteHandlerV1:         handlermanager.WebsiteInit(c),
 	}
-}
-
-type HandlerManager struct {
-	ArticleHandlerV1         *v1.ArticleHandler
-	ArticleCategoryHandlerV1 *v1.ArticleCategoryHandler
-	AddressHandlerV1         *v1.AddressHandler
-	BasketHandlerV1          *v1.BasketHandler
-	CustomerHandlerV1        *v1.CustomerHandler
-	CustomerTicketHandlerV1  *v1.CustomerTicketHandler
-	DefaultThemeHandlerV1    *v1.DefaultThemeHandler
-	DiscountHandlerV1        *v1.DiscountHandler
-	FileItemHandlerV1        *v1.FileItemHandler
-	HeaderFooterHandlerV1    *v1.HeaderFooterHandler
-	OrderHandlerV1           *v1.OrderHandler
-	PageHandlerV1            *v1.PageHandler
-	PaymentHandlerV1         *v1.PaymentHandler
-	PlanHandlerV1            *v1.PlanHandler
-	ProductHandlerV1         *v1.ProductHandler
-	ProductCategoryHandlerV1 *v1.ProductCategoryHandler
-	ProductReviewHandlerV1   *v1.ProductReviewHandler
-	RoleHandlerV1            *v1.RoleHandler
-	SiteHandlerV1            *v1.SiteHandler
-	TicketHandlerV1          *v1.TicketHandler
-	UnitPriceHandlerV1       *v1.UnitPriceHandler
-	UserHandlerV1            *v1.UserHandler
-	WebsiteHandlerV1         *v1.WebsiteHandler
 }

@@ -17,7 +17,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 	err := sform.RegisterConnection(
 		sform.WithLogger(logger),
 		sform.WithRetryOptions(&sform.RetryOptions{
-			MaxRetries:     5,
+			MaxRetries:     100,
 			InitialBackoff: time.Second,
 			MaxBackoff:     15 * time.Second,
 			BackoffFactor:  1.5,

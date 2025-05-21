@@ -7,13 +7,14 @@ require (
 	git.snappfood.ir/backend/go/packages/sf-logger v0.0.22
 	git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3
 	git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3
-	git.snappfood.ir/backend/go/packages/sf-orm v0.0.9
+	git.snappfood.ir/backend/go/packages/sf-orm v0.0.10
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5
 	git.snappfood.ir/backend/go/packages/sf-redis v0.0.7
 	git.snappfood.ir/backend/go/packages/sf-routing v0.0.11
-	github.com/gin-gonic/gin v1.10.0
+	github.com/gin-gonic/gin v1.10.1
 	github.com/go-zookeeper/zk v1.0.4
 	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/google/uuid v1.6.0
 	github.com/hashicorp/consul/api v1.32.1
 	github.com/minio/minio-go/v7 v7.0.92
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -63,7 +64,6 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect

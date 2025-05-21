@@ -7,7 +7,8 @@ MAIN_PATH=./src/cmd/server
 # Docker related variables
 DOCKER_IMAGE=new-site-builder
 DOCKER_TAG=latest
-
+vet:
+	go vet ./...
 # Generate API documentation
 docs:
 	swag init -g src/cmd/server/main.go -o ./docs

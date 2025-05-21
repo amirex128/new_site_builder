@@ -9,8 +9,8 @@ git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3 h1:F7jC58Dp/jteo8ku
 git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3/go.mod h1:R7kg0w0q3IrsM/fPwVvdGaG/0TAlZTQwRP+Iuu9En2s=
 git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3 h1:Q0etYSZItDHM5sZ+SI0LrKg021nntJJ1gXu/c8xUG7A=
 git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3/go.mod h1:DrETQiy3bZPDJsISi9bTvFxiPdCnVq/+43W95Yn4OdU=
-git.snappfood.ir/backend/go/packages/sf-orm v0.0.9 h1:imPk5zpUVFUd7+Io513ZNzaFurOPSS38XsabK/EjGgc=
-git.snappfood.ir/backend/go/packages/sf-orm v0.0.9/go.mod h1:iD9GlBQcBYn6qEXabdJ8QwMGl+HVjWIN1MpQVxgWwX0=
+git.snappfood.ir/backend/go/packages/sf-orm v0.0.10 h1:ocRqbPLSVfTty1f+ozxZacUzElx0f9NEbBO11TrRK5M=
+git.snappfood.ir/backend/go/packages/sf-orm v0.0.10/go.mod h1:iD9GlBQcBYn6qEXabdJ8QwMGl+HVjWIN1MpQVxgWwX0=
 git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5 h1:JJfP0kacXA4XIehpE9Kd8sbRl3Yrz0WNThnxM6zak3k=
 git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5/go.mod h1:mBl36yFIc5O+AIMmeN+oMDjF7mGgeD02HNSdsleZMRk=
 git.snappfood.ir/backend/go/packages/sf-redis v0.0.7 h1:QX5thDy3BRBbs4p+H6xl/vKDu4k0YoEt6RNihsh+oVI=
