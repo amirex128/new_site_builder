@@ -1,23 +1,20 @@
 package sflogger
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"sync"
 	"time"
-	"strings"
-	"encoding/json"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/natefinch/lumberjack"
-
-	"bytes"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // LoggerType enumeration
@@ -37,7 +34,6 @@ const (
 	FatalLevel Level = Level(zap.FatalLevel)
 )
 
-// FormatterType enumeration
 type FormatterType int
 
 const (
@@ -45,13 +41,11 @@ const (
 	JSONFormatter
 )
 
-// Option defines a functional option for logger configuration
 type Option func(*Registry)
 
-// Registry holds logger config and zap instance
 type Registry struct {
 	mu           sync.RWMutex
-	loggerEngine *zap.SugaredLogger
+	loggerEngine *zap.Logger
 	loggerType   LoggerType
 	level        Level
 	appName      string
@@ -89,10 +83,11 @@ type elasticSinkConfig struct {
 	flushSec int
 }
 
-// Global singleton registry
 var globalRegistry = &Registry{}
 
-// RegisterLogger initializes logger based on options, returns Logger interface
+// --------------------------------------------
+// Logger registration (no big changes here)
+// --------------------------------------------
 func RegisterLogger(opts ...Option) Logger {
 	for _, opt := range opts {
 		opt(globalRegistry)
@@ -101,22 +96,10 @@ func RegisterLogger(opts ...Option) Logger {
 	defer globalRegistry.mu.Unlock()
 
 	cfg := zap.Config{
-		Level:       zap.NewAtomicLevelAt(zapcore.Level(globalRegistry.level)),
-		Development: false,
-		Encoding:    "console",
-		EncoderConfig: zapcore.EncoderConfig{
-			TimeKey:        "time",
-			LevelKey:       "level",
-			NameKey:        "logger",
-			CallerKey:      "caller",
-			MessageKey:     "msg",
-			StacktraceKey:  "stacktrace",
-			LineEnding:     zapcore.DefaultLineEnding,
-			EncodeLevel:    zapcore.CapitalColorLevelEncoder,
-			EncodeTime:     zapcore.ISO8601TimeEncoder,
-			EncodeDuration: zapcore.StringDurationEncoder,
-			EncodeCaller:   zapcore.ShortCallerEncoder,
-		},
+		Level:             zap.NewAtomicLevelAt(zapcore.Level(globalRegistry.level)),
+		Development:       false,
+		Encoding:          "console",
+		EncoderConfig:     defaultEncoderConfig(),
 		OutputPaths:       []string{"stdout"},
 		ErrorOutputPaths:  []string{"stderr"},
 		InitialFields:     map[string]interface{}{"appName": globalRegistry.appName},
@@ -125,18 +108,15 @@ func RegisterLogger(opts ...Option) Logger {
 
 	if globalRegistry.formatter == JSONFormatter {
 		cfg.Encoding = "json"
-		// adjust encoder config for json if needed
 		cfg.EncoderConfig.EncodeLevel = zapcore.LowercaseLevelEncoder
 	}
 
 	var cores []zapcore.Core
 
-	// Base core writes to stdout
 	consoleSyncer := zapcore.Lock(os.Stdout)
 	encoder := getEncoder(cfg)
 	cores = append(cores, zapcore.NewCore(encoder, consoleSyncer, zap.NewAtomicLevelAt(zapcore.Level(globalRegistry.level))))
 
-	// Add file sink if configured
 	if globalRegistry.fileSinkCfg != nil {
 		fs, err := newFileSink(globalRegistry.fileSinkCfg)
 		if err == nil {
@@ -147,18 +127,22 @@ func RegisterLogger(opts ...Option) Logger {
 		}
 	}
 
-	// Add MongoDB sink if configured
 	if globalRegistry.mongoSinkCfg != nil {
+		mongoCfg := cfg
+		mongoCfg.Encoding = "json"
+		mongoCfg.EncoderConfig = defaultEncoderConfig()
+		mongoCfg.EncoderConfig.EncodeLevel = zapcore.LowercaseLevelEncoder
+		mongoEncoder := getEncoder(mongoCfg)
+
 		ms, err := newMongoSink(globalRegistry.mongoSinkCfg)
 		if err == nil {
-			mongoCore := zapcore.NewCore(encoder, ms, zap.NewAtomicLevelAt(zapcore.Level(globalRegistry.level)))
+			mongoCore := zapcore.NewCore(mongoEncoder, ms, zap.NewAtomicLevelAt(zapcore.Level(globalRegistry.level)))
 			cores = append(cores, mongoCore)
 		} else {
 			fmt.Fprintf(os.Stderr, "mongo sink error: %v\n", err)
 		}
 	}
 
-	// Add Elasticsearch sink if configured
 	if globalRegistry.esSinkCfg != nil {
 		es, err := newElasticSink(globalRegistry.esSinkCfg)
 		if err == nil {
@@ -171,12 +155,33 @@ func RegisterLogger(opts ...Option) Logger {
 
 	core := zapcore.NewTee(cores...)
 	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
-	globalRegistry.loggerEngine = logger.Sugar()
+	globalRegistry.loggerEngine = logger
 
 	return newZapLogger(globalRegistry.loggerEngine)
 }
 
-// Functional options
+func defaultEncoderConfig() zapcore.EncoderConfig {
+	return zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		MessageKey:     "msg",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+	}
+}
+
+func getEncoder(cfg zap.Config) zapcore.Encoder {
+	if cfg.Encoding == "json" {
+		return zapcore.NewJSONEncoder(cfg.EncoderConfig)
+	}
+	return zapcore.NewConsoleEncoder(cfg.EncoderConfig)
+}
 
 func WithLoggerType(t LoggerType) Option {
 	return func(r *Registry) {
@@ -247,19 +252,17 @@ func WithElasticSearchSink(url, username, password, index string, flushSec int) 
 	}
 }
 
-// --- Encoders
-
-func getEncoder(cfg zap.Config) zapcore.Encoder {
-	if cfg.Encoding == "json" {
-		return zapcore.NewJSONEncoder(cfg.EncoderConfig)
-	}
-	return zapcore.NewConsoleEncoder(cfg.EncoderConfig)
+// ---------------------------------
+// File Sink with background flush
+// ---------------------------------
+type fileSink struct {
+	writer *lumberjack.Logger
+	buffer chan []byte
+	closed chan struct{}
+	wg     sync.WaitGroup
 }
 
 func newFileSink(cfg *fileSinkConfig) (zapcore.WriteSyncer, error) {
-	if cfg == nil {
-		return nil, fmt.Errorf("file sink config is nil")
-	}
 	writer := &lumberjack.Logger{
 		Filename:   cfg.path,
 		MaxSize:    cfg.maxSizeMB,
@@ -267,18 +270,64 @@ func newFileSink(cfg *fileSinkConfig) (zapcore.WriteSyncer, error) {
 		MaxBackups: cfg.maxBackups,
 		Compress:   cfg.compress,
 	}
-	return zapcore.AddSync(writer), nil
+
+	fs := &fileSink{
+		writer: writer,
+		buffer: make(chan []byte, 1000),
+		closed: make(chan struct{}),
+	}
+	fs.wg.Add(1)
+	go fs.backgroundWriter()
+
+	return zapcore.AddSync(fs), nil
 }
 
-// --- MongoDB sink implementation
+func (f *fileSink) Write(p []byte) (n int, err error) {
+	select {
+	case f.buffer <- append([]byte{}, p...): // copy p before enqueue
+		return len(p), nil
+	default:
+		// buffer full, drop log or handle differently
+		return 0, fmt.Errorf("file sink buffer full")
+	}
+}
 
+func (f *fileSink) Sync() error {
+	// Flush remaining logs synchronously
+	close(f.closed)
+	f.wg.Wait()
+	return nil
+}
+
+func (f *fileSink) backgroundWriter() {
+	defer f.wg.Done()
+	for {
+		select {
+		case p := <-f.buffer:
+			_, _ = f.writer.Write(p)
+		case <-f.closed:
+			// Flush remaining items
+			for {
+				select {
+				case p := <-f.buffer:
+					_, _ = f.writer.Write(p)
+				default:
+					return
+				}
+			}
+		}
+	}
+}
+
+// ---------------------------------
+// Mongo Sink with background flush
+// ---------------------------------
 type mongoSink struct {
 	client     *mongo.Client
 	collection *mongo.Collection
-	buffer     []map[string]interface{}
-	mu         sync.Mutex
-	flushSec   int
+	buffer     chan map[string]interface{}
 	closed     chan struct{}
+	wg         sync.WaitGroup
 }
 
 func newMongoSink(cfg *mongoSinkConfig) (zapcore.WriteSyncer, error) {
@@ -294,98 +343,92 @@ func newMongoSink(cfg *mongoSinkConfig) (zapcore.WriteSyncer, error) {
 	ms := &mongoSink{
 		client:     client,
 		collection: coll,
-		buffer:     make([]map[string]interface{}, 0, 100),
-		flushSec:   cfg.flushSec,
+		buffer:     make(chan map[string]interface{}, 1000),
 		closed:     make(chan struct{}),
 	}
-
-	go ms.flusher(ctx)
+	ms.wg.Add(1)
+	go ms.backgroundInserter()
 
 	return ms, nil
 }
 
 func (m *mongoSink) Write(p []byte) (n int, err error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	logStr := string(p)
-	doc := map[string]interface{}{
-		"timestamp": time.Now(),
-		"raw_log":   logStr,
+	var doc map[string]interface{}
+	if err := json.Unmarshal(p, &doc); err != nil {
+		doc = map[string]interface{}{"raw_log": string(p)}
 	}
-
-	jsonStart := strings.LastIndex(logStr, "{")
-	jsonEnd := strings.LastIndex(logStr, "}")
-	if jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart {
-		jsonPart := logStr[jsonStart : jsonEnd+1]
-		var extraFields map[string]interface{}
-		if err := json.Unmarshal([]byte(jsonPart), &extraFields); err == nil {
-			for k, v := range extraFields {
-				doc[k] = v
-			}
-		}
+	if _, ok := doc["time"]; !ok {
+		doc["timestamp"] = time.Now()
 	}
-
-	m.buffer = append(m.buffer, doc)
-	return len(p), nil
+	select {
+	case m.buffer <- doc:
+		return len(p), nil
+	default:
+		// buffer full: drop or handle error
+		return 0, fmt.Errorf("mongo sink buffer full")
+	}
 }
 
 func (m *mongoSink) Sync() error {
-	return nil
+	close(m.closed)
+	m.wg.Wait()
+	return m.client.Disconnect(context.Background())
 }
 
-func (m *mongoSink) flusher(ctx context.Context) {
-	ticker := time.NewTicker(time.Duration(m.flushSec) * time.Second)
-	defer ticker.Stop()
+func (m *mongoSink) backgroundInserter() {
+	defer m.wg.Done()
+
+	batch := make([]map[string]interface{}, 0, 100)
+	flushTicker := time.NewTicker(time.Second * time.Duration(5))
+	defer flushTicker.Stop()
+
+	flush := func() {
+		if len(batch) == 0 {
+			return
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if _, err := m.collection.InsertMany(ctx, toInterfaceSlice(batch)); err != nil {
+			fmt.Fprintf(os.Stderr, "mongo sink insert error: %v\n", err)
+		}
+		batch = batch[:0]
+	}
+
 	for {
 		select {
-		case <-ticker.C:
-			m.mu.Lock()
-			if len(m.buffer) > 0 {
-				docs := m.buffer
-				m.buffer = make([]map[string]interface{}, 0, 100)
-				m.mu.Unlock()
-
-				// Convert []map[string]interface{} to []interface{}
-				ifaceDocs := make([]interface{}, len(docs))
-				for i, doc := range docs {
-					ifaceDocs[i] = doc
-				}
-
-				_, err := m.collection.InsertMany(ctx, ifaceDocs)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "mongo sink insert error: %v\n", err)
-				}
-			} else {
-				m.mu.Unlock()
+		case doc := <-m.buffer:
+			batch = append(batch, doc)
+			if len(batch) >= 100 {
+				flush()
 			}
+		case <-flushTicker.C:
+			flush()
 		case <-m.closed:
+			flush()
 			return
 		}
 	}
 }
 
-func (m *mongoSink) Close() error {
-	close(m.closed)
-	return m.client.Disconnect(context.Background())
+func toInterfaceSlice(maps []map[string]interface{}) []interface{} {
+	out := make([]interface{}, len(maps))
+	for i := range maps {
+		out[i] = maps[i]
+	}
+	return out
 }
 
-// --- Elasticsearch sink implementation
+// ---------------------------------
+// Elasticsearch Sink with background flush
+// ---------------------------------
 
 type elasticSink struct {
 	client   *elasticsearch.Client
-	buffer   [][]byte
-	mu       sync.Mutex
-	flushSec int
+	buffer   chan []byte
 	closed   chan struct{}
-}
-
-// Move this type to top-level
-// Wraps elasticSink and adds index name
-
-type elasticSinkWithIndex struct {
-	*elasticSink
-	index string
+	wg       sync.WaitGroup
+	index    string
+	flushSec int
 }
 
 func newElasticSink(cfg *elasticSinkConfig) (zapcore.WriteSyncer, error) {
@@ -403,99 +446,169 @@ func newElasticSink(cfg *elasticSinkConfig) (zapcore.WriteSyncer, error) {
 
 	es := &elasticSink{
 		client:   client,
-		buffer:   make([][]byte, 0, 100),
-		flushSec: cfg.flushSec,
+		buffer:   make(chan []byte, 1000),
 		closed:   make(chan struct{}),
+		index:    cfg.index,
+		flushSec: cfg.flushSec,
 	}
-
-	esWithIndex := &elasticSinkWithIndex{
-		elasticSink: es,
-		index:       cfg.index,
-	}
-
-	go esWithIndex.flusher()
-
-	return esWithIndex, nil
+	es.wg.Add(1)
+	go es.backgroundIndexer()
+	return es, nil
 }
 
-func (e *elasticSinkWithIndex) Write(p []byte) (n int, err error) {
-	e.mu.Lock()
-	defer e.mu.Unlock()
-	logStr := string(p)
-	doc := map[string]interface{}{
-		"timestamp": time.Now(),
-		"raw_log":   logStr,
+func (e *elasticSink) Write(p []byte) (n int, err error) {
+	select {
+	case e.buffer <- append([]byte{}, p...):
+		return len(p), nil
+	default:
+		return 0, fmt.Errorf("elasticsearch sink buffer full")
 	}
+}
 
-	jsonStart := strings.LastIndex(logStr, "{")
-	jsonEnd := strings.LastIndex(logStr, "}")
-	if jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart {
-		jsonPart := logStr[jsonStart : jsonEnd+1]
-		var extraFields map[string]interface{}
-		if err := json.Unmarshal([]byte(jsonPart), &extraFields); err == nil {
-			for k, v := range extraFields {
-				doc[k] = v
+func (e *elasticSink) Sync() error {
+	close(e.closed)
+	e.wg.Wait()
+	return nil
+}
+
+func (e *elasticSink) backgroundIndexer() {
+	defer e.wg.Done()
+	batch := make([][]byte, 0, 100)
+	flushTicker := time.NewTicker(time.Second * time.Duration(e.flushSec))
+	defer flushTicker.Stop()
+
+	flush := func() {
+		if len(batch) == 0 {
+			return
+		}
+		for _, doc := range batch {
+			_, err := e.client.Index(e.index, bytes.NewReader(doc))
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "elasticsearch sink error: %v\n", err)
 			}
 		}
+		batch = batch[:0]
 	}
 
-	jsonDoc, err := json.Marshal(doc)
-	if err != nil {
-		return 0, err
-	}
-	e.buffer = append(e.buffer, jsonDoc)
-	return len(p), nil
-}
-
-func (e *elasticSinkWithIndex) Sync() error { return nil }
-
-func (e *elasticSinkWithIndex) flusher() {
-	ticker := time.NewTicker(time.Duration(e.flushSec) * time.Second)
-	defer ticker.Stop()
 	for {
 		select {
-		case <-ticker.C:
-			e.mu.Lock()
-			if len(e.buffer) > 0 {
-				batch := e.buffer
-				e.buffer = make([][]byte, 0, 100)
-				e.mu.Unlock()
-				for _, doc := range batch {
-					_, err := e.client.Index(
-						e.index,
-						bytes.NewReader(doc),
-					)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "elasticsearch sink error: %v\n", err)
-					}
-				}
-			} else {
-				e.mu.Unlock()
+		case doc := <-e.buffer:
+			batch = append(batch, doc)
+			if len(batch) >= 100 {
+				flush()
 			}
+		case <-flushTicker.C:
+			flush()
 		case <-e.closed:
+			flush()
 			return
 		}
 	}
 }
 
-func (e *elasticSinkWithIndex) Close() error {
-	close(e.closed)
-	return nil
-}
-
-// --- zapLogger implementation
+// ---------------------------------
+// zapLogger implementation
+// ---------------------------------
 
 type zapLogger struct {
-	logger *zap.SugaredLogger
+	logger *zap.Logger
 }
 
-func newZapLogger(l *zap.SugaredLogger) Logger {
+func newZapLogger(l *zap.Logger) Logger {
 	return &zapLogger{logger: l}
 }
 
-// mergeCategory adds category and subcategory to extra fields
+func mapToZapFields(m map[string]interface{}) []zap.Field {
+	fields := make([]zap.Field, 0, len(m))
+	for k, v := range m {
+		switch val := v.(type) {
+		case string:
+			fields = append(fields, zap.String(k, val))
+		case int:
+			fields = append(fields, zap.Int(k, val))
+		case int64:
+			fields = append(fields, zap.Int64(k, val))
+		case float64:
+			fields = append(fields, zap.Float64(k, val))
+		case bool:
+			fields = append(fields, zap.Bool(k, val))
+		case time.Time:
+			fields = append(fields, zap.Time(k, val))
+		case []byte:
+			fields = append(fields, zap.ByteString(k, val))
+		case []interface{}:
+			fields = append(fields, zap.Array(k, zapcore.ArrayMarshalerFunc(func(enc zapcore.ArrayEncoder) error {
+				for _, v := range val {
+					enc.AppendReflected(v)
+				}
+				return nil
+			})))
+		case map[string]interface{}:
+			fields = append(fields, zap.Object(k, zapcore.ObjectMarshalerFunc(func(enc zapcore.ObjectEncoder) error {
+				for kk, vv := range val {
+					enc.AddReflected(kk, vv)
+				}
+				return nil
+			})))
+		case error:
+			fields = append(fields, zap.Error(val))
+		default:
+			fields = append(fields, zap.Any(k, val))
+		}
+	}
+	return fields
+}
+
+func (z *zapLogger) Debug(msg string, extra map[string]interface{}) {
+	z.logger.Debug(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) Info(msg string, extra map[string]interface{}) {
+	z.logger.Info(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) Warn(msg string, extra map[string]interface{}) {
+	z.logger.Warn(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) Error(msg string, extra map[string]interface{}) {
+	z.logger.Error(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) Fatal(msg string, extra map[string]interface{}) {
+	z.logger.Fatal(msg, mapToZapFields(extra)...)
+}
+
+func (z *zapLogger) Debugf(template string, args ...interface{}) {
+	z.logger.Sugar().Debugf(template, args...)
+}
+func (z *zapLogger) Infof(template string, args ...interface{}) {
+	z.logger.Sugar().Infof(template, args...)
+}
+func (z *zapLogger) Warnf(template string, args ...interface{}) {
+	z.logger.Sugar().Warnf(template, args...)
+}
+func (z *zapLogger) Errorf(template string, args ...interface{}) {
+	z.logger.Sugar().Errorf(template, args...)
+}
+func (z *zapLogger) Fatalf(template string, args ...interface{}) {
+	z.logger.Sugar().Fatalf(template, args...)
+}
+
+func (z *zapLogger) DebugContext(ctx context.Context, msg string, extra map[string]interface{}) {
+	z.logger.Debug(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) InfoContext(ctx context.Context, msg string, extra map[string]interface{}) {
+	z.logger.Info(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) WarnContext(ctx context.Context, msg string, extra map[string]interface{}) {
+	z.logger.Warn(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) ErrorContext(ctx context.Context, msg string, extra map[string]interface{}) {
+	z.logger.Error(msg, mapToZapFields(extra)...)
+}
+func (z *zapLogger) FatalContext(ctx context.Context, msg string, extra map[string]interface{}) {
+	z.logger.Fatal(msg, mapToZapFields(extra)...)
+}
+
 func mergeCategory(cat, sub string, extra map[string]interface{}) map[string]interface{} {
-	m := make(map[string]interface{})
+	m := make(map[string]interface{}, len(extra)+2)
 	for k, v := range extra {
 		m[k] = v
 	}
@@ -508,79 +621,18 @@ func mergeCategory(cat, sub string, extra map[string]interface{}) map[string]int
 	return m
 }
 
-// flattenMapToFields converts a map[string]interface{} to a flat list of key-value pairs for zap.SugaredLogger.Infow, etc.
-func flattenMapToFields(m map[string]interface{}) []interface{} {
-	fields := make([]interface{}, 0, len(m)*2)
-	for k, v := range m {
-		fields = append(fields, k, v)
-	}
-	return fields
-}
-
-// Core logging methods
-func (z *zapLogger) Debug(msg string, extra map[string]interface{}) {
-	z.logger.Debugw(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) Info(msg string, extra map[string]interface{}) {
-	z.logger.Infow(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) Warn(msg string, extra map[string]interface{}) {
-	z.logger.Warnw(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) Error(msg string, extra map[string]interface{}) {
-	z.logger.Errorw(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) Fatal(msg string, extra map[string]interface{}) {
-	z.logger.Fatalw(msg, flattenMapToFields(extra)...)
-}
-
-// Formatted logging methods
-func (z *zapLogger) Debugf(template string, args ...interface{}) {
-	z.logger.Debugf(template, args...)
-}
-func (z *zapLogger) Infof(template string, args ...interface{}) {
-	z.logger.Infof(template, args...)
-}
-func (z *zapLogger) Warnf(template string, args ...interface{}) {
-	z.logger.Warnf(template, args...)
-}
-func (z *zapLogger) Errorf(template string, args ...interface{}) {
-	z.logger.Errorf(template, args...)
-}
-func (z *zapLogger) Fatalf(template string, args ...interface{}) {
-	z.logger.Fatalf(template, args...)
-}
-
-// Context-aware logging methods
-func (z *zapLogger) DebugContext(ctx context.Context, msg string, extra map[string]interface{}) {
-	z.logger.Debugw(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) InfoContext(ctx context.Context, msg string, extra map[string]interface{}) {
-	z.logger.Infow(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) WarnContext(ctx context.Context, msg string, extra map[string]interface{}) {
-	z.logger.Warnw(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) ErrorContext(ctx context.Context, msg string, extra map[string]interface{}) {
-	z.logger.Errorw(msg, flattenMapToFields(extra)...)
-}
-func (z *zapLogger) FatalContext(ctx context.Context, msg string, extra map[string]interface{}) {
-	z.logger.Fatalw(msg, flattenMapToFields(extra)...)
-}
-
-// Category-based logging methods
 func (z *zapLogger) DebugWithCategory(cat string, sub string, msg string, extra map[string]interface{}) {
-	z.logger.Debugw(msg, flattenMapToFields(mergeCategory(cat, sub, extra))...)
+	z.logger.Debug(msg, mapToZapFields(mergeCategory(cat, sub, extra))...)
 }
 func (z *zapLogger) InfoWithCategory(cat string, sub string, msg string, extra map[string]interface{}) {
-	z.logger.Infow(msg, flattenMapToFields(mergeCategory(cat, sub, extra))...)
+	z.logger.Info(msg, mapToZapFields(mergeCategory(cat, sub, extra))...)
 }
 func (z *zapLogger) WarnWithCategory(cat string, sub string, msg string, extra map[string]interface{}) {
-	z.logger.Warnw(msg, flattenMapToFields(mergeCategory(cat, sub, extra))...)
+	z.logger.Warn(msg, mapToZapFields(mergeCategory(cat, sub, extra))...)
 }
 func (z *zapLogger) ErrorWithCategory(cat string, sub string, msg string, extra map[string]interface{}) {
-	z.logger.Errorw(msg, flattenMapToFields(mergeCategory(cat, sub, extra))...)
+	z.logger.Error(msg, mapToZapFields(mergeCategory(cat, sub, extra))...)
 }
 func (z *zapLogger) FatalWithCategory(cat string, sub string, msg string, extra map[string]interface{}) {
-	z.logger.Fatalw(msg, flattenMapToFields(mergeCategory(cat, sub, extra))...)
+	z.logger.Fatal(msg, mapToZapFields(mergeCategory(cat, sub, extra))...)
 }

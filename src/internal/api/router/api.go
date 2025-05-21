@@ -12,7 +12,7 @@ import (
 )
 
 func RunServer(handlers *bootstrap.HandlerManager, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
-	sfrouting.AddGlobalMiddlewares(middleware.ErrorHandlerMiddleware(logger))
+	sfrouting.AddGlobalMiddlewares(middleware.LoggerMiddleware(logger), middleware.ErrorHandlerMiddleware(logger))
 	RegisterRoutes(handlers, container)
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	err := sfrouting.StartServer(fmt.Sprintf(":%s", cnf.GetString("app_port")))
