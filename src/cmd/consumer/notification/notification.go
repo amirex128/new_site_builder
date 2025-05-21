@@ -13,5 +13,5 @@ func main() {
 
 	handlers := bootstrap.ConsumerHandlerBootstrap(container)
 
-	consumerrouter.RunServer(handlers, container, container.Logger, container.Config)
+	consumerrouter.RunServer(ctx, handlers, container)
 }

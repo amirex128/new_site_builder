@@ -1,11 +1,11 @@
 package consumerrouter
 
 import (
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
+	"context"
 	"github.com/amirex128/new_site_builder/src/bootstrap"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 )
 
-func RunServer(handlers *bootstrap.ConsumerHandlerManager, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
-
+func RunServer(ctx context.Context, handlers *bootstrap.ConsumerHandlerManager, container contract.IContainer) {
+	BindConsumers(ctx, handlers, container.GetLogger())
 }
