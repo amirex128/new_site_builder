@@ -4,7 +4,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
-func HttpProvider(logger sflogger.Logger) {
+func HttpRequestProvider(logger sflogger.Logger) {
 	//err := httpo.RegisterConnection(
 	//	httpo.WithConnectionDetails("badge", "https://api.example.com"),
 	//	httpo.WithConnectionDetails("badge2", "https://api.example.com"),

@@ -17,15 +17,17 @@ func HttpServerBootstrap(ctx context.Context) *Container {
 
 	serviceprovider.MysqlProvider(cfg, logger)
 
+	serviceprovider.RabbitProvider(cfg, logger)
+
 	serviceprovider.ServiceDiscoveryProvider(cfg, logger)
 
 	serviceprovider.RouterProvider(logger)
 
 	container := ContainerProvider(ctx, cfg, logger)
 
-	serviceprovider.HttpProvider(logger)
+	serviceprovider.HttpRequestProvider(logger)
 
-	serviceprovider.GrpcProvider(logger)
+	serviceprovider.GrpcRequestProvider(logger)
 
 	serviceprovider.MemoryLoaderProvider(logger)
 
@@ -44,15 +46,17 @@ func ConsumerServerBootstrap(ctx context.Context) *Container {
 
 	serviceprovider.MysqlProvider(cfg, logger)
 
+	serviceprovider.RabbitProvider(cfg, logger)
+
 	serviceprovider.ServiceDiscoveryProvider(cfg, logger)
 
 	serviceprovider.RouterProvider(logger)
 
 	container := ContainerProvider(ctx, cfg, logger)
 
-	serviceprovider.HttpProvider(logger)
+	serviceprovider.HttpRequestProvider(logger)
 
-	serviceprovider.GrpcProvider(logger)
+	serviceprovider.GrpcRequestProvider(logger)
 
 	serviceprovider.MemoryLoaderProvider(logger)
 

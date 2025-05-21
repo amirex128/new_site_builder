@@ -22,6 +22,11 @@ type Config struct {
 	MysqlPort     string `env:"MYSQL_PORT"`
 	MysqlUsername string `env:"MYSQL_USERNAME"`
 
+	RabbitmqHost     string `env:"RABBITMQ_HOST"`
+	RabbitmqPort     string `env:"RABBITMQ_PORT"`
+	RabbitmqUsername string `env:"RABBITMQ_USERNAME"`
+	RabbitmqPassword string `env:"RABBITMQ_PASSWORD"`
+
 	RedisHost     string `env:"REDIS_HOST"`
 	RedisPassword string `env:"REDIS_PASSWORD"`
 	RedisPort     string `env:"REDIS_PORT"`

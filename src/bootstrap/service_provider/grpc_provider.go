@@ -4,7 +4,7 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
-func GrpcProvider(logger sflogger.Logger) {
+func GrpcRequestProvider(logger sflogger.Logger) {
 	//err := grpco.RegisterConnection(
 	//	// Define the connection details and pass services directly
 	//	grpco.WithConnectionDetails(

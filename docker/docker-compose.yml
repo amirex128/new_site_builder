@@ -89,6 +89,33 @@ services:
     networks:
       - appnet
 
+  rabbitmq:
+    image: bitnami/rabbitmq:4.1.0
+    container_name: rabbitmq
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_USERNAME=amirex128
+      - RABBITMQ_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
+      - RABBITMQ_VHOST=/
+      - RABBITMQ_MANAGEMENT_BIND_IP=0.0.0.0
+      - RABBITMQ_MANAGEMENT_PORT_NUMBER=15672
+      - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
+      - RABBITMQ_NODE_PORT_NUMBER=5672
+      - RABBITMQ_ERL_COOKIE=supersecreterlcookie
+      - RABBITMQ_DISK_FREE_RELATIVE_LIMIT=1.0
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.4
+      - RABBITMQ_LOAD_DEFINITIONS=no
+      - RABBITMQ_SECURE_PASSWORD=yes
+      - RABBITMQ_UPDATE_PASSWORD=no
+      - RABBITMQ_CLUSTER_PARTITION_HANDLING=ignore
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/bitnami/rabbitmq
+    networks:
+      - appnet
+
   openresty:
     image: bitnami/openresty:1.27.1-2
     container_name: openresty
@@ -122,6 +149,8 @@ volumes:
   openresty_logs:
     driver: local
   openresty_html:
+    driver: local
+  rabbitmq_data:
     driver: local
 
 networks:

@@ -31,7 +31,7 @@ func RouterProvider(logger sflogger.Logger) {
 			AllowCredentials: true,
 		}),
 		sfrouting.WithGinConfig(func(engine *gin.Engine) {
-			gin.SetMode(gin.DebugMode)
+			gin.SetMode(gin.ReleaseMode)
 		}),
 	)
 

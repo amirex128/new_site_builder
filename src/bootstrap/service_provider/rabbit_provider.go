@@ -3,50 +3,40 @@ package serviceprovider
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfrabbitmq "git.snappfood.ir/backend/go/packages/sf-rabbitmq"
+	"github.com/amirex128/new_site_builder/src/config"
+	"strconv"
 	"time"
 )
 
-func RabbitProvider(logger sflogger.Logger) {
-	err := sfrabbitmq.RegisterConnection(
-		// Add the logger
+func RabbitProvider(cfg *config.Config, logger sflogger.Logger) {
+	port, err := strconv.Atoi(cfg.RabbitmqPort)
+	if err != nil {
+		logger.Errorf("Could not convert RabbitMQ port to integer: %v", err)
+	}
+	err = sfrabbitmq.RegisterConnection(
 		sfrabbitmq.WithLogger(logger),
-
-		// Global options applied to all connections
 		sfrabbitmq.WithGlobalOptions(func(c *sfrabbitmq.Config) {
 			c.Heartbeat = 30 * time.Second
 			c.Vhost = "/"
 		}),
-
-		// First connection with specific options
 		sfrabbitmq.WithConnectionDetails(
-			"order-connection",
-			"localhost",
-			5672,
-			"guest",
-			"guest",
+			"main",
+			cfg.RabbitmqHost,
+			port,
+			cfg.RabbitmqUsername,
+			cfg.RabbitmqPassword,
 		),
-
-		sfrabbitmq.WithConnectionDetails(
-			"ads-connection",
-			"localhost",
-			5672,
-			"guest",
-			"guest",
-		),
-
 		// Configure outbox retry behavior
 		sfrabbitmq.WithOutboxConfig(5*time.Second, 3),
 
 		// Declare exchange
-		sfrabbitmq.WithDeclareExchange("order-connection", "order_exchange", "direct"),
+		sfrabbitmq.WithDeclareExchange("main", "notification", "direct"),
 		// Declare queue
-		sfrabbitmq.WithDeclareQueue("order-connection", "order_queue"),
+		sfrabbitmq.WithDeclareQueue("main", "sms"),
+		sfrabbitmq.WithDeclareQueue("main", "email"),
 		// Bind queue to exchange
-		sfrabbitmq.WithBind("order-connection", "order_queue", "order_routing_key", "order_exchange"),
-
-		// Or Instead of the above three functions, you can only use the following function
-		sfrabbitmq.WithDeclareExchangeAndQueue("ads-connection", "ads_exchange",
-			"direct", "ads_queue", "ads_routing_key"),
+		sfrabbitmq.WithBind("main", "sms", "send_sms", "notification"),
+		sfrabbitmq.WithBind("main", "email", "send_email", "notification"),
 	)
 
 	if err != nil {

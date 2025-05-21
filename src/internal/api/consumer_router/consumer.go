@@ -6,6 +6,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 )
 
-func RunServer(handlers *bootstrap.ConsumerHandler, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
+func RunServer(handlers *bootstrap.ConsumerHandlerManager, container contract.IContainer, logger sflogger.Logger, cnf contract.IConfig) {
 
 }
