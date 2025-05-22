@@ -2,11 +2,12 @@ package userusecase
 
 import (
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/utils"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
-	"strconv"
-	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -21,13 +22,15 @@ import (
 
 type UserUsecase struct {
 	*usecase.BaseUsecase
-	userRepo    repository.IUserRepository
-	planRepo    repository.IPlanRepository
-	addressRepo repository.IAddressRepository
-	paymentRepo repository.IPaymentRepository
-	identitySvc service.IIdentityService
-	authContext func(c *gin.Context) service.IAuthService
-	siteRepo    repository.ISiteRepository
+	userRepo      repository.IUserRepository
+	planRepo      repository.IPlanRepository
+	addressRepo   repository.IAddressRepository
+	paymentRepo   repository.IPaymentRepository
+	identitySvc   service.IIdentityService
+	authContext   func(c *gin.Context) service.IAuthService
+	siteRepo      repository.ISiteRepository
+	messageSvc    service.IMessageService
+	unitPriceRepo repository.IUnitPriceRepository
 }
 
 func NewUserUsecase(c contract.IContainer) *UserUsecase {
@@ -35,26 +38,27 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 		BaseUsecase: &usecase.BaseUsecase{
 			Logger: c.GetLogger(),
 		},
-		siteRepo:    c.GetSiteRepo(),
-		userRepo:    c.GetUserRepo(),
-		planRepo:    c.GetPlanRepo(),
-		addressRepo: c.GetAddressRepo(),
-		paymentRepo: c.GetPaymentRepo(),
-		identitySvc: c.GetIdentityService(),
-		authContext: c.GetAuthTransientService(),
+		siteRepo:      c.GetSiteRepo(),
+		userRepo:      c.GetUserRepo(),
+		planRepo:      c.GetPlanRepo(),
+		addressRepo:   c.GetAddressRepo(),
+		paymentRepo:   c.GetPaymentRepo(),
+		identitySvc:   c.GetIdentityService(),
+		authContext:   c.GetAuthTransientService(),
+		messageSvc:    c.GetMessageService(),
+		unitPriceRepo: c.GetUnitPriceRepo(),
 	}
 }
 
 func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (*resp.Response, error) {
-	// Implementation for updating a user's profile
-	fmt.Println(params)
-
-	// In a real implementation, get the user ID from the auth context
-	userID := int64(1)
-
-	existingUser, err := u.userRepo.GetByID(userID)
+	userId, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
+	}
+
+	existingUser, err := u.userRepo.GetByID(userId)
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	if params.FirstName != nil {
@@ -70,8 +74,9 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 	}
 
 	if params.Password != nil {
-		// In a real implementation, hash the password before storing
-		existingUser.Password = *params.Password
+		hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
+		existingUser.Password = hashedPassword
+		existingUser.Salt = salt
 	}
 
 	if params.NationalCode != nil {
@@ -91,7 +96,6 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 	}
 
 	if params.Smtp != nil {
-		// In a real implementation, encrypt sensitive information like SMTP password
 		existingUser.SmtpHost = params.Smtp.Host
 		existingUser.SmtpPort = &params.Smtp.Port
 		existingUser.SmtpUsername = params.Smtp.Username
@@ -102,64 +106,69 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 
 	err = u.userRepo.Update(existingUser)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Handle address IDs if provided
 	if len(params.AddressIDs) > 0 {
 		// First, remove all existing addresses
-		err = u.addressRepo.RemoveAllAddressesFromUser(userID)
+		err = u.addressRepo.RemoveAllAddressesFromUser(userId)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 
 		// Then add the new addresses
 		for _, addressID := range params.AddressIDs {
-			err = u.addressRepo.AddAddressToUser(addressID, userID)
+			err = u.addressRepo.AddAddressToUser(addressID, userId)
 			if err != nil {
-				// Log error but continue
-				u.Logger.Errorf("Failed to assign address %d to user %d: %v", addressID, userID, err)
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
 	}
 
-	return existingUser, nil
+	return resp.NewResponse(
+		resp.Updated,
+		"User profile updated",
+	), nil
 }
 
 func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*resp.Response, error) {
-	// Implementation to get a user's profile
-	fmt.Println(params)
-
-	// In a real implementation, get the user ID from the auth context
-	userID := int64(1)
-
-	result, err := u.userRepo.GetByID(userID)
+	userId, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 
-	// Get user addresses
-	addresses, err := u.addressRepo.GetAllByUserID(userID)
+	existingUser, err := u.userRepo.GetByID(userId)
 	if err != nil {
-		u.Logger.Errorf("Failed to get addresses for user %d: %v", userID, err)
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return map[string]interface{}{
-		"user":      result,
-		"addresses": addresses,
-	}, nil
+	addresses, err := u.addressRepo.GetAllByUserID(userId)
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+
+	return resp.NewResponseData(
+		resp.Retrieved,
+		resp.Data{
+			"user":      existingUser,
+			"addresses": addresses,
+		},
+		"user profile successful retrieved",
+	), nil
 }
 
 func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*resp.Response, error) {
+	u.Logger.Info("RegisterUserCommand called", map[string]interface{}{
+		"email": *params.Email,
+	})
+
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
 		return nil, resp.NewError(resp.BadRequest, "user with email %s already exists", *params.Email)
 	}
 
-	// Generate salt and hash password
 	hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
 
-	// Create new user
 	newUser := domain.User{
 		Email:     *params.Email,
 		Password:  hashedPassword,
@@ -169,18 +178,21 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 		UpdatedAt: time.Now(),
 	}
 
-	// Generate verification code
 	verificationCode := utils.GenerateVerificationCode()
-	newUser.VerifyEmail = verificationCode
+	newUser.VerifyCode = &verificationCode
 
 	err = u.userRepo.Create(newUser)
 	if err != nil {
-		return nil, err
+		u.Logger.Error("Error creating user", map[string]interface{}{
+			"error": err.Error(),
+			"email": *params.Email,
+		})
+		return nil, resp.NewError(resp.Internal, "Error creating user: %s", err.Error())
 	}
 
-	token := u.identitySvc.TokenForUser(newUser).AddRoles([]string{"admin"}).Make()
+	token := u.identitySvc.TokenForUser(newUser).Make()
 	return resp.NewResponseData(
-		resp.Success,
+		resp.Created,
 		resp.Data{
 			"token": token,
 		},
@@ -189,29 +201,43 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 }
 
 func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Response, error) {
-	// Get user by email
+	u.Logger.Info("LoginUserCommand called", map[string]interface{}{
+		"email": *params.Email,
+	})
+
 	existingUser, err := u.userRepo.GetByEmail(*params.Email)
 	if err != nil {
-		return nil, fmt.Errorf("invalid email or password")
+		u.Logger.Info("Login failed: user not found", map[string]interface{}{
+			"email": *params.Email,
+		})
+		return nil, resp.NewError(resp.Unauthorized, "invalid email or password")
 	}
 
-	// Check if user is active
-	if existingUser.IsActive != "1" {
-		return nil, fmt.Errorf("account is not active")
+	if existingUser.IsActive == enums.InactiveStatus {
+		u.Logger.Info("Login failed: account not active", map[string]interface{}{
+			"email":  *params.Email,
+			"userId": existingUser.ID,
+		})
+		return nil, resp.NewError(resp.Unauthorized, "account is not active")
 	}
 
-	// Verify password
 	if !u.identitySvc.VerifyPassword(*params.Password, existingUser.Password, existingUser.Salt) {
-		return nil, fmt.Errorf("invalid email or password")
+		u.Logger.Info("Login failed: invalid password", map[string]interface{}{
+			"email":  *params.Email,
+			"userId": existingUser.ID,
+		})
+		return nil, resp.NewError(resp.Unauthorized, "invalid email or password")
 	}
 
-	// Generate JWT token
 	token := u.identitySvc.TokenForUser(existingUser).Make()
 
-	return map[string]interface{}{
-		"token": token,
-		"user":  existingUser,
-	}, nil
+	return resp.NewResponseData(
+		resp.Created,
+		resp.Data{
+			"token": token,
+		},
+		"Login successful",
+	), nil
 }
 
 func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVerifyAndForgetUserCommand) (*resp.Response, error) {
@@ -221,103 +247,141 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	// Get user by email or phone based on the verification type
 	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) {
 		if params.Email == nil {
-			return nil, fmt.Errorf("email is required for email verification")
+			return nil, resp.NewError(resp.BadRequest, "email is required for email verification")
 		}
 		existingUser, err = u.userRepo.GetByEmail(*params.Email)
 	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) {
 		if params.Phone == nil {
-			return nil, fmt.Errorf("phone is required for phone verification")
+			return nil, resp.NewError(resp.BadRequest, "phone is required for phone verification")
 		}
 		existingUser, err = u.userRepo.GetByPhone(*params.Phone)
 	} else {
-		return nil, fmt.Errorf("invalid verification type")
+		return nil, resp.NewError(resp.BadRequest, "invalid verification type")
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("user not found")
+		return nil, resp.NewError(resp.NotFound, "user not found")
 	}
 
 	// Generate verification code
-	verificationCode := "123456" // Example code, in a real implementation generate a random code
+	verificationCode := utils.GenerateVerificationCode()
 
 	// Store verification code based on type
 	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) {
-		existingUser.VerifyEmail = verificationCode
+		existingUser.VerifyCode = &verificationCode
 	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) {
-		existingUser.VerifyPhone = verificationCode
+		existingUser.VerifyCode = &verificationCode
 	}
 
 	err = u.userRepo.Update(existingUser)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// TODO: send verification code via email or SMS
+	// Send verification code via email or SMS
+	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) && params.Email != nil {
+		msg := struct {
+			To      string
+			Subject string
+			Body    string
+		}{
+			To:      *params.Email,
+			Subject: "Your Verification Code",
+			Body:    fmt.Sprintf("Your verification code is: %s", verificationCode),
+		}
+		u.messageSvc.SendEmail(msg)
+	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) && params.Phone != nil {
+		msg := struct {
+			To   string
+			Body string
+		}{
+			To:   *params.Phone,
+			Body: fmt.Sprintf("Your verification code is: %s", verificationCode),
+		}
+		u.messageSvc.SendSms(msg)
+	}
 
-	return map[string]interface{}{
-		"success": true,
-		"message": "Verification code sent. Please check your email or phone.",
-	}, nil
+	return resp.NewResponseData(
+		resp.Success,
+		resp.Data{
+			"success": true,
+			"message": "Verification code sent. Please check your email or phone.",
+		},
+		"Verification code sent. Please check your email or phone.",
+	), nil
 }
 
 func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (*resp.Response, error) {
 	// Get user by email
 	existingUser, err := u.userRepo.GetByEmail(*params.Email)
 	if err != nil {
-		return nil, fmt.Errorf("user not found")
+		return nil, resp.NewError(resp.NotFound, "user not found")
 	}
 
 	// Convert code to string for comparison
 	codeStr := strconv.Itoa(*params.Code)
 
+	var resetToken string
+
 	// Check verification code based on type
 	if params.Type != nil && *params.Type == enums.VerifyEmailType {
-		if existingUser.VerifyEmail != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
+		if *existingUser.VerifyCode != codeStr {
+			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
 		}
-		existingUser.IsActive = "1" // Activate the user
+		existingUser.IsActive = enums.ActiveStatus // Activate the user
 		existingUser.VerifyEmail = ""
 	} else if params.Type != nil && *params.Type == enums.VerifyPhoneType {
-		if existingUser.VerifyPhone != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
+		if *existingUser.VerifyCode != codeStr {
+			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
 		}
-		existingUser.IsActive = "1" // Activate the user
+		existingUser.IsActive = enums.ActiveStatus // Activate the user
 		existingUser.VerifyPhone = ""
 	} else if params.Type != nil && *params.Type == enums.ForgetPasswordEmailType {
-		if existingUser.VerifyEmail != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
+		if *existingUser.VerifyCode != codeStr {
+			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
 		}
-		// In a real implementation, provide a token for password reset instead
+		// Provide a token for password reset
+		resetToken = u.identitySvc.AddClaim("reset_password", "1").AddClaim("user_id", strconv.FormatInt(existingUser.ID, 10)).Make()
 		existingUser.VerifyEmail = ""
 	} else if params.Type != nil && *params.Type == enums.ForgetPasswordPhoneType {
-		if existingUser.VerifyPhone != codeStr {
-			return nil, fmt.Errorf("invalid verification code")
+		if *existingUser.VerifyCode != codeStr {
+			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
 		}
-		// In a real implementation, provide a token for password reset instead
+		// Provide a token for password reset
+		resetToken = u.identitySvc.AddClaim("reset_password", "1").AddClaim("user_id", strconv.FormatInt(existingUser.ID, 10)).Make()
 		existingUser.VerifyPhone = ""
 	} else {
-		return nil, fmt.Errorf("invalid verification type")
+		return nil, resp.NewError(resp.BadRequest, "invalid verification type")
 	}
 
 	err = u.userRepo.Update(existingUser)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return map[string]interface{}{
+	respData := resp.Data{
 		"success": true,
 		"message": "Verification successful.",
-	}, nil
+	}
+	if resetToken != "" {
+		respData["reset_token"] = resetToken
+	}
+
+	return resp.NewResponseData(
+		resp.Success,
+		respData,
+		"Verification successful.",
+	), nil
 }
 
 func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (*resp.Response, error) {
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if userID == 0 {
-		return nil, fmt.Errorf("user not authenticated")
+		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
 	}
 
 	// Calculate total amount
@@ -325,9 +389,12 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	orderData := make(map[string]string)
 
 	for i, unitPrice := range params.UnitPrices {
-		// In a real implementation, fetch actual unit prices from database
-		// For now, using dummy values
-		var itemPrice int64 = 1000 * int64(*unitPrice.UnitPriceCount)
+		// Fetch actual unit price from database
+		unitPriceObj, err := u.unitPriceRepo.GetByName(string(*unitPrice.UnitPriceName))
+		if err != nil {
+			return nil, resp.NewError(resp.BadRequest, "unit price not found: %s", *unitPrice.UnitPriceName)
+		}
+		var itemPrice int64 = unitPriceObj.Price * int64(*unitPrice.UnitPriceCount)
 
 		// For storage, multiply by days if provided
 		if string(*unitPrice.UnitPriceName) == "storage_mb_credits" && unitPrice.UnitPriceDay != nil {
@@ -345,7 +412,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	}
 
 	// Create a new order in the payment system
-	orderID := time.Now().Unix() // Dummy order ID
+	orderID := time.Now().UnixNano() // Use nanoseconds for more uniqueness
 
 	// Additional order data
 	orderData["userId"] = strconv.FormatInt(userID, 10)
@@ -355,29 +422,33 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	// Request payment from gateway
 	paymentUrl, err := u.paymentRepo.RequestPayment(totalAmount, orderID, userID, string(*params.Gateway), orderData)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return map[string]interface{}{
-		"paymentUrl": paymentUrl,
-		"orderId":    orderID,
-	}, nil
+	return resp.NewResponseData(
+		resp.Success,
+		resp.Data{
+			"paymentUrl": paymentUrl,
+			"orderId":    orderID,
+		},
+		"Payment URL generated successfully.",
+	), nil
 }
 
 func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (*resp.Response, error) {
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if userID == 0 {
-		return nil, fmt.Errorf("user not authenticated")
+		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
 	}
 
 	// Get the plan
 	plan, err := u.planRepo.GetByID(*params.PlanID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Calculate final price (consider applying discounts here)
@@ -410,32 +481,63 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	orderData["finalFrontReturnUrl"] = *params.FinalFrontReturnUrl
 
 	// Create a new order in the payment system
-	orderID := time.Now().Unix() // Dummy order ID
+	orderID := time.Now().UnixNano() // Use nanoseconds for more uniqueness
 
 	// Request payment from gateway
 	paymentUrl, err := u.paymentRepo.RequestPayment(finalPrice, orderID, userID, string(*params.Gateway), orderData)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return map[string]interface{}{
-		"paymentUrl": paymentUrl,
-		"orderId":    orderID,
-		"plan":       plan,
-	}, nil
+	return resp.NewResponseData(
+		resp.Success,
+		resp.Data{
+			"paymentUrl": paymentUrl,
+			"orderId":    orderID,
+			"plan":       plan,
+		},
+		"Plan upgrade payment URL generated successfully.",
+	), nil
 }
 
 func (u *UserUsecase) AdminGetAllUserQuery(params *user.AdminGetAllUserQuery) (*resp.Response, error) {
-	// Implementation for admin to get all users
-	fmt.Println(params)
+	u.Logger.Info("AdminGetAllUserQuery called", map[string]interface{}{
+		"page":     params.Page,
+		"pageSize": params.PageSize,
+	})
+
+	// Check admin access
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+	if !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "Only administrators can access this resource")
+	}
 
 	result, count, err := u.userRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		u.Logger.Error("Error getting all users", map[string]interface{}{
+			"error": err.Error(),
+		})
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return map[string]interface{}{
-		"items": result,
-		"total": count,
-	}, nil
+	// Calculate total pages
+	totalPages := (count + int64(params.PageSize) - 1) / int64(params.PageSize)
+	if totalPages < 1 {
+		totalPages = 1
+	}
+
+	return resp.NewResponseData(
+		resp.Success,
+		resp.Data{
+			"items":     result,
+			"total":     count,
+			"page":      params.Page,
+			"pageSize":  params.PageSize,
+			"totalPage": totalPages,
+		},
+		"All users retrieved successfully.",
+	), nil
 }

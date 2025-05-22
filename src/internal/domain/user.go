@@ -13,19 +13,19 @@ type User struct {
 	LastName                 string             `json:"last_name" gorm:"column:last_name;type:longtext;null"`
 	Email                    string             `json:"email" gorm:"column:email;type:varchar(255);not null;uniqueIndex"`
 	AvatarID                 *int64             `json:"avatar_id" gorm:"column:avatar_id;type:bigint;null"`
-	VerifyEmail              string             `json:"verify_email" gorm:"column:verify_email;type:longtext;null"`
+	VerifyEmail              enums.StatusEnum   `json:"verify_email" gorm:"column:verify_email;type:longtext;null"`
 	Password                 string             `json:"password" gorm:"column:password;type:longtext;not null"`
 	Salt                     string             `json:"salt" gorm:"column:salt;type:longtext;not null"`
 	NationalCode             string             `json:"national_code" gorm:"column:national_code;type:longtext;null"`
 	Phone                    string             `json:"phone" gorm:"column:phone;type:longtext;null"`
-	VerifyPhone              string             `json:"verify_phone" gorm:"column:verify_phone;type:longtext;null"`
+	VerifyPhone              enums.StatusEnum   `json:"verify_phone" gorm:"column:verify_phone;type:longtext;null"`
 	IsActive                 enums.StatusEnum   `json:"is_active" gorm:"column:is_active;type:longtext;not null"`
 	AiTypeEnum               enums.AiTypeEnum   `json:"ai_type_enum" gorm:"column:ai_type_enum;type:longtext;not null"`
 	UserTypeEnum             enums.UserTypeEnum `json:"user_type_enum" gorm:"column:user_type_enum;type:longtext;not null"`
 	PlanID                   *int64             `json:"plan_id" gorm:"column:plan_id;type:bigint;null"`
 	PlanStartedAt            *time.Time         `json:"plan_started_at" gorm:"column:plan_started_at;type:datetime(6);null"`
 	PlanExpiredAt            *time.Time         `json:"plan_expired_at" gorm:"column:plan_expired_at;type:datetime(6);null"`
-	VerifyCode               *int               `json:"verify_code" gorm:"column:verify_code;type:int;null"`
+	VerifyCode               *string            `json:"verify_code" gorm:"column:verify_code;type:int;null"`
 	ExpireVerifyCodeAt       *time.Time         `json:"expire_verify_code_at" gorm:"column:expire_verify_code_at;type:datetime(6);null"`
 	AiCredits                int                `json:"ai_credits" gorm:"column:ai_credits;type:int;not null"`
 	AiImageCredits           int                `json:"ai_image_credits" gorm:"column:ai_image_credits;type:int;not null"`
@@ -59,25 +59,25 @@ func (User) TableName() string {
 
 // Customer represents User.Customers table
 type Customer struct {
-	ID                 int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	SiteID             int64      `json:"site_id" gorm:"column:site_id;type:bigint;not null"`
-	FirstName          string     `json:"first_name" gorm:"column:first_name;type:longtext;null"`
-	AvatarID           *int64     `json:"avatar_id" gorm:"column:avatar_id;type:bigint;null"`
-	LastName           string     `json:"last_name" gorm:"column:last_name;type:longtext;null"`
-	Email              string     `json:"email" gorm:"column:email;type:varchar(255);not null;uniqueIndex"`
-	VerifyEmail        string     `json:"verify_email" gorm:"column:verify_email;type:longtext;null"`
-	Password           string     `json:"password" gorm:"column:password;type:longtext;not null"`
-	Salt               string     `json:"salt" gorm:"column:salt;type:longtext;not null"`
-	NationalCode       string     `json:"national_code" gorm:"column:national_code;type:longtext;null"`
-	Phone              string     `json:"phone" gorm:"column:phone;type:longtext;null"`
-	VerifyPhone        string     `json:"verify_phone" gorm:"column:verify_phone;type:longtext;null"`
-	IsActive           string     `json:"is_active" gorm:"column:is_active;type:longtext;not null"`
-	VerifyCode         *int       `json:"verify_code" gorm:"column:verify_code;type:int;null"`
-	ExpireVerifyCodeAt *time.Time `json:"expire_verify_code_at" gorm:"column:expire_verify_code_at;type:datetime(6);null"`
-	CreatedAt          time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt          time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	IsDeleted          bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt          *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
+	ID                 int64            `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
+	SiteID             int64            `json:"site_id" gorm:"column:site_id;type:bigint;not null"`
+	FirstName          string           `json:"first_name" gorm:"column:first_name;type:longtext;null"`
+	AvatarID           *int64           `json:"avatar_id" gorm:"column:avatar_id;type:bigint;null"`
+	LastName           string           `json:"last_name" gorm:"column:last_name;type:longtext;null"`
+	Email              string           `json:"email" gorm:"column:email;type:varchar(255);not null;uniqueIndex"`
+	VerifyEmail        enums.StatusEnum `json:"verify_email" gorm:"column:verify_email;type:longtext;null"`
+	Password           string           `json:"password" gorm:"column:password;type:longtext;not null"`
+	Salt               string           `json:"salt" gorm:"column:salt;type:longtext;not null"`
+	NationalCode       string           `json:"national_code" gorm:"column:national_code;type:longtext;null"`
+	Phone              string           `json:"phone" gorm:"column:phone;type:longtext;null"`
+	VerifyPhone        enums.StatusEnum `json:"verify_phone" gorm:"column:verify_phone;type:longtext;null"`
+	IsActive           enums.StatusEnum `json:"is_active" gorm:"column:is_active;type:longtext;not null"`
+	VerifyCode         *string          `json:"verify_code" gorm:"column:verify_code;type:int;null"`
+	ExpireVerifyCodeAt *time.Time       `json:"expire_verify_code_at" gorm:"column:expire_verify_code_at;type:datetime(6);null"`
+	CreatedAt          time.Time        `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
+	UpdatedAt          time.Time        `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
+	IsDeleted          bool             `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
+	DeletedAt          *time.Time       `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
 	Roles     []Role     `json:"roles" gorm:"many2many:customer_roles;"`

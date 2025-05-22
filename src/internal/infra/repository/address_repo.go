@@ -94,3 +94,21 @@ func (r *AddressRepo) RemoveAllAddressesFromUser(userID int64) error {
 	result := r.database.Model(&domain.Address{}).Where("user_id = ?", userID).Update("user_id", nil)
 	return result.Error
 }
+
+func (r *AddressRepo) AddAddressToCustomer(addressID int64, customerID int64) error {
+	// Update the customer_id field directly in the database
+	result := r.database.Model(&domain.Address{}).Where("id = ?", addressID).Update("customer_id", customerID)
+	return result.Error
+}
+
+func (r *AddressRepo) RemoveAddressFromCustomer(addressID int64, customerID int64) error {
+	// Set customer_id to NULL where matching both addressID and customerID
+	result := r.database.Model(&domain.Address{}).Where("id = ? AND customer_id = ?", addressID, customerID).Update("customer_id", nil)
+	return result.Error
+}
+
+func (r *AddressRepo) RemoveAllAddressesFromCustomer(customerID int64) error {
+	// Set customer_id to NULL for all addresses with the given customer_id
+	result := r.database.Model(&domain.Address{}).Where("customer_id = ?", customerID).Update("customer_id", nil)
+	return result.Error
+}

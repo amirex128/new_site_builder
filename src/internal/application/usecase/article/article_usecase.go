@@ -1,11 +1,13 @@
 package articleusecase
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"strings"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -85,7 +87,24 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 	}
 
 	// Return the created article
-	return newArticle, nil
+	// Convert domain.Article to map for response data
+	articleMap := map[string]interface{}{
+		"id":           newArticle.ID,
+		"title":        newArticle.Title,
+		"description":  newArticle.Description,
+		"body":         newArticle.Body,
+		"slug":         newArticle.Slug,
+		"siteId":       newArticle.SiteID,
+		"seoTags":      newArticle.SeoTags,
+		"userId":       newArticle.UserID,
+		"visitedCount": newArticle.VisitedCount,
+		"reviewCount":  newArticle.ReviewCount,
+		"rate":         newArticle.Rate,
+		"createdAt":    newArticle.CreatedAt,
+		"updatedAt":    newArticle.UpdatedAt,
+		"isDeleted":    newArticle.IsDeleted,
+	}
+	return resp.NewResponseData(resp.Created, articleMap, "Article created successfully"), nil
 }
 
 func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (*resp.Response, error) {
@@ -166,7 +185,24 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 		}
 	}
 
-	return existingArticle, nil
+	// Convert domain.Article to map for response data
+	articleMap := map[string]interface{}{
+		"id":           existingArticle.ID,
+		"title":        existingArticle.Title,
+		"description":  existingArticle.Description,
+		"body":         existingArticle.Body,
+		"slug":         existingArticle.Slug,
+		"siteId":       existingArticle.SiteID,
+		"seoTags":      existingArticle.SeoTags,
+		"userId":       existingArticle.UserID,
+		"visitedCount": existingArticle.VisitedCount,
+		"reviewCount":  existingArticle.ReviewCount,
+		"rate":         existingArticle.Rate,
+		"createdAt":    existingArticle.CreatedAt,
+		"updatedAt":    existingArticle.UpdatedAt,
+		"isDeleted":    existingArticle.IsDeleted,
+	}
+	return resp.NewResponseData(resp.Updated, articleMap, "Article updated successfully"), nil
 }
 
 func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (*resp.Response, error) {
@@ -189,10 +225,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"success": true,
-		"id":      *params.ID,
-	}, nil
+	return resp.NewResponse(resp.Deleted, "Article deleted successfully"), nil
 }
 
 func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery) (*resp.Response, error) {
@@ -215,10 +248,10 @@ func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery
 		u.Logger.Errorf("Failed to get media for article %d: %v", result.ID, err)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"article": result,
 		"media":   mediaItems,
-	}, nil
+	}, "Article retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQuery) (*resp.Response, error) {
@@ -240,10 +273,10 @@ func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQ
 		u.Logger.Errorf("Failed to get media for article %d: %v", result.ID, err)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"article": result,
 		"media":   mediaItems,
-	}, nil
+	}, "Article retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) (*resp.Response, error) {
@@ -275,10 +308,10 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": articlesWithMedia,
 		"total": count,
-	}, nil
+	}, "Articles retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (*resp.Response, error) {
@@ -315,11 +348,11 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":    articlesWithMedia,
 		"total":    count,
 		"category": category,
-	}, nil
+	}, "Articles retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFiltersSortArticleQuery) (*resp.Response, error) {
@@ -354,10 +387,10 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": articlesWithMedia,
 		"total": count,
-	}, nil
+	}, "Articles retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (*resp.Response, error) {
@@ -388,8 +421,8 @@ func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArti
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": articlesWithMedia,
 		"total": count,
-	}, nil
+	}, "Articles retrieved successfully"), nil
 }

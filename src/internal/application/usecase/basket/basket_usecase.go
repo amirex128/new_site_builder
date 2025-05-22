@@ -3,13 +3,15 @@ package basketusecase
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/basket"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -121,7 +123,20 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			return nil, err
 		}
 
-		return updatedBasket, nil
+		// Convert domain.Basket to map for response data
+		basketMap := map[string]interface{}{
+			"id":                           updatedBasket.ID,
+			"siteId":                       updatedBasket.SiteID,
+			"customerId":                   updatedBasket.CustomerID,
+			"totalRawPrice":                updatedBasket.TotalRawPrice,
+			"totalCouponDiscount":          updatedBasket.TotalCouponDiscount,
+			"totalPriceWithCouponDiscount": updatedBasket.TotalPriceWithCouponDiscount,
+			"discountId":                   updatedBasket.DiscountID,
+			"createdAt":                    updatedBasket.CreatedAt,
+			"updatedAt":                    updatedBasket.UpdatedAt,
+			"items":                        updatedBasket.Items,
+		}
+		return resp.NewResponseData(resp.Updated, basketMap, "Basket updated successfully"), nil
 	} else {
 		// Complex mode with price calculation
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -261,7 +276,20 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			return nil, err
 		}
 
-		return updatedBasket, nil
+		// Convert domain.Basket to map for response data
+		basketMap := map[string]interface{}{
+			"id":                           updatedBasket.ID,
+			"siteId":                       updatedBasket.SiteID,
+			"customerId":                   updatedBasket.CustomerID,
+			"totalRawPrice":                updatedBasket.TotalRawPrice,
+			"totalCouponDiscount":          updatedBasket.TotalCouponDiscount,
+			"totalPriceWithCouponDiscount": updatedBasket.TotalPriceWithCouponDiscount,
+			"discountId":                   updatedBasket.DiscountID,
+			"createdAt":                    updatedBasket.CreatedAt,
+			"updatedAt":                    updatedBasket.UpdatedAt,
+			"items":                        updatedBasket.Items,
+		}
+		return resp.NewResponseData(resp.Updated, basketMap, "Basket updated successfully"), nil
 	}
 }
 
@@ -279,7 +307,7 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Res
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Return an empty basket
-			return map[string]interface{}{
+			return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 				"id":                           0,
 				"siteId":                       *params.SiteID,
 				"customerId":                   customerID,
@@ -287,12 +315,25 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Res
 				"totalCouponDiscount":          0,
 				"totalPriceWithCouponDiscount": 0,
 				"items":                        []interface{}{},
-			}, nil
+			}, "Empty basket retrieved"), nil
 		}
 		return nil, err
 	}
 
-	return basket, nil
+	// Convert domain.Basket to map for response data
+	basketMap := map[string]interface{}{
+		"id":                           basket.ID,
+		"siteId":                       basket.SiteID,
+		"customerId":                   basket.CustomerID,
+		"totalRawPrice":                basket.TotalRawPrice,
+		"totalCouponDiscount":          basket.TotalCouponDiscount,
+		"totalPriceWithCouponDiscount": basket.TotalPriceWithCouponDiscount,
+		"discountId":                   basket.DiscountID,
+		"createdAt":                    basket.CreatedAt,
+		"updatedAt":                    basket.UpdatedAt,
+		"items":                        basket.Items,
+	}
+	return resp.NewResponseData(resp.Retrieved, basketMap, "Basket retrieved successfully"), nil
 }
 
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (*resp.Response, error) {
@@ -310,10 +351,10 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": baskets,
 		"total": count,
-	}, nil
+	}, "Customer baskets retrieved successfully"), nil
 }
 
 func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (*resp.Response, error) {
@@ -326,8 +367,8 @@ func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBas
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": result,
 		"total": count,
-	}, nil
+	}, "All baskets retrieved successfully (Admin)"), nil
 }

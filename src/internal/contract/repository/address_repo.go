@@ -16,4 +16,7 @@ type IAddressRepository interface {
 	AddAddressToUser(addressID int64, userID int64) error
 	RemoveAddressFromUser(addressID int64, userID int64) error
 	RemoveAllAddressesFromUser(userID int64) error
+	AddAddressToCustomer(addressID int64, customerID int64) error
+	RemoveAddressFromCustomer(addressID int64, customerID int64) error
+	RemoveAllAddressesFromCustomer(customerID int64) error
 }

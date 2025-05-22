@@ -3,12 +3,16 @@ package customerusecase
 import (
 	"errors"
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -28,6 +32,7 @@ type CustomerUsecase struct {
 	roleRepo     repository.IRoleRepository
 	authContext  func(c *gin.Context) service.IAuthService
 	identitySvc  service.IIdentityService
+	messageSvc   service.IMessageService
 }
 
 func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
@@ -41,6 +46,7 @@ func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
 		roleRepo:     c.GetRoleRepo(),
 		authContext:  c.GetAuthTransientService(),
 		identitySvc:  c.GetIdentityService(),
+		messageSvc:   c.GetMessageService(),
 	}
 }
 
@@ -54,14 +60,14 @@ func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCom
 	existingCustomer, err := u.repo.GetByEmail(*params.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("ایمیل یا رمز عبور اشتباه است")
+			return nil, resp.NewError(resp.Unauthorized, "ایمیل یا رمز عبور اشتباه است")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Verify password
 	if !u.identitySvc.VerifyPassword(*params.Password, existingCustomer.Password, existingCustomer.Salt) {
-		return nil, errors.New("ایمیل یا رمز عبور اشتباه است")
+		return nil, resp.NewError(resp.Unauthorized, "ایمیل یا رمز عبور اشتباه است")
 	}
 
 	// Get roles for customer
@@ -78,7 +84,13 @@ func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCom
 	// Generate token
 	token := u.identitySvc.TokenForCustomer(existingCustomer).AddRoles(roleNames).Make()
 
-	return token, nil
+	return resp.NewResponseData(
+		resp.Created,
+		resp.Data{
+			"token": token,
+		},
+		"Login successful",
+	), nil
 }
 
 // RegisterCustomerCommand handles customer registration
@@ -91,7 +103,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 	// Check if customer already exists with this email
 	existingCustomer, err := u.repo.GetByEmail(*params.Email)
 	if err == nil && existingCustomer.ID > 0 {
-		return nil, errors.New("ایمیل قبلاً ثبت شده است")
+		return nil, resp.NewError(resp.BadRequest, "ایمیل قبلاً ثبت شده است")
 	}
 
 	// Hash password with salt
@@ -103,11 +115,15 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 		SiteID:    *params.SiteID,
 		Password:  hashedPassword,
 		Salt:      salt,
-		IsActive:  "1",
+		IsActive:  enums.ActiveStatus,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		IsDeleted: false,
 	}
+
+	// Generate verification code
+	verificationCode := utils.GenerateVerificationCode()
+	newCustomer.VerifyCode = &verificationCode
 
 	// Save customer
 	err = u.repo.Create(newCustomer)
@@ -116,23 +132,50 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 			"error": err.Error(),
 			"email": *params.Email,
 		})
-		return nil, errors.New("خطا در ثبت نام مشتری")
+		return nil, resp.NewError(resp.Internal, "خطا در ثبت نام مشتری")
 	}
 
 	// Retrieve the created customer to get the ID
 	createdCustomer, err := u.repo.GetByEmail(*params.Email)
 	if err != nil {
-		return nil, errors.New("خطا در بازیابی اطلاعات مشتری")
+		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات مشتری")
 	}
 
-	// Add default customer role (ID 1)
-	// In a real implementation, we'd need to assign roles through a relationship method
-	// For simplicity, we'll assume role ID 1 is "Customer"
+	// Add default customer role
+	defaultRole, err := u.roleRepo.GetByName("Customer")
+	if err == nil {
+		err = u.roleRepo.AddRoleToCustomer(defaultRole.ID, createdCustomer.ID)
+		if err != nil {
+			u.Logger.Error("Error assigning default role to customer", map[string]interface{}{
+				"error":      err.Error(),
+				"customerId": createdCustomer.ID,
+			})
+			// Continue despite role assignment error
+		}
+	}
 
 	// Generate token
 	token := u.identitySvc.TokenForCustomer(createdCustomer).AddRoles([]string{"Customer"}).Make()
 
-	return token, nil
+	// Send verification email
+	msg := struct {
+		To      string
+		Subject string
+		Body    string
+	}{
+		To:      *params.Email,
+		Subject: "Verify Your Account",
+		Body:    fmt.Sprintf("Your verification code is: %s", verificationCode),
+	}
+	u.messageSvc.SendEmail(msg)
+
+	return resp.NewResponseData(
+		resp.Created,
+		resp.Data{
+			"token": token,
+		},
+		"Registration successful. Please verify your account.",
+	), nil
 }
 
 // RequestVerifyAndForgetCustomerCommand handles verification and password reset requests
@@ -145,61 +188,80 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 
 	// Handle phone verification/forget
 	if *params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType {
+		if params.Phone == nil {
+			return nil, resp.NewError(resp.BadRequest, "phone is required for phone verification")
+		}
+
 		existingCustomer, err := u.repo.GetByPhone(*params.Phone)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, errors.New("شماره تلفن یافت نشد")
+				return nil, resp.NewError(resp.NotFound, "شماره تلفن یافت نشد")
 			}
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 
-		// Generate verification code (random 6-digit number)
-		verifyCode := generateVerificationCode()
+		// Generate verification code
+		verifyCode := utils.GenerateVerificationCode()
+		verifyCodeStr := verifyCode
 		expireAt := time.Now().Add(15 * time.Minute)
 
 		// Update customer with verification code
-		existingCustomer.VerifyCode = &verifyCode
+		existingCustomer.VerifyCode = &verifyCodeStr
 		existingCustomer.ExpireVerifyCodeAt = &expireAt
 		existingCustomer.UpdatedAt = time.Now()
 
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
-			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی اطلاعات مشتری")
 		}
 
-		// In a real implementation, we would send an SMS here
-		// For now, we'll just log the code
-		u.Logger.Info("SMS verification code generated", map[string]interface{}{
-			"phone": *params.Phone,
-			"code":  verifyCode,
-			"type":  *params.Type,
-		})
+		// Send verification code via SMS
+		msg := struct {
+			To   string
+			Body string
+		}{
+			To:   *params.Phone,
+			Body: fmt.Sprintf("Your verification code is: %s", verifyCode),
+		}
+		u.messageSvc.SendSms(msg)
 
-		return "success", nil
+		return resp.NewResponseData(
+			resp.Success,
+			resp.Data{
+				"success": true,
+				"message": "Verification code sent. Please check your phone.",
+			},
+			"Verification code sent. Please check your phone.",
+		), nil
 	}
 
 	// Handle email verification/forget
 	if *params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType {
+		if params.Email == nil {
+			return nil, resp.NewError(resp.BadRequest, "email is required for email verification")
+		}
+
 		existingCustomer, err := u.repo.GetByEmail(*params.Email)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, errors.New("ایمیل یافت نشد")
+				return nil, resp.NewError(resp.NotFound, "ایمیل یافت نشد")
 			}
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 
-		// Generate verification code and link
-		verifyCode := generateVerificationCode()
+		// Generate verification code
+		verifyCode := utils.GenerateVerificationCode()
+		verifyCodeStr := verifyCode
 		expireAt := time.Now().Add(24 * time.Hour)
 
 		// Update customer with verification code
-		existingCustomer.VerifyCode = &verifyCode
+		existingCustomer.VerifyCode = &verifyCodeStr
 		existingCustomer.ExpireVerifyCodeAt = &expireAt
 		existingCustomer.UpdatedAt = time.Now()
 
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
-			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی اطلاعات مشتری")
 		}
 
 		// Generate reset link
@@ -208,21 +270,31 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 			gatewayURL = "http://localhost"
 		}
 
-		resetLink := generatePasswordResetLink(gatewayURL, existingCustomer.ID, verifyCode, string(*params.Type))
+		resetLink := generatePasswordResetLink(gatewayURL, existingCustomer.ID, verifyCodeStr, string(*params.Type))
 
-		// In a real implementation, we would send an email here
-		// For now, we'll just log the link
-		u.Logger.Info("Email verification link generated", map[string]interface{}{
-			"email": *params.Email,
-			"code":  verifyCode,
-			"link":  resetLink,
-			"type":  *params.Type,
-		})
+		// Send verification code via email
+		msg := struct {
+			To      string
+			Subject string
+			Body    string
+		}{
+			To:      *params.Email,
+			Subject: "Your Verification Code",
+			Body:    fmt.Sprintf("Your verification code is: %s\nOr use this link: %s", verifyCode, resetLink),
+		}
+		u.messageSvc.SendEmail(msg)
 
-		return "success", nil
+		return resp.NewResponseData(
+			resp.Success,
+			resp.Data{
+				"success": true,
+				"message": "Verification code sent. Please check your email.",
+			},
+			"Verification code sent. Please check your email.",
+		), nil
 	}
 
-	return nil, errors.New("نوع تأیید نامعتبر است")
+	return nil, resp.NewError(resp.BadRequest, "نوع تأیید نامعتبر است")
 }
 
 // UpdateProfileCustomerCommand handles updating customer profile
@@ -235,16 +307,16 @@ func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdatePr
 	// Get customer ID from auth context
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, errors.New("خطا در احراز هویت مشتری")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت مشتری")
 	}
 
 	// Get existing customer
 	existingCustomer, err := u.repo.GetByID(customerID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("مشتری یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "مشتری یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Update fields if provided
@@ -280,21 +352,34 @@ func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdatePr
 	// Save customer
 	err = u.repo.Update(existingCustomer)
 	if err != nil {
-		return nil, errors.New("خطا در بروزرسانی پروفایل مشتری")
+		return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی پروفایل مشتری")
 	}
 
 	// Handle address IDs if provided
 	if len(params.AddressIDs) > 0 {
-		// This would typically involve updating the many-to-many relationship
-		// For simplicity, we'll just log the addresses
-		u.Logger.Info("Updating customer addresses", map[string]interface{}{
-			"customerId": customerID,
-			"addressIds": params.AddressIDs,
-		})
+		// First, remove all existing addresses
+		err = u.addressRepo.RemoveAllAddressesFromCustomer(customerID)
+		if err != nil {
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی آدرس‌های مشتری")
+		}
+
+		// Then add the new addresses
+		for _, addressID := range params.AddressIDs {
+			err = u.addressRepo.AddAddressToCustomer(addressID, customerID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در افزودن آدرس به مشتری")
+			}
+		}
 	}
 
-	// Return updated customer
-	return enhanceCustomerResponse(existingCustomer), nil
+	// Return updated customer with enhanced response
+	return resp.NewResponseData(
+		resp.Updated,
+		resp.Data{
+			"customer": existingCustomer,
+		},
+		"Customer profile updated successfully.",
+	), nil
 }
 
 // VerifyCustomerQuery handles customer verification
@@ -309,19 +394,19 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 	existingCustomer, err := u.repo.GetByEmail(*params.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("ایمیل یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "ایمیل یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Check verification code
 	if existingCustomer.VerifyCode == nil || *existingCustomer.VerifyCode != *params.Code {
-		return nil, errors.New("کد تایید نامعتبر است")
+		return nil, resp.NewError(resp.BadRequest, "کد تایید نامعتبر است")
 	}
 
 	// Check if code is expired
 	if existingCustomer.ExpireVerifyCodeAt == nil || time.Now().After(*existingCustomer.ExpireVerifyCodeAt) {
-		return nil, errors.New("کد تایید منقضی شده است")
+		return nil, resp.NewError(resp.BadRequest, "کد تایید منقضی شده است")
 	}
 
 	// Clear verification code
@@ -329,50 +414,89 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 	existingCustomer.ExpireVerifyCodeAt = nil
 	existingCustomer.UpdatedAt = time.Now()
 
+	var resetToken string
+
 	// Handle different verification types
 	switch *params.Type {
 	case enums.VerifyEmailType:
-		existingCustomer.VerifyEmail = "1"
+		existingCustomer.VerifyEmail = enums.ActiveStatus
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
-			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی اطلاعات مشتری")
 		}
-		return "success", nil
+		return resp.NewResponseData(
+			resp.Success,
+			resp.Data{
+				"success": true,
+				"message": "Email verification successful.",
+			},
+			"Email verification successful.",
+		), nil
 
 	case enums.VerifyPhoneType:
-		existingCustomer.VerifyPhone = "1"
+		existingCustomer.VerifyPhone = enums.ActiveStatus
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
-			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی اطلاعات مشتری")
 		}
-		return "success", nil
+		return resp.NewResponseData(
+			resp.Success,
+			resp.Data{
+				"success": true,
+				"message": "Phone verification successful.",
+			},
+			"Phone verification successful.",
+		), nil
 
 	case enums.ForgetPasswordEmailType:
-		// Generate token for password reset
-		token := u.identitySvc.TokenForCustomer(existingCustomer).Make()
+		// Generate token for password reset with claims
+		resetToken = u.identitySvc.AddClaim("reset_password", "1").AddClaim("customer_id", strconv.FormatInt(existingCustomer.ID, 10)).Make()
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
-			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی اطلاعات مشتری")
 		}
 
-		// Return token with redirect URL
-		redirectURL := "https://example.com/reset-password"
-		queryParams := url.Values{}
-		queryParams.Add("token", token)
+		// Get reset URL from environment or use default
+		resetURL := os.Getenv("RESET_PASSWORD_URL")
+		if resetURL == "" {
+			resetURL = "https://example.com/reset-password"
+		}
 
-		return map[string]string{
-			"url": redirectURL + "?" + queryParams.Encode(),
-		}, nil
+		// Add token to URL
+		queryParams := url.Values{}
+		queryParams.Add("token", resetToken)
+		resetURL = resetURL + "?" + queryParams.Encode()
+
+		return resp.NewResponseData(
+			resp.Success,
+			resp.Data{
+				"success":     true,
+				"message":     "Password reset verification successful.",
+				"reset_token": resetToken,
+				"reset_url":   resetURL,
+			},
+			"Password reset verification successful.",
+		), nil
 
 	case enums.ForgetPasswordPhoneType:
+		// Generate token for password reset with claims
+		resetToken = u.identitySvc.AddClaim("reset_password", "1").AddClaim("customer_id", strconv.FormatInt(existingCustomer.ID, 10)).Make()
 		err = u.repo.Update(existingCustomer)
 		if err != nil {
-			return nil, errors.New("خطا در بروزرسانی اطلاعات مشتری")
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی اطلاعات مشتری")
 		}
-		return "success", nil
+		return resp.NewResponseData(
+			resp.Success,
+			resp.Data{
+				"success":     true,
+				"message":     "Password reset verification successful.",
+				"reset_token": resetToken,
+			},
+			"Password reset verification successful.",
+		), nil
 
 	default:
-		return nil, errors.New("نوع تأیید نامعتبر است")
+		return nil, resp.NewError(resp.BadRequest, "نوع تأیید نامعتبر است")
 	}
 }
 
@@ -383,29 +507,32 @@ func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCus
 	// Get customer ID from auth context
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, errors.New("خطا در احراز هویت مشتری")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت مشتری")
 	}
 
 	// Get customer details
 	existingCustomer, err := u.repo.GetByID(customerID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("مشتری یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "مشتری یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Enhance response with file items (avatar) if available
-	response := enhanceCustomerResponse(existingCustomer)
-
-	// Get avatar media URL if available
-	if existingCustomer.AvatarID != nil {
-		// We would typically call a file service here to get the file URL
-		// For simplicity, we'll just add the ID
-		response["avatarId"] = *existingCustomer.AvatarID
+	// Get customer addresses
+	addresses, err := u.addressRepo.GetAllByCustomerID(customerID)
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return response, nil
+	return resp.NewResponseData(
+		resp.Retrieved,
+		resp.Data{
+			"customer": existingCustomer,
+			"address":  addresses,
+		},
+		"Customer profile retrieved successfully.",
+	), nil
 }
 
 // AdminGetAllCustomerQuery handles admin getting all customers
@@ -418,117 +545,40 @@ func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllC
 	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	if !isAdmin {
-		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
+		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
 	// Get all customers with pagination
 	customers, count, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, errors.New("خطا در دریافت لیست مشتریان")
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت لیست مشتریان")
 	}
 
-	// Enhance response
-	enhancedCustomers := make([]map[string]interface{}, 0, len(customers))
-	for _, c := range customers {
-		enhancedCustomers = append(enhancedCustomers, enhanceCustomerResponse(c))
+	// Calculate total pages
+	totalPages := (count + int64(params.PageSize) - 1) / int64(params.PageSize)
+	if totalPages < 1 {
+		totalPages = 1
 	}
 
-	return map[string]interface{}{
-		"items":     enhancedCustomers,
-		"total":     count,
-		"page":      params.Page,
-		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
-}
-
-// Helper function to enhance customer response with structured data
-func enhanceCustomerResponse(c domain.Customer) map[string]interface{} {
-	response := map[string]interface{}{
-		"id":           c.ID,
-		"siteId":       c.SiteID,
-		"firstName":    c.FirstName,
-		"lastName":     c.LastName,
-		"email":        c.Email,
-		"verifyEmail":  c.VerifyEmail,
-		"nationalCode": c.NationalCode,
-		"phone":        c.Phone,
-		"verifyPhone":  c.VerifyPhone,
-		"isActive":     c.IsActive,
-		"createdAt":    c.CreatedAt,
-		"updatedAt":    c.UpdatedAt,
-	}
-
-	// Add roles if available
-	if len(c.Roles) > 0 {
-		roles := make([]map[string]interface{}, 0, len(c.Roles))
-		for _, r := range c.Roles {
-			roles = append(roles, map[string]interface{}{
-				"id":   r.ID,
-				"name": r.Name,
-			})
-		}
-		response["roles"] = roles
-	}
-
-	// Add addresses if available
-	if len(c.Addresses) > 0 {
-		addresses := make([]map[string]interface{}, 0, len(c.Addresses))
-		for _, a := range c.Addresses {
-			addr := enhanceAddressResponse(a)
-			addresses = append(addresses, addr)
-		}
-		response["addresses"] = addresses
-	}
-
-	return response
-}
-
-// Helper function to enhance address response with structured data
-func enhanceAddressResponse(a domain.Address) map[string]interface{} {
-	response := map[string]interface{}{
-		"id":          a.ID,
-		"title":       a.Title,
-		"latitude":    a.Latitude,
-		"longitude":   a.Longitude,
-		"addressLine": a.AddressLine,
-		"postalCode":  a.PostalCode,
-		"cityId":      a.CityID,
-		"provinceId":  a.ProvinceID,
-	}
-
-	// Add city info if available
-	if a.City != nil {
-		response["city"] = map[string]interface{}{
-			"id":   a.City.ID,
-			"name": a.City.Name,
-		}
-	}
-
-	// Add province info if available
-	if a.Province != nil {
-		response["province"] = map[string]interface{}{
-			"id":   a.Province.ID,
-			"name": a.Province.Name,
-		}
-	}
-
-	return response
-}
-
-// Helper function to generate a random verification code
-func generateVerificationCode() int {
-	// In a real implementation, we would use a secure random number generator
-	// For simplicity, we'll just return a fixed code for now
-	return 123456
+	return resp.NewResponseData(
+		resp.Success,
+		resp.Data{
+			"items":     customers,
+			"total":     count,
+			"page":      params.Page,
+			"pageSize":  params.PageSize,
+			"totalPage": totalPages,
+		},
+		"All customers retrieved successfully.",
+	), nil
 }
 
 // Helper function to generate a password reset link
-func generatePasswordResetLink(baseURL string, customerID int64, code int, verifyType string) string {
+func generatePasswordResetLink(baseURL string, customerID int64, code string, verifyType string) string {
 	// In a real implementation, we might encrypt or sign the parameters
-	return fmt.Sprintf("%s/reset-password?id=%d&code=%d&type=%s",
+	return fmt.Sprintf("%s/reset-password?id=%d&code=%s&type=%s",
 		baseURL, customerID, code, verifyType)
 }

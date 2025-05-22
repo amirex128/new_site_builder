@@ -5,6 +5,7 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/page_usage"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -193,9 +194,13 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 		return nil, errors.New("نوع استفاده نامعتبر است")
 	}
 
-	return map[string]interface{}{
-		"success": true,
-	}, nil
+	return resp.NewResponseData(
+		resp.Success,
+		resp.Data{
+			"success": true,
+		},
+		"Page usage synchronized successfully",
+	), nil
 }
 
 func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsagesQuery) (*resp.Response, error) {

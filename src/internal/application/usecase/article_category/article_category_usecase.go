@@ -1,11 +1,13 @@
 package articlecategoryusecase
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"strings"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article_category"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -75,7 +77,22 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 	}
 
 	// Return the created category
-	return newCategory, nil
+	// Convert domain.ArticleCategory to map for response data
+	categoryMap := map[string]interface{}{
+		"id":               newCategory.ID,
+		"name":             newCategory.Name,
+		"slug":             newCategory.Slug,
+		"description":      newCategory.Description,
+		"parentCategoryId": newCategory.ParentCategoryID,
+		"siteId":           newCategory.SiteID,
+		"order":            newCategory.Order,
+		"seoTags":          newCategory.SeoTags,
+		"userId":           newCategory.UserID,
+		"createdAt":        newCategory.CreatedAt,
+		"updatedAt":        newCategory.UpdatedAt,
+		"isDeleted":        newCategory.IsDeleted,
+	}
+	return resp.NewResponseData(resp.Created, categoryMap, "Article category created successfully"), nil
 }
 
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
@@ -143,7 +160,22 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 		}
 	}
 
-	return existingCategory, nil
+	// Convert domain.ArticleCategory to map for response data
+	categoryMap := map[string]interface{}{
+		"id":               existingCategory.ID,
+		"name":             existingCategory.Name,
+		"slug":             existingCategory.Slug,
+		"description":      existingCategory.Description,
+		"parentCategoryId": existingCategory.ParentCategoryID,
+		"siteId":           existingCategory.SiteID,
+		"order":            existingCategory.Order,
+		"seoTags":          existingCategory.SeoTags,
+		"userId":           existingCategory.UserID,
+		"createdAt":        existingCategory.CreatedAt,
+		"updatedAt":        existingCategory.UpdatedAt,
+		"isDeleted":        existingCategory.IsDeleted,
+	}
+	return resp.NewResponseData(resp.Updated, categoryMap, "Article category updated successfully"), nil
 }
 
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
@@ -166,10 +198,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"success": true,
-		"id":      *params.ID,
-	}, nil
+	return resp.NewResponse(resp.Deleted, "Article category deleted successfully"), nil
 }
 
 func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.GetByIdCategoryQuery) (*resp.Response, error) {
@@ -192,10 +221,10 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 		u.Logger.Errorf("Failed to get media for category %d: %v", result.ID, err)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"category": result,
 		"media":    mediaItems,
-	}, nil
+	}, "Article category retrieved successfully"), nil
 }
 
 func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (*resp.Response, error) {
@@ -227,10 +256,10 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": categoriesWithMedia,
 		"total": count,
-	}, nil
+	}, "Article categories retrieved successfully"), nil
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
@@ -261,8 +290,8 @@ func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_catego
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": categoriesWithMedia,
 		"total": count,
-	}, nil
+	}, "Article categories retrieved successfully (Admin)"), nil
 }

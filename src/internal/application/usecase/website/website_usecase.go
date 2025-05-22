@@ -3,6 +3,7 @@ package websiteusecase
 import (
 	"fmt"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/website"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -44,9 +45,7 @@ func (u *WebsiteUsecase) GetByDomainPageQuery(params *website.GetByDomainPageQue
 	// 2. Find the page by slug for that site using the page repository
 
 	// Return empty result for now
-	return map[string]interface{}{
-		"message": "GetByDomainPageQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
 }
 
 func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomainHeaderFooterQuery) (*resp.Response, error) {
@@ -58,9 +57,8 @@ func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomai
 	// 2. Find the header/footer for that site using the header/footer repository
 
 	// Return empty result for now
-	return map[string]interface{}{
-		"message": "GetByDomainHeaderFooterQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) ProductSearchListQuery(params *website.ProductSearchListQuery) (*resp.Response, error) {
@@ -71,11 +69,8 @@ func (u *WebsiteUsecase) ProductSearchListQuery(params *website.ProductSearchLis
 	// 1. Find the site by domain using the site repository
 	// 2. Find all products for that site using the product repository with pagination
 
-	return map[string]interface{}{
-		"items":   []interface{}{},
-		"total":   0,
-		"message": "ProductSearchListQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) GetFiltersSortArticleQuery(params *website.GetFiltersSortArticleQuery) (*resp.Response, error) {
@@ -87,11 +82,8 @@ func (u *WebsiteUsecase) GetFiltersSortArticleQuery(params *website.GetFiltersSo
 	// 2. Get all articles for that site using the article repository with pagination
 	// 3. Apply filters and sorting as specified in the params
 
-	return map[string]interface{}{
-		"items":   []interface{}{},
-		"total":   0,
-		"message": "GetFiltersSortArticleQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) GetFiltersSortProductQuery(params *website.GetFiltersSortProductQuery) (*resp.Response, error) {
@@ -103,11 +95,8 @@ func (u *WebsiteUsecase) GetFiltersSortProductQuery(params *website.GetFiltersSo
 	// 2. Get all products for that site using the product repository with pagination
 	// 3. Apply filters and sorting as specified in the params
 
-	return map[string]interface{}{
-		"items":   []interface{}{},
-		"total":   0,
-		"message": "GetFiltersSortProductQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) GetArticlesByCategorySlugQuery(params *website.GetArticlesByCategorySlugQuery) (*resp.Response, error) {
@@ -119,11 +108,8 @@ func (u *WebsiteUsecase) GetArticlesByCategorySlugQuery(params *website.GetArtic
 	// 2. Find the category by slug using the category repository
 	// 3. Find all articles for that category using the article repository with pagination
 
-	return map[string]interface{}{
-		"items":   []interface{}{},
-		"total":   0,
-		"message": "GetArticlesByCategorySlugQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) GetProductsByCategorySlugQuery(params *website.GetProductsByCategorySlugQuery) (*resp.Response, error) {
@@ -135,11 +121,8 @@ func (u *WebsiteUsecase) GetProductsByCategorySlugQuery(params *website.GetProdu
 	// 2. Find the category by slug using the category repository
 	// 3. Find all products for that category using the product repository with pagination
 
-	return map[string]interface{}{
-		"items":   []interface{}{},
-		"total":   0,
-		"message": "GetProductsByCategorySlugQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) GetSingleArticleBySlugQuery(params *website.GetSingleArticleBySlugQuery) (*resp.Response, error) {
@@ -150,9 +133,8 @@ func (u *WebsiteUsecase) GetSingleArticleBySlugQuery(params *website.GetSingleAr
 	// 1. Find the site by domain using the site repository
 	// 2. Find the article by slug using the article repository
 
-	return map[string]interface{}{
-		"message": "GetSingleArticleBySlugQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }
 
 func (u *WebsiteUsecase) GetSingleProductBySlugQuery(params *website.GetSingleProductBySlugQuery) (*resp.Response, error) {
@@ -163,7 +145,6 @@ func (u *WebsiteUsecase) GetSingleProductBySlugQuery(params *website.GetSinglePr
 	// 1. Find the site by domain using the site repository
 	// 2. Find the product by slug using the product repository
 
-	return map[string]interface{}{
-		"message": "GetSingleProductBySlugQuery not fully implemented",
-	}, nil
+	return resp.NewResponse(resp.Success,"success"), nil
+
 }

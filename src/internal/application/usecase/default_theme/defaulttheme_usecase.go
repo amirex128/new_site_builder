@@ -3,6 +3,7 @@ package defaultthemeusecase
 import (
 	"errors"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"time"
 
@@ -90,8 +91,11 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 		return nil, err
 	}
 
-	return createdTheme, nil
-}
+	return resp.NewResponseData(resp.Success,
+		resp.Data{
+			"default_theme": createdTheme,
+		},
+		"success"), nil}
 
 func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.UpdateDefaultThemeCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateDefaultThemeCommand called", map[string]interface{}{
@@ -159,7 +163,12 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 		return nil, err
 	}
 
-	return updatedTheme, nil
+	return resp.NewResponseData(resp.Success,
+		resp.Data{
+			"default_theme": updatedTheme,
+		},
+		"success"), nil
+
 }
 
 func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.DeleteDefaultThemeCommand) (*resp.Response, error) {
@@ -191,9 +200,11 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"id": existingTheme.ID,
-	}, nil
+	return resp.NewResponseData(resp.Success,
+		resp.Data{
+			"default_theme": existingTheme,
+		},
+		"success"), nil
 }
 
 func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetByIdDefaultThemeQuery) (*resp.Response, error) {
@@ -210,7 +221,11 @@ func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetB
 		return nil, err
 	}
 
-	return theme, nil
+	return resp.NewResponseData(resp.Success,
+		resp.Data{
+			"default_theme": theme,
+		},
+		"success"), nil
 }
 
 func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAllDefaultThemeQuery) (*resp.Response, error) {
@@ -220,16 +235,14 @@ func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAl
 	})
 
 	// Get paginated list of themes
-	themes, count, err := u.defaultThemeRepo.GetAll(params.PaginationRequestDto)
+	themes, _, err := u.defaultThemeRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"items":     themes,
-		"total":     count,
-		"page":      params.Page,
-		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	return resp.NewResponseData(resp.Success,
+		resp.Data{
+			"default_theme": themes,
+		},
+		"success"), nil
 }

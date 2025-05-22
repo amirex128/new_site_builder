@@ -2,13 +2,15 @@ package addressusecase
 
 import (
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/address"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -129,10 +131,10 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	// Retrieve the address with relations to return
 	fullAddress, err := u.addressRepo.GetByID(newAddress.ID)
 	if err != nil {
-		return newAddress, nil // Return the basic address if can't retrieve with relations
+		return resp.NewResponseData(resp.Created, enhanceAddressResponse(newAddress), "آدرس با موفقیت ایجاد شد"), nil // Return the basic address if can't retrieve with relations
 	}
 
-	return enhanceAddressResponse(fullAddress), nil
+	return resp.NewResponseData(resp.Created, enhanceAddressResponse(fullAddress), "آدرس با موفقیت ایجاد شد"), nil
 }
 
 // UpdateAddressCommand handles updating an existing address
@@ -216,10 +218,10 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	// Retrieve the updated address with relations
 	fullAddress, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
-		return existingAddress, nil // Return the basic address if can't retrieve with relations
+		return resp.NewResponseData(resp.Updated, enhanceAddressResponse(existingAddress), "آدرس با موفقیت بروزرسانی شد"), nil // Return the basic address if can't retrieve with relations
 	}
 
-	return enhanceAddressResponse(fullAddress), nil
+	return resp.NewResponseData(resp.Updated, enhanceAddressResponse(fullAddress), "آدرس با موفقیت بروزرسانی شد"), nil
 }
 
 // DeleteAddressCommand handles deleting an address
@@ -258,10 +260,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 		return nil, errors.New("خطا در حذف آدرس")
 	}
 
-	return map[string]interface{}{
-		"success": true,
-		"message": "آدرس با موفقیت حذف شد",
-	}, nil
+	return resp.NewResponse(resp.Deleted, "آدرس با موفقیت حذف شد"), nil
 }
 
 // GetByIdAddressQuery handles retrieving an address by ID
@@ -290,7 +289,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 		return nil, errors.New("شما دسترسی به این آدرس ندارید")
 	}
 
-	return enhanceAddressResponse(result), nil
+	return resp.NewResponseData(resp.Retrieved, enhanceAddressResponse(result), "آدرس با موفقیت دریافت شد"), nil
 }
 
 // GetAllAddressQuery handles retrieving all addresses for the current user/customer
@@ -334,13 +333,13 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 		enhancedAddresses = append(enhancedAddresses, enhanceAddressResponse(addr))
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedAddresses,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "آدرس ها با موفقیت دریافت شدند"), nil
 }
 
 // AdminGetAllAddressQuery handles retrieving all addresses for admin
@@ -375,13 +374,13 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 		enhancedAddresses = append(enhancedAddresses, enhanceAddressResponse(addr))
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedAddresses,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "آدرس ها با موفقیت دریافت شدند"), nil
 }
 
 // GetAllCityQuery handles retrieving all cities
@@ -422,13 +421,13 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (*resp
 		cities = append(cities, cityData)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     cities,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "شهرها با موفقیت دریافت شدند"), nil
 }
 
 // GetAllProvinceQuery handles retrieving all provinces
@@ -460,13 +459,13 @@ func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery
 		provinces = append(provinces, provinceData)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     provinces,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "استان ها با موفقیت دریافت شدند"), nil
 }
 
 // Helper function to enhance address response with structured data
