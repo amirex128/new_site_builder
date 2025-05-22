@@ -48,7 +48,7 @@ func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 	}
 }
 
-func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductCommand) (any, error) {
+func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateProductCommand called", map[string]interface{}{
 		"name":   *params.Name,
 		"siteId": *params.SiteID,
@@ -211,7 +211,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	return createdProduct, nil
 }
 
-func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductCommand) (any, error) {
+func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateProductCommand called", map[string]interface{}{
 		"id":     *params.ID,
 		"siteId": *params.SiteID,
@@ -361,7 +361,7 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	return updatedProduct, nil
 }
 
-func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductCommand) (any, error) {
+func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteProductCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -402,7 +402,7 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 	}, nil
 }
 
-func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery) (any, error) {
+func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdProductQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -433,7 +433,7 @@ func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery
 	return product, nil
 }
 
-func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) (any, error) {
+func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllProductQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
@@ -459,7 +459,7 @@ func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) 
 	}, nil
 }
 
-func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFiltersSortProductQuery) (any, error) {
+func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFiltersSortProductQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByFiltersSortProductQuery called", map[string]interface{}{
 		"siteId":       *params.SiteID,
 		"page":         params.Page,
@@ -542,7 +542,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 	}, nil
 }
 
-func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByCategoryQuery) (any, error) {
+func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByCategoryQuery) (*resp.Response, error) {
 	u.Logger.Info("GetProductByCategoryQuery called", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteId": *params.SiteID,
@@ -578,7 +578,7 @@ func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByC
 	}, nil
 }
 
-func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQuery) (any, error) {
+func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQuery) (*resp.Response, error) {
 	u.Logger.Info("GetSingleProductQuery called", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteId": *params.SiteID,
@@ -645,7 +645,7 @@ func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQ
 	return response, nil
 }
 
-func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculateProductsPriceQuery) (any, error) {
+func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculateProductsPriceQuery) (*resp.Response, error) {
 	u.Logger.Info("CalculateProductsPriceQuery called", map[string]interface{}{
 		"customerId": *params.CustomerID,
 		"siteId":     *params.SiteID,
@@ -876,7 +876,7 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 	return response, nil
 }
 
-func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProductQuery) (any, error) {
+func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProductQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllProductQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

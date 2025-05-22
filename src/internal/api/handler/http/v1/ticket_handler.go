@@ -39,12 +39,8 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateTicketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ReplayTicket godoc
@@ -68,12 +64,8 @@ func (h *TicketHandler) ReplayTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.ReplayTicketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminReplayTicket godoc
@@ -98,12 +90,8 @@ func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminReplayTicketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdTicket godoc
@@ -127,12 +115,8 @@ func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdTicketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllTicket godoc
@@ -155,12 +139,8 @@ func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllTicketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllTicket godoc
@@ -184,10 +164,6 @@ func (h *TicketHandler) AdminGetAllTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllTicketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

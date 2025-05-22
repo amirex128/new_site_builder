@@ -35,7 +35,7 @@ func NewUnitPriceUsecase(c contract.IContainer) *UnitPriceUsecase {
 
 // UpdateUnitPriceCommand updates a unit price
 // Based on UpdateUnitPriceCommand.cs
-func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitPriceCommand) (any, error) {
+func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitPriceCommand) (*resp.Response, error) {
 	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -84,7 +84,7 @@ func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitP
 
 // CalculateUnitPriceQuery calculates the price for unit prices
 // Based on CalculateUnitPriceQuery.cs
-func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateUnitPriceQuery) (any, error) {
+func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateUnitPriceQuery) (*resp.Response, error) {
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
@@ -197,7 +197,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 
 // GetAllUnitPriceQuery gets all unit prices with pagination
 // Based on GetAllUnitPriceQuery.cs
-func (u *UnitPriceUsecase) GetAllUnitPriceQuery(params *unit_price.GetAllUnitPriceQuery) (any, error) {
+func (u *UnitPriceUsecase) GetAllUnitPriceQuery(params *unit_price.GetAllUnitPriceQuery) (*resp.Response, error) {
 	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {

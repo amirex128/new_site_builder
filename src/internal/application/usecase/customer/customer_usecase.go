@@ -45,7 +45,7 @@ func NewCustomerUsecase(c contract.IContainer) *CustomerUsecase {
 }
 
 // LoginCustomerCommand handles customer login
-func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCommand) (any, error) {
+func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCommand) (*resp.Response, error) {
 	u.Logger.Info("LoginCustomerCommand called", map[string]interface{}{
 		"email": *params.Email,
 	})
@@ -82,7 +82,7 @@ func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCom
 }
 
 // RegisterCustomerCommand handles customer registration
-func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCustomerCommand) (any, error) {
+func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCustomerCommand) (*resp.Response, error) {
 	u.Logger.Info("RegisterCustomerCommand called", map[string]interface{}{
 		"email":  *params.Email,
 		"siteId": *params.SiteID,
@@ -136,7 +136,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 }
 
 // RequestVerifyAndForgetCustomerCommand handles verification and password reset requests
-func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer.RequestVerifyAndForgetCustomerCommand) (any, error) {
+func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer.RequestVerifyAndForgetCustomerCommand) (*resp.Response, error) {
 	u.Logger.Info("RequestVerifyAndForgetCustomerCommand called", map[string]interface{}{
 		"email": *params.Email,
 		"phone": *params.Phone,
@@ -226,7 +226,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 }
 
 // UpdateProfileCustomerCommand handles updating customer profile
-func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdateProfileCustomerCommand) (any, error) {
+func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdateProfileCustomerCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateProfileCustomerCommand called", map[string]interface{}{
 		"firstName": params.FirstName,
 		"lastName":  params.LastName,
@@ -298,7 +298,7 @@ func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdatePr
 }
 
 // VerifyCustomerQuery handles customer verification
-func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQuery) (any, error) {
+func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQuery) (*resp.Response, error) {
 	u.Logger.Info("VerifyCustomerQuery called", map[string]interface{}{
 		"email": *params.Email,
 		"code":  *params.Code,
@@ -377,7 +377,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 }
 
 // GetProfileCustomerQuery handles getting customer profile
-func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCustomerQuery) (any, error) {
+func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCustomerQuery) (*resp.Response, error) {
 	u.Logger.Info("GetProfileCustomerQuery called", nil)
 
 	// Get customer ID from auth context
@@ -409,7 +409,7 @@ func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCus
 }
 
 // AdminGetAllCustomerQuery handles admin getting all customers
-func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllCustomerQuery) (any, error) {
+func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllCustomerQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllCustomerQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

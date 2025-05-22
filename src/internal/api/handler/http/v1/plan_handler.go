@@ -39,12 +39,8 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreatePlanCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdatePlan godoc
@@ -68,12 +64,8 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdatePlanCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeletePlan godoc
@@ -97,12 +89,8 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeletePlanCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdPlan godoc
@@ -126,12 +114,8 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIDPlanQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllPlan godoc
@@ -154,12 +138,8 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllPlanQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CalculatePlanPrice godoc
@@ -182,10 +162,6 @@ func (h *PlanHandler) CalculatePlanPrice(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CalculatePlanPriceQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

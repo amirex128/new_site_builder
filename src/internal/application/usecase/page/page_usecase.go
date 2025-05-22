@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
@@ -40,7 +41,7 @@ func NewPageUsecase(c contract.IContainer) *PageUsecase {
 	}
 }
 
-func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, error) {
+func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.Response, error) {
 	u.Logger.Info("CreatePageCommand called", map[string]interface{}{
 		"siteId": *params.SiteID,
 		"title":  *params.Title,
@@ -143,7 +144,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (any, er
 	return enhancePageResponse(createdPage), nil
 }
 
-func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, error) {
+func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdatePageCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -293,7 +294,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (any, er
 	return enhancePageResponse(updatedPage), nil
 }
 
-func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (any, error) {
+func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.Response, error) {
 	u.Logger.Info("DeletePageCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -333,7 +334,7 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (any, er
 	}, nil
 }
 
-func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (any, error) {
+func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdPageQuery called", map[string]interface{}{
 		"id":     params.ID,
 		"ids":    params.IDs,
@@ -371,7 +372,7 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (any, erro
 	return nil, errors.New("شناسه صفحه یا صفحات الزامی است")
 }
 
-func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (any, error) {
+func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllPageQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
@@ -399,7 +400,7 @@ func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (any, error)
 	}, nil
 }
 
-func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (any, error) {
+func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllPageQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -436,7 +437,7 @@ func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (a
 	}, nil
 }
 
-func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (any, error) {
+func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByPathPageQuery called", map[string]interface{}{
 		"paths":  params.Paths,
 		"siteId": *params.SiteID,

@@ -39,12 +39,8 @@ func (h *DiscountHandler) CreateDiscount(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateDiscountCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateDiscount godoc
@@ -68,12 +64,8 @@ func (h *DiscountHandler) UpdateDiscount(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateDiscountCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteDiscount godoc
@@ -97,12 +89,8 @@ func (h *DiscountHandler) DeleteDiscount(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteDiscountCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdDiscount godoc
@@ -126,12 +114,8 @@ func (h *DiscountHandler) GetByIdDiscount(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdDiscountQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllDiscount godoc
@@ -154,12 +138,8 @@ func (h *DiscountHandler) GetAllDiscount(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllDiscountQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllDiscount godoc
@@ -183,10 +163,6 @@ func (h *DiscountHandler) AdminGetAllDiscount(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllDiscountQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

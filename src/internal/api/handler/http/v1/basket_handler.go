@@ -39,12 +39,8 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateBasketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetBasket godoc
@@ -68,12 +64,8 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetBasketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllBasketUser godoc
@@ -96,12 +88,8 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllBasketUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllBasketUser godoc
@@ -125,10 +113,6 @@ func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllBasketUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

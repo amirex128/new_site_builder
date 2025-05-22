@@ -3,6 +3,7 @@ package orderusecase
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"strconv"
 	"time"
 
@@ -43,7 +44,7 @@ func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
 	}
 }
 
-func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderRequestCommand) (any, error) {
+func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderRequestCommand) (*resp.Response, error) {
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
@@ -216,7 +217,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 	}, nil
 }
 
-func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyCommand) (any, error) {
+func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyCommand) (*resp.Response, error) {
 	// Extract order ID from order data
 	orderIDStr, ok := params.OrderData["OrderId"]
 	if !ok {
@@ -297,7 +298,7 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 	}, nil
 }
 
-func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustomerQuery) (any, error) {
+func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustomerQuery) (*resp.Response, error) {
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
@@ -314,7 +315,7 @@ func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustome
 	}, nil
 }
 
-func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustomerDetailsQuery) (any, error) {
+func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustomerDetailsQuery) (*resp.Response, error) {
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, err
@@ -333,7 +334,7 @@ func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustom
 	return order, nil
 }
 
-func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) (any, error) {
+func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) (*resp.Response, error) {
 	orders, count, err := u.orderRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
@@ -345,7 +346,7 @@ func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) 
 	}, nil
 }
 
-func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetailsQuery) (any, error) {
+func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetailsQuery) (*resp.Response, error) {
 	order, err := u.orderRepo.GetByID(*params.OrderID)
 	if err != nil {
 		return nil, err
@@ -396,7 +397,7 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 	return order, nil
 }
 
-func (u *OrderUsecase) AdminGetAllOrderUserQuery(params *order.AdminGetAllOrderUserQuery) (any, error) {
+func (u *OrderUsecase) AdminGetAllOrderUserQuery(params *order.AdminGetAllOrderUserQuery) (*resp.Response, error) {
 	orders, count, err := u.orderRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err

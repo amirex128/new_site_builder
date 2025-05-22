@@ -29,7 +29,7 @@ type IIdentityService interface {
 	// HashPassword creates a hashed password with a salt
 	HashPassword(password string) (string, string)
 
-	// GetTokenFromContext extracts the JWT token from the request context
+	// GetToken GetTokenFromContext extracts the JWT token from the request context
 	GetToken(c *gin.Context) (*jwt.Token, error)
 	GetTokenString(c *gin.Context) (string, error)
 

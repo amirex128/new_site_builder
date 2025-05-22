@@ -45,7 +45,7 @@ func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 	}
 }
 
-func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentCommand) (any, error) {
+func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentCommand) (*resp.Response, error) {
 	u.Logger.Info("VerifyPaymentCommand called", map[string]interface{}{
 		"transactionCode": *params.TransactionCode,
 	})
@@ -122,7 +122,7 @@ func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentComma
 	return responseData, nil
 }
 
-func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUpdateGatewayCommand) (any, error) {
+func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUpdateGatewayCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateOrUpdateGatewayCommand called", map[string]interface{}{
 		"siteId": *params.SiteID,
 	})
@@ -371,7 +371,7 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 	}
 }
 
-func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery) (any, error) {
+func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdGatewayQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -402,7 +402,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 	return gateway, nil
 }
 
-func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (any, error) {
+func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllGatewayQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -430,7 +430,7 @@ func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGate
 	}, nil
 }
 
-func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCommand) (any, error) {
+func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCommand) (*resp.Response, error) {
 	u.Logger.Info("RequestGatewayCommand called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"orderId":  *params.OrderID,
@@ -521,7 +521,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 	return responseData, nil
 }
 
-func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (any, error) {
+func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllPaymentQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

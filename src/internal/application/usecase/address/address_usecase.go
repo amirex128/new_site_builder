@@ -36,7 +36,7 @@ func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 }
 
 // CreateAddressCommand handles the creation of a new address
-func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressCommand) (any, error) {
+func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressCommand) (*resp.Response, error) {
 	var customerID, userID int64
 	var err error
 
@@ -136,7 +136,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 }
 
 // UpdateAddressCommand handles updating an existing address
-func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressCommand) (any, error) {
+func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateAddressCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -223,7 +223,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 }
 
 // DeleteAddressCommand handles deleting an address
-func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressCommand) (any, error) {
+func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteAddressCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -265,7 +265,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 }
 
 // GetByIdAddressQuery handles retrieving an address by ID
-func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery) (any, error) {
+func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdAddressQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -294,7 +294,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 }
 
 // GetAllAddressQuery handles retrieving all addresses for the current user/customer
-func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) (any, error) {
+func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllAddressQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -344,7 +344,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 }
 
 // AdminGetAllAddressQuery handles retrieving all addresses for admin
-func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddressQuery) (any, error) {
+func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddressQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllAddressQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -385,7 +385,7 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 }
 
 // GetAllCityQuery handles retrieving all cities
-func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (any, error) {
+func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllCityQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -432,7 +432,7 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (any, 
 }
 
 // GetAllProvinceQuery handles retrieving all provinces
-func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery) (any, error) {
+func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllProvinceQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

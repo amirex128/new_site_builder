@@ -39,12 +39,8 @@ func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateOrderRequestCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CreateOrderVerify godoc
@@ -68,12 +64,8 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateOrderVerifyCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Success(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllOrderCustomer godoc
@@ -96,12 +88,8 @@ func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllOrderCustomerQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetOrderCustomerDetails godoc
@@ -125,12 +113,8 @@ func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetOrderCustomerDetailsQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllOrderUser godoc
@@ -153,12 +137,8 @@ func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllOrderUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetOrderUserDetails godoc
@@ -182,12 +162,8 @@ func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetOrderUserDetailsQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllOrderUser godoc
@@ -211,10 +187,6 @@ func (h *OrderHandler) AdminGetAllOrderUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllOrderUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

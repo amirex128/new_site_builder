@@ -40,7 +40,7 @@ func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	}
 }
 
-func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (any, error) {
+func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateBasketCommand called", map[string]interface{}{
 		"params": params,
 	})
@@ -265,7 +265,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 	}
 }
 
-func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, error) {
+func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Response, error) {
 	u.Logger.Info("GetBasketQuery called", map[string]interface{}{
 		"params": params,
 	})
@@ -295,7 +295,7 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (any, erro
 	return basket, nil
 }
 
-func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (any, error) {
+func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllBasketUserQuery called", map[string]interface{}{
 		"params": params,
 	})
@@ -316,7 +316,7 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 	}, nil
 }
 
-func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (any, error) {
+func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllBasketUserQuery called", map[string]interface{}{
 		"params": params,
 	})

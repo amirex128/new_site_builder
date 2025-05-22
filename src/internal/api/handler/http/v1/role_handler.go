@@ -40,12 +40,8 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateRoleCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateRole godoc
@@ -70,12 +66,8 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateRoleCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // SetRoleToCustomer godoc
@@ -100,12 +92,8 @@ func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.SetRoleToCustomerCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // SetRoleToUser godoc
@@ -130,12 +118,8 @@ func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.SetRoleToUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // SetRoleToPlan godoc
@@ -160,12 +144,8 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 	}
 
 	result, err := h.usecase.SetRoleToPlanCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllPermission godoc
@@ -188,12 +168,8 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllPermissionQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllRole godoc
@@ -216,12 +192,8 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllRoleQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetRolePermissions godoc
@@ -245,10 +217,6 @@ func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetRolePermissionsQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

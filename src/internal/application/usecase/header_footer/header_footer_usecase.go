@@ -38,7 +38,7 @@ func NewHeaderFooterUsecase(c contract.IContainer) *HeaderFooterUsecase {
 	}
 }
 
-func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.CreateHeaderFooterCommand) (any, error) {
+func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.CreateHeaderFooterCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateHeaderFooterCommand called", map[string]interface{}{
 		"siteId": *params.SiteID,
 		"title":  *params.Title,
@@ -93,7 +93,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 	return createdHeaderFooter, nil
 }
 
-func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.UpdateHeaderFooterCommand) (any, error) {
+func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.UpdateHeaderFooterCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateHeaderFooterCommand called", map[string]interface{}{
 		"id":     *params.ID,
 		"siteId": *params.SiteID,
@@ -167,7 +167,7 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 	return updatedHeaderFooter, nil
 }
 
-func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.DeleteHeaderFooterCommand) (any, error) {
+func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.DeleteHeaderFooterCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteHeaderFooterCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -207,7 +207,7 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 	}, nil
 }
 
-func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.GetByIdHeaderFooterQuery) (any, error) {
+func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.GetByIdHeaderFooterQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdHeaderFooterQuery called", map[string]interface{}{
 		"id":     params.ID,
 		"siteId": *params.SiteID,
@@ -251,7 +251,7 @@ func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.Get
 	return nil, errors.New("شناسه هدر/فوتر الزامی است")
 }
 
-func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetAllHeaderFooterQuery) (any, error) {
+func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetAllHeaderFooterQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllHeaderFooterQuery called", map[string]interface{}{
 		"siteId": *params.SiteID,
 		"type":   params.Type,
@@ -287,7 +287,7 @@ func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetA
 	}, nil
 }
 
-func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer.AdminGetAllHeaderFooterQuery) (any, error) {
+func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer.AdminGetAllHeaderFooterQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllHeaderFooterQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -318,7 +318,7 @@ func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer
 	}, nil
 }
 
-func (u *HeaderFooterUsecase) GetHeaderFooterByDomainOrSiteIdQuery(params *header_footer.GetHeaderFooterByDomainOrSiteIdQuery) (any, error) {
+func (u *HeaderFooterUsecase) GetHeaderFooterByDomainOrSiteIdQuery(params *header_footer.GetHeaderFooterByDomainOrSiteIdQuery) (*resp.Response, error) {
 	u.Logger.Info("GetHeaderFooterByDomainOrSiteIdQuery called", map[string]interface{}{
 		"siteId": params.SiteID,
 		"domain": params.Domain,

@@ -46,7 +46,7 @@ func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 	}
 }
 
-func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsageCommand) (any, error) {
+func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsageCommand) (*resp.Response, error) {
 	u.Logger.Info("SyncPageUsageCommand called", map[string]interface{}{
 		"pageId":    *params.PageID,
 		"siteId":    *params.SiteID,
@@ -198,7 +198,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	}, nil
 }
 
-func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsagesQuery) (any, error) {
+func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsagesQuery) (*resp.Response, error) {
 	u.Logger.Info("FindPageUsagesQuery called", map[string]interface{}{
 		"entityIds": params.EntityIDs,
 		"siteId":    *params.SiteID,

@@ -39,12 +39,8 @@ func (h *ArticleCategoryHandler) CategoryCreate(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateCategoryCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CategoryUpdate godoc
@@ -68,12 +64,8 @@ func (h *ArticleCategoryHandler) CategoryUpdate(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateCategoryCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CategoryDelete godoc
@@ -97,12 +89,8 @@ func (h *ArticleCategoryHandler) CategoryDelete(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteCategoryCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CategoryGet godoc
@@ -126,12 +114,8 @@ func (h *ArticleCategoryHandler) CategoryGet(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdCategoryQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CategoryGetAll godoc
@@ -154,12 +138,8 @@ func (h *ArticleCategoryHandler) CategoryGetAll(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllCategoryQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminCategoryGetAll godoc
@@ -183,10 +163,6 @@ func (h *ArticleCategoryHandler) AdminCategoryGetAll(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllCategoryQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

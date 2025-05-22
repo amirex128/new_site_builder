@@ -37,7 +37,7 @@ func NewProductCategoryUsecase(c contract.IContainer) *ProductCategoryUsecase {
 	}
 }
 
-func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.CreateCategoryCommand) (any, error) {
+func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.CreateCategoryCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateCategoryCommand called", map[string]interface{}{
 		"name":   *params.Name,
 		"siteId": *params.SiteID,
@@ -105,7 +105,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 	return createdCategory, nil
 }
 
-func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.UpdateCategoryCommand) (any, error) {
+func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.UpdateCategoryCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateCategoryCommand called", map[string]interface{}{
 		"id":     *params.ID,
 		"siteId": *params.SiteID,
@@ -197,7 +197,7 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 	return updatedCategory, nil
 }
 
-func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.DeleteCategoryCommand) (any, error) {
+func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.DeleteCategoryCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteCategoryCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -237,7 +237,7 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 	}, nil
 }
 
-func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.GetByIdCategoryQuery) (any, error) {
+func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.GetByIdCategoryQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdCategoryQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -297,7 +297,7 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 	return response, nil
 }
 
-func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.GetAllCategoryQuery) (any, error) {
+func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.GetAllCategoryQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllCategoryQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
@@ -360,7 +360,7 @@ func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.Ge
 	}, nil
 }
 
-func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_category.AdminGetAllCategoryQuery) (any, error) {
+func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllCategoryQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

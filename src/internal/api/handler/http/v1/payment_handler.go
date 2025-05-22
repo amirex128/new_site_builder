@@ -40,12 +40,8 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 	}
 
 	result, err := h.usecase.VerifyPaymentCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // RequestGateway godoc
@@ -68,12 +64,8 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 	}
 
 	result, err := h.usecase.RequestGatewayCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Success(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CreateOrUpdateGateway godoc
@@ -96,14 +88,8 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateOrUpdateGatewayCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	// Since there's no clear ID field to determine if this is an update or a create,
-	// we'll always respond with a generic success response
-	utils.Success(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdGateway godoc
@@ -127,12 +113,8 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdGatewayQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllGateway godoc
@@ -156,12 +138,8 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllGatewayQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllPayment godoc
@@ -185,10 +163,6 @@ func (h *PaymentHandler) AdminGetAllPayment(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllPaymentQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

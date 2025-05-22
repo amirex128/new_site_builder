@@ -34,7 +34,7 @@ func NewSiteUsecase(c contract.IContainer) *SiteUsecase {
 	}
 }
 
-func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, error) {
+func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateSiteCommand called", map[string]interface{}{
 		"domain": *params.Domain,
 		"name":   *params.Name,
@@ -116,7 +116,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 	return enhanceSiteResponse(createdSite), nil
 }
 
-func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, error) {
+func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateSiteCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -195,7 +195,7 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 	return enhanceSiteResponse(updatedSite), nil
 }
 
-func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (any, error) {
+func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteSiteCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -235,7 +235,7 @@ func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (any, er
 	}, nil
 }
 
-func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (any, error) {
+func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdSiteQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -252,7 +252,7 @@ func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (any, erro
 	return enhanceSiteResponse(site), nil
 }
 
-func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (any, error) {
+func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByDomainSiteQuery called", map[string]interface{}{
 		"domain": *params.Domain,
 	})
@@ -269,7 +269,7 @@ func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (a
 	return enhanceSiteResponse(site), nil
 }
 
-func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (any, error) {
+func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllSiteQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -302,7 +302,7 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (any, error)
 	}, nil
 }
 
-func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (any, error) {
+func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllSiteQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

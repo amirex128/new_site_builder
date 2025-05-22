@@ -38,12 +38,8 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 		return
 	}
 	result, err := h.usecase.CreateAddressCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateAddress godoc
@@ -67,12 +63,8 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateAddressCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteAddress godoc
@@ -96,12 +88,8 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteAddressCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdAddress godoc
@@ -125,12 +113,8 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdAddressQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllAddress godoc
@@ -153,12 +137,8 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllAddressQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllCity godoc
@@ -181,12 +161,8 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllCityQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllProvince godoc
@@ -209,12 +185,8 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllProvinceQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllAddress godoc
@@ -238,10 +210,6 @@ func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllAddressQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

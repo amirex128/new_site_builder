@@ -39,12 +39,8 @@ func (h *SiteHandler) CreateSite(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateSiteCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateSite godoc
@@ -68,12 +64,8 @@ func (h *SiteHandler) UpdateSite(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateSiteCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteSite godoc
@@ -97,12 +89,8 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteSiteCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdSite godoc
@@ -126,12 +114,8 @@ func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdSiteQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllSite godoc
@@ -154,12 +138,8 @@ func (h *SiteHandler) GetAllSite(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllSiteQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllSite godoc
@@ -183,10 +163,6 @@ func (h *SiteHandler) AdminGetAllSite(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllSiteQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

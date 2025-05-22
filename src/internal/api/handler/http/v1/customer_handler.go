@@ -39,12 +39,8 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateProfileCustomerCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetProfileCustomer godoc
@@ -68,12 +64,8 @@ func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetProfileCustomerQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // RegisterCustomer godoc
@@ -96,12 +88,8 @@ func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.RegisterCustomerCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // LoginCustomer godoc
@@ -124,12 +112,8 @@ func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.LoginCustomerCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // RequestVerifyAndForgetCustomer godoc
@@ -152,12 +136,8 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.RequestVerifyAndForgetCustomerCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // VerifyCustomer godoc
@@ -180,12 +160,8 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.VerifyCustomerQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllCustomer godoc
@@ -209,10 +185,6 @@ func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllCustomerQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

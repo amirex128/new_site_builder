@@ -39,12 +39,8 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateDefaultThemeCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateDefaultTheme godoc
@@ -68,12 +64,8 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateDefaultThemeCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteDefaultTheme godoc
@@ -97,12 +89,8 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteDefaultThemeCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdDefaultTheme godoc
@@ -126,12 +114,8 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdDefaultThemeQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllDefaultTheme godoc
@@ -154,10 +138,6 @@ func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllDefaultThemeQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

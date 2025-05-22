@@ -33,21 +33,34 @@ type Response struct {
 	Data    Data
 }
 
-func NewNError(typ ErrorType, data Data, msg string, format ...any) *Error {
+func NewError(typ ErrorType, msg string, format ...any) *Error {
+	return &Error{
+		Message: fmt.Sprintf(msg, format...),
+		Type:    typ,
+	}
+}
+
+func NewErrorData(typ ErrorType, data Data, msg string, format ...any) *Error {
 	return &Error{
 		Message: fmt.Sprintf(msg, format...),
 		Type:    typ,
 		Data:    data,
 	}
 }
+
 func (e *Error) Error() string {
 	return e.Message
 }
 
-func NewResponse(typ ResponseType, data Data, msg string, format ...any) *Response {
+func NewResponseData(typ ResponseType, data Data, msg string, format ...any) *Response {
 	return &Response{
 		Message: fmt.Sprintf(msg, format...),
 		Type:    typ,
 		Data:    data,
 	}
+}
+func NewResponse(typ ResponseType, msg string, format ...any) *Response {
+	return &Response{
+		Message: fmt.Sprintf(msg, format...),
+		Type:    typ}
 }

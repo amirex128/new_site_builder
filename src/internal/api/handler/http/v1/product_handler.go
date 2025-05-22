@@ -39,12 +39,8 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateProductCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateProduct godoc
@@ -68,12 +64,8 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateProductCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteProduct godoc
@@ -97,12 +89,8 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteProductCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdProduct godoc
@@ -126,12 +114,8 @@ func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdProductQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllProduct godoc
@@ -154,12 +138,8 @@ func (h *ProductHandler) GetAllProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllProductQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByFiltersSortProduct godoc
@@ -182,12 +162,8 @@ func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByFiltersSortProductQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllProduct godoc
@@ -211,10 +187,6 @@ func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllProductQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

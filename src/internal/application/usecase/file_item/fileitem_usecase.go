@@ -50,7 +50,7 @@ func toServicePermissionEnum(p enums.FileItemPermissionEnum) contractStorage.Fil
 }
 
 // CreateOrDirectoryItemCommand handles the creation of a new file or directory
-func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOrDirectoryItemCommand) (any, error) {
+func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOrDirectoryItemCommand) (*resp.Response, error) {
 	// Get or create user storage
 	storage, err := u.storageRepo.GetByUserID(u.userID)
 	if err != nil {
@@ -201,7 +201,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 }
 
 // DeleteFileItemCommand marks a file item as deleted
-func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (any, error) {
+func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (*resp.Response, error) {
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -224,7 +224,7 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 }
 
 // ForceDeleteFileItemCommand permanently deletes a file item
-func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (any, error) {
+func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (*resp.Response, error) {
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -280,7 +280,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 }
 
 // RestoreFileItemCommand restores a deleted file item
-func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (any, error) {
+func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (*resp.Response, error) {
 	// Restore the file
 	result := u.FileItemRepo.SetRestore(*params.ID)
 	if result != nil {
@@ -293,7 +293,7 @@ func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileIte
 }
 
 // UpdateFileItemCommand updates file item properties
-func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (any, error) {
+func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (*resp.Response, error) {
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -331,7 +331,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 }
 
 // FileOperationCommand handles file operations like copy, move, rename
-func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (any, error) {
+func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (*resp.Response, error) {
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -553,7 +553,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 }
 
 // GetByIdsQuery retrieves file items by IDs
-func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (any, error) {
+func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.Response, error) {
 	// Extract IDs from the request
 	var ids []int64
 	for _, item := range params.IdsOrder {
@@ -633,7 +633,7 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (any, er
 }
 
 // GetDeletedTreeDirectoryQuery retrieves deleted file items
-func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (any, error) {
+func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (*resp.Response, error) {
 	// Get deleted items
 	items, err := u.FileItemRepo.GetDeletedItems(u.userID)
 	if err != nil {
@@ -645,7 +645,7 @@ func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDelet
 }
 
 // GetDownloadFileItemByIdQuery retrieves a file for download
-func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (any, error) {
+func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (*resp.Response, error) {
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -678,7 +678,7 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 }
 
 // GetTreeDirectoryQuery retrieves a directory tree
-func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (any, error) {
+func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (*resp.Response, error) {
 	// Get tree
 	items, err := u.FileItemRepo.GetTreeByUserIDAndParentID(u.userID, params.ParentFileItemID)
 	if err != nil {

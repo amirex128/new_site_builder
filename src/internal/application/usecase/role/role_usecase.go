@@ -31,7 +31,7 @@ func NewRoleUsecase(c contract.IContainer) *RoleUsecase {
 }
 
 // CreateRoleCommand creates a new role
-func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (any, error) {
+func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -68,7 +68,7 @@ func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (any, er
 }
 
 // UpdateRoleCommand updates an existing role
-func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (any, error) {
+func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -113,7 +113,7 @@ func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (any, er
 }
 
 // SetRoleToCustomerCommand assigns roles to a customer
-func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCommand) (any, error) {
+func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCommand) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -152,7 +152,7 @@ func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCom
 }
 
 // SetRoleToUserCommand assigns roles to a user
-func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (any, error) {
+func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -191,7 +191,7 @@ func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (a
 }
 
 // SetRoleToPlanCommand assigns roles to a plan
-func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (any, error) {
+func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -230,7 +230,7 @@ func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (a
 }
 
 // GetAllPermissionQuery gets all permissions with pagination
-func (u *RoleUsecase) GetAllPermissionQuery(params *role.GetAllPermissionQuery) (any, error) {
+func (u *RoleUsecase) GetAllPermissionQuery(params *role.GetAllPermissionQuery) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -248,7 +248,7 @@ func (u *RoleUsecase) GetAllPermissionQuery(params *role.GetAllPermissionQuery) 
 }
 
 // GetAllRoleQuery gets all roles with pagination
-func (u *RoleUsecase) GetAllRoleQuery(params *role.GetAllRoleQuery) (any, error) {
+func (u *RoleUsecase) GetAllRoleQuery(params *role.GetAllRoleQuery) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
@@ -264,7 +264,7 @@ func (u *RoleUsecase) GetAllRoleQuery(params *role.GetAllRoleQuery) (any, error)
 }
 
 // GetRolePermissionsQuery gets permissions for roles with pagination
-func (u *RoleUsecase) GetRolePermissionsQuery(params *role.GetRolePermissionsQuery) (any, error) {
+func (u *RoleUsecase) GetRolePermissionsQuery(params *role.GetRolePermissionsQuery) (*resp.Response, error) {
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 

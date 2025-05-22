@@ -39,7 +39,7 @@ func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 	}
 }
 
-func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (any, error) {
+func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateCustomerTicketCommand called", map[string]interface{}{
 		"title":    *params.Title,
 		"category": *params.Category,
@@ -115,7 +115,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	return enhanceCustomerTicketResponse(createdTicket), nil
 }
 
-func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (any, error) {
+func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (*resp.Response, error) {
 	u.Logger.Info("ReplayCustomerTicketCommand called", map[string]interface{}{
 		"id":      *params.ID,
 		"status":  *params.Status,
@@ -208,7 +208,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	return enhanceCustomerTicketResponse(updatedTicket), nil
 }
 
-func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *customer_ticket.AdminReplayCustomerTicketCommand) (any, error) {
+func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *customer_ticket.AdminReplayCustomerTicketCommand) (*resp.Response, error) {
 	u.Logger.Info("AdminReplayCustomerTicketCommand called", map[string]interface{}{
 		"id":      *params.ID,
 		"status":  *params.Status,
@@ -305,7 +305,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	return enhanceCustomerTicketResponse(updatedTicket), nil
 }
 
-func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (any, error) {
+func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdCustomerTicketQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -341,7 +341,7 @@ func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_tick
 	return enhanceCustomerTicketResponse(result), nil
 }
 
-func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticket.GetAllCustomerTicketQuery) (any, error) {
+func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticket.GetAllCustomerTicketQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllCustomerTicketQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,
@@ -378,7 +378,7 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 	}, nil
 }
 
-func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_ticket.AdminGetAllCustomerTicketQuery) (any, error) {
+func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_ticket.AdminGetAllCustomerTicketQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllCustomerTicketQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

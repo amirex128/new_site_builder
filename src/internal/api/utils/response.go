@@ -185,7 +185,7 @@ func HandleError(c *gin.Context, err error) {
 }
 
 // HandleResponse is a convenience function to handle response with appropriate responses
-func HandleResponse(c *gin.Context, response resp.Response) {
+func HandleResponse(c *gin.Context, response *resp.Response) {
 	switch response.Type {
 	case resp.Success:
 		Success(c, response.Message, response.Data)

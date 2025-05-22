@@ -35,7 +35,7 @@ func NewWebsiteUsecase(c contract.IContainer) *WebsiteUsecase {
 	}
 }
 
-func (u *WebsiteUsecase) GetByDomainPageQuery(params *website.GetByDomainPageQuery) (any, error) {
+func (u *WebsiteUsecase) GetByDomainPageQuery(params *website.GetByDomainPageQuery) (*resp.Response, error) {
 	// Implementation to get page by domain and path
 	fmt.Println(params)
 
@@ -49,7 +49,7 @@ func (u *WebsiteUsecase) GetByDomainPageQuery(params *website.GetByDomainPageQue
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomainHeaderFooterQuery) (any, error) {
+func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomainHeaderFooterQuery) (*resp.Response, error) {
 	// Implementation to get header/footer by domain
 	fmt.Println(params)
 
@@ -63,7 +63,7 @@ func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomai
 	}, nil
 }
 
-func (u *WebsiteUsecase) ProductSearchListQuery(params *website.ProductSearchListQuery) (any, error) {
+func (u *WebsiteUsecase) ProductSearchListQuery(params *website.ProductSearchListQuery) (*resp.Response, error) {
 	// Implementation for searching products by domain
 	fmt.Println(params)
 
@@ -78,7 +78,7 @@ func (u *WebsiteUsecase) ProductSearchListQuery(params *website.ProductSearchLis
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetFiltersSortArticleQuery(params *website.GetFiltersSortArticleQuery) (any, error) {
+func (u *WebsiteUsecase) GetFiltersSortArticleQuery(params *website.GetFiltersSortArticleQuery) (*resp.Response, error) {
 	// Implementation for getting articles with filters and sorting
 	fmt.Println(params)
 
@@ -94,7 +94,7 @@ func (u *WebsiteUsecase) GetFiltersSortArticleQuery(params *website.GetFiltersSo
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetFiltersSortProductQuery(params *website.GetFiltersSortProductQuery) (any, error) {
+func (u *WebsiteUsecase) GetFiltersSortProductQuery(params *website.GetFiltersSortProductQuery) (*resp.Response, error) {
 	// Implementation for getting products with filters and sorting
 	fmt.Println(params)
 
@@ -110,7 +110,7 @@ func (u *WebsiteUsecase) GetFiltersSortProductQuery(params *website.GetFiltersSo
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetArticlesByCategorySlugQuery(params *website.GetArticlesByCategorySlugQuery) (any, error) {
+func (u *WebsiteUsecase) GetArticlesByCategorySlugQuery(params *website.GetArticlesByCategorySlugQuery) (*resp.Response, error) {
 	// Implementation for getting articles by category slug
 	fmt.Println(params)
 
@@ -126,7 +126,7 @@ func (u *WebsiteUsecase) GetArticlesByCategorySlugQuery(params *website.GetArtic
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetProductsByCategorySlugQuery(params *website.GetProductsByCategorySlugQuery) (any, error) {
+func (u *WebsiteUsecase) GetProductsByCategorySlugQuery(params *website.GetProductsByCategorySlugQuery) (*resp.Response, error) {
 	// Implementation for getting products by category slug
 	fmt.Println(params)
 
@@ -142,7 +142,7 @@ func (u *WebsiteUsecase) GetProductsByCategorySlugQuery(params *website.GetProdu
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetSingleArticleBySlugQuery(params *website.GetSingleArticleBySlugQuery) (any, error) {
+func (u *WebsiteUsecase) GetSingleArticleBySlugQuery(params *website.GetSingleArticleBySlugQuery) (*resp.Response, error) {
 	// Implementation for getting a single article by slug
 	fmt.Println(params)
 
@@ -155,7 +155,7 @@ func (u *WebsiteUsecase) GetSingleArticleBySlugQuery(params *website.GetSingleAr
 	}, nil
 }
 
-func (u *WebsiteUsecase) GetSingleProductBySlugQuery(params *website.GetSingleProductBySlugQuery) (any, error) {
+func (u *WebsiteUsecase) GetSingleProductBySlugQuery(params *website.GetSingleProductBySlugQuery) (*resp.Response, error) {
 	// Implementation for getting a single product by slug
 	fmt.Println(params)
 

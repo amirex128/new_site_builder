@@ -27,7 +27,7 @@ func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 	}
 }
 
-func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (any, error) {
+func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (*resp.Response, error) {
 	// Implementation for creating a category based on .NET CreateCategoryCommand
 	u.Logger.Info("Creating new category", map[string]interface{}{"name": *params.Name})
 
@@ -78,7 +78,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 	return newCategory, nil
 }
 
-func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (any, error) {
+func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
 	// Implementation for updating a category based on .NET UpdateCategoryCommand
 	u.Logger.Info("Updating category", map[string]interface{}{"id": *params.ID})
 
@@ -146,7 +146,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	return existingCategory, nil
 }
 
-func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (any, error) {
+func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
 	// Implementation for deleting a category based on .NET DeleteCategoryCommand
 	u.Logger.Info("Deleting category", map[string]interface{}{"id": *params.ID})
 
@@ -172,7 +172,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 	}, nil
 }
 
-func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.GetByIdCategoryQuery) (any, error) {
+func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.GetByIdCategoryQuery) (*resp.Response, error) {
 	// Implementation to get category by ID based on .NET GetByIdCategoryQuery
 	u.Logger.Info("Getting category by ID", map[string]interface{}{"id": *params.ID})
 
@@ -198,7 +198,7 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 	}, nil
 }
 
-func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (any, error) {
+func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (*resp.Response, error) {
 	// Implementation to get all categories by site ID, based on .NET GetAllCategoryQuery
 	u.Logger.Info("Getting all categories by site ID", map[string]interface{}{"siteID": *params.SiteID})
 
@@ -233,7 +233,7 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 	}, nil
 }
 
-func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (any, error) {
+func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
 	// Implementation to get all categories for admin, based on .NET AdminGetAllCategoryQuery
 	u.Logger.Info("Admin getting all categories", map[string]interface{}{})
 

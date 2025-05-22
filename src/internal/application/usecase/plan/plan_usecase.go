@@ -36,7 +36,7 @@ func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 }
 
 // CreatePlanCommand creates a new plan
-func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, error) {
+func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (*resp.Response, error) {
 	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -84,7 +84,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (any, er
 }
 
 // UpdatePlanCommand updates an existing plan
-func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, error) {
+func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (*resp.Response, error) {
 	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -164,7 +164,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (any, er
 }
 
 // DeletePlanCommand deletes a plan
-func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, error) {
+func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (*resp.Response, error) {
 	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -193,7 +193,7 @@ func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (any, er
 }
 
 // GetAllPlanQuery gets all plans with pagination
-func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (any, error) {
+func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (*resp.Response, error) {
 	// Get all plans
 	plans, count, err := u.planRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
@@ -207,7 +207,7 @@ func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (any, error)
 }
 
 // GetByIDPlanQuery gets a plan by ID
-func (u *PlanUsecase) GetByIDPlanQuery(params *plan.GetByIDPlanQuery) (any, error) {
+func (u *PlanUsecase) GetByIDPlanQuery(params *plan.GetByIDPlanQuery) (*resp.Response, error) {
 	// Get the plan
 	plan, err := u.planRepo.GetByID(*params.ID)
 	if err != nil {
@@ -218,7 +218,7 @@ func (u *PlanUsecase) GetByIDPlanQuery(params *plan.GetByIDPlanQuery) (any, erro
 }
 
 // CalculatePlanPriceQuery calculates a plan's price with discounts
-func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQuery) (any, error) {
+func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQuery) (*resp.Response, error) {
 	// Get the plan
 	plan, err := u.planRepo.GetByID(*params.PlanID)
 	if err != nil {

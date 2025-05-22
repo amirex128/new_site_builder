@@ -33,7 +33,7 @@ func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
 	}
 }
 
-func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.CreateDefaultThemeCommand) (any, error) {
+func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.CreateDefaultThemeCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateDefaultThemeCommand called", map[string]interface{}{
 		"name": *params.Name,
 	})
@@ -93,7 +93,7 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 	return createdTheme, nil
 }
 
-func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.UpdateDefaultThemeCommand) (any, error) {
+func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.UpdateDefaultThemeCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateDefaultThemeCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -162,7 +162,7 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 	return updatedTheme, nil
 }
 
-func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.DeleteDefaultThemeCommand) (any, error) {
+func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.DeleteDefaultThemeCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteDefaultThemeCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -196,7 +196,7 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 	}, nil
 }
 
-func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetByIdDefaultThemeQuery) (any, error) {
+func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetByIdDefaultThemeQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdDefaultThemeQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -213,7 +213,7 @@ func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetB
 	return theme, nil
 }
 
-func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAllDefaultThemeQuery) (any, error) {
+func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAllDefaultThemeQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllDefaultThemeQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

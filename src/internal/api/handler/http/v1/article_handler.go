@@ -39,12 +39,8 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateArticleCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ArticleUpdate godoc
@@ -68,12 +64,8 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateArticleCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ArticleDelete godoc
@@ -97,12 +89,8 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteArticleCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ArticleGet godoc
@@ -126,12 +114,8 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdArticleQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ArticleGetAll godoc
@@ -154,12 +138,8 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllArticleQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ArticleGetByFiltersSort godoc
@@ -182,12 +162,8 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminArticleGetAll godoc
@@ -211,10 +187,6 @@ func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllArticleQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

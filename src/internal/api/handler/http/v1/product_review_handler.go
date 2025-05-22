@@ -39,12 +39,8 @@ func (h *ProductReviewHandler) CreateProductReview(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateProductReviewCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateProductReview godoc
@@ -68,12 +64,8 @@ func (h *ProductReviewHandler) UpdateProductReview(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateProductReviewCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteProductReview godoc
@@ -97,12 +89,8 @@ func (h *ProductReviewHandler) DeleteProductReview(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteProductReviewCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdProductReview godoc
@@ -126,12 +114,8 @@ func (h *ProductReviewHandler) GetByIdProductReview(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdProductReviewQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllProductReview godoc
@@ -154,12 +138,8 @@ func (h *ProductReviewHandler) GetAllProductReview(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllProductReviewQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllProductReview godoc
@@ -183,10 +163,6 @@ func (h *ProductReviewHandler) AdminGetAllProductReview(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllProductReviewQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

@@ -40,12 +40,8 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateUnitPriceCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // CalculateUnitPrice godoc
@@ -68,12 +64,8 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CalculateUnitPriceQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllUnitPrice godoc
@@ -96,10 +88,6 @@ func (h *UnitPriceHandler) GetAllUnitPrice(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllUnitPriceQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

@@ -39,12 +39,8 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateProfileUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetProfileUser godoc
@@ -68,12 +64,8 @@ func (h *UserHandler) GetProfileUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetProfileUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ChargeCreditRequestUser godoc
@@ -96,12 +88,8 @@ func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.ChargeCreditRequestUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpgradePlanRequestUser godoc
@@ -124,12 +112,8 @@ func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpgradePlanRequestUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // RegisterUser godoc
@@ -173,12 +157,8 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.LoginUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // RequestVerifyAndForgetUser godoc
@@ -200,12 +180,8 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.RequestVerifyAndForgetUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // VerifyUser godoc
@@ -227,12 +203,8 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.VerifyUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllUser godoc
@@ -256,10 +228,6 @@ func (h *UserHandler) AdminGetAllUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllUserQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

@@ -32,7 +32,7 @@ func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 	}
 }
 
-func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (any, error) {
+func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateDiscountCommand called", map[string]interface{}{
 		"code":   *params.Code,
 		"siteId": *params.SiteID,
@@ -86,7 +86,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	return createdDiscount, nil
 }
 
-func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (any, error) {
+func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateDiscountCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -167,7 +167,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	return updatedDiscount, nil
 }
 
-func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (any, error) {
+func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteDiscountCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -207,7 +207,7 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 	}, nil
 }
 
-func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQuery) (any, error) {
+func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdDiscountQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -246,7 +246,7 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 	return response, nil
 }
 
-func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQuery) (any, error) {
+func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllDiscountQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
@@ -290,7 +290,7 @@ func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQue
 	}, nil
 }
 
-func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllDiscountQuery) (any, error) {
+func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllDiscountQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllDiscountQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

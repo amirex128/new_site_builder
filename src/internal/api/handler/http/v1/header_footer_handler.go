@@ -39,12 +39,8 @@ func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateHeaderFooterCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdateHeaderFooter godoc
@@ -68,12 +64,8 @@ func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdateHeaderFooterCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeleteHeaderFooter godoc
@@ -97,12 +89,8 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeleteHeaderFooterCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdHeaderFooter godoc
@@ -126,12 +114,8 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdHeaderFooterQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllHeaderFooter godoc
@@ -154,12 +138,8 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllHeaderFooterQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllHeaderFooter godoc
@@ -183,10 +163,6 @@ func (h *HeaderFooterHandler) AdminGetAllHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllHeaderFooterQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

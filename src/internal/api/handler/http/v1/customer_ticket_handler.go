@@ -39,12 +39,8 @@ func (h *CustomerTicketHandler) CreateCustomerTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreateCustomerTicketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ReplayCustomerTicket godoc
@@ -68,12 +64,8 @@ func (h *CustomerTicketHandler) ReplayCustomerTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.ReplayCustomerTicketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminReplayCustomerTicket godoc
@@ -98,12 +90,8 @@ func (h *CustomerTicketHandler) AdminReplayCustomerTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminReplayCustomerTicketCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdCustomerTicket godoc
@@ -127,12 +115,8 @@ func (h *CustomerTicketHandler) GetByIdCustomerTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdCustomerTicketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllCustomerTicket godoc
@@ -155,12 +139,8 @@ func (h *CustomerTicketHandler) GetAllCustomerTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllCustomerTicketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllCustomerTicket godoc
@@ -184,10 +164,6 @@ func (h *CustomerTicketHandler) AdminGetAllCustomerTicket(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllCustomerTicketQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

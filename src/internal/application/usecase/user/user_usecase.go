@@ -45,7 +45,7 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 	}
 }
 
-func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (any, error) {
+func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (*resp.Response, error) {
 	// Implementation for updating a user's profile
 	fmt.Println(params)
 
@@ -126,7 +126,7 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 	return existingUser, nil
 }
 
-func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (any, error) {
+func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*resp.Response, error) {
 	// Implementation to get a user's profile
 	fmt.Println(params)
 
@@ -153,7 +153,7 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (any
 func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*resp.Response, error) {
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
-		return nil, resp.NewNError(resp.BadRequest, "user with email %s already exists", *params.Email)
+		return nil, resp.NewError(resp.BadRequest, "user with email %s already exists", *params.Email)
 	}
 
 	// Generate salt and hash password
@@ -178,18 +178,17 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 		return nil, err
 	}
 
-	// TODO: send verification email
-
-	return resp.NewResponse(
+	token := u.identitySvc.TokenForUser(newUser).AddRoles([]string{"admin"}).Make()
+	return resp.NewResponseData(
 		resp.Success,
 		resp.Data{
-			"user": newUser,
+			"token": token,
 		},
 		"Registration successful. Please verify your account.",
 	), nil
 }
 
-func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (any, error) {
+func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Response, error) {
 	// Get user by email
 	existingUser, err := u.userRepo.GetByEmail(*params.Email)
 	if err != nil {
@@ -215,7 +214,7 @@ func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (any, erro
 	}, nil
 }
 
-func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVerifyAndForgetUserCommand) (any, error) {
+func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVerifyAndForgetUserCommand) (*resp.Response, error) {
 	var existingUser domain.User
 	var err error
 
@@ -261,7 +260,7 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	}, nil
 }
 
-func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error) {
+func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (*resp.Response, error) {
 	// Get user by email
 	existingUser, err := u.userRepo.GetByEmail(*params.Email)
 	if err != nil {
@@ -311,7 +310,7 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (any, error)
 	}, nil
 }
 
-func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (any, error) {
+func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (*resp.Response, error) {
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
@@ -365,7 +364,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	}, nil
 }
 
-func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (any, error) {
+func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (*resp.Response, error) {
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
@@ -426,7 +425,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	}, nil
 }
 
-func (u *UserUsecase) AdminGetAllUserQuery(params *user.AdminGetAllUserQuery) (any, error) {
+func (u *UserUsecase) AdminGetAllUserQuery(params *user.AdminGetAllUserQuery) (*resp.Response, error) {
 	// Implementation for admin to get all users
 	fmt.Println(params)
 

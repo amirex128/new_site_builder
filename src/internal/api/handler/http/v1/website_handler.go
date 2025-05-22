@@ -38,12 +38,8 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByDomainPageQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByDomainHeaderFooter godoc
@@ -65,12 +61,8 @@ func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByDomainHeaderFooterQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // ProductSearchList godoc
@@ -91,12 +83,8 @@ func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 	}
 
 	result, err := h.usecase.ProductSearchListQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetFiltersSortArticle godoc
@@ -117,12 +105,8 @@ func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetFiltersSortArticleQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetFiltersSortProduct godoc
@@ -143,12 +127,8 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetFiltersSortProductQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetArticlesByCategorySlug godoc
@@ -170,12 +150,8 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetArticlesByCategorySlugQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetProductsByCategorySlug godoc
@@ -197,12 +173,8 @@ func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetProductsByCategorySlugQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetSingleArticleBySlug godoc
@@ -224,12 +196,8 @@ func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetSingleArticleBySlugQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetSingleProductBySlug godoc
@@ -251,10 +219,6 @@ func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetSingleProductBySlugQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }

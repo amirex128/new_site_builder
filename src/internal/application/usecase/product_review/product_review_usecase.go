@@ -35,7 +35,7 @@ func NewProductReviewUsecase(c contract.IContainer) *ProductReviewUsecase {
 	}
 }
 
-func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review.CreateProductReviewCommand) (any, error) {
+func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review.CreateProductReviewCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateProductReviewCommand called", map[string]interface{}{
 		"rating":    *params.Rating,
 		"productId": *params.ProductID,
@@ -95,7 +95,7 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 	return createdReview, nil
 }
 
-func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review.UpdateProductReviewCommand) (any, error) {
+func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review.UpdateProductReviewCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateProductReviewCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -169,7 +169,7 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 	return updatedReview, nil
 }
 
-func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review.DeleteProductReviewCommand) (any, error) {
+func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review.DeleteProductReviewCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteProductReviewCommand called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -210,7 +210,7 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 	}, nil
 }
 
-func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.GetByIdProductReviewQuery) (any, error) {
+func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.GetByIdProductReviewQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdProductReviewQuery called", map[string]interface{}{
 		"id": *params.ID,
 	})
@@ -237,7 +237,7 @@ func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.
 	return review, nil
 }
 
-func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.GetAllProductReviewQuery) (any, error) {
+func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.GetAllProductReviewQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllProductReviewQuery called", map[string]interface{}{
 		"siteId":   *params.SiteID,
 		"page":     params.Page,
@@ -264,7 +264,7 @@ func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.G
 	}, nil
 }
 
-func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_review.AdminGetAllProductReviewQuery) (any, error) {
+func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_review.AdminGetAllProductReviewQuery) (*resp.Response, error) {
 	u.Logger.Info("AdminGetAllProductReviewQuery called", map[string]interface{}{
 		"page":     params.Page,
 		"pageSize": params.PageSize,

@@ -29,7 +29,7 @@ func NewArticleUsecase(c contract.IContainer) *ArticleUsecase {
 	}
 }
 
-func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleCommand) (any, error) {
+func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleCommand) (*resp.Response, error) {
 	// Implementation for creating an article based on .NET CreateArticleCommand
 	u.Logger.Info("Creating new article", map[string]interface{}{"title": *params.Title})
 
@@ -88,7 +88,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 	return newArticle, nil
 }
 
-func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (any, error) {
+func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (*resp.Response, error) {
 	// Implementation for updating an article based on .NET UpdateArticleCommand
 	u.Logger.Info("Updating article", map[string]interface{}{"id": *params.ID})
 
@@ -169,7 +169,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 	return existingArticle, nil
 }
 
-func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (any, error) {
+func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (*resp.Response, error) {
 	// Implementation for deleting an article based on .NET DeleteArticleCommand
 	u.Logger.Info("Deleting article", map[string]interface{}{"id": *params.ID})
 
@@ -195,7 +195,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 	}, nil
 }
 
-func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery) (any, error) {
+func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery) (*resp.Response, error) {
 	// Implementation to get article by ID based on .NET GetByIdArticleQuery
 	u.Logger.Info("Getting article by ID", map[string]interface{}{"id": *params.ID})
 
@@ -221,7 +221,7 @@ func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery
 	}, nil
 }
 
-func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQuery) (any, error) {
+func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQuery) (*resp.Response, error) {
 	// Implementation to get article by slug based on .NET GetSingleArticleQuery
 	u.Logger.Info("Getting article by slug", map[string]interface{}{
 		"slug":   *params.Slug,
@@ -246,7 +246,7 @@ func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQ
 	}, nil
 }
 
-func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) (any, error) {
+func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) (*resp.Response, error) {
 	// Implementation to get all articles by site ID, based on .NET GetAllArticleQuery
 	u.Logger.Info("Getting all articles by site ID", map[string]interface{}{"siteID": *params.SiteID})
 
@@ -281,7 +281,7 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 	}, nil
 }
 
-func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (any, error) {
+func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (*resp.Response, error) {
 	// Implementation to get articles by category, based on .NET GetArticleByCategoryQuery
 	u.Logger.Info("Getting articles by category slug", map[string]interface{}{
 		"slug":   *params.Slug,
@@ -322,7 +322,7 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 	}, nil
 }
 
-func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFiltersSortArticleQuery) (any, error) {
+func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFiltersSortArticleQuery) (*resp.Response, error) {
 	// Implementation to get articles with filtering and sorting, based on .NET GetByFiltersSortArticleQuery
 	u.Logger.Info("Getting articles with filters and sorting", map[string]interface{}{"siteID": *params.SiteID})
 
@@ -360,7 +360,7 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 	}, nil
 }
 
-func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (any, error) {
+func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (*resp.Response, error) {
 	// Implementation to get all articles for admin, based on .NET AdminGetAllArticleQuery
 	u.Logger.Info("Admin getting all articles", map[string]interface{}{})
 

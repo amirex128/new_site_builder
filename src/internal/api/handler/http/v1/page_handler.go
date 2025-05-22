@@ -39,12 +39,8 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.CreatePageCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Created(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // UpdatePage godoc
@@ -68,12 +64,8 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.UpdatePageCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Updated(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // DeletePage godoc
@@ -97,12 +89,8 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.DeletePageCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Deleted(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetByIdPage godoc
@@ -126,12 +114,8 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetByIdPageQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // GetAllPage godoc
@@ -154,12 +138,8 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.GetAllPageQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
 
 // AdminGetAllPage godoc
@@ -183,10 +163,6 @@ func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 	}
 
 	result, err := h.usecase.AdminGetAllPageQuery(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
-	utils.Retrieved(c, result)
+	utils.HandleError(c, err)
+	utils.HandleResponse(c, result)
 }
