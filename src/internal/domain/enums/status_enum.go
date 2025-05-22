@@ -11,9 +11,6 @@ const (
 	InactiveStatus StatusEnum = "inactive"
 	ActiveStatus   StatusEnum = "active"
 	PendingStatus  StatusEnum = "pending"
-	DeletedStatus  StatusEnum = "deleted"
-	DisabledStatus StatusEnum = "disabled"
-	EnabledStatus  StatusEnum = "enabled"
 )
 
 func (e *StatusEnum) Scan(src interface{}) error {
@@ -47,9 +44,6 @@ func (e StatusEnum) IsValid() bool {
 		string(InactiveStatus),
 		string(ActiveStatus),
 		string(PendingStatus),
-		string(DeletedStatus),
-		string(DisabledStatus),
-		string(EnabledStatus),
 	}
 	for _, statusType := range statusTypes {
 		if statusType == string(e) {

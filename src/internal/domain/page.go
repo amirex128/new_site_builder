@@ -6,21 +6,21 @@ import (
 
 // Page represents Site.Pages table
 type Page struct {
-	ID          int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	SiteID      int64      `json:"site_id" gorm:"column:site_id;type:bigint;not null"`
-	HeaderID    int64      `json:"header_id" gorm:"column:header_id;type:bigint;not null"`
-	FooterID    int64      `json:"footer_id" gorm:"column:footer_id;type:bigint;not null"`
-	Slug        string     `json:"slug" gorm:"column:slug;type:longtext;not null"`
-	Title       string     `json:"title" gorm:"column:title;type:longtext;not null"`
-	Description string     `json:"description" gorm:"column:description;type:longtext;null"`
-	Body        string     `json:"body" gorm:"column:body;type:longtext;null"`
-	SeoTags     string     `json:"seo_tags" gorm:"column:seo_tags;type:longtext;null"`
-	UserID      int64      `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
-	CreatedAt   time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt   time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	Version     time.Time  `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-	IsDeleted   bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt   *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
+	ID          int64     `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
+	SiteID      int64     `json:"site_id" gorm:"column:site_id;type:bigint;not null"`
+	HeaderID    int64     `json:"header_id" gorm:"column:header_id;type:bigint;not null"`
+	FooterID    int64     `json:"footer_id" gorm:"column:footer_id;type:bigint;not null"`
+	Slug        string    `json:"slug" gorm:"column:slug;type:longtext;not null"`
+	Title       string    `json:"title" gorm:"column:title;type:longtext;not null"`
+	Description string    `json:"description" gorm:"column:description;type:longtext;null"`
+	Body        string    `json:"body" gorm:"column:body;type:longtext;null"`
+	SeoTags     string    `json:"seo_tags" gorm:"column:seo_tags;type:longtext;null"`
+	UserID      int64     `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
+	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
+	UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
+
+	IsDeleted bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
+	DeletedAt *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
 	Site          *Site          `json:"site" gorm:"foreignKey:SiteID"`

@@ -6,7 +6,7 @@ type Media struct {
 
 	// Relations
 	Articles          []Article         `json:"articles" gorm:"many2many:article_media;"`
-	BlogCategories    []BlogCategory    `json:"blog_categories" gorm:"many2many:category_media;"`
+	BlogCategories    []ArticleCategory `json:"blog_categories" gorm:"many2many:category_media;"`
 	ProductCategories []ProductCategory `json:"product_categories" gorm:"many2many:category_media;"`
 	Products          []Product         `json:"products" gorm:"many2many:product_media;"`
 	Pages             []Page            `json:"pages" gorm:"many2many:page_media;"`

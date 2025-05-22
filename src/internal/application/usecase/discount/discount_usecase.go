@@ -61,7 +61,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	newDiscount := domain.Discount{
 		Code:       *params.Code,
 		Quantity:   *params.Quantity,
-		Type:       string(*params.Type),
+		Type:       *params.Type,
 		Value:      *params.Value,
 		ExpiryDate: *params.ExpiryDate,
 		SiteID:     *params.SiteID,
@@ -135,7 +135,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	}
 
 	if params.Type != nil {
-		existingDiscount.Type = string(*params.Type)
+		existingDiscount.Type = *params.Type
 	}
 
 	if params.Value != nil {

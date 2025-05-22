@@ -55,9 +55,9 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	// Create the ticket
 	newTicket := domain.Ticket{
 		Title:     *params.Title,
-		Status:    string(enums.TicketNewStatus), // Default to New status
-		Category:  string(*params.Category),
-		Priority:  string(*params.Priority),
+		Status:    enums.TicketNewStatus, // Default to New status
+		Category:  *params.Category,
+		Priority:  *params.Priority,
 		UserID:    userID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -145,14 +145,14 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 	}
 
 	// Update the ticket
-	existingTicket.Status = string(*params.Status)
-	existingTicket.Category = string(*params.Category)
+	existingTicket.Status = *params.Status
+	existingTicket.Category = *params.Category
 	existingTicket.AssignedTo = params.AssignedTo
-	existingTicket.Priority = string(*params.Priority)
+	existingTicket.Priority = *params.Priority
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == enums.ClosedTicketStatus {
+	if *params.Status == enums.TicketClosedStatus {
 		now := time.Now()
 		existingTicket.ClosedBy = &userID
 		existingTicket.ClosedAt = &now
@@ -242,16 +242,16 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 	}
 
 	// Update the ticket
-	existingTicket.Status = string(*params.Status)
-	existingTicket.Category = string(*params.Category)
+	existingTicket.Status = *params.Status
+	existingTicket.Category = *params.Category
 	if params.AssignedTo != nil {
 		existingTicket.AssignedTo = params.AssignedTo
 	}
-	existingTicket.Priority = string(*params.Priority)
+	existingTicket.Priority = *params.Priority
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == enums.ClosedTicketStatus {
+	if *params.Status == enums.TicketClosedStatus {
 		now := time.Now()
 		existingTicket.ClosedBy = &userID
 		existingTicket.ClosedAt = &now

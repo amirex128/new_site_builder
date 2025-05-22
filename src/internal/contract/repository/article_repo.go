@@ -25,7 +25,7 @@ type IArticleRepository interface {
 	RemoveAllMediaFromArticle(articleID int64) error
 
 	// Category relationship methods
-	GetArticleCategories(articleID int64) ([]domain.BlogCategory, error)
+	GetArticleCategories(articleID int64) ([]domain.ArticleCategory, error)
 	AddCategoryToArticle(articleID int64, categoryID int64) error
 	RemoveCategoryFromArticle(articleID int64, categoryID int64) error
 	RemoveAllCategoriesFromArticle(articleID int64) error

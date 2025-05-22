@@ -2,6 +2,7 @@ package siteusecase
 
 import (
 	"errors"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
@@ -54,15 +55,17 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (any, er
 	}
 
 	// Convert enum values to strings
-	var domainType, siteType, status string
+	var domainType enums.DomainTypeEnum
+	var siteType enums.SiteTypeEnum
+	var status enums.StatusEnum
 	if params.DomainType != nil {
-		domainType = string(*params.DomainType)
+		domainType = *params.DomainType
 	}
 	if params.SiteType != nil {
-		siteType = string(*params.SiteType)
+		siteType = *params.SiteType
 	}
 	if params.Status != nil {
-		status = string(*params.Status)
+		status = *params.Status
 	}
 
 	// Create the Site entity
@@ -157,7 +160,7 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 
 	// Update domain type if provided
 	if params.DomainType != nil {
-		existingSite.DomainType = string(*params.DomainType)
+		existingSite.DomainType = *params.DomainType
 	}
 
 	// Update name if provided
@@ -167,12 +170,12 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (any, er
 
 	// Update status if provided
 	if params.Status != nil {
-		existingSite.Status = string(*params.Status)
+		existingSite.Status = *params.Status
 	}
 
 	// Update site type if provided
 	if params.SiteType != nil {
-		existingSite.SiteType = string(*params.SiteType)
+		existingSite.SiteType = *params.SiteType
 	}
 
 	existingSite.UpdatedAt = time.Now()

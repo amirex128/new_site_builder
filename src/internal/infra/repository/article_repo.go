@@ -310,8 +310,8 @@ func (r *ArticleRepo) RemoveAllMediaFromArticle(articleID int64) error {
 
 // Category relationship methods
 
-func (r *ArticleRepo) GetArticleCategories(articleID int64) ([]domain.BlogCategory, error) {
-	var categories []domain.BlogCategory
+func (r *ArticleRepo) GetArticleCategories(articleID int64) ([]domain.ArticleCategory, error) {
+	var categories []domain.ArticleCategory
 
 	err := r.database.
 		Joins("JOIN article_category ON article_category.category_id = blog_categories.id").

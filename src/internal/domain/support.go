@@ -2,24 +2,26 @@ package domain
 
 import (
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // Ticket represents Support.Tickets table
 type Ticket struct {
-	ID         int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Title      string     `json:"title" gorm:"column:title;type:longtext;not null"`
-	Status     string     `json:"status" gorm:"column:status;type:longtext;not null"`
-	Category   string     `json:"product_category" gorm:"column:product_category;type:longtext;not null"`
-	AssignedTo *int64     `json:"assigned_to" gorm:"column:assigned_to;type:bigint;null"`
-	ClosedBy   *int64     `json:"closed_by" gorm:"column:closed_by;type:bigint;null"`
-	ClosedAt   *time.Time `json:"closed_at" gorm:"column:closed_at;type:datetime(6);null"`
-	Priority   string     `json:"priority" gorm:"column:priority;type:longtext;not null"`
-	UserID     int64      `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
-	CreatedAt  time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt  time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	Version    time.Time  `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-	IsDeleted  bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt  *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
+	ID         int64                    `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
+	Title      string                   `json:"title" gorm:"column:title;type:longtext;not null"`
+	Status     enums.TicketStatusEnum   `json:"status" gorm:"column:status;type:longtext;not null"`
+	Category   enums.TicketCategoryEnum `json:"product_category" gorm:"column:product_category;type:longtext;not null"`
+	AssignedTo *int64                   `json:"assigned_to" gorm:"column:assigned_to;type:bigint;null"`
+	ClosedBy   *int64                   `json:"closed_by" gorm:"column:closed_by;type:bigint;null"`
+	ClosedAt   *time.Time               `json:"closed_at" gorm:"column:closed_at;type:datetime(6);null"`
+	Priority   enums.TicketPriorityEnum `json:"priority" gorm:"column:priority;type:longtext;not null"`
+	UserID     int64                    `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
+	CreatedAt  time.Time                `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
+	UpdatedAt  time.Time                `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
+	Version    time.Time                `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
+	IsDeleted  bool                     `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
+	DeletedAt  *time.Time               `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
 	Comments []Comment `json:"comments" gorm:"foreignKey:TicketID"`
@@ -36,15 +38,15 @@ func (Ticket) TableName() string {
 
 // Comment represents Support.Comments table
 type Comment struct {
-	ID           int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	TicketID     int64      `json:"ticket_id" gorm:"column:ticket_id;type:bigint;not null;index"`
-	Content      string     `json:"content" gorm:"column:content;type:longtext;not null"`
-	RespondentID int64      `json:"respondent_id" gorm:"column:respondent_id;type:bigint;not null"`
-	CreatedAt    time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt    time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	Version      time.Time  `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-	IsDeleted    bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt    *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
+	ID           int64     `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
+	TicketID     int64     `json:"ticket_id" gorm:"column:ticket_id;type:bigint;not null;index"`
+	Content      string    `json:"content" gorm:"column:content;type:longtext;not null"`
+	RespondentID int64     `json:"respondent_id" gorm:"column:respondent_id;type:bigint;not null"`
+	CreatedAt    time.Time `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
+	UpdatedAt    time.Time `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
+
+	IsDeleted bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
+	DeletedAt *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
 	Ticket     *Ticket `json:"ticket" gorm:"foreignKey:TicketID"`
@@ -70,21 +72,21 @@ func (TicketMedia) TableName() string {
 
 // CustomerTicket represents Support.CustomerTickets table
 type CustomerTicket struct {
-	ID         int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	Title      string     `json:"title" gorm:"column:title;type:longtext;not null"`
-	Status     string     `json:"status" gorm:"column:status;type:longtext;not null"`
-	Category   string     `json:"product_category" gorm:"column:product_category;type:longtext;not null"`
-	AssignedTo *int64     `json:"assigned_to" gorm:"column:assigned_to;type:bigint;null"`
-	ClosedBy   *int64     `json:"closed_by" gorm:"column:closed_by;type:bigint;null"`
-	ClosedAt   *time.Time `json:"closed_at" gorm:"column:closed_at;type:datetime(6);null"`
-	Priority   string     `json:"priority" gorm:"column:priority;type:longtext;not null"`
-	UserID     int64      `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
-	CustomerID int64      `json:"customer_id" gorm:"column:customer_id;type:bigint;not null"`
-	CreatedAt  time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt  time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	Version    time.Time  `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-	IsDeleted  bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt  *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
+	ID         int64                    `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
+	Title      string                   `json:"title" gorm:"column:title;type:longtext;not null"`
+	Status     enums.TicketStatusEnum   `json:"status" gorm:"column:status;type:longtext;not null"`
+	Category   enums.TicketCategoryEnum `json:"product_category" gorm:"column:product_category;type:longtext;not null"`
+	AssignedTo *int64                   `json:"assigned_to" gorm:"column:assigned_to;type:bigint;null"`
+	ClosedBy   *int64                   `json:"closed_by" gorm:"column:closed_by;type:bigint;null"`
+	ClosedAt   *time.Time               `json:"closed_at" gorm:"column:closed_at;type:datetime(6);null"`
+	Priority   enums.TicketPriorityEnum `json:"priority" gorm:"column:priority;type:longtext;not null"`
+	UserID     int64                    `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
+	CustomerID int64                    `json:"customer_id" gorm:"column:customer_id;type:bigint;not null"`
+	CreatedAt  time.Time                `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
+	UpdatedAt  time.Time                `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
+	Version    time.Time                `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
+	IsDeleted  bool                     `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
+	DeletedAt  *time.Time               `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
 	Comments []CustomerComment `json:"comments" gorm:"foreignKey:CustomerTicketID"`
@@ -102,15 +104,15 @@ func (CustomerTicket) TableName() string {
 
 // CustomerComment represents Support.CustomerComments table
 type CustomerComment struct {
-	ID               int64      `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
-	CustomerTicketID int64      `json:"customer_ticket_id" gorm:"column:customer_ticket_id;type:bigint;not null;index"`
-	Content          string     `json:"content" gorm:"column:content;type:longtext;not null"`
-	RespondentID     int64      `json:"respondent_id" gorm:"column:respondent_id;type:bigint;not null"`
-	CreatedAt        time.Time  `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
-	UpdatedAt        time.Time  `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
-	Version          time.Time  `json:"version" gorm:"column:version;type:timestamp(6);default:current_timestamp(6);not null"`
-	IsDeleted        bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
-	DeletedAt        *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
+	ID               int64     `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
+	CustomerTicketID int64     `json:"customer_ticket_id" gorm:"column:customer_ticket_id;type:bigint;not null;index"`
+	Content          string    `json:"content" gorm:"column:content;type:longtext;not null"`
+	RespondentID     int64     `json:"respondent_id" gorm:"column:respondent_id;type:bigint;not null"`
+	CreatedAt        time.Time `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
+	UpdatedAt        time.Time `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
+
+	IsDeleted bool       `json:"is_deleted" gorm:"column:is_deleted;type:tinyint(1);not null"`
+	DeletedAt *time.Time `json:"deleted_at" gorm:"column:deleted_at;type:datetime(6);null"`
 
 	// Relations
 	CustomerTicket *CustomerTicket `json:"customer_ticket" gorm:"foreignKey:CustomerTicketID"`

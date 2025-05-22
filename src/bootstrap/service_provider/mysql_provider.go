@@ -31,7 +31,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 				&domain.Article{},
 				&domain.Basket{},
 				&domain.BasketItem{},
-				&domain.BlogCategory{},
+				&domain.ArticleCategory{},
 				&domain.City{},
 				&domain.Comment{},
 				&domain.Coupon{},

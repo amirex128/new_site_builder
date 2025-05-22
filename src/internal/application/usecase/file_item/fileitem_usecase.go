@@ -104,7 +104,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 	fileItem.UpdatedAt = time.Now()
 	fileItem.IsDeleted = false
 	fileItem.IsDirectory = *params.IsDirectory
-	fileItem.Permission = string(*params.Permission)
+	fileItem.Permission = *params.Permission
 
 	if params.ParentID != nil {
 		fileItem.ParentID = params.ParentID
@@ -307,7 +307,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 
 	// Update permission if requested
 	if *params.IsChangePermission && params.Permission != nil {
-		newPermission := string(*params.Permission)
+		newPermission := *params.Permission
 		fileItem.Permission = newPermission
 
 		// Update permission in storage

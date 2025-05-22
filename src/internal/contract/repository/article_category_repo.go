@@ -6,14 +6,14 @@ import (
 )
 
 type IArticleCategoryRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error)
-	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error)
-	GetByID(id int64) (domain.BlogCategory, error)
-	GetBySlug(slug string) (domain.BlogCategory, error)
-	GetBySlugAndSiteID(slug string, siteID int64) (domain.BlogCategory, error)
-	Create(category domain.BlogCategory) error
-	Update(category domain.BlogCategory) error
+	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error)
+	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error)
+	GetByID(id int64) (domain.ArticleCategory, error)
+	GetBySlug(slug string) (domain.ArticleCategory, error)
+	GetBySlugAndSiteID(slug string, siteID int64) (domain.ArticleCategory, error)
+	Create(category domain.ArticleCategory) error
+	Update(category domain.ArticleCategory) error
 	Delete(id int64) error
 
 	// Media relationship methods

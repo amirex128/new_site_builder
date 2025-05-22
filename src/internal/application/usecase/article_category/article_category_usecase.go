@@ -43,7 +43,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 	}
 
 	// Create new category
-	newCategory := domain.BlogCategory{
+	newCategory := domain.ArticleCategory{
 		Name:             *params.Name,
 		Slug:             *params.Slug,
 		Description:      description,

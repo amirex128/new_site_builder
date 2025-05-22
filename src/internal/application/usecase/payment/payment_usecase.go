@@ -461,7 +461,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 	paymentData := domain.Payment{
 		SiteID:             *params.SiteID,
 		PaymentStatusEnum:  "Processing",
-		UserType:           string(*params.UserType),
+		UserType:           *params.UserType,
 		TrackingNumber:     time.Now().UnixNano(),
 		Gateway:            string(*params.Gateway),
 		GatewayAccountName: gatewayAccountName,

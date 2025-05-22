@@ -75,7 +75,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 
 	// Convert status enum to string
-	statusStr := string(*params.Status)
+	statusStr := *params.Status
 
 	// Create product entity
 	newProduct := domain.Product{
@@ -132,7 +132,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 			attr := domain.ProductAttribute{
 				Name:      *attrDTO.Name,
 				Value:     *attrDTO.Value,
-				Type:      string(*attrDTO.Type),
+				Type:      *attrDTO.Type,
 				ProductID: newProduct.ID,
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
@@ -152,7 +152,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	if params.Coupon != nil {
 		coupon := domain.Coupon{
 			Quantity:   *params.Coupon.Quantity,
-			Type:       string(*params.Coupon.Type),
+			Type:       *params.Coupon.Type,
 			Value:      *params.Coupon.Value,
 			ExpiryDate: *params.Coupon.ExpiryDate,
 			ProductID:  newProduct.ID,
@@ -262,7 +262,7 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	}
 
 	if params.Status != nil {
-		existingProduct.Status = string(*params.Status)
+		existingProduct.Status = *params.Status
 	}
 
 	if params.Weight != nil {
@@ -831,8 +831,7 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 
 		// Apply global discount if available and not already used
 		if discountFound && !isDiscountUsed {
-			discountType, _ := strconv.Atoi(discount.Type)
-			if discountType == 0 { // Percentage
+			if discount.Type == enums.PercentageDiscountType {
 				discountValue = (rawPrice * discount.Value) / 100
 			} else { // Fixed value
 				discountValue = discount.Value

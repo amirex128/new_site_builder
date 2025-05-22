@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"time"
 
@@ -171,7 +172,7 @@ func (s *PaymentService) RefundPayment(paymentID int64, amount int64) error {
 }
 
 // GetPaymentStatus gets the current status of a payment
-func (s *PaymentService) GetPaymentStatus(paymentID int64) (string, error) {
+func (s *PaymentService) GetPaymentStatus(paymentID int64) (enums.StatusEnum, error) {
 	// Get payment record
 	payment, err := s.paymentRepo.GetByID(paymentID)
 	if err != nil {

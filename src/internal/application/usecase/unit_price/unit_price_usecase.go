@@ -65,7 +65,7 @@ func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitP
 	}
 
 	if params.DiscountType != nil {
-		existingUnitPrice.DiscountType = string(*params.DiscountType)
+		existingUnitPrice.DiscountType = *params.DiscountType
 	}
 
 	if params.Discount != nil {

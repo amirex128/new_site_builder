@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // IPaymentService defines the interface for payment gateway operations
@@ -19,7 +20,7 @@ type IPaymentService interface {
 	RefundPayment(paymentID int64, amount int64) error
 
 	// GetPaymentStatus gets the current status of a payment
-	GetPaymentStatus(paymentID int64) (string, error)
+	GetPaymentStatus(paymentID int64) (enums.StatusEnum, error)
 
 	// GetGatewayByID gets gateway configuration by ID
 	GetGatewayByID(gatewayID int64) (domain.Gateway, error)

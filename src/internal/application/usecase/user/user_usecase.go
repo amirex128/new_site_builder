@@ -82,7 +82,7 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 	}
 
 	if params.AiTypeEnum != nil {
-		existingUser.AiTypeEnum = string(*params.AiTypeEnum)
+		existingUser.AiTypeEnum = *params.AiTypeEnum
 	}
 
 	if params.UseCustomEmailSmtp != nil {

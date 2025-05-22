@@ -17,11 +17,11 @@ func NewArticleCategoryRepository(db *gorm.DB) *ArticleCategoryRepo {
 	}
 }
 
-func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
-	var categories []domain.BlogCategory
+func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error) {
+	var categories []domain.ArticleCategory
 	var count int64
 
-	query := r.database.Model(&domain.BlogCategory{}).Where("is_deleted = ?", false)
+	query := r.database.Model(&domain.ArticleCategory{}).Where("is_deleted = ?", false)
 	query.Count(&count)
 
 	limit := paginationRequestDto.PageSize
@@ -35,11 +35,11 @@ func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationReque
 	return categories, count, nil
 }
 
-func (r *ArticleCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
-	var categories []domain.BlogCategory
+func (r *ArticleCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error) {
+	var categories []domain.ArticleCategory
 	var count int64
 
-	query := r.database.Model(&domain.BlogCategory{}).
+	query := r.database.Model(&domain.ArticleCategory{}).
 		Where("site_id = ?", siteID).
 		Where("is_deleted = ?", false)
 
@@ -56,11 +56,11 @@ func (r *ArticleCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto 
 	return categories, count, nil
 }
 
-func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BlogCategory, int64, error) {
-	var categories []domain.BlogCategory
+func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error) {
+	var categories []domain.ArticleCategory
 	var count int64
 
-	query := r.database.Model(&domain.BlogCategory{}).
+	query := r.database.Model(&domain.ArticleCategory{}).
 		Where("parent_category_id = ?", parentID).
 		Where("is_deleted = ?", false)
 
@@ -77,8 +77,8 @@ func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequest
 	return categories, count, nil
 }
 
-func (r *ArticleCategoryRepo) GetByID(id int64) (domain.BlogCategory, error) {
-	var category domain.BlogCategory
+func (r *ArticleCategoryRepo) GetByID(id int64) (domain.ArticleCategory, error) {
+	var category domain.ArticleCategory
 
 	result := r.database.
 		Where("id = ?", id).
@@ -86,14 +86,14 @@ func (r *ArticleCategoryRepo) GetByID(id int64) (domain.BlogCategory, error) {
 		First(&category)
 
 	if result.Error != nil {
-		return domain.BlogCategory{}, result.Error
+		return domain.ArticleCategory{}, result.Error
 	}
 
 	return category, nil
 }
 
-func (r *ArticleCategoryRepo) GetBySlug(slug string) (domain.BlogCategory, error) {
-	var category domain.BlogCategory
+func (r *ArticleCategoryRepo) GetBySlug(slug string) (domain.ArticleCategory, error) {
+	var category domain.ArticleCategory
 
 	result := r.database.
 		Where("slug = ?", slug).
@@ -101,14 +101,14 @@ func (r *ArticleCategoryRepo) GetBySlug(slug string) (domain.BlogCategory, error
 		First(&category)
 
 	if result.Error != nil {
-		return domain.BlogCategory{}, result.Error
+		return domain.ArticleCategory{}, result.Error
 	}
 
 	return category, nil
 }
 
-func (r *ArticleCategoryRepo) GetBySlugAndSiteID(slug string, siteID int64) (domain.BlogCategory, error) {
-	var category domain.BlogCategory
+func (r *ArticleCategoryRepo) GetBySlugAndSiteID(slug string, siteID int64) (domain.ArticleCategory, error) {
+	var category domain.ArticleCategory
 
 	result := r.database.
 		Where("slug = ?", slug).
@@ -117,23 +117,23 @@ func (r *ArticleCategoryRepo) GetBySlugAndSiteID(slug string, siteID int64) (dom
 		First(&category)
 
 	if result.Error != nil {
-		return domain.BlogCategory{}, result.Error
+		return domain.ArticleCategory{}, result.Error
 	}
 
 	return category, nil
 }
 
-func (r *ArticleCategoryRepo) Create(category domain.BlogCategory) error {
+func (r *ArticleCategoryRepo) Create(category domain.ArticleCategory) error {
 	return r.database.Create(&category).Error
 }
 
-func (r *ArticleCategoryRepo) Update(category domain.BlogCategory) error {
+func (r *ArticleCategoryRepo) Update(category domain.ArticleCategory) error {
 	return r.database.Save(&category).Error
 }
 
 func (r *ArticleCategoryRepo) Delete(id int64) error {
 	// Soft delete
-	return r.database.Model(&domain.BlogCategory{}).
+	return r.database.Model(&domain.ArticleCategory{}).
 		Where("id = ?", id).
 		Update("is_deleted", true).Error
 }
@@ -156,7 +156,7 @@ func (r *ArticleCategoryRepo) GetCategoryMedia(categoryID int64) ([]domain.Media
 }
 
 func (r *ArticleCategoryRepo) AddMediaToCategory(categoryID int64, mediaID int64) error {
-	categoryMedia := domain.BlogCategoryMedia{
+	categoryMedia := domain.ArticleCategoryMedia{
 		CategoryID: categoryID,
 		MediaID:    mediaID,
 	}
@@ -167,11 +167,11 @@ func (r *ArticleCategoryRepo) AddMediaToCategory(categoryID int64, mediaID int64
 func (r *ArticleCategoryRepo) RemoveMediaFromCategory(categoryID int64, mediaID int64) error {
 	return r.database.
 		Where("category_id = ? AND media_id = ?", categoryID, mediaID).
-		Delete(&domain.BlogCategoryMedia{}).Error
+		Delete(&domain.ArticleCategoryMedia{}).Error
 }
 
 func (r *ArticleCategoryRepo) RemoveAllMediaFromCategory(categoryID int64) error {
 	return r.database.
 		Where("category_id = ?", categoryID).
-		Delete(&domain.BlogCategoryMedia{}).Error
+		Delete(&domain.ArticleCategoryMedia{}).Error
 }
