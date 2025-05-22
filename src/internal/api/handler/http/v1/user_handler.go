@@ -151,7 +151,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 
 	result, err := h.usecase.RegisterUserCommand(&params)
 	utils.HandleError(c, err)
-	utils.Created(c, result)
+	utils.HandleResponse(c, result)
 }
 
 // LoginUser godoc

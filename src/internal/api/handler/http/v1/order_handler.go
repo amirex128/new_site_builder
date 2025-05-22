@@ -73,7 +73,7 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 		return
 	}
 
-	utils.OK(c, result)
+	utils.Success(c, result)
 }
 
 // GetAllOrderCustomer godoc

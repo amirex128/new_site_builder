@@ -19,7 +19,7 @@ type User struct {
 	NationalCode             string             `json:"national_code" gorm:"column:national_code;type:longtext;null"`
 	Phone                    string             `json:"phone" gorm:"column:phone;type:longtext;null"`
 	VerifyPhone              string             `json:"verify_phone" gorm:"column:verify_phone;type:longtext;null"`
-	IsActive                 string             `json:"is_active" gorm:"column:is_active;type:longtext;not null"`
+	IsActive                 enums.StatusEnum   `json:"is_active" gorm:"column:is_active;type:longtext;not null"`
 	AiTypeEnum               enums.AiTypeEnum   `json:"ai_type_enum" gorm:"column:ai_type_enum;type:longtext;not null"`
 	UserTypeEnum             enums.UserTypeEnum `json:"user_type_enum" gorm:"column:user_type_enum;type:longtext;not null"`
 	PlanID                   *int64             `json:"plan_id" gorm:"column:plan_id;type:bigint;null"`

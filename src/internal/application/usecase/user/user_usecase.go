@@ -2,7 +2,8 @@ package userusecase
 
 import (
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/application/utils/nerror"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"time"
@@ -149,10 +150,10 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (any
 	}, nil
 }
 
-func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (any, error) {
+func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*resp.Response, error) {
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
-		return nil, nerror.NewNError(nerror.BadRequest, "user with email %s already exists", *params.Email)
+		return nil, resp.NewNError(resp.BadRequest, "user with email %s already exists", *params.Email)
 	}
 
 	// Generate salt and hash password
@@ -163,14 +164,13 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (any
 		Email:     *params.Email,
 		Password:  hashedPassword,
 		Salt:      salt,
-		IsActive:  "0", // Not active until verification
+		IsActive:  enums.InactiveStatus,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		IsDeleted: false,
 	}
 
 	// Generate verification code
-	verificationCode := "123456" // In a real implementation, generate a random code
+	verificationCode := utils.GenerateVerificationCode()
 	newUser.VerifyEmail = verificationCode
 
 	err = u.userRepo.Create(newUser)
@@ -178,12 +178,15 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (any
 		return nil, err
 	}
 
-	// TODO: Send verification email
+	// TODO: send verification email
 
-	return map[string]interface{}{
-		"success": true,
-		"message": "Registration successful. Please verify your account.",
-	}, nil
+	return resp.NewResponse(
+		resp.Success,
+		resp.Data{
+			"user": newUser,
+		},
+		"Registration successful. Please verify your account.",
+	), nil
 }
 
 func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (any, error) {
@@ -250,7 +253,7 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 		return nil, err
 	}
 
-	// TODO: Send verification code via email or SMS
+	// TODO: send verification code via email or SMS
 
 	return map[string]interface{}{
 		"success": true,

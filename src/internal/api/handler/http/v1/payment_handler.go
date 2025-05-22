@@ -73,7 +73,7 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 		return
 	}
 
-	utils.OK(c, result)
+	utils.Success(c, result)
 }
 
 // CreateOrUpdateGateway godoc
@@ -103,7 +103,7 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 
 	// Since there's no clear ID field to determine if this is an update or a create,
 	// we'll always respond with a generic success response
-	utils.OK(c, result)
+	utils.Success(c, result)
 }
 
 // GetByIdGateway godoc

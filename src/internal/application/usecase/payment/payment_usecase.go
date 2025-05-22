@@ -925,7 +925,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 		}
 	}
 
-	// 4. Send confirmation email/notification
+	// 4. send confirmation email/notification
 	// Get customer details
 	customerRepo := u.container.GetCustomerRepo()
 	if customerRepo != nil {
