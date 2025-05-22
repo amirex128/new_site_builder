@@ -2,6 +2,7 @@ package userusecase
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/nerror"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"time"
@@ -149,10 +150,9 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (any
 }
 
 func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (any, error) {
-	// Check if user already exists
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
-		return nil, fmt.Errorf("user with email %s already exists", *params.Email)
+		return nil, nerror.NewNError(nerror.BadRequest, "user with email %s already exists", *params.Email)
 	}
 
 	// Generate salt and hash password

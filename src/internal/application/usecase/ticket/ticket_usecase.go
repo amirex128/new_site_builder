@@ -55,7 +55,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	// Create the ticket
 	newTicket := domain.Ticket{
 		Title:     *params.Title,
-		Status:    string(enums.NewTicketStatus), // Default to New status
+		Status:    string(enums.TicketNewStatus), // Default to New status
 		Category:  string(*params.Category),
 		Priority:  string(*params.Priority),
 		UserID:    userID,

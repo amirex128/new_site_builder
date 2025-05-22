@@ -8,9 +8,9 @@ import (
 type TicketStatusEnum string
 
 const (
-	NewTicketStatus        TicketStatusEnum = "new"
-	InProgressTicketStatus TicketStatusEnum = "in_progress"
-	ClosedTicketStatus     TicketStatusEnum = "closed"
+	TicketNewStatus        TicketStatusEnum = "new"
+	TicketInProgressStatus TicketStatusEnum = "in_progress"
+	TicketClosedStatus     TicketStatusEnum = "closed"
 )
 
 func (e *TicketStatusEnum) Scan(src interface{}) error {
@@ -41,9 +41,9 @@ func (e TicketStatusEnum) Value() (driver.Value, error) {
 
 func (e TicketStatusEnum) IsValid() bool {
 	var statusTypes = []string{
-		string(NewTicketStatus),
-		string(InProgressTicketStatus),
-		string(ClosedTicketStatus),
+		string(TicketNewStatus),
+		string(TicketInProgressStatus),
+		string(TicketClosedStatus),
 	}
 	for _, statusType := range statusTypes {
 		if statusType == string(e) {

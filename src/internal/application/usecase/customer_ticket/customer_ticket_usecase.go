@@ -56,7 +56,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	newTicket := domain.CustomerTicket{
 		Title:      *params.Title,
 		CustomerID: *params.OwnerUserID,
-		Status:     string(enums.CustomerTicketNewStatus), // Default to New status
+		Status:     string(enums.TicketNewStatus), // Default to New status
 		Category:   string(*params.Category),
 		Priority:   string(*params.Priority),
 		UserID:     userID,
@@ -150,7 +150,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == enums.CustomerTicketClosedStatus {
+	if *params.Status == enums.TicketClosedStatus {
 		respondentID := *params.Comment.RespondentID
 		now := time.Now()
 		existingTicket.ClosedBy = &respondentID
@@ -248,7 +248,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	existingTicket.UpdatedAt = time.Now()
 
 	// Set closed info if status is closed
-	if *params.Status == enums.CustomerTicketClosedStatus {
+	if *params.Status == enums.TicketClosedStatus {
 		now := time.Now()
 		existingTicket.ClosedBy = &userID
 		existingTicket.ClosedAt = &now

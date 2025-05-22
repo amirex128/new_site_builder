@@ -17,7 +17,7 @@ import (
 
 type AddressUsecase struct {
 	*usecase.BaseUsecase
-	repo         repository.IAddressRepository
+	addressRepo  repository.IAddressRepository
 	cityRepo     repository.ICityRepository
 	provinceRepo repository.IProvinceRepository
 	authContext  func(c *gin.Context) service.IAuthService
@@ -28,7 +28,7 @@ func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 		BaseUsecase: &usecase.BaseUsecase{
 			Logger: c.GetLogger(),
 		},
-		repo:         c.GetAddressRepo(),
+		addressRepo:  c.GetAddressRepo(),
 		cityRepo:     c.GetCityRepo(),
 		provinceRepo: c.GetProvinceRepo(),
 		authContext:  c.GetAuthTransientService(),
@@ -37,10 +37,6 @@ func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 
 // CreateAddressCommand handles the creation of a new address
 func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressCommand) (any, error) {
-	u.Logger.Info("CreateAddressCommand called", map[string]interface{}{
-		"title": *params.Title,
-	})
-
 	var customerID, userID int64
 	var err error
 
@@ -102,7 +98,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	}
 
 	// Save to repository
-	err = u.repo.Create(newAddress)
+	err = u.addressRepo.Create(newAddress)
 	if err != nil {
 		u.Logger.Error("Error creating address", map[string]interface{}{
 			"error": err.Error(),
@@ -119,7 +115,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 			"customerId": customerID,
 		})
 	} else if userID > 0 {
-		err = u.repo.AddAddressToUser(newAddress.ID, userID)
+		err = u.addressRepo.AddAddressToUser(newAddress.ID, userID)
 		if err != nil {
 			u.Logger.Error("Error adding address to user", map[string]interface{}{
 				"error":     err.Error(),
@@ -131,7 +127,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	}
 
 	// Retrieve the address with relations to return
-	fullAddress, err := u.repo.GetByID(newAddress.ID)
+	fullAddress, err := u.addressRepo.GetByID(newAddress.ID)
 	if err != nil {
 		return newAddress, nil // Return the basic address if can't retrieve with relations
 	}
@@ -146,7 +142,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	})
 
 	// Get existing address
-	existingAddress, err := u.repo.GetByID(*params.ID)
+	existingAddress, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("آدرس مورد نظر یافت نشد")
@@ -208,7 +204,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	existingAddress.UpdatedAt = time.Now()
 
 	// Update in repository
-	err = u.repo.Update(existingAddress)
+	err = u.addressRepo.Update(existingAddress)
 	if err != nil {
 		u.Logger.Error("Error updating address", map[string]interface{}{
 			"error": err.Error(),
@@ -218,7 +214,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 	}
 
 	// Retrieve the updated address with relations
-	fullAddress, err := u.repo.GetByID(*params.ID)
+	fullAddress, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
 		return existingAddress, nil // Return the basic address if can't retrieve with relations
 	}
@@ -233,7 +229,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 	})
 
 	// Get existing address to check ownership
-	existingAddress, err := u.repo.GetByID(*params.ID)
+	existingAddress, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("آدرس مورد نظر یافت نشد")
@@ -253,7 +249,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 	}
 
 	// Delete address
-	err = u.repo.Delete(*params.ID)
+	err = u.addressRepo.Delete(*params.ID)
 	if err != nil {
 		u.Logger.Error("Error deleting address", map[string]interface{}{
 			"error": err.Error(),
@@ -275,7 +271,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 	})
 
 	// Get address
-	result, err := u.repo.GetByID(*params.ID)
+	result, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("آدرس مورد نظر یافت نشد")
@@ -312,7 +308,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 	customerID, customerErr := u.authContext(u.Ctx).GetCustomerID()
 	if customerErr == nil && customerID > 0 {
 		// Get addresses for customer
-		results, err = u.repo.GetAllByCustomerID(customerID)
+		results, err = u.addressRepo.GetAllByCustomerID(customerID)
 		if err != nil {
 			return nil, errors.New("خطا در دریافت آدرس ها")
 		}
@@ -325,7 +321,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 		}
 
 		// Get addresses for user
-		results, err = u.repo.GetAllByUserID(userID)
+		results, err = u.addressRepo.GetAllByUserID(userID)
 		if err != nil {
 			return nil, errors.New("خطا در دریافت آدرس ها")
 		}
@@ -365,7 +361,7 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 	}
 
 	// Get all addresses with pagination
-	results, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	results, count, err := u.addressRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all addresses", map[string]interface{}{
 			"error": err.Error(),

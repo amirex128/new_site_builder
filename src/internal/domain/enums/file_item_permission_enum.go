@@ -10,10 +10,6 @@ type FileItemPermissionEnum string
 const (
 	FileItemPrivatePermission FileItemPermissionEnum = "private"
 	FileItemPublicPermission  FileItemPermissionEnum = "public"
-
-	// Keep old names for backward compatibility
-	PrivatePermission FileItemPermissionEnum = "private"
-	PublicPermission  FileItemPermissionEnum = "public"
 )
 
 func (e *FileItemPermissionEnum) Scan(src interface{}) error {

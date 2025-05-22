@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/nerror"
 	"github.com/gin-gonic/gin"
 )
 
@@ -185,31 +187,28 @@ func InternalError(c *gin.Context, errors ...string) {
 // Error handling helpers
 
 // HandleError is a convenience function to handle errors with appropriate responses
-func HandleError(c *gin.Context, err error, statusCode int, message string) {
+func HandleError(c *gin.Context, err error) {
 	if err == nil {
 		return
 	}
 
-	errMsg := err.Error()
-	NewResponse(false, message, statusCode).
-		WithErrors(errMsg).
-		SendAndAbort(c)
-}
-
-// ErrorUnauthorized handles unauthorized errors (for backward compatibility)
-func ErrorUnauthorized(c *gin.Context, err error) {
-	errMsgs := []string{}
-	if err != nil {
-		errMsgs = append(errMsgs, err.Error())
+	var nerr *nerror.NError
+	if errors.As(err, &nerr) {
+		switch nerr.Type {
+		case nerror.NotFound:
+			NotFound(c, nerr.Message)
+		case nerror.Unauthorized:
+			Unauthorized(c, nerr.Message)
+		case nerror.BadRequest:
+			BadRequest(c, nerr.Message)
+		case nerror.Internal:
+			InternalError(c, nerr.Message)
+		default:
+			InternalError(c, nerr.Message)
+		}
+		return
 	}
-	Unauthorized(c, errMsgs...)
-}
 
-// ErrorForbidden handles forbidden errors (for backward compatibility)
-func ErrorForbidden(c *gin.Context, err error) {
-	errMsgs := []string{}
-	if err != nil {
-		errMsgs = append(errMsgs, err.Error())
-	}
-	Forbidden(c, errMsgs...)
+	// fallback for generic errors
+	InternalError(c, err.Error())
 }

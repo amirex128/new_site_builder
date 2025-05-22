@@ -150,11 +150,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	}
 
 	result, err := h.usecase.RegisterUserCommand(&params)
-	if err != nil {
-		utils.InternalError(c, err.Error())
-		return
-	}
-
+	utils.HandleError(c, err)
 	utils.Created(c, result)
 }
 
