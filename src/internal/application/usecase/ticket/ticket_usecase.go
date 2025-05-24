@@ -2,10 +2,12 @@ package ticketusecase
 
 import (
 	"errors"
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -39,15 +41,8 @@ func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
 	}
 }
 
-func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (*resp.Response, error) {
-	u.Logger.Info("CreateTicketCommand called", map[string]interface{}{
-		"title":    *params.Title,
-		"category": *params.Category,
-		"priority": *params.Priority,
-	})
-
-	// Get current user ID from auth context
-	userID, err := u.authContext(u.Ctx).GetUserID()
+func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (*resp.Response, error) 
+	userId, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
 	}
@@ -58,7 +53,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 		Status:    enums.TicketNewStatus, // Default to New status
 		Category:  *params.Category,
 		Priority:  *params.Priority,
-		UserID:    userID,
+		UserID:    userId,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		IsDeleted: false,

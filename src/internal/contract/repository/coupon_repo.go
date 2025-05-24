@@ -6,7 +6,7 @@ import (
 )
 
 type ICouponRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Coupon, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Coupon], int64, error)
 	GetByProductID(productID int64) (domain.Coupon, error)
 	GetByID(id int64) (domain.Coupon, error)
 	Create(coupon domain.Coupon) error

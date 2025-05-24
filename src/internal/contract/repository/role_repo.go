@@ -6,7 +6,7 @@ import (
 )
 
 type IRoleRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Role, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Role], int64, error)
 	GetByID(id int64) (domain.Role, error)
 	GetByName(name string) (domain.Role, error)
 	Create(role domain.Role) (int64, error)

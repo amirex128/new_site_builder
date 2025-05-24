@@ -6,9 +6,9 @@ import (
 )
 
 type ITicketRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error)
-	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Ticket], int64, error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Ticket], int64, error)
+	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Ticket], int64, error)
 	GetByID(id int64) (domain.Ticket, error)
 	GetByIDWithRelations(id int64) (domain.Ticket, error)
 	Create(ticket domain.Ticket) error
@@ -31,9 +31,9 @@ type ITicketMediaRepository interface {
 }
 
 type ICustomerTicketRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error)
-	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.CustomerTicket], int64, error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.CustomerTicket], int64, error)
+	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.CustomerTicket], int64, error)
 	GetByID(id int64) (domain.CustomerTicket, error)
 	GetByIDWithRelations(id int64) (domain.CustomerTicket, error)
 	Create(ticket domain.CustomerTicket) error

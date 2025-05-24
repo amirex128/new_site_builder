@@ -95,7 +95,8 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 		resp.Data{
 			"default_theme": createdTheme,
 		},
-		"success"), nil}
+		"success"), nil
+}
 
 func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.UpdateDefaultThemeCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateDefaultThemeCommand called", map[string]interface{}{

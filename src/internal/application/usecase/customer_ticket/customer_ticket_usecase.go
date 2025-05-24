@@ -2,10 +2,12 @@ package customerticketusecase
 
 import (
 	"errors"
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -40,12 +42,6 @@ func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 }
 
 func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (*resp.Response, error) {
-	u.Logger.Info("CreateCustomerTicketCommand called", map[string]interface{}{
-		"title":    *params.Title,
-		"category": *params.Category,
-		"priority": *params.Priority,
-	})
-
 	// Get current user ID from auth context
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
@@ -68,10 +64,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	// Save ticket to repository
 	err = u.repo.Create(newTicket)
 	if err != nil {
-		u.Logger.Error("Error creating customer ticket", map[string]interface{}{
-			"error": err.Error(),
-		})
-		return nil, errors.New("خطا در ایجاد تیکت مشتری")
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Create the first comment
@@ -87,32 +80,30 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	// Save comment
 	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
-		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
-			"error":    err.Error(),
-			"ticketId": newTicket.ID,
-		})
-		return nil, errors.New("خطا در ایجاد پیام تیکت مشتری")
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Handle media attachments
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(newTicket.ID, params.MediaIDs)
 		if err != nil {
-			u.Logger.Error("Error adding media to customer ticket", map[string]interface{}{
-				"error":    err.Error(),
-				"ticketId": newTicket.ID,
-			})
-			// Continue despite media error
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 	}
 
 	// Get the created ticket with relations
 	createdTicket, err := u.repo.GetByIDWithRelations(newTicket.ID)
 	if err != nil {
-		return newTicket, nil // Return basic ticket if relations can't be loaded
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return enhanceCustomerTicketResponse(createdTicket), nil
+	return resp.NewResponseData(
+		resp.Created,
+		resp.Data{
+			"ticket": createdTicket,
+		},
+		"تیکت مشتری با موفقیت ایجاد شد",
+	), nil
 }
 
 func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (*resp.Response, error) {
@@ -202,10 +193,16 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	// Get the updated ticket with relations
 	updatedTicket, err := u.repo.GetByIDWithRelations(existingTicket.ID)
 	if err != nil {
-		return existingTicket, nil // Return basic ticket if relations can't be loaded
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return enhanceCustomerTicketResponse(updatedTicket), nil
+	return resp.NewResponseData(
+		resp.Created,
+		resp.Data{
+			"ticket": updatedTicket,
+		},
+		"پاسخ به تیکت مشتری با موفقیت ایجاد شد",
+	), nil
 }
 
 func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *customer_ticket.AdminReplayCustomerTicketCommand) (*resp.Response, error) {
@@ -299,17 +296,19 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	// Get the updated ticket with relations
 	updatedTicket, err := u.repo.GetByIDWithRelations(existingTicket.ID)
 	if err != nil {
-		return existingTicket, nil // Return basic ticket if relations can't be loaded
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return enhanceCustomerTicketResponse(updatedTicket), nil
+	return resp.NewResponseData(
+		resp.Created,
+		resp.Data{
+			"ticket": updatedTicket,
+		},
+		"پاسخ به تیکت مشتری با موفقیت ایجاد شد",
+	), nil
 }
 
 func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (*resp.Response, error) {
-	u.Logger.Info("GetByIdCustomerTicketQuery called", map[string]interface{}{
-		"id": *params.ID,
-	})
-
 	// Get user ID and determine if admin
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
@@ -338,7 +337,13 @@ func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_tick
 		return nil, errors.New("شما دسترسی به این تیکت مشتری ندارید")
 	}
 
-	return enhanceCustomerTicketResponse(result), nil
+	return resp.NewResponseData(
+		resp.Retrieved,
+		resp.Data{
+			"ticket": result,
+		},
+		"تیکت مشتری با موفقیت دریافت شد",
+	), nil
 }
 
 func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticket.GetAllCustomerTicketQuery) (*resp.Response, error) {
@@ -361,12 +366,6 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 			"customerId": customerID,
 		})
 		return nil, errors.New("خطا در دریافت تیکت های مشتری")
-	}
-
-	// Enhance ticket responses
-	enhancedTickets := make([]map[string]interface{}, 0, len(tickets))
-	for _, t := range tickets {
-		enhancedTickets = append(enhancedTickets, enhanceCustomerTicketResponse(t))
 	}
 
 	return map[string]interface{}{
@@ -416,104 +415,4 @@ func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
 	}, nil
-}
-
-// Helper function to enhance customer ticket response with structured data
-func enhanceCustomerTicketResponse(t domain.CustomerTicket) map[string]interface{} {
-	response := map[string]interface{}{
-		"id":         t.ID,
-		"title":      t.Title,
-		"status":     t.Status,
-		"category":   t.Category,
-		"assignedTo": t.AssignedTo,
-		"priority":   t.Priority,
-		"userId":     t.UserID,
-		"customerId": t.CustomerID,
-		"createdAt":  t.CreatedAt,
-		"updatedAt":  t.UpdatedAt,
-	}
-
-	// Add comments if available
-	if len(t.Comments) > 0 {
-		comments := make([]map[string]interface{}, 0, len(t.Comments))
-		for _, c := range t.Comments {
-			commentData := map[string]interface{}{
-				"id":           c.ID,
-				"content":      c.Content,
-				"respondentId": c.RespondentID,
-				"createdAt":    c.CreatedAt,
-			}
-			if c.Respondent != nil {
-				commentData["respondent"] = map[string]interface{}{
-					"id":        c.Respondent.ID,
-					"firstName": c.Respondent.FirstName,
-					"lastName":  c.Respondent.LastName,
-					"email":     c.Respondent.Email,
-				}
-			}
-			comments = append(comments, commentData)
-		}
-		response["comments"] = comments
-	}
-
-	// Add media if available
-	if len(t.Media) > 0 {
-		mediaItems := make([]map[string]interface{}, 0, len(t.Media))
-		for _, m := range t.Media {
-			// Since the Media struct doesn't have many fields directly,
-			// we're just adding the ID. In a real implementation, you would
-			// join with file_items or another table with detailed media info
-			mediaItem := map[string]interface{}{
-				"id": m.ID,
-			}
-			mediaItems = append(mediaItems, mediaItem)
-		}
-		response["media"] = mediaItems
-	}
-
-	// Add user info if available
-	if t.User != nil {
-		response["user"] = map[string]interface{}{
-			"id":        t.User.ID,
-			"firstName": t.User.FirstName,
-			"lastName":  t.User.LastName,
-			"email":     t.User.Email,
-		}
-	}
-
-	// Add customer info if available
-	if t.Customer != nil {
-		response["customer"] = map[string]interface{}{
-			"id":        t.Customer.ID,
-			"firstName": t.Customer.FirstName,
-			"lastName":  t.Customer.LastName,
-			"email":     t.Customer.Email,
-		}
-	}
-
-	// Add assigned user info if available
-	if t.AssignedTo != nil && t.Assigned != nil {
-		response["assignedUser"] = map[string]interface{}{
-			"id":        t.Assigned.ID,
-			"firstName": t.Assigned.FirstName,
-			"lastName":  t.Assigned.LastName,
-			"email":     t.Assigned.Email,
-		}
-	}
-
-	// Add closed info if available
-	if t.ClosedAt != nil {
-		response["closedAt"] = t.ClosedAt
-		response["closedBy"] = t.ClosedBy
-		if t.Closer != nil {
-			response["closingUser"] = map[string]interface{}{
-				"id":        t.Closer.ID,
-				"firstName": t.Closer.FirstName,
-				"lastName":  t.Closer.LastName,
-				"email":     t.Closer.Email,
-			}
-		}
-	}
-
-	return response
 }

@@ -6,8 +6,8 @@ import (
 )
 
 type IOrderItemRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.OrderItem, int64, error)
-	GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.OrderItem, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.OrderItem], int64, error)
+	GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.OrderItem], int64, error)
 	GetByID(id int64) (domain.OrderItem, error)
 	Create(orderItem domain.OrderItem) error
 	Update(orderItem domain.OrderItem) error

@@ -7,10 +7,10 @@ import (
 )
 
 type IArticleRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
-	GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
-	GetAllByFilterAndSort(siteID int64, filters map[enums.ArticleFilterEnum][]string, sort *enums.ArticleSortEnum, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Article], int64, error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Article], int64, error)
+	GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Article], int64, error)
+	GetAllByFilterAndSort(siteID int64, filters map[enums.ArticleFilterEnum][]string, sort *enums.ArticleSortEnum, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Article], int64, error)
 	GetByID(id int64) (domain.Article, error)
 	GetBySlug(slug string) (domain.Article, error)
 	GetBySlugAndSiteID(slug string, siteID int64) (domain.Article, error)

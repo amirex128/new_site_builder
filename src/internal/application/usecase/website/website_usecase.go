@@ -45,7 +45,7 @@ func (u *WebsiteUsecase) GetByDomainPageQuery(params *website.GetByDomainPageQue
 	// 2. Find the page by slug for that site using the page repository
 
 	// Return empty result for now
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 }
 
 func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomainHeaderFooterQuery) (*resp.Response, error) {
@@ -57,7 +57,7 @@ func (u *WebsiteUsecase) GetByDomainHeaderFooterQuery(params *website.GetByDomai
 	// 2. Find the header/footer for that site using the header/footer repository
 
 	// Return empty result for now
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -69,7 +69,7 @@ func (u *WebsiteUsecase) ProductSearchListQuery(params *website.ProductSearchLis
 	// 1. Find the site by domain using the site repository
 	// 2. Find all products for that site using the product repository with pagination
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -82,7 +82,7 @@ func (u *WebsiteUsecase) GetFiltersSortArticleQuery(params *website.GetFiltersSo
 	// 2. Get all articles for that site using the article repository with pagination
 	// 3. Apply filters and sorting as specified in the params
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -95,7 +95,7 @@ func (u *WebsiteUsecase) GetFiltersSortProductQuery(params *website.GetFiltersSo
 	// 2. Get all products for that site using the product repository with pagination
 	// 3. Apply filters and sorting as specified in the params
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -108,7 +108,7 @@ func (u *WebsiteUsecase) GetArticlesByCategorySlugQuery(params *website.GetArtic
 	// 2. Find the category by slug using the category repository
 	// 3. Find all articles for that category using the article repository with pagination
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -121,7 +121,7 @@ func (u *WebsiteUsecase) GetProductsByCategorySlugQuery(params *website.GetProdu
 	// 2. Find the category by slug using the category repository
 	// 3. Find all products for that category using the product repository with pagination
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -133,7 +133,7 @@ func (u *WebsiteUsecase) GetSingleArticleBySlugQuery(params *website.GetSingleAr
 	// 1. Find the site by domain using the site repository
 	// 2. Find the article by slug using the article repository
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }
 
@@ -145,6 +145,6 @@ func (u *WebsiteUsecase) GetSingleProductBySlugQuery(params *website.GetSinglePr
 	// 1. Find the site by domain using the site repository
 	// 2. Find the product by slug using the product repository
 
-	return resp.NewResponse(resp.Success,"success"), nil
+	return resp.NewResponse(resp.Success, "success"), nil
 
 }

@@ -47,11 +47,6 @@ func NewErrorData(typ ErrorType, data Data, msg string, format ...any) *Error {
 		Data:    data,
 	}
 }
-
-func (e *Error) Error() string {
-	return e.Message
-}
-
 func NewResponseData(typ ResponseType, data Data, msg string, format ...any) *Response {
 	return &Response{
 		Message: fmt.Sprintf(msg, format...),
@@ -63,4 +58,8 @@ func NewResponse(typ ResponseType, msg string, format ...any) *Response {
 	return &Response{
 		Message: fmt.Sprintf(msg, format...),
 		Type:    typ}
+}
+
+func (e *Error) Error() string {
+	return e.Message
 }

@@ -8,3 +8,12 @@ type PaginationRequestDto struct {
 	Sort     string `form:"sort" json:"sort" nameFa:"مرتب سازی" validate:"omitempty,oneof=asc desc"`
 	SortBy   string `form:"sortBy" json:"sortBy" nameFa:"مرتب سازی براساس" validate:"omitempty,oneof=title description"`
 }
+
+type PaginationResponseDto[T any] struct {
+	Items           []T   `json:"items" nameFa:"آیتم ها"`
+	PageNumber      int   `json:"pageNumber" nameFa:"شماره صفحه"`
+	TotalPages      int   `json:"totalPages" nameFa:"تعداد صفحات"`
+	TotalCount      int64 `json:"totalCount" nameFa:"تعداد کل"`
+	HasPreviousPage bool  `json:"hasPreviousPage" nameFa:"دارای صفحه قبلی"`
+	HasNextPage     bool  `json:"hasNextPage" nameFa:"دارای صفحه بعدی"`
+}

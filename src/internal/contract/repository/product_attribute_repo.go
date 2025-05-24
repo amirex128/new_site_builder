@@ -6,8 +6,8 @@ import (
 )
 
 type IProductAttributeRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductAttribute, int64, error)
-	GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductAttribute, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ProductAttribute], int64, error)
+	GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ProductAttribute], int64, error)
 	GetByID(id int64) (domain.ProductAttribute, error)
 	Create(attribute domain.ProductAttribute) error
 	Update(attribute domain.ProductAttribute) error

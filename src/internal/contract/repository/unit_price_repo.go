@@ -6,7 +6,7 @@ import (
 )
 
 type IUnitPriceRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.UnitPrice, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.UnitPrice], int64, error)
 	GetByID(id int64) (domain.UnitPrice, error)
 	GetByName(name string) (domain.UnitPrice, error)
 	Create(unitPrice domain.UnitPrice) error

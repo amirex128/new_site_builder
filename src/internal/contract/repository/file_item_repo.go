@@ -6,9 +6,9 @@ import (
 )
 
 type IFileItemRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.FileItem, int64, error)
-	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.FileItem, int64, error)
-	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.FileItem, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.FileItem], int64, error)
+	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.FileItem], int64, error)
+	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.FileItem], int64, error)
 	GetByID(id int64) (domain.FileItem, error)
 	GetByIDs(ids []int64) ([]domain.FileItem, error)
 	GetTreeByUserIDAndParentID(userID int64, parentID *int64) ([]domain.FileItem, error)
