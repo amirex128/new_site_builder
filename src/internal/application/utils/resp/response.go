@@ -1,6 +1,8 @@
 package resp
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type ErrorType string
 type ResponseType string
@@ -25,12 +27,12 @@ const (
 type Error struct {
 	Message string    `json:"message"`
 	Type    ErrorType `json:"type"`
-	Data    Data      `json:"data"`
+	Data    any       `json:"data"`
 }
 type Response struct {
 	Message string
 	Type    ResponseType
-	Data    Data
+	Data    any
 }
 
 func NewError(typ ErrorType, msg string, format ...any) *Error {
@@ -40,14 +42,14 @@ func NewError(typ ErrorType, msg string, format ...any) *Error {
 	}
 }
 
-func NewErrorData(typ ErrorType, data Data, msg string, format ...any) *Error {
+func NewErrorData(typ ErrorType, data any, msg string, format ...any) *Error {
 	return &Error{
 		Message: fmt.Sprintf(msg, format...),
 		Type:    typ,
 		Data:    data,
 	}
 }
-func NewResponseData(typ ResponseType, data Data, msg string, format ...any) *Response {
+func NewResponseData(typ ResponseType, data any, msg string, format ...any) *Response {
 	return &Response{
 		Message: fmt.Sprintf(msg, format...),
 		Type:    typ,

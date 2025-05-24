@@ -39,7 +39,7 @@ func (m *Address) GetID() int64 {
 func (m *Address) GetUserID() *int64 {
 	return m.UserID
 }
-func (m *Address) GetCutomerID() *int64 {
+func (m *Address) GetCustomerID() *int64 {
 	return m.CustomerID
 }
 func (m *Address) GetSiteID() *int64 {

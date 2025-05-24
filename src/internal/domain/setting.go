@@ -32,7 +32,7 @@ func (m *Setting) GetID() int64 {
 func (m *Setting) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *Setting) GetCutomerID() *int64 {
+func (m *Setting) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *Setting) GetSiteID() *int64 {

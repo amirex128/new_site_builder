@@ -24,7 +24,7 @@ func (m *Province) GetID() int64 {
 func (m *Province) GetUserID() *int64 {
 	return nil
 }
-func (m *Province) GetCutomerID() *int64 {
+func (m *Province) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Province) GetSiteID() *int64 {

@@ -7,7 +7,7 @@ import (
 
 type IAddressRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error)
-	GetByID(id int64) (domain.Address, error)
+	GetByID(id int64) (*domain.Address, error)
 	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error)
 	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error)
 	Create(address *domain.Address) error

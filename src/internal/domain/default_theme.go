@@ -32,7 +32,7 @@ func (m *DefaultTheme) GetID() int64 {
 func (m *DefaultTheme) GetUserID() *int64 {
 	return nil
 }
-func (m *DefaultTheme) GetCutomerID() *int64 {
+func (m *DefaultTheme) GetCustomerID() *int64 {
 	return nil
 }
 func (m *DefaultTheme) GetSiteID() *int64 {

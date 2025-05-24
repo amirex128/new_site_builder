@@ -26,7 +26,7 @@ func (m *ParbadPayment) GetID() int64 {
 func (m *ParbadPayment) GetUserID() *int64 {
 	return nil
 }
-func (m *ParbadPayment) GetCutomerID() *int64 {
+func (m *ParbadPayment) GetCustomerID() *int64 {
 	return nil
 }
 func (m *ParbadPayment) GetSiteID() *int64 {

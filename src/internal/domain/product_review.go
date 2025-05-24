@@ -39,7 +39,7 @@ func (m *ProductReview) GetID() int64 {
 func (m *ProductReview) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *ProductReview) GetCutomerID() *int64 {
+func (m *ProductReview) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *ProductReview) GetSiteID() *int64 {

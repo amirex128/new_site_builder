@@ -36,7 +36,7 @@ func (m *Basket) GetID() int64 {
 func (m *Basket) GetUserID() *int64 {
 	return nil
 }
-func (m *Basket) GetCutomerID() *int64 {
+func (m *Basket) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *Basket) GetSiteID() *int64 {

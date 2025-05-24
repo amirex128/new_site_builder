@@ -35,7 +35,7 @@ func (m *ProductVariant) GetID() int64 {
 func (m *ProductVariant) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *ProductVariant) GetCutomerID() *int64 {
+func (m *ProductVariant) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *ProductVariant) GetSiteID() *int64 {

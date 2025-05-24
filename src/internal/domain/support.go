@@ -41,7 +41,7 @@ func (m *Ticket) GetID() int64 {
 func (m *Ticket) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *Ticket) GetCutomerID() *int64 {
+func (m *Ticket) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Ticket) GetSiteID() *int64 {
@@ -75,7 +75,7 @@ func (m *Comment) GetID() int64 {
 func (m *Comment) GetUserID() *int64 {
 	return nil
 }
-func (m *Comment) GetCutomerID() *int64 {
+func (m *Comment) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Comment) GetSiteID() *int64 {
@@ -131,7 +131,7 @@ func (m *CustomerTicket) GetID() int64 {
 func (m *CustomerTicket) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *CustomerTicket) GetCutomerID() *int64 {
+func (m *CustomerTicket) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *CustomerTicket) GetSiteID() *int64 {
@@ -165,7 +165,7 @@ func (m *CustomerComment) GetID() int64 {
 func (m *CustomerComment) GetUserID() *int64 {
 	return nil
 }
-func (m *CustomerComment) GetCutomerID() *int64 {
+func (m *CustomerComment) GetCustomerID() *int64 {
 	return nil
 }
 func (m *CustomerComment) GetSiteID() *int64 {

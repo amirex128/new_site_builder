@@ -40,7 +40,7 @@ func (m *FileItem) GetID() int64 {
 func (m *FileItem) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *FileItem) GetCutomerID() *int64 {
+func (m *FileItem) GetCustomerID() *int64 {
 	return nil
 }
 func (m *FileItem) GetSiteID() *int64 {

@@ -29,7 +29,7 @@ func (m *Role) GetID() int64 {
 func (m *Role) GetUserID() *int64 {
 	return nil
 }
-func (m *Role) GetCutomerID() *int64 {
+func (m *Role) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Role) GetSiteID() *int64 {

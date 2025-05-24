@@ -35,7 +35,7 @@ func (m *HeaderFooter) GetID() int64 {
 func (m *HeaderFooter) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *HeaderFooter) GetCutomerID() *int64 {
+func (m *HeaderFooter) GetCustomerID() *int64 {
 	return nil
 }
 func (m *HeaderFooter) GetSiteID() *int64 {

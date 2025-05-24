@@ -44,7 +44,7 @@ func (m *Customer) GetID() int64 {
 func (m *Customer) GetUserID() *int64 {
 	return nil
 }
-func (m *Customer) GetCutomerID() *int64 {
+func (m *Customer) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Customer) GetSiteID() *int64 {

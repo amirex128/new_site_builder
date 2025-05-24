@@ -30,7 +30,7 @@ func (m *Credit) GetID() int64 {
 func (m *Credit) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *Credit) GetCutomerID() *int64 {
+func (m *Credit) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *Credit) GetSiteID() *int64 {

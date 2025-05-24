@@ -44,7 +44,7 @@ func (m *Order) GetID() int64 {
 func (m *Order) GetUserID() *int64 {
 	return nil
 }
-func (m *Order) GetCutomerID() *int64 {
+func (m *Order) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *Order) GetSiteID() *int64 {

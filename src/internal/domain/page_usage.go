@@ -25,7 +25,7 @@ func (m *PageArticleUsage) GetID() int64 {
 func (m *PageArticleUsage) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *PageArticleUsage) GetCutomerID() *int64 {
+func (m *PageArticleUsage) GetCustomerID() *int64 {
 	return nil
 }
 func (m *PageArticleUsage) GetSiteID() *int64 {
@@ -57,7 +57,7 @@ func (m *PageProductUsage) GetID() int64 {
 func (m *PageProductUsage) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *PageProductUsage) GetCutomerID() *int64 {
+func (m *PageProductUsage) GetCustomerID() *int64 {
 	return nil
 }
 func (m *PageProductUsage) GetSiteID() *int64 {
@@ -89,7 +89,7 @@ func (m *PageHeaderFooterUsage) GetID() int64 {
 func (m *PageHeaderFooterUsage) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *PageHeaderFooterUsage) GetCutomerID() *int64 {
+func (m *PageHeaderFooterUsage) GetCustomerID() *int64 {
 	return nil
 }
 func (m *PageHeaderFooterUsage) GetSiteID() *int64 {

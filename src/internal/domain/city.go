@@ -29,7 +29,7 @@ func (m *City) GetID() int64 {
 func (m *City) GetUserID() *int64 {
 	return nil
 }
-func (m *City) GetCutomerID() *int64 {
+func (m *City) GetCustomerID() *int64 {
 	return nil
 }
 func (m *City) GetSiteID() *int64 {

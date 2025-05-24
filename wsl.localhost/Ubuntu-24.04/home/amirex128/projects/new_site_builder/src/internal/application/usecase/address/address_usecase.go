@@ -1,0 +1,1 @@
+	return resp.NewResponsePagination[any](resp.Retrieved, results, "آدرس ها با موفقیت دریافت شدند"), nil

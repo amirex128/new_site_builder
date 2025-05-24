@@ -22,7 +22,7 @@ func (m *UnitPrice) GetID() int64 {
 func (m *UnitPrice) GetUserID() *int64 {
 	return nil
 }
-func (m *UnitPrice) GetCutomerID() *int64 {
+func (m *UnitPrice) GetCustomerID() *int64 {
 	return nil
 }
 func (m *UnitPrice) GetSiteID() *int64 {

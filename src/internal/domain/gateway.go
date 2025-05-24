@@ -75,7 +75,7 @@ func (m *Gateway) GetID() int64 {
 func (m *Gateway) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *Gateway) GetCutomerID() *int64 {
+func (m *Gateway) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Gateway) GetSiteID() *int64 {

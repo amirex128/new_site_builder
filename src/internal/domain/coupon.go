@@ -34,7 +34,7 @@ func (m *Coupon) GetID() int64 {
 func (m *Coupon) GetUserID() *int64 {
 	return nil
 }
-func (m *Coupon) GetCutomerID() *int64 {
+func (m *Coupon) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Coupon) GetSiteID() *int64 {

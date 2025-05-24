@@ -19,7 +19,7 @@ func (m *Permission) GetID() int64 {
 func (m *Permission) GetUserID() *int64 {
 	return nil
 }
-func (m *Permission) GetCutomerID() *int64 {
+func (m *Permission) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Permission) GetSiteID() *int64 {

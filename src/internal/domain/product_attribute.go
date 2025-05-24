@@ -33,7 +33,7 @@ func (m *ProductAttribute) GetID() int64 {
 func (m *ProductAttribute) GetUserID() *int64 {
 	return nil
 }
-func (m *ProductAttribute) GetCutomerID() *int64 {
+func (m *ProductAttribute) GetCustomerID() *int64 {
 	return nil
 }
 func (m *ProductAttribute) GetSiteID() *int64 {

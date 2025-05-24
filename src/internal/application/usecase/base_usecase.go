@@ -3,6 +3,7 @@ package usecase
 import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,12 +17,15 @@ func (u *BaseUsecase) SetContext(c *gin.Context) *BaseUsecase {
 	return u
 }
 
-func (u *BaseUsecase) CheckAccessModel[T any](existingAddress T) (*resp.Response, error) {
-	if *existingAddress.CustomerID > 0 && *existingAddress.CustomerID != *customerID {
-		return nil, resp.NewError(resp.Unauthorized, "شما اجازه ویرایش این آدرس را ندارید")
+func (u *BaseUsecase) CheckAccessUserModel(existingModel common.AccessControllable, userID *int64) error {
+	if existingModel.GetUserID() != nil && *existingModel.GetUserID() > 0 && existingModel.GetUserID() != nil && *existingModel.GetUserID() != *userID {
+		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
 	}
-
-	if *existingAddress.UserID > 0 && *existingAddress.UserID != *userID {
-		return nil, resp.NewError(resp.Unauthorized, "شما اجازه ویرایش این آدرس را ندارید")
+	return nil
+}
+func (u *BaseUsecase) CheckAccessCustomerModel(existingModel common.AccessControllable, customerID *int64) error {
+	if existingModel.GetCustomerID() != nil && *existingModel.GetCustomerID() > 0 && existingModel.GetCustomerID != nil && *existingModel.GetCustomerID() != *customerID {
+		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
 	}
+	return nil
 }

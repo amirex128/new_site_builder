@@ -32,7 +32,7 @@ func (m *Storage) GetID() int64 {
 func (m *Storage) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *Storage) GetCutomerID() *int64 {
+func (m *Storage) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Storage) GetSiteID() *int64 {

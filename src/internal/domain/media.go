@@ -25,7 +25,7 @@ func (m *Media) GetID() int64 {
 func (m *Media) GetUserID() *int64 {
 	return nil
 }
-func (m *Media) GetCutomerID() *int64 {
+func (m *Media) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Media) GetSiteID() *int64 {

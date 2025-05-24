@@ -39,7 +39,7 @@ func (m *OrderItem) GetID() int64 {
 func (m *OrderItem) GetUserID() *int64 {
 	return nil
 }
-func (m *OrderItem) GetCutomerID() *int64 {
+func (m *OrderItem) GetCustomerID() *int64 {
 	return nil
 }
 func (m *OrderItem) GetSiteID() *int64 {

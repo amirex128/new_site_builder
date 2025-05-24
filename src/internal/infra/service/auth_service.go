@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"strings"
 
@@ -100,13 +101,23 @@ func (s *AuthContextService) GetCustomerID() (*int64, error) {
 }
 
 // GetUserType returns the type of the current user
-func (s *AuthContextService) GetUserType() (string, error) {
+func (s *AuthContextService) GetUserType() (*enums.UserTypeEnum, error) {
 	userType, err := s.identity.GetClaim(s.ctx, "type")
 	if err != nil {
-		return "", errors.New("authorization access exception: user type not found")
+		return nil, errors.New("authorization access exception: user type not found")
 	}
 
-	return validateUserType(userType)
+	s2, err := validateUserType(userType)
+	if err != nil {
+		return nil, err
+	}
+	if s2 == "user" {
+		return (*enums.UserTypeEnum)(&s2), nil
+	}
+	if s2 == "customer" {
+		return (*enums.UserTypeEnum)(&s2), nil
+	}
+	return nil, errors.New("unknow user type")
 }
 
 // Helper function to validate user type
@@ -136,35 +147,40 @@ func (s *AuthContextService) GetEmail() (string, error) {
 func (s *AuthContextService) IsAdmin() (bool, error) {
 	isAdminStr, err := s.identity.GetClaim(s.ctx, "is_admin")
 	if err != nil {
-		return false, nil // Not an admin if claim not found
+		return false, errors.New("خطا در بررسی دسترسی کاربر")
 	}
-
-	return isAdminStr == "true", nil
+	if isAdminStr == "true" {
+		return true, nil
+	}
+	if isAdminStr == "false" {
+		return false, errors.New("خطا در بررسی دسترسی کاربر")
+	}
+	return false, errors.New("خطا در بررسی دسترسی کاربر")
 }
 
-func (s *AuthContextService) GetUserOrCustomerID() (*int64, *int64, error) {
+func (s *AuthContextService) GetUserOrCustomerID() (*int64, *int64, *enums.UserTypeEnum, error) {
 	var customerID, userID *int64
 	var err error
 
 	userType, err := s.GetUserType()
 	if err != nil {
-		return nil, nil, errors.New("خطا در احراز هویت کاربر")
+		return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
 	}
 
-	if userType == "customer" {
+	if *userType == enums.CustomerTypeValue {
 		customerID, err = s.GetCustomerID()
 		if err != nil {
-			return nil, nil, errors.New("خطا در احراز هویت کاربر")
+			return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
 		}
-		return userID, customerID, nil
+		return userID, customerID, userType, nil
 	}
-	if userType == "user" {
+	if *userType == enums.UserTypeValue {
 		userID, err = s.GetUserID()
 		if err != nil {
-			return nil, nil, errors.New("خطا در احراز هویت کاربر")
+			return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
 		}
-		return userID, customerID, nil
+		return userID, customerID, userType, nil
 	}
 
-	return nil, nil, errors.New("خطا در احراز هویت کاربر")
+	return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
 }

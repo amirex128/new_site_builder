@@ -36,7 +36,7 @@ func (m *ReturnItem) GetID() int64 {
 func (m *ReturnItem) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *ReturnItem) GetCutomerID() *int64 {
+func (m *ReturnItem) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *ReturnItem) GetSiteID() *int64 {

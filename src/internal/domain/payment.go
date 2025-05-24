@@ -52,7 +52,7 @@ func (m *Payment) GetID() int64 {
 func (m *Payment) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *Payment) GetCutomerID() *int64 {
+func (m *Payment) GetCustomerID() *int64 {
 	return &m.CustomerID
 }
 func (m *Payment) GetSiteID() *int64 {

@@ -70,13 +70,13 @@ func (r *AddressRepo) GetAllByCustomerID(customerID int64, paginationRequestDto 
 
 	return buildPaginationResponse(addresses, paginationRequestDto, count)
 }
-func (r *AddressRepo) GetByID(id int64) (domain.Address, error) {
+func (r *AddressRepo) GetByID(id int64) (*domain.Address, error) {
 	var address domain.Address
 	result := r.database.First(&address, id)
 	if result.Error != nil {
-		return address, result.Error
+		return nil, result.Error
 	}
-	return address, nil
+	return &address, nil
 }
 
 func (r *AddressRepo) Create(address *domain.Address) error {

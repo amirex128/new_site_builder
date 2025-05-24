@@ -32,7 +32,7 @@ func (m *Plan) GetID() int64 {
 func (m *Plan) GetUserID() *int64 {
 	return nil
 }
-func (m *Plan) GetCutomerID() *int64 {
+func (m *Plan) GetCustomerID() *int64 {
 	return nil
 }
 func (m *Plan) GetSiteID() *int64 {

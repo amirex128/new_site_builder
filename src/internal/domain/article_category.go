@@ -40,7 +40,7 @@ func (m *ArticleCategory) GetID() int64 {
 func (m *ArticleCategory) GetUserID() *int64 {
 	return &m.UserID
 }
-func (m *ArticleCategory) GetCutomerID() *int64 {
+func (m *ArticleCategory) GetCustomerID() *int64 {
 	return nil
 }
 func (m *ArticleCategory) GetSiteID() *int64 {
