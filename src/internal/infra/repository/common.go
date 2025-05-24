@@ -2,7 +2,6 @@ package repository
 
 import "github.com/amirex128/new_site_builder/src/internal/contract/common"
 
-// buildPaginationResponse creates a pagination response from the query results
 func buildPaginationResponse[T any](items []T, paginationRequestDto common.PaginationRequestDto, count int64) (*common.PaginationResponseDto[T], error) {
 	paginationResponse := &common.PaginationResponseDto[T]{
 		Items:      items,

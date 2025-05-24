@@ -17,7 +17,7 @@ func NewProvinceRepository(db *gorm.DB) *ProvinceRepo {
 	}
 }
 
-func (r *ProvinceRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Province, int64, error) {
+func (r *ProvinceRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Province], error) {
 	var provinces []domain.Province
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *ProvinceRepo) GetAll(paginationRequestDto common.PaginationRequestDto) 
 
 	result := query.Limit(limit).Offset(offset).Find(&provinces)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return provinces, count, nil
+	return buildPaginationResponse(provinces, paginationRequestDto, count)
 }
 
 func (r *ProvinceRepo) GetByID(id int64) (domain.Province, error) {

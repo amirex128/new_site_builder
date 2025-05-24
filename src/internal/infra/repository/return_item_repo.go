@@ -17,7 +17,7 @@ func NewReturnItemRepository(db *gorm.DB) *ReturnItemRepo {
 	}
 }
 
-func (r *ReturnItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ReturnItem, int64, error) {
+func (r *ReturnItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ReturnItem], error) {
 	var returnItems []domain.ReturnItem
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *ReturnItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto
 
 	result := query.Limit(limit).Offset(offset).Find(&returnItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return returnItems, count, nil
+	return buildPaginationResponse(returnItems, paginationRequestDto, count)
 }
 
-func (r *ReturnItemRepo) GetAllByOrderItemID(orderItemID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ReturnItem, int64, error) {
+func (r *ReturnItemRepo) GetAllByOrderItemID(orderItemID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ReturnItem], error) {
 	var returnItems []domain.ReturnItem
 	var count int64
 
@@ -47,13 +47,13 @@ func (r *ReturnItemRepo) GetAllByOrderItemID(orderItemID int64, paginationReques
 
 	result := query.Limit(limit).Offset(offset).Find(&returnItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return returnItems, count, nil
+	return buildPaginationResponse(returnItems, paginationRequestDto, count)
 }
 
-func (r *ReturnItemRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ReturnItem, int64, error) {
+func (r *ReturnItemRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ReturnItem], error) {
 	var returnItems []domain.ReturnItem
 	var count int64
 
@@ -65,10 +65,10 @@ func (r *ReturnItemRepo) GetAllByCustomerID(customerID int64, paginationRequestD
 
 	result := query.Limit(limit).Offset(offset).Find(&returnItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return returnItems, count, nil
+	return buildPaginationResponse(returnItems, paginationRequestDto, count)
 }
 
 func (r *ReturnItemRepo) GetByID(id int64) (domain.ReturnItem, error) {

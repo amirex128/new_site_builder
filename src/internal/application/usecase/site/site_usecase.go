@@ -346,7 +346,7 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Respo
 	}
 
 	// Get all sites for the user with pagination
-	sites, count, err := u.repo.GetAllByUserID(userID, params.PaginationRequestDto)
+	result, err := u.repo.GetAllByUserID(userID, params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error retrieving sites for user", map[string]interface{}{
 			"userId": userID,
@@ -354,6 +354,9 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Respo
 		})
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی لیست سایت ها")
 	}
+
+	sites := result.Items
+	count := result.TotalCount
 
 	// Enhance site responses
 	enhancedSites := make([]map[string]interface{}, 0, len(sites))
@@ -390,13 +393,16 @@ func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (*
 	}
 
 	// Get all sites with pagination
-	sites, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	result, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error retrieving all sites", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی لیست سایت ها")
 	}
+
+	sites := result.Items
+	count := result.TotalCount
 
 	// Enhance site responses
 	enhancedSites := make([]map[string]interface{}, 0, len(sites))

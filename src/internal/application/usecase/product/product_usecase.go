@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -208,7 +209,9 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 		return nil, err
 	}
 
-	return createdProduct, nil
+	return resp.NewResponseData(resp.Created, resp.Data{
+		"product": createdProduct,
+	}, "محصول با موفقیت ایجاد شد"), nil
 }
 
 func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductCommand) (*resp.Response, error) {
@@ -358,7 +361,9 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 		return nil, err
 	}
 
-	return updatedProduct, nil
+	return resp.NewResponseData(resp.Updated, resp.Data{
+		"product": updatedProduct,
+	}, "محصول با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductCommand) (*resp.Response, error) {
@@ -397,9 +402,9 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Deleted, resp.Data{
 		"success": true,
-	}, nil
+	}, "محصول با موفقیت حذف شد"), nil
 }
 
 func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery) (*resp.Response, error) {
@@ -430,7 +435,9 @@ func (u *ProductUsecase) GetByIdProductQuery(params *product.GetByIdProductQuery
 	// In a real implementation, we would fetch the media information
 	// and add it to the response
 
-	return product, nil
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
+		"product": product,
+	}, "محصول با موفقیت دریافت شد"), nil
 }
 
 func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) (*resp.Response, error) {
@@ -444,19 +451,22 @@ func (u *ProductUsecase) GetAllProductQuery(params *product.GetAllProductQuery) 
 	// In a real implementation, we would check if the user has access to this site
 
 	// Get all products for the site
-	products, count, err := u.productRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	result, err := u.productRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
+	products := result.Items
+	count := result.TotalCount
+
 	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":     products,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "محصولات با موفقیت دریافت شدند"), nil
 }
 
 func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFiltersSortProductQuery) (*resp.Response, error) {
@@ -482,7 +492,7 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 	}
 
 	// Call the repository method for filtering and sorting
-	products, count, err := u.productRepo.GetAllByFilterAndSort(
+	result, err := u.productRepo.GetAllByFilterAndSort(
 		*params.SiteID,
 		filters,
 		sortStr,
@@ -491,6 +501,9 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 	if err != nil {
 		return nil, err
 	}
+
+	products := result.Items
+	count := result.TotalCount
 
 	// Enhancement: Load associated data (media, etc.)
 	var enhancedProducts []map[string]interface{}
@@ -533,13 +546,13 @@ func (u *ProductUsecase) GetByFiltersSortProductQuery(params *product.GetByFilte
 		enhancedProducts = append(enhancedProducts, productData)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":     enhancedProducts,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "محصولات با موفقیت دریافت شدند"), nil
 }
 
 func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByCategoryQuery) (*resp.Response, error) {
@@ -563,19 +576,22 @@ func (u *ProductUsecase) GetProductByCategoryQuery(params *product.GetProductByC
 	}
 
 	// Get products for the category
-	products, count, err := u.productRepo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
+	result, err := u.productRepo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
+	products := result.Items
+	count := result.TotalCount
+
 	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":     products,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "محصولات با موفقیت دریافت شدند"), nil
 }
 
 func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQuery) (*resp.Response, error) {
@@ -642,7 +658,7 @@ func (u *ProductUsecase) GetSingleProductQuery(params *product.GetSingleProductQ
 		}
 	}()
 
-	return response, nil
+	return resp.NewResponseData(resp.Retrieved, resp.Data(response), "محصول با موفقیت دریافت شد"), nil
 }
 
 func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculateProductsPriceQuery) (*resp.Response, error) {
@@ -678,7 +694,14 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 	if params.OrderBasketItems == nil || len(params.OrderBasketItems) == 0 {
 		response.ResponseStatus.IsSuccess = false
 		response.ResponseStatus.Message = "سبد خرید خالی است"
-		return response, nil
+		return resp.NewResponseData(resp.Retrieved, resp.Data{
+			"calculatedPrices":             response.CalculatedPrices,
+			"totalRawPrice":                response.TotalRawPrice,
+			"totalCouponDiscount":          response.TotalCouponDiscount,
+			"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+			"discountId":                   response.DiscountID,
+			"responseStatus":               response.ResponseStatus,
+		}, response.ResponseStatus.Message), nil
 	}
 
 	// Find discount if code is provided
@@ -716,21 +739,42 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 			if discount.SiteID != *params.SiteID {
 				response.ResponseStatus.IsSuccess = false
 				response.ResponseStatus.Message = "کد تخفیف معتبر نیست"
-				return response, nil
+				return resp.NewResponseData(resp.Retrieved, resp.Data{
+					"calculatedPrices":             response.CalculatedPrices,
+					"totalRawPrice":                response.TotalRawPrice,
+					"totalCouponDiscount":          response.TotalCouponDiscount,
+					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+					"discountId":                   response.DiscountID,
+					"responseStatus":               response.ResponseStatus,
+				}, response.ResponseStatus.Message), nil
 			}
 
 			// Check quantity
 			if discount.Quantity <= 0 {
 				response.ResponseStatus.IsSuccess = false
 				response.ResponseStatus.Message = "ظرفیت استفاده از این کد تخفیف به پایان رسیده است"
-				return response, nil
+				return resp.NewResponseData(resp.Retrieved, resp.Data{
+					"calculatedPrices":             response.CalculatedPrices,
+					"totalRawPrice":                response.TotalRawPrice,
+					"totalCouponDiscount":          response.TotalCouponDiscount,
+					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+					"discountId":                   response.DiscountID,
+					"responseStatus":               response.ResponseStatus,
+				}, response.ResponseStatus.Message), nil
 			}
 
 			// Check expiry date
 			if discount.ExpiryDate.Before(time.Now()) {
 				response.ResponseStatus.IsSuccess = false
 				response.ResponseStatus.Message = "این کد تخفیف منقضی شده است"
-				return response, nil
+				return resp.NewResponseData(resp.Retrieved, resp.Data{
+					"calculatedPrices":             response.CalculatedPrices,
+					"totalRawPrice":                response.TotalRawPrice,
+					"totalCouponDiscount":          response.TotalCouponDiscount,
+					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+					"discountId":                   response.DiscountID,
+					"responseStatus":               response.ResponseStatus,
+				}, response.ResponseStatus.Message), nil
 			}
 
 			// Check if customer has already used this discount
@@ -760,7 +804,14 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				response.ResponseStatus.IsSuccess = false
 				response.ResponseStatus.Message = "یکی از محصولات موجود نیست"
-				return response, nil
+				return resp.NewResponseData(resp.Retrieved, resp.Data{
+					"calculatedPrices":             response.CalculatedPrices,
+					"totalRawPrice":                response.TotalRawPrice,
+					"totalCouponDiscount":          response.TotalCouponDiscount,
+					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+					"discountId":                   response.DiscountID,
+					"responseStatus":               response.ResponseStatus,
+				}, response.ResponseStatus.Message), nil
 			}
 			return nil, err
 		}
@@ -776,10 +827,11 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 			Page:     1,
 			PageSize: 100, // Assuming we won't have more than 100 variants per product
 		}
-		variants, _, err := u.productVariantRepo.GetAllByProductID(productID, paginationRequest)
+		variantsResult, err := u.productVariantRepo.GetAllByProductID(productID, paginationRequest)
 		if err != nil {
 			return nil, err
 		}
+		variants := variantsResult.Items
 
 		for _, v := range variants {
 			if v.ID == variantID {
@@ -792,7 +844,14 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 		if !variantFound {
 			response.ResponseStatus.IsSuccess = false
 			response.ResponseStatus.Message = "یکی از تنوع های محصول موجود نیست"
-			return response, nil
+			return resp.NewResponseData(resp.Retrieved, resp.Data{
+				"calculatedPrices":             response.CalculatedPrices,
+				"totalRawPrice":                response.TotalRawPrice,
+				"totalCouponDiscount":          response.TotalCouponDiscount,
+				"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+				"discountId":                   response.DiscountID,
+				"responseStatus":               response.ResponseStatus,
+			}, response.ResponseStatus.Message), nil
 		}
 
 		// Check stock
@@ -800,7 +859,14 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 		if variant.Stock < quantity {
 			response.ResponseStatus.IsSuccess = false
 			response.ResponseStatus.Message = "موجودی محصول " + product.Name + " کافی نیست"
-			return response, nil
+			return resp.NewResponseData(resp.Retrieved, resp.Data{
+				"calculatedPrices":             response.CalculatedPrices,
+				"totalRawPrice":                response.TotalRawPrice,
+				"totalCouponDiscount":          response.TotalCouponDiscount,
+				"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+				"discountId":                   response.DiscountID,
+				"responseStatus":               response.ResponseStatus,
+			}, response.ResponseStatus.Message), nil
 		}
 
 		// Calculate raw price
@@ -873,7 +939,15 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 		response.DiscountID = &discount.ID
 	}
 
-	return response, nil
+	responseData := resp.Data{
+		"calculatedPrices":             response.CalculatedPrices,
+		"totalRawPrice":                response.TotalRawPrice,
+		"totalCouponDiscount":          response.TotalCouponDiscount,
+		"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
+		"discountId":                   response.DiscountID,
+		"responseStatus":               response.ResponseStatus,
+	}
+	return resp.NewResponseData(resp.Success, responseData, "محاسبه قیمت محصولات با موفقیت انجام شد"), nil
 }
 
 func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProductQuery) (*resp.Response, error) {
@@ -893,19 +967,22 @@ func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProd
 	}
 
 	// Get all products across all sites for admin
-	products, count, err := u.productRepo.GetAll(params.PaginationRequestDto)
+	result, err := u.productRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
+	products := result.Items
+	count := result.TotalCount
+
 	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":     products,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "محصولات با موفقیت دریافت شدند"), nil
 }
 
 // Helper function to handle nil string pointers

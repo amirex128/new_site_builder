@@ -17,7 +17,7 @@ func NewProductAttributeRepository(db *gorm.DB) *ProductAttributeRepo {
 	}
 }
 
-func (r *ProductAttributeRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductAttribute, int64, error) {
+func (r *ProductAttributeRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductAttribute], error) {
 	var attributes []domain.ProductAttribute
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *ProductAttributeRepo) GetAll(paginationRequestDto common.PaginationRequ
 
 	result := query.Limit(limit).Offset(offset).Find(&attributes)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return attributes, count, nil
+	return buildPaginationResponse(attributes, paginationRequestDto, count)
 }
 
-func (r *ProductAttributeRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductAttribute, int64, error) {
+func (r *ProductAttributeRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductAttribute], error) {
 	var attributes []domain.ProductAttribute
 	var count int64
 
@@ -47,10 +47,10 @@ func (r *ProductAttributeRepo) GetAllByProductID(productID int64, paginationRequ
 
 	result := query.Limit(limit).Offset(offset).Find(&attributes)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return attributes, count, nil
+	return buildPaginationResponse(attributes, paginationRequestDto, count)
 }
 
 func (r *ProductAttributeRepo) GetByID(id int64) (domain.ProductAttribute, error) {

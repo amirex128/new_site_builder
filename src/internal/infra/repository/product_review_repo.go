@@ -17,7 +17,7 @@ func NewProductReviewRepository(db *gorm.DB) *ProductReviewRepo {
 	}
 }
 
-func (r *ProductReviewRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *ProductReviewRepo) GetAll(paginationRequestDto common.PaginationRequest
 
 	result := query.Limit(limit).Offset(offset).Find(&reviews)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return reviews, count, nil
+	return buildPaginationResponse(reviews, paginationRequestDto, count)
 }
 
-func (r *ProductReviewRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -47,13 +47,13 @@ func (r *ProductReviewRepo) GetAllBySiteID(siteID int64, paginationRequestDto co
 
 	result := query.Limit(limit).Offset(offset).Find(&reviews)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return reviews, count, nil
+	return buildPaginationResponse(reviews, paginationRequestDto, count)
 }
 
-func (r *ProductReviewRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -65,13 +65,13 @@ func (r *ProductReviewRepo) GetAllByProductID(productID int64, paginationRequest
 
 	result := query.Limit(limit).Offset(offset).Find(&reviews)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return reviews, count, nil
+	return buildPaginationResponse(reviews, paginationRequestDto, count)
 }
 
-func (r *ProductReviewRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductReview, int64, error) {
+func (r *ProductReviewRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error) {
 	var reviews []domain.ProductReview
 	var count int64
 
@@ -83,10 +83,10 @@ func (r *ProductReviewRepo) GetAllByCustomerID(customerID int64, paginationReque
 
 	result := query.Limit(limit).Offset(offset).Find(&reviews)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return reviews, count, nil
+	return buildPaginationResponse(reviews, paginationRequestDto, count)
 }
 
 func (r *ProductReviewRepo) GetByID(id int64) (domain.ProductReview, error) {

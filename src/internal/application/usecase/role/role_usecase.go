@@ -1,10 +1,12 @@
 package roleusecase
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/role"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -61,10 +63,10 @@ func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (*resp.R
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Created, resp.Data{
 		"id":   roleID,
 		"name": newRole.Name,
-	}, nil
+	}, "نقش با موفقیت ایجاد شد"), nil
 }
 
 // UpdateRoleCommand updates an existing role
@@ -109,7 +111,9 @@ func (u *RoleUsecase) UpdateRoleCommand(params *role.UpdateRoleCommand) (*resp.R
 		}
 	}
 
-	return existingRole, nil
+	return resp.NewResponseData(resp.Updated, resp.Data{
+		"role": existingRole,
+	}, "نقش با موفقیت بروزرسانی شد"), nil
 }
 
 // SetRoleToCustomerCommand assigns roles to a customer
@@ -145,10 +149,10 @@ func (u *RoleUsecase) SetRoleToCustomerCommand(params *role.SetRoleToCustomerCom
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"customerId": params.CustomerID,
 		"roles":      params.Role,
-	}, nil
+	}, "نقش‌ها با موفقیت به مشتری اختصاص داده شدند"), nil
 }
 
 // SetRoleToUserCommand assigns roles to a user
@@ -184,10 +188,10 @@ func (u *RoleUsecase) SetRoleToUserCommand(params *role.SetRoleToUserCommand) (*
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"userId": params.UserID,
 		"roles":  params.Roles,
-	}, nil
+	}, "نقش‌ها با موفقیت به کاربر اختصاص داده شدند"), nil
 }
 
 // SetRoleToPlanCommand assigns roles to a plan
@@ -223,10 +227,10 @@ func (u *RoleUsecase) SetRoleToPlanCommand(params *role.SetRoleToPlanCommand) (*
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"planId": params.PlanID,
 		"roles":  params.Roles,
-	}, nil
+	}, "نقش‌ها با موفقیت به طرح اختصاص داده شدند"), nil
 }
 
 // GetAllPermissionQuery gets all permissions with pagination
@@ -236,15 +240,14 @@ func (u *RoleUsecase) GetAllPermissionQuery(params *role.GetAllPermissionQuery) 
 
 	// Note: We need to implement a repository method to get all permissions
 	// Since we don't have direct access to a permission repository in the container
-	permissions, count, err := u.roleRepo.GetAllPermissions(params.PaginationRequestDto)
+	permissions, err := u.roleRepo.GetAllPermissions()
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items": permissions,
-		"total": count,
-	}, nil
+	}, "دسترسی‌ها با موفقیت دریافت شدند"), nil
 }
 
 // GetAllRoleQuery gets all roles with pagination
@@ -252,31 +255,26 @@ func (u *RoleUsecase) GetAllRoleQuery(params *role.GetAllRoleQuery) (*resp.Respo
 	// Check admin access
 	// Note: In .NET this was done with gate.IsAdminAccess()
 
-	result, count, err := u.roleRepo.GetAll(params.PaginationRequestDto)
+	result, err := u.roleRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
+	count := result.TotalCount
 
-	return map[string]interface{}{
-		"items": result,
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
+		"items": result.Items,
 		"total": count,
-	}, nil
+	}, "نقش‌ها با موفقیت دریافت شدند"), nil
 }
 
 // GetRolePermissionsQuery gets permissions for roles with pagination
 func (u *RoleUsecase) GetRolePermissionsQuery(params *role.GetRolePermissionsQuery) (*resp.Response, error) {
-	// Check admin access
-	// Note: In .NET this was done with gate.IsAdminAccess()
-
-	// This is a placeholder - in a real implementation you'd query role-permission mappings
-	// We need to add a method to the role repository to get permissions for a role
-	permissions, count, err := u.roleRepo.GetRolePermissions(params.PaginationRequestDto)
+	permissions, err := u.roleRepo.GetRolePermissions(params.RoleID)
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items": permissions,
-		"total": count,
-	}, nil
+	}, "دسترسی‌های نقش با موفقیت دریافت شدند"), nil
 }

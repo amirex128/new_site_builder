@@ -17,7 +17,7 @@ func NewOrderRepository(db *gorm.DB) *OrderRepo {
 	}
 }
 
-func (r *OrderRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Order, int64, error) {
+func (r *OrderRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Order], error) {
 	var orders []domain.Order
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *OrderRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]
 
 	result := query.Limit(limit).Offset(offset).Find(&orders)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return orders, count, nil
+	return buildPaginationResponse(orders, paginationRequestDto, count)
 }
 
-func (r *OrderRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Order, int64, error) {
+func (r *OrderRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Order], error) {
 	var orders []domain.Order
 	var count int64
 
@@ -47,13 +47,13 @@ func (r *OrderRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.Pag
 
 	result := query.Limit(limit).Offset(offset).Find(&orders)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return orders, count, nil
+	return buildPaginationResponse(orders, paginationRequestDto, count)
 }
 
-func (r *OrderRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Order, int64, error) {
+func (r *OrderRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Order], error) {
 	var orders []domain.Order
 	var count int64
 
@@ -65,10 +65,10 @@ func (r *OrderRepo) GetAllByCustomerID(customerID int64, paginationRequestDto co
 
 	result := query.Limit(limit).Offset(offset).Find(&orders)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return orders, count, nil
+	return buildPaginationResponse(orders, paginationRequestDto, count)
 }
 
 func (r *OrderRepo) GetByID(id int64) (domain.Order, error) {

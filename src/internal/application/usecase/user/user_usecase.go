@@ -16,6 +16,7 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
@@ -142,7 +143,10 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*re
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	addresses, err := u.addressRepo.GetAllByUserID(userId)
+	addresses, err := u.addressRepo.GetAllByUserID(userId, common.PaginationRequestDto{
+		Page:     1,
+		PageSize: 100,
+	})
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -439,7 +443,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, resp.NewError(resp.Unauthorized, "error : %s", err.Error())
 	}
 	if userID == 0 {
 		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
@@ -515,13 +519,15 @@ func (u *UserUsecase) AdminGetAllUserQuery(params *user.AdminGetAllUserQuery) (*
 		return nil, resp.NewError(resp.Unauthorized, "Only administrators can access this resource")
 	}
 
-	result, count, err := u.userRepo.GetAll(params.PaginationRequestDto)
+	result, err := u.userRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all users", map[string]interface{}{
 			"error": err.Error(),
 		})
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
+
+	count := result.TotalCount
 
 	// Calculate total pages
 	totalPages := (count + int64(params.PageSize) - 1) / int64(params.PageSize)

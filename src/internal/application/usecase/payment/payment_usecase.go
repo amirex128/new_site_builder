@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -15,6 +16,7 @@ import (
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/payment"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -119,7 +121,7 @@ func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentComma
 		responseData["redirectUrl"] = paymentRecord.ReturnUrl
 	}
 
-	return responseData, nil
+	return resp.NewResponseData(resp.Retrieved, responseData, "وضعیت پرداخت"), nil
 }
 
 func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUpdateGatewayCommand) (*resp.Response, error) {
@@ -175,7 +177,7 @@ func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUp
 	}
 
 	// Return the gateway object
-	return gateway, nil
+	return resp.NewResponseData(resp.Success, map[string]interface{}{"gateway": gateway}, "درگاه با موفقیت ایجاد یا بروزرسانی شد"), nil
 }
 
 func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payment.CreateOrUpdateGatewayCommand) {
@@ -399,7 +401,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 		}
 	}
 
-	return gateway, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"gateway": gateway}, "درگاه با موفقیت دریافت شد"), nil
 }
 
 func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (*resp.Response, error) {
@@ -417,17 +419,17 @@ func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGate
 		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
-	gateways, count, err := u.gatewayRepo.GetAll(params.PaginationRequestDto)
+	gatewaysResult, err := u.gatewayRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
-
-	return map[string]interface{}{
-		"items": gateways,
-		"total": count,
-		"page":  params.Page,
-		"size":  params.PageSize,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     gatewaysResult.Items,
+		"total":     gatewaysResult.TotalCount,
+		"page":      gatewaysResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": gatewaysResult.TotalPages,
+	}, "لیست درگاه ها با موفقیت دریافت شد"), nil
 }
 
 func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCommand) (*resp.Response, error) {
@@ -518,7 +520,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 		"formData":       map[string]string{},
 	}
 
-	return responseData, nil
+	return resp.NewResponseData(resp.Retrieved, responseData, "درخواست پرداخت با موفقیت انجام شد"), nil
 }
 
 func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (*resp.Response, error) {
@@ -536,17 +538,17 @@ func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaym
 		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
-	payments, count, err := u.paymentRepo.GetAll(params.PaginationRequestDto)
+	paymentsResult, err := u.paymentRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
-
-	return map[string]interface{}{
-		"items": payments,
-		"total": count,
-		"page":  params.Page,
-		"size":  params.PageSize,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     paymentsResult.Items,
+		"total":     paymentsResult.TotalCount,
+		"page":      paymentsResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": paymentsResult.TotalPages,
+	}, "لیست پرداخت ها با موفقیت دریافت شد"), nil
 }
 
 // Helper methods
@@ -635,7 +637,7 @@ func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSucc
 	}
 
 	// Get all unit prices
-	unitPrices, _, err := unitPriceRepo.GetAll(common.PaginationRequestDto{
+	unitPricesResult, err := unitPriceRepo.GetAll(common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 100,
 	})
@@ -644,7 +646,7 @@ func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSucc
 	}
 
 	// Update user credits based on order data
-	for _, unitPrice := range unitPrices {
+	for _, unitPrice := range unitPricesResult.Items {
 		unitPriceNameKey := fmt.Sprintf("%s_UnitPriceName", unitPrice.Name)
 		unitPriceCountKey := fmt.Sprintf("%s_UnitPriceCount", unitPrice.Name)
 
@@ -835,7 +837,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 	}
 
 	// Get order items
-	orderItems, _, err := u.container.GetOrderItemRepo().GetAllByOrderID(orderID, common.PaginationRequestDto{
+	orderItemsResult, err := u.container.GetOrderItemRepo().GetAllByOrderID(orderID, common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 1000,
 	})
@@ -854,7 +856,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 		return false
 	}
 
-	for _, item := range orderItems {
+	for _, item := range orderItemsResult.Items {
 		if item.ProductVariantID > 0 {
 			err := productVariantRepo.DecreaseStock(item.ProductVariantID, item.Quantity)
 			if err != nil {
@@ -906,7 +908,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 
 	// 3. Decrease coupon quantity if applicable
 	// First, get products associated with order items to check for coupons
-	for _, item := range orderItems {
+	for _, item := range orderItemsResult.Items {
 		if item.ProductID > 0 {
 			// Get coupon for this product
 			couponRepo := u.container.GetCouponRepo()
@@ -942,7 +944,7 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 						customer.FirstName, order.ID)
 
 					// Add order items to email
-					for _, item := range orderItems {
+					for _, item := range orderItemsResult.Items {
 						// Get product details
 						productRepo := u.container.GetProductRepo()
 						if productRepo != nil {

@@ -280,22 +280,15 @@ func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQ
 }
 
 func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) (*resp.Response, error) {
-	// Implementation to get all articles by site ID, based on .NET GetAllArticleQuery
 	u.Logger.Info("Getting all articles by site ID", map[string]interface{}{"siteID": *params.SiteID})
 
-	// Check if user has access to this site
-	// In a real implementation, check if the current user has rights to view articles for this site
-	// This is equivalent to the gate.HasSiteAccess(request.SiteId) call in .NET
-
-	result, count, err := u.articleRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	result, err := u.articleRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// For each article, get media information
-	// In a more efficient implementation, this would be done in a single query
-	articlesWithMedia := make([]map[string]interface{}, len(result))
-	for i, article := range result {
+	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
+	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
 			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
@@ -310,32 +303,28 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": articlesWithMedia,
-		"total": count,
+		"total": result.TotalCount,
 	}, "Articles retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (*resp.Response, error) {
-	// Implementation to get articles by category, based on .NET GetArticleByCategoryQuery
 	u.Logger.Info("Getting articles by category slug", map[string]interface{}{
 		"slug":   *params.Slug,
 		"siteID": *params.SiteID,
 	})
 
-	// First get the category by slug
 	category, err := u.categoryRepo.GetBySlugAndSiteID(*params.Slug, *params.SiteID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Then get articles for this category
-	result, count, err := u.articleRepo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
+	result, err := u.articleRepo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// For each article, get media information
-	articlesWithMedia := make([]map[string]interface{}, len(result))
-	for i, article := range result {
+	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
+	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
 			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
@@ -350,18 +339,15 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":    articlesWithMedia,
-		"total":    count,
+		"total":    result.TotalCount,
 		"category": category,
 	}, "Articles retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFiltersSortArticleQuery) (*resp.Response, error) {
-	// Implementation to get articles with filtering and sorting, based on .NET GetByFiltersSortArticleQuery
 	u.Logger.Info("Getting articles with filters and sorting", map[string]interface{}{"siteID": *params.SiteID})
 
-	// This is a more complex query that would need special handling
-	// For now, we'll implement a basic version that just calls through to a repository method
-	result, count, err := u.articleRepo.GetAllByFilterAndSort(
+	result, err := u.articleRepo.GetAllByFilterAndSort(
 		*params.SiteID,
 		params.SelectedFilters,
 		params.SelectedSort,
@@ -372,9 +358,8 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 		return nil, err
 	}
 
-	// For each article, get media information
-	articlesWithMedia := make([]map[string]interface{}, len(result))
-	for i, article := range result {
+	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
+	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
 			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
@@ -389,26 +374,20 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": articlesWithMedia,
-		"total": count,
+		"total": result.TotalCount,
 	}, "Articles retrieved successfully"), nil
 }
 
 func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (*resp.Response, error) {
-	// Implementation to get all articles for admin, based on .NET AdminGetAllArticleQuery
 	u.Logger.Info("Admin getting all articles", map[string]interface{}{})
 
-	// Check if user has admin access
-	// In a real implementation, check if the current user has admin rights
-	// This is equivalent to the gate.HasSiteAccess() call in .NET
-
-	result, count, err := u.articleRepo.GetAll(params.PaginationRequestDto)
+	result, err := u.articleRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// For each article, get media information
-	articlesWithMedia := make([]map[string]interface{}, len(result))
-	for i, article := range result {
+	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
+	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
 			u.Logger.Errorf("Failed to get media for article %d: %v", article.ID, err)
@@ -423,6 +402,6 @@ func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArti
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": articlesWithMedia,
-		"total": count,
+		"total": result.TotalCount,
 	}, "Articles retrieved successfully"), nil
 }

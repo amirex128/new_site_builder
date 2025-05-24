@@ -247,7 +247,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 			}
 		}
 
-		return enhancePageUsageResponse(pages), nil
+		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancePageUsageResponse(pages)}, "صفحات با موفقیت دریافت شدند"), nil
 
 	case enums.PageProductUsage:
 		usages, err := u.pageProductUsageRepo.GetByProductIDsAndSiteID(params.EntityIDs, *params.SiteID)
@@ -275,7 +275,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 			}
 		}
 
-		return enhancePageUsageResponse(pages), nil
+		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancePageUsageResponse(pages)}, "صفحات با موفقیت دریافت شدند"), nil
 
 	case enums.PageHeaderFooterUsage:
 		usages, err := u.pageHeaderFooterUsageRepo.GetByHeaderFooterIDsAndSiteID(params.EntityIDs, *params.SiteID)
@@ -303,7 +303,7 @@ func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsages
 			}
 		}
 
-		return enhancePageUsageResponse(pages), nil
+		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancePageUsageResponse(pages)}, "صفحات با موفقیت دریافت شدند"), nil
 
 	default:
 		return nil, errors.New("نوع استفاده نامعتبر است")

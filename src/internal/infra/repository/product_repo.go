@@ -1,10 +1,11 @@
 package repository
 
 import (
+	"strings"
+
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
-	"strings"
 
 	"gorm.io/gorm"
 )
@@ -19,7 +20,7 @@ func NewProductRepository(db *gorm.DB) *ProductRepo {
 	}
 }
 
-func (r *ProductRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Product, int64, error) {
+func (r *ProductRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Product], error) {
 	var products []domain.Product
 	var count int64
 
@@ -31,13 +32,13 @@ func (r *ProductRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 
 	result := query.Limit(limit).Offset(offset).Find(&products)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return products, count, nil
+	return buildPaginationResponse(products, paginationRequestDto, count)
 }
 
-func (r *ProductRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Product, int64, error) {
+func (r *ProductRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Product], error) {
 	var products []domain.Product
 	var count int64
 
@@ -49,21 +50,19 @@ func (r *ProductRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.P
 
 	result := query.Limit(limit).Offset(offset).Find(&products)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return products, count, nil
+	return buildPaginationResponse(products, paginationRequestDto, count)
 }
 
-func (r *ProductRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Product, int64, error) {
+func (r *ProductRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Product], error) {
 	var products []domain.Product
 	var count int64
 
-	// For many-to-many relationship using the join table
 	query := r.database.Model(&domain.Product{}).
 		Joins("JOIN product_category ON product_category.product_id = products.id").
 		Where("product_category.category_id = ?", categoryID)
-
 	query.Count(&count)
 
 	limit := paginationRequestDto.PageSize
@@ -71,10 +70,10 @@ func (r *ProductRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto 
 
 	result := query.Limit(limit).Offset(offset).Find(&products)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return products, count, nil
+	return buildPaginationResponse(products, paginationRequestDto, count)
 }
 
 func (r *ProductRepo) GetByID(id int64) (domain.Product, error) {
@@ -115,7 +114,7 @@ func (r *ProductRepo) GetAllByFilterAndSort(
 	filters map[enums.ProductFilterEnum][]string,
 	sort *string,
 	paginationRequestDto common.PaginationRequestDto,
-) ([]domain.Product, int64, error) {
+) (*common.PaginationResponseDto[domain.Product], error) {
 	var products []domain.Product
 	var count int64
 
@@ -236,8 +235,8 @@ func (r *ProductRepo) GetAllByFilterAndSort(
 
 	result := query.Limit(limit).Offset(offset).Find(&products)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return products, count, nil
+	return buildPaginationResponse(products, paginationRequestDto, count)
 }

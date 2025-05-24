@@ -19,7 +19,7 @@ func NewProductVariantRepository(db *gorm.DB) *ProductVariantRepo {
 	}
 }
 
-func (r *ProductVariantRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductVariant, int64, error) {
+func (r *ProductVariantRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductVariant], error) {
 	var variants []domain.ProductVariant
 	var count int64
 
@@ -31,13 +31,13 @@ func (r *ProductVariantRepo) GetAll(paginationRequestDto common.PaginationReques
 
 	result := query.Limit(limit).Offset(offset).Find(&variants)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return variants, count, nil
+	return buildPaginationResponse(variants, paginationRequestDto, count)
 }
 
-func (r *ProductVariantRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductVariant, int64, error) {
+func (r *ProductVariantRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductVariant], error) {
 	var variants []domain.ProductVariant
 	var count int64
 
@@ -49,10 +49,10 @@ func (r *ProductVariantRepo) GetAllByProductID(productID int64, paginationReques
 
 	result := query.Limit(limit).Offset(offset).Find(&variants)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return variants, count, nil
+	return buildPaginationResponse(variants, paginationRequestDto, count)
 }
 
 func (r *ProductVariantRepo) GetByID(id int64) (domain.ProductVariant, error) {

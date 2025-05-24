@@ -17,7 +17,7 @@ func NewHeaderFooterRepository(db *gorm.DB) *HeaderFooterRepo {
 	}
 }
 
-func (r *HeaderFooterRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.HeaderFooter, int64, error) {
+func (r *HeaderFooterRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.HeaderFooter], error) {
 	var headerFooters []domain.HeaderFooter
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *HeaderFooterRepo) GetAll(paginationRequestDto common.PaginationRequestD
 
 	result := query.Limit(limit).Offset(offset).Find(&headerFooters)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return headerFooters, count, nil
+	return buildPaginationResponse(headerFooters, paginationRequestDto, count)
 }
 
-func (r *HeaderFooterRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.HeaderFooter, int64, error) {
+func (r *HeaderFooterRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.HeaderFooter], error) {
 	var headerFooters []domain.HeaderFooter
 	var count int64
 
@@ -47,10 +47,10 @@ func (r *HeaderFooterRepo) GetAllBySiteID(siteID int64, paginationRequestDto com
 
 	result := query.Limit(limit).Offset(offset).Find(&headerFooters)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return headerFooters, count, nil
+	return buildPaginationResponse(headerFooters, paginationRequestDto, count)
 }
 
 func (r *HeaderFooterRepo) GetByID(id int64) (domain.HeaderFooter, error) {

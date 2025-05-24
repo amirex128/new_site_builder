@@ -1,7 +1,6 @@
 package repository
 
 import (
-	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
@@ -17,22 +16,18 @@ func NewPermissionRepository(db *gorm.DB) *PermissionRepo {
 	}
 }
 
-func (r *PermissionRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error) {
+func (r *PermissionRepo) GetAll() ([]domain.Permission, error) {
 	var permissions []domain.Permission
 	var count int64
 
 	query := r.database.Model(&domain.Permission{})
 	query.Count(&count)
-
-	limit := paginationRequestDto.PageSize
-	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
-
-	result := query.Limit(limit).Offset(offset).Find(&permissions)
+	result := query.Find(&permissions)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return permissions, count, nil
+	return permissions, nil
 }
 
 func (r *PermissionRepo) GetByID(id int64) (domain.Permission, error) {

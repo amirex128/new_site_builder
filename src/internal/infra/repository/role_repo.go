@@ -17,7 +17,7 @@ func NewRoleRepository(db *gorm.DB) *RoleRepo {
 	}
 }
 
-func (r *RoleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Role, int64, error) {
+func (r *RoleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Role], error) {
 	var roles []domain.Role
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *RoleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]d
 
 	result := query.Limit(limit).Offset(offset).Find(&roles)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return roles, count, nil
+	return buildPaginationResponse(roles, paginationRequestDto, count)
 }
 
 func (r *RoleRepo) GetByID(id int64) (domain.Role, error) {
@@ -92,43 +92,34 @@ func (r *RoleRepo) RemoveAllPermissionsFromRole(roleID int64) error {
 }
 
 // GetAllPermissions retrieves all permissions with pagination
-func (r *RoleRepo) GetAllPermissions(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error) {
+func (r *RoleRepo) GetAllPermissions() ([]domain.Permission, error) {
 	var permissions []domain.Permission
 	var count int64
 
 	query := r.database.Model(&domain.Permission{})
 	query.Count(&count)
 
-	limit := paginationRequestDto.PageSize
-	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
-
-	result := query.Limit(limit).Offset(offset).Find(&permissions)
+	result := query.Find(&permissions)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return permissions, count, nil
+	return permissions, nil
 }
 
 // GetRolePermissions retrieves permissions associated with roles
-func (r *RoleRepo) GetRolePermissions(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error) {
+func (r *RoleRepo) GetRolePermissions(roleId int64) ([]domain.Permission, error) {
 	var permissions []domain.Permission
-	var count int64
 
-	// This is a simplified implementation that just returns all permissions
-	// In a real implementation, you might want to filter by specific role ID
-	query := r.database.Model(&domain.Permission{})
-	query.Count(&count)
+	result := r.database.Model(&domain.Permission{}).
+		Joins("JOIN permission_roles ON permission_roles.permission_id = permissions.id").
+		Where("permission_roles.role_id = ?", roleId).
+		Find(&permissions)
 
-	limit := paginationRequestDto.PageSize
-	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
-
-	result := query.Limit(limit).Offset(offset).Find(&permissions)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
-
-	return permissions, count, nil
+	return permissions, nil
 }
 
 // Role-User operations

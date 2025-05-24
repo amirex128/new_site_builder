@@ -17,7 +17,7 @@ func NewCityRepository(db *gorm.DB) *CityRepo {
 	}
 }
 
-func (r *CityRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.City, int64, error) {
+func (r *CityRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.City], error) {
 	var cities []domain.City
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *CityRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]d
 
 	result := query.Limit(limit).Offset(offset).Find(&cities)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return cities, count, nil
+	return buildPaginationResponse(cities, paginationRequestDto, count)
 }
 
 func (r *CityRepo) GetByID(id int64) (domain.City, error) {

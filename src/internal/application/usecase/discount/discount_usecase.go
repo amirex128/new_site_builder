@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -83,7 +84,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 		return nil, err
 	}
 
-	return createdDiscount, nil
+	return resp.NewResponseData(resp.Created, map[string]interface{}{"discount": createdDiscount}, "تخفیف با موفقیت ایجاد شد"), nil
 }
 
 func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (*resp.Response, error) {
@@ -164,7 +165,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 		return nil, err
 	}
 
-	return updatedDiscount, nil
+	return resp.NewResponseData(resp.Updated, map[string]interface{}{"discount": updatedDiscount}, "تخفیف با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (*resp.Response, error) {
@@ -202,9 +203,7 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"success": true,
-	}, nil
+	return resp.NewResponseData(resp.Deleted, map[string]interface{}{"success": true}, "تخفیف با موفقیت حذف شد"), nil
 }
 
 func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQuery) (*resp.Response, error) {
@@ -243,7 +242,7 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 		"updatedAt":  discount.UpdatedAt,
 	}
 
-	return response, nil
+	return resp.NewResponseData(resp.Retrieved, response, "تخفیف با موفقیت دریافت شد"), nil
 }
 
 func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQuery) (*resp.Response, error) {
@@ -253,18 +252,13 @@ func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQue
 		"pageSize": params.PageSize,
 	})
 
-	// Check site access - simplified in monolithic app
-	// In a real implementation, we would check if the user has access to this site
-
-	// Get all discounts for the site
-	discounts, count, err := u.discountRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	results, err := u.discountRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// Prepare response items
-	var items []map[string]interface{}
-	for _, discount := range discounts {
+	items := make([]map[string]interface{}, 0, len(results.Items))
+	for _, discount := range results.Items {
 		item := map[string]interface{}{
 			"id":         discount.ID,
 			"code":       discount.Code,
@@ -276,18 +270,16 @@ func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQue
 			"createdAt":  discount.CreatedAt,
 			"updatedAt":  discount.UpdatedAt,
 		}
-
 		items = append(items, item)
 	}
 
-	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     items,
-		"total":     count,
-		"page":      params.Page,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": results.TotalPages,
+	}, "لیست تخفیف ها با موفقیت دریافت شد"), nil
 }
 
 func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllDiscountQuery) (*resp.Response, error) {
@@ -296,25 +288,21 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 		"pageSize": params.PageSize,
 	})
 
-	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
-
 	if !isAdmin {
 		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
-	// Get all discounts across all sites for admin
-	discounts, count, err := u.discountRepo.GetAll(params.PaginationRequestDto)
+	results, err := u.discountRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// Prepare response items
-	var items []map[string]interface{}
-	for _, discount := range discounts {
+	items := make([]map[string]interface{}, 0, len(results.Items))
+	for _, discount := range results.Items {
 		item := map[string]interface{}{
 			"id":         discount.ID,
 			"code":       discount.Code,
@@ -326,16 +314,14 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 			"createdAt":  discount.CreatedAt,
 			"updatedAt":  discount.UpdatedAt,
 		}
-
 		items = append(items, item)
 	}
 
-	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     items,
-		"total":     count,
-		"page":      params.Page,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": results.TotalPages,
+	}, "لیست تخفیف ها با موفقیت دریافت شد (ادمین)"), nil
 }

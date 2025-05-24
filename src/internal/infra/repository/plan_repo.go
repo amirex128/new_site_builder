@@ -17,7 +17,7 @@ func NewPlanRepository(db *gorm.DB) *PlanRepo {
 	}
 }
 
-func (r *PlanRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Plan, int64, error) {
+func (r *PlanRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Plan], error) {
 	var plans []domain.Plan
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *PlanRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]d
 
 	result := query.Limit(limit).Offset(offset).Find(&plans)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return plans, count, nil
+	return buildPaginationResponse(plans, paginationRequestDto, count)
 }
 
 func (r *PlanRepo) GetByID(id int64) (domain.Plan, error) {

@@ -17,7 +17,7 @@ func NewBasketRepository(db *gorm.DB) *BasketRepo {
 	}
 }
 
-func (r *BasketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Basket, int64, error) {
+func (r *BasketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Basket], error) {
 	var baskets []domain.Basket
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *BasketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([
 
 	result := query.Limit(limit).Offset(offset).Find(&baskets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return baskets, count, nil
+	return buildPaginationResponse(baskets, paginationRequestDto, count)
 }
 
-func (r *BasketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Basket, int64, error) {
+func (r *BasketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Basket], error) {
 	var baskets []domain.Basket
 	var count int64
 
@@ -47,13 +47,13 @@ func (r *BasketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.Pa
 
 	result := query.Limit(limit).Offset(offset).Find(&baskets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return baskets, count, nil
+	return buildPaginationResponse(baskets, paginationRequestDto, count)
 }
 
-func (r *BasketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Basket, int64, error) {
+func (r *BasketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Basket], error) {
 	var baskets []domain.Basket
 	var count int64
 
@@ -65,10 +65,10 @@ func (r *BasketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto c
 
 	result := query.Limit(limit).Offset(offset).Find(&baskets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return baskets, count, nil
+	return buildPaginationResponse(baskets, paginationRequestDto, count)
 }
 
 func (r *BasketRepo) GetByID(id int64) (domain.Basket, error) {

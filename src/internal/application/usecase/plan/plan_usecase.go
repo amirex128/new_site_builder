@@ -2,6 +2,7 @@ package planusecase
 
 import (
 	"fmt"
+
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
@@ -11,6 +12,7 @@ import (
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/plan"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -80,7 +82,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (*resp.R
 		return nil, err
 	}
 
-	return newPlan, nil
+	return resp.NewResponseData(resp.Created, map[string]interface{}{"plan": newPlan}, "پلن با موفقیت ایجاد شد"), nil
 }
 
 // UpdatePlanCommand updates an existing plan
@@ -160,7 +162,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (*resp.R
 		return nil, err
 	}
 
-	return existingPlan, nil
+	return resp.NewResponseData(resp.Updated, map[string]interface{}{"plan": existingPlan}, "پلن با موفقیت بروزرسانی شد"), nil
 }
 
 // DeletePlanCommand deletes a plan
@@ -186,24 +188,27 @@ func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (*resp.R
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Deleted, map[string]interface{}{
 		"success": true,
 		"message": "Plan deleted successfully",
-	}, nil
+	}, "پلن با موفقیت حذف شد"), nil
 }
 
 // GetAllPlanQuery gets all plans with pagination
 func (u *PlanUsecase) GetAllPlanQuery(params *plan.GetAllPlanQuery) (*resp.Response, error) {
 	// Get all plans
-	plans, count, err := u.planRepo.GetAll(params.PaginationRequestDto)
+	plansResult, err := u.planRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"items": plans,
-		"total": count,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     plansResult.Items,
+		"total":     plansResult.TotalCount,
+		"page":      plansResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": plansResult.TotalPages,
+	}, "لیست پلن ها با موفقیت دریافت شد"), nil
 }
 
 // GetByIDPlanQuery gets a plan by ID
@@ -214,7 +219,7 @@ func (u *PlanUsecase) GetByIDPlanQuery(params *plan.GetByIDPlanQuery) (*resp.Res
 		return nil, err
 	}
 
-	return plan, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"plan": plan}, "پلن با موفقیت دریافت شد"), nil
 }
 
 // CalculatePlanPriceQuery calculates a plan's price with discounts
@@ -244,10 +249,10 @@ func (u *PlanUsecase) CalculatePlanPriceQuery(params *plan.CalculatePlanPriceQue
 		finalPrice = 0
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"plan":           plan,
 		"originalPrice":  plan.Price,
 		"discountAmount": discountAmount,
 		"finalPrice":     finalPrice,
-	}, nil
+	}, "قیمت پلن با موفقیت محاسبه شد"), nil
 }

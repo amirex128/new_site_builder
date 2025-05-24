@@ -17,7 +17,7 @@ func NewOrderItemRepository(db *gorm.DB) *OrderItemRepo {
 	}
 }
 
-func (r *OrderItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.OrderItem, int64, error) {
+func (r *OrderItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.OrderItem], error) {
 	var orderItems []domain.OrderItem
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *OrderItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto)
 
 	result := query.Limit(limit).Offset(offset).Find(&orderItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return orderItems, count, nil
+	return buildPaginationResponse(orderItems, paginationRequestDto, count)
 }
 
-func (r *OrderItemRepo) GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.OrderItem, int64, error) {
+func (r *OrderItemRepo) GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.OrderItem], error) {
 	var orderItems []domain.OrderItem
 	var count int64
 
@@ -47,10 +47,10 @@ func (r *OrderItemRepo) GetAllByOrderID(orderID int64, paginationRequestDto comm
 
 	result := query.Limit(limit).Offset(offset).Find(&orderItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return orderItems, count, nil
+	return buildPaginationResponse(orderItems, paginationRequestDto, count)
 }
 
 func (r *OrderItemRepo) GetByID(id int64) (domain.OrderItem, error) {

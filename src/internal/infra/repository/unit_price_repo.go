@@ -17,7 +17,7 @@ func NewUnitPriceRepository(db *gorm.DB) *UnitPriceRepo {
 	}
 }
 
-func (r *UnitPriceRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.UnitPrice, int64, error) {
+func (r *UnitPriceRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.UnitPrice], error) {
 	var unitPrices []domain.UnitPrice
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *UnitPriceRepo) GetAll(paginationRequestDto common.PaginationRequestDto)
 
 	result := query.Limit(limit).Offset(offset).Find(&unitPrices)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return unitPrices, count, nil
+	return buildPaginationResponse(unitPrices, paginationRequestDto, count)
 }
 
 func (r *UnitPriceRepo) GetByID(id int64) (domain.UnitPrice, error) {

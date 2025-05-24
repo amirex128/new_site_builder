@@ -17,7 +17,7 @@ func NewGatewayRepository(db *gorm.DB) *GatewayRepo {
 	}
 }
 
-func (r *GatewayRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Gateway, int64, error) {
+func (r *GatewayRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Gateway], error) {
 	var gateways []domain.Gateway
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *GatewayRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 
 	result := query.Limit(limit).Offset(offset).Find(&gateways)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return gateways, count, nil
+	return buildPaginationResponse(gateways, paginationRequestDto, count)
 }
 
 func (r *GatewayRepo) GetBySiteID(siteID int64) (domain.Gateway, error) {

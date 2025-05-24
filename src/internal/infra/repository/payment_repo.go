@@ -21,7 +21,7 @@ func NewPaymentRepository(db *gorm.DB) *PaymentRepo {
 	}
 }
 
-func (r *PaymentRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -33,13 +33,13 @@ func (r *PaymentRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 
 	result := query.Limit(limit).Offset(offset).Find(&payments)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return payments, count, nil
+	return buildPaginationResponse(payments, paginationRequestDto, count)
 }
 
-func (r *PaymentRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -51,13 +51,13 @@ func (r *PaymentRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.P
 
 	result := query.Limit(limit).Offset(offset).Find(&payments)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return payments, count, nil
+	return buildPaginationResponse(payments, paginationRequestDto, count)
 }
 
-func (r *PaymentRepo) GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -69,13 +69,13 @@ func (r *PaymentRepo) GetAllByOrderID(orderID int64, paginationRequestDto common
 
 	result := query.Limit(limit).Offset(offset).Find(&payments)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return payments, count, nil
+	return buildPaginationResponse(payments, paginationRequestDto, count)
 }
 
-func (r *PaymentRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Payment, int64, error) {
+func (r *PaymentRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error) {
 	var payments []domain.Payment
 	var count int64
 
@@ -87,10 +87,10 @@ func (r *PaymentRepo) GetAllByCustomerID(customerID int64, paginationRequestDto 
 
 	result := query.Limit(limit).Offset(offset).Find(&payments)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return payments, count, nil
+	return buildPaginationResponse(payments, paginationRequestDto, count)
 }
 
 func (r *PaymentRepo) GetByID(id int64) (domain.Payment, error) {

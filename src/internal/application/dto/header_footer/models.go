@@ -1,7 +1,7 @@
 package header_footer
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 )
 
 // HeaderFooterColumn corresponds to the C# HeaderFooterColumn class
@@ -14,12 +14,12 @@ type HeaderFooterColumn struct {
 
 // HeaderFooterComponent corresponds to the C# HeaderFooterComponent class
 type HeaderFooterComponent struct {
-	Name    string              `json:"name"`
-	Filters map[string][]string `json:"filters"`
-	Sort    string              `json:"sort"`
-	Title   string              `json:"title"`
-	Props   interface{}         `json:"props"`
-	Data    resp.PaginationJson `json:"data"`
+	Name    string                            `json:"name"`
+	Filters map[string][]string               `json:"filters"`
+	Sort    string                            `json:"sort"`
+	Title   string                            `json:"title"`
+	Props   interface{}                       `json:"props"`
+	Data    common.PaginationResponseDto[any] `json:"data"`
 }
 
 // HeaderFooterBody corresponds to the C# HeaderFooterBody class

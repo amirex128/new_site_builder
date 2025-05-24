@@ -1,16 +1,16 @@
 package page
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 )
 
 type PageComponent struct {
-	Name    string              `json:"name"`
-	Filters map[string][]string `json:"filters"`
-	Sort    string              `json:"sort"`
-	Title   string              `json:"title"`
-	Props   interface{}         `json:"props"`
-	Data    resp.PaginationJson `json:"data"`
+	Name    string                            `json:"name"`
+	Filters map[string][]string               `json:"filters"`
+	Sort    string                            `json:"sort"`
+	Title   string                            `json:"title"`
+	Props   interface{}                       `json:"props"`
+	Data    common.PaginationResponseDto[any] `json:"data"`
 }
 
 type PageColumn struct {

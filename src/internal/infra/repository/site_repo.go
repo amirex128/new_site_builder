@@ -17,7 +17,7 @@ func NewSiteRepository(db *gorm.DB) *SiteRepo {
 	}
 }
 
-func (r *SiteRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Site, int64, error) {
+func (r *SiteRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Site], error) {
 	var sites []domain.Site
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *SiteRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]d
 
 	result := query.Limit(limit).Offset(offset).Find(&sites)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return sites, count, nil
+	return buildPaginationResponse(sites, paginationRequestDto, count)
 }
 
-func (r *SiteRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Site, int64, error) {
+func (r *SiteRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Site], error) {
 	var sites []domain.Site
 	var count int64
 
@@ -47,10 +47,10 @@ func (r *SiteRepo) GetAllByUserID(userID int64, paginationRequestDto common.Pagi
 
 	result := query.Limit(limit).Offset(offset).Find(&sites)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return sites, count, nil
+	return buildPaginationResponse(sites, paginationRequestDto, count)
 }
 
 func (r *SiteRepo) GetByID(id int64) (domain.Site, error) {

@@ -1,12 +1,11 @@
 package repository
 
 import (
-	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
 
 type IPermissionRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, error)
+	GetAll() ([]domain.Permission, error)
 	GetByID(id int64) (domain.Permission, error)
 	GetByName(name string) (domain.Permission, error)
 	Create(permission domain.Permission) error

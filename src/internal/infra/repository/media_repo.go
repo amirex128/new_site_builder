@@ -17,7 +17,7 @@ func NewMediaRepository(db *gorm.DB) *MediaRepo {
 	}
 }
 
-func (r *MediaRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Media, int64, error) {
+func (r *MediaRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Media], error) {
 	var media []domain.Media
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *MediaRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]
 
 	result := query.Limit(limit).Offset(offset).Find(&media)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return media, count, nil
+	return buildPaginationResponse(media, paginationRequestDto, count)
 }
 
 func (r *MediaRepo) GetByID(id int64) (domain.Media, error) {

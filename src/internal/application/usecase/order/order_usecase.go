@@ -3,9 +3,10 @@ package orderusecase
 import (
 	"errors"
 	"fmt"
-	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"strconv"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -211,10 +212,10 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"success":    true,
 		"paymentUrl": paymentURL,
-	}, nil
+	}, "پرداخت با موفقیت انجام شد"), nil
 }
 
 func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyCommand) (*resp.Response, error) {
@@ -241,19 +242,17 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 	}
 
 	// Get latest payment for this order
-	payments, count, err := u.paymentRepo.GetAllByOrderID(orderID, common.PaginationRequestDto{
+	paymentsResult, err := u.paymentRepo.GetAllByOrderID(orderID, common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 1,
 	})
 	if err != nil {
 		return nil, err
 	}
-
-	if count == 0 {
+	if len(paymentsResult.Items) == 0 {
 		return nil, errors.New("پرداختی برای این سفارش یافت نشد")
 	}
-
-	payment := payments[0]
+	payment := paymentsResult.Items[0]
 
 	// Verify payment with gateway
 	// In a real application, you would call the payment gateway's API
@@ -277,11 +276,11 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 			return nil, err
 		}
 
-		return map[string]interface{}{
+		return resp.NewResponseData(resp.Success, map[string]interface{}{
 			"success": true,
 			"message": "پرداخت با موفقیت انجام شد",
 			"order":   order,
-		}, nil
+		}, "پرداخت با موفقیت انجام شد"), nil
 	}
 
 	// Payment failed
@@ -292,10 +291,10 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"success": false,
 		"message": "پرداخت ناموفق بود",
-	}, nil
+	}, "پرداخت ناموفق بود"), nil
 }
 
 func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustomerQuery) (*resp.Response, error) {
@@ -303,16 +302,17 @@ func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustome
 	if err != nil {
 		return nil, err
 	}
-
-	orders, count, err := u.orderRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
+	ordersResult, err := u.orderRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
-
-	return map[string]interface{}{
-		"items": orders,
-		"total": count,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     ordersResult.Items,
+		"total":     ordersResult.TotalCount,
+		"page":      ordersResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": ordersResult.TotalPages,
+	}, "لیست سفارشات با موفقیت دریافت شد"), nil
 }
 
 func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustomerDetailsQuery) (*resp.Response, error) {
@@ -320,30 +320,28 @@ func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustom
 	if err != nil {
 		return nil, err
 	}
-
 	order, err := u.orderRepo.GetByID(*params.OrderID)
 	if err != nil {
 		return nil, err
 	}
-
-	// Verify the order belongs to the current customer
 	if order.CustomerID != customerID {
 		return nil, errors.New("سفارش متعلق به این کاربر نیست")
 	}
-
-	return order, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"order": order}, "جزئیات سفارش با موفقیت دریافت شد"), nil
 }
 
 func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) (*resp.Response, error) {
-	orders, count, err := u.orderRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	ordersResult, err := u.orderRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
-
-	return map[string]interface{}{
-		"items": orders,
-		"total": count,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     ordersResult.Items,
+		"total":     ordersResult.TotalCount,
+		"page":      ordersResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": ordersResult.TotalPages,
+	}, "لیست سفارشات کاربر با موفقیت دریافت شد"), nil
 }
 
 func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetailsQuery) (*resp.Response, error) {
@@ -351,60 +349,50 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 	if err != nil {
 		return nil, err
 	}
-
-	// Verify the order belongs to the user's site
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
-
-	// Get user's sites
 	siteRepo := u.container.GetSiteRepo()
 	if siteRepo == nil {
 		return nil, errors.New("site repository not available")
 	}
-
-	// Check if the user has access to the site of this order
-	userSites, _, err := siteRepo.GetAllByUserID(userID, common.PaginationRequestDto{
+	userSitesResult, err := siteRepo.GetAllByUserID(userID, common.PaginationRequestDto{
 		Page:     1,
-		PageSize: 100, // Assuming users won't have more than 100 sites
+		PageSize: 100,
 	})
 	if err != nil {
 		return nil, err
 	}
-
-	// Check if the order's site is in the user's sites
 	hasAccess := false
-	for _, site := range userSites {
+	for _, site := range userSitesResult.Items {
 		if site.ID == order.SiteID {
 			hasAccess = true
 			break
 		}
 	}
-
-	// If admin, allow access regardless of site ownership
 	if !hasAccess {
 		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 		if err != nil {
 			return nil, err
 		}
-
 		if !isAdmin {
 			return nil, errors.New("شما به این سفارش دسترسی ندارید")
 		}
 	}
-
-	return order, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"order": order}, "جزئیات سفارش با موفقیت دریافت شد"), nil
 }
 
 func (u *OrderUsecase) AdminGetAllOrderUserQuery(params *order.AdminGetAllOrderUserQuery) (*resp.Response, error) {
-	orders, count, err := u.orderRepo.GetAll(params.PaginationRequestDto)
+	ordersResult, err := u.orderRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
-
-	return map[string]interface{}{
-		"items": orders,
-		"total": count,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     ordersResult.Items,
+		"total":     ordersResult.TotalCount,
+		"page":      ordersResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": ordersResult.TotalPages,
+	}, "لیست سفارشات ادمین با موفقیت دریافت شد"), nil
 }

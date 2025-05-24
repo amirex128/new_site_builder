@@ -13,6 +13,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
@@ -520,7 +521,7 @@ func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCus
 	}
 
 	// Get customer addresses
-	addresses, err := u.addressRepo.GetAllByCustomerID(customerID)
+	addressesResult, err := u.addressRepo.GetAllByCustomerID(customerID, common.PaginationRequestDto{Page: 1, PageSize: 100})
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -529,7 +530,7 @@ func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCus
 		resp.Retrieved,
 		resp.Data{
 			"customer": existingCustomer,
-			"address":  addresses,
+			"address":  addressesResult.Items,
 		},
 		"Customer profile retrieved successfully.",
 	), nil
@@ -552,13 +553,13 @@ func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllC
 	}
 
 	// Get all customers with pagination
-	customers, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	customersResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت لیست مشتریان")
 	}
 
 	// Calculate total pages
-	totalPages := (count + int64(params.PageSize) - 1) / int64(params.PageSize)
+	totalPages := (customersResult.TotalCount + int64(params.PageSize) - 1) / int64(params.PageSize)
 	if totalPages < 1 {
 		totalPages = 1
 	}
@@ -566,8 +567,8 @@ func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllC
 	return resp.NewResponseData(
 		resp.Success,
 		resp.Data{
-			"items":     customers,
-			"total":     count,
+			"items":     customersResult.Items,
+			"total":     customersResult.TotalCount,
 			"page":      params.Page,
 			"pageSize":  params.PageSize,
 			"totalPage": totalPages,

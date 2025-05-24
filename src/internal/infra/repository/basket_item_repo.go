@@ -17,7 +17,7 @@ func NewBasketItemRepository(db *gorm.DB) *BasketItemRepo {
 	}
 }
 
-func (r *BasketItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.BasketItem, int64, error) {
+func (r *BasketItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.BasketItem], error) {
 	var basketItems []domain.BasketItem
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *BasketItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto
 
 	result := query.Limit(limit).Offset(offset).Find(&basketItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return basketItems, count, nil
+	return buildPaginationResponse(basketItems, paginationRequestDto, count)
 }
 
-func (r *BasketItemRepo) GetAllByBasketID(basketID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.BasketItem, int64, error) {
+func (r *BasketItemRepo) GetAllByBasketID(basketID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.BasketItem], error) {
 	var basketItems []domain.BasketItem
 	var count int64
 
@@ -47,10 +47,10 @@ func (r *BasketItemRepo) GetAllByBasketID(basketID int64, paginationRequestDto c
 
 	result := query.Limit(limit).Offset(offset).Find(&basketItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return basketItems, count, nil
+	return buildPaginationResponse(basketItems, paginationRequestDto, count)
 }
 
 func (r *BasketItemRepo) GetByID(id int64) (domain.BasketItem, error) {

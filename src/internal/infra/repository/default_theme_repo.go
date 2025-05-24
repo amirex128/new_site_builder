@@ -17,7 +17,7 @@ func NewDefaultThemeRepository(db *gorm.DB) *DefaultThemeRepo {
 	}
 }
 
-func (r *DefaultThemeRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.DefaultTheme, int64, error) {
+func (r *DefaultThemeRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.DefaultTheme], error) {
 	var themes []domain.DefaultTheme
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *DefaultThemeRepo) GetAll(paginationRequestDto common.PaginationRequestD
 
 	result := query.Limit(limit).Offset(offset).Find(&themes)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return themes, count, nil
+	return buildPaginationResponse(themes, paginationRequestDto, count)
 }
 
 func (r *DefaultThemeRepo) GetByID(id int64) (domain.DefaultTheme, error) {

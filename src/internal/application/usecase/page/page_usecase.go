@@ -3,12 +3,13 @@ package pageusecase
 import (
 	"encoding/json"
 	"errors"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
@@ -140,8 +141,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.R
 	if err != nil {
 		return nil, err
 	}
-
-	return enhancePageResponse(createdPage), nil
+	return resp.NewResponseData(resp.Created, enhancePageResponse(createdPage), "صفحه با موفقیت ایجاد شد"), nil
 }
 
 func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.Response, error) {
@@ -290,8 +290,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.R
 	if err != nil {
 		return nil, err
 	}
-
-	return enhancePageResponse(updatedPage), nil
+	return resp.NewResponseData(resp.Updated, enhancePageResponse(updatedPage), "صفحه با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.Response, error) {
@@ -329,9 +328,9 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.R
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Deleted, map[string]interface{}{
 		"id": *params.ID,
-	}, nil
+	}, "صفحه با موفقیت حذف شد"), nil
 }
 
 func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Response, error) {
@@ -352,7 +351,7 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Res
 			return nil, err
 		}
 
-		return enhancePageResponse(pageItem), nil
+		return resp.NewResponseData(resp.Retrieved, enhancePageResponse(pageItem), "صفحه با موفقیت دریافت شد"), nil
 	} else if params.IDs != nil && len(params.IDs) > 0 {
 		// Get multiple pages by IDs
 		pages, err := u.repo.GetByIDs(params.IDs, *params.SiteID)
@@ -366,7 +365,7 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Res
 			enhancedPages = append(enhancedPages, enhancePageResponse(p))
 		}
 
-		return enhancedPages, nil
+		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancedPages}, "صفحات با موفقیت دریافت شدند"), nil
 	}
 
 	return nil, errors.New("شناسه صفحه یا صفحات الزامی است")
@@ -380,24 +379,23 @@ func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (*resp.Respo
 	})
 
 	// Get pages for site with pagination
-	pages, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	pagesResult, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// Enhance each page response
-	enhancedPages := make([]map[string]interface{}, 0, len(pages))
-	for _, p := range pages {
+	enhancedPages := make([]map[string]interface{}, 0, len(pagesResult.Items))
+	for _, p := range pagesResult.Items {
 		enhancedPages = append(enhancedPages, enhancePageResponse(p))
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedPages,
-		"total":     count,
-		"page":      params.Page,
+		"total":     pagesResult.TotalCount,
+		"page":      pagesResult.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": pagesResult.TotalPages,
+	}, "لیست صفحات با موفقیت دریافت شد"), nil
 }
 
 func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (*resp.Response, error) {
@@ -417,24 +415,23 @@ func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (*
 	}
 
 	// Get all pages with pagination
-	pages, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	pagesResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// Enhance each page response
-	enhancedPages := make([]map[string]interface{}, 0, len(pages))
-	for _, p := range pages {
+	enhancedPages := make([]map[string]interface{}, 0, len(pagesResult.Items))
+	for _, p := range pagesResult.Items {
 		enhancedPages = append(enhancedPages, enhancePageResponse(p))
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedPages,
-		"total":     count,
-		"page":      params.Page,
+		"total":     pagesResult.TotalCount,
+		"page":      pagesResult.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": pagesResult.TotalPages,
+	}, "لیست صفحات ادمین با موفقیت دریافت شد"), nil
 }
 
 func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (*resp.Response, error) {
@@ -455,7 +452,7 @@ func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (*resp
 		enhancedPages = append(enhancedPages, enhancePageResponse(p))
 	}
 
-	return enhancedPages, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancedPages}, "صفحات با موفقیت دریافت شدند"), nil
 }
 
 // Helper function to enhance page response with structured data

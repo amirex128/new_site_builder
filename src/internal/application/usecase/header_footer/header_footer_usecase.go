@@ -12,6 +12,7 @@ import (
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/header_footer"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -90,7 +91,9 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 		return nil, err
 	}
 
-	return createdHeaderFooter, nil
+	return resp.NewResponseData(resp.Created, resp.Data{
+		"headerFooter": createdHeaderFooter,
+	}, "هدر/فوتر با موفقیت ایجاد شد"), nil
 }
 
 func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.UpdateHeaderFooterCommand) (*resp.Response, error) {
@@ -164,7 +167,9 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 		return nil, err
 	}
 
-	return updatedHeaderFooter, nil
+	return resp.NewResponseData(resp.Updated, resp.Data{
+		"headerFooter": updatedHeaderFooter,
+	}, "هدر/فوتر با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.DeleteHeaderFooterCommand) (*resp.Response, error) {
@@ -202,9 +207,9 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Deleted, resp.Data{
 		"id": existingHeaderFooter.ID,
-	}, nil
+	}, "هدر/فوتر با موفقیت حذف شد"), nil
 }
 
 func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.GetByIdHeaderFooterQuery) (*resp.Response, error) {
@@ -233,7 +238,9 @@ func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.Get
 			return nil, errors.New("نوع هدر/فوتر مطابقت ندارد")
 		}
 
-		return headerFooter, nil
+		return resp.NewResponseData(resp.Retrieved, resp.Data{
+			"headerFooter": headerFooter,
+		}, "هدر/فوتر با موفقیت دریافت شد"), nil
 	} else if len(params.IDs) > 0 {
 		// Get by multiple IDs
 		// In a monolithic approach, we would need to implement a method to get by IDs in the repository
@@ -245,7 +252,9 @@ func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.Get
 				result = append(result, headerFooter)
 			}
 		}
-		return result, nil
+		return resp.NewResponseData(resp.Retrieved, resp.Data{
+			"headerFooters": result,
+		}, "هدر/فوترها با موفقیت دریافت شدند"), nil
 	}
 
 	return nil, errors.New("شناسه هدر/فوتر الزامی است")
@@ -257,34 +266,29 @@ func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetA
 		"type":   params.Type,
 	})
 
-	// Check site access (in a real implementation, we would verify user has access to the site)
-	// We don't need the userID here, so remove the unused variable
-
-	// Get all header/footers for the site
-	headerFooters, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	results, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// Filter by type if specified
+	items := results.Items
 	if params.Type != nil {
-		var filteredHeaderFooters []domain.HeaderFooter
-		for _, hf := range headerFooters {
+		filtered := make([]domain.HeaderFooter, 0, len(items))
+		for _, hf := range items {
 			if hf.Type == string(*params.Type) {
-				filteredHeaderFooters = append(filteredHeaderFooters, hf)
+				filtered = append(filtered, hf)
 			}
 		}
-		headerFooters = filteredHeaderFooters
-		count = int64(len(filteredHeaderFooters))
+		items = filtered
 	}
 
-	return map[string]interface{}{
-		"items":     headerFooters,
-		"total":     count,
-		"page":      params.Page,
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     items,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": results.TotalPages,
+	}, "هدر/فوترها با موفقیت دریافت شدند"), nil
 }
 
 func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer.AdminGetAllHeaderFooterQuery) (*resp.Response, error) {
@@ -293,29 +297,22 @@ func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer
 		"pageSize": params.PageSize,
 	})
 
-	// Check admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
-
 	if !isAdmin {
 		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
-	// Get all header/footers across all sites for admin
-	headerFooters, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	results, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"items":     headerFooters,
-		"total":     count,
-		"page":      params.Page,
-		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
+		"pagination": results,
+	}, ""), nil
 }
 
 func (u *HeaderFooterUsecase) GetHeaderFooterByDomainOrSiteIdQuery(params *header_footer.GetHeaderFooterByDomainOrSiteIdQuery) (*resp.Response, error) {
@@ -346,7 +343,7 @@ func (u *HeaderFooterUsecase) GetHeaderFooterByDomainOrSiteIdQuery(params *heade
 	// Get main header/footer for site
 	// In a real implementation, we would have a dedicated repository method for this
 	// For now, we'll get all and filter for the main one
-	headerFooters, _, err := u.repo.GetAllBySiteID(siteID, common.PaginationRequestDto{
+	result, err := u.repo.GetAllBySiteID(siteID, common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 100,
 	})
@@ -354,10 +351,14 @@ func (u *HeaderFooterUsecase) GetHeaderFooterByDomainOrSiteIdQuery(params *heade
 		return nil, err
 	}
 
+	headerFooters := result.Items
+
 	// Find main header/footer
 	for _, hf := range headerFooters {
 		if hf.IsMain {
-			return hf, nil
+			return resp.NewResponseData(resp.Retrieved, resp.Data{
+				"headerFooter": hf,
+			}, "هدر/فوتر اصلی با موفقیت دریافت شد"), nil
 		}
 	}
 

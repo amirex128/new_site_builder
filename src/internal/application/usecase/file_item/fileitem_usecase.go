@@ -11,6 +11,7 @@ import (
 	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/fileitem"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -197,7 +198,9 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 		return nil, fmt.Errorf("error saving file item: %v", err)
 	}
 
-	return fileItem, nil
+	return resp.NewResponseData(resp.Success, resp.Data{
+		"fileItem": fileItem,
+	}, ""), nil
 }
 
 // DeleteFileItemCommand marks a file item as deleted
@@ -218,9 +221,9 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 		return nil, fmt.Errorf("error deleting file: %v", err)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"id": params.ID,
-	}, nil
+	}, ""), nil
 }
 
 // ForceDeleteFileItemCommand permanently deletes a file item
@@ -274,9 +277,9 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 		}
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"id": params.ID,
-	}, nil
+	}, ""), nil
 }
 
 // RestoreFileItemCommand restores a deleted file item
@@ -287,9 +290,9 @@ func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileIte
 		return nil, fmt.Errorf("error restoring file: %v", result)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"id": params.ID,
-	}, nil
+	}, ""), nil
 }
 
 // UpdateFileItemCommand updates file item properties
@@ -327,7 +330,9 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 		return nil, fmt.Errorf("error updating file: %v", err)
 	}
 
-	return fileItem, nil
+	return resp.NewResponseData(resp.Success, resp.Data{
+		"fileItem": fileItem,
+	}, ""), nil
 }
 
 // FileOperationCommand handles file operations like copy, move, rename
@@ -546,10 +551,14 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			return nil, fmt.Errorf("error updating storage usage: %v", err)
 		}
 
-		return newFileItem, nil
+		return resp.NewResponseData(resp.Success, resp.Data{
+			"fileItem": newFileItem,
+		}, ""), nil
 	}
 
-	return fileItem, nil
+	return resp.NewResponseData(resp.Success, resp.Data{
+		"fileItem": fileItem,
+	}, ""), nil
 }
 
 // GetByIdsQuery retrieves file items by IDs
@@ -629,7 +638,9 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.R
 		result = append(result, fileItemDTO)
 	}
 
-	return result, nil
+	return resp.NewResponseData(resp.Success, resp.Data{
+		"items": result,
+	}, ""), nil
 }
 
 // GetDeletedTreeDirectoryQuery retrieves deleted file items
@@ -640,8 +651,9 @@ func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDelet
 		return nil, fmt.Errorf("error retrieving deleted items: %v", err)
 	}
 
-	// Build a tree structure (simplified for now)
-	return items, nil
+	return resp.NewResponseData(resp.Success, resp.Data{
+		"items": items,
+	}, ""), nil
 }
 
 // GetDownloadFileItemByIdQuery retrieves a file for download
@@ -671,10 +683,10 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 		return nil, fmt.Errorf("error downloading file: %v", err)
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Success, resp.Data{
 		"fileItem":       fileItem,
 		"downloadStream": stream,
-	}, nil
+	}, ""), nil
 }
 
 // GetTreeDirectoryQuery retrieves a directory tree
@@ -685,7 +697,9 @@ func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirector
 		return nil, fmt.Errorf("error retrieving directory tree: %v", err)
 	}
 
-	return items, nil
+	return resp.NewResponseData(resp.Success, resp.Data{
+		"items": items,
+	}, ""), nil
 }
 
 // Helper functions

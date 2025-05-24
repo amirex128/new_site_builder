@@ -41,7 +41,7 @@ func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
 	}
 }
 
-func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (*resp.Response, error) 
+func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (*resp.Response, error) {
 	userId, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت کاربر")
@@ -72,7 +72,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	comment := domain.Comment{
 		TicketID:     newTicket.ID,
 		Content:      *params.Comment.Content,
-		RespondentID: userID, // Use current user ID
+		RespondentID: userId, // Use current user ID
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 		IsDeleted:    false,
@@ -103,10 +103,12 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	// Get the created ticket with relations
 	createdTicket, err := u.repo.GetByIDWithRelations(newTicket.ID)
 	if err != nil {
-		return newTicket, nil // Return basic ticket if relations can't be loaded
+		return resp.NewResponseData(resp.Created, resp.Data{
+			"ticket": newTicket,
+		}, "تیکت با موفقیت ایجاد شد"), nil
 	}
 
-	return enhanceTicketResponse(createdTicket), nil
+	return resp.NewResponseData(resp.Created, enhanceTicketResponse(createdTicket), "تیکت با موفقیت ایجاد شد"), nil
 }
 
 func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) (*resp.Response, error) {
@@ -198,10 +200,12 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 	// Get the updated ticket with relations
 	updatedTicket, err := u.repo.GetByIDWithRelations(existingTicket.ID)
 	if err != nil {
-		return existingTicket, nil // Return basic ticket if relations can't be loaded
+		return resp.NewResponseData(resp.Updated, resp.Data{
+			"ticket": existingTicket,
+		}, "تیکت با موفقیت بروزرسانی شد"), nil
 	}
 
-	return enhanceTicketResponse(updatedTicket), nil
+	return resp.NewResponseData(resp.Updated, enhanceTicketResponse(updatedTicket), "تیکت با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicketCommand) (*resp.Response, error) {
@@ -297,10 +301,12 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 	// Get the updated ticket with relations
 	updatedTicket, err := u.repo.GetByIDWithRelations(existingTicket.ID)
 	if err != nil {
-		return existingTicket, nil // Return basic ticket if relations can't be loaded
+		return resp.NewResponseData(resp.Updated, resp.Data{
+			"ticket": existingTicket,
+		}, "تیکت با موفقیت بروزرسانی شد"), nil
 	}
 
-	return enhanceTicketResponse(updatedTicket), nil
+	return resp.NewResponseData(resp.Updated, enhanceTicketResponse(updatedTicket), "تیکت با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*resp.Response, error) {
@@ -331,7 +337,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*
 		}
 	}
 
-	return enhanceTicketResponse(result), nil
+	return resp.NewResponseData(resp.Retrieved, enhanceTicketResponse(result), "تیکت با موفقیت دریافت شد"), nil
 }
 
 func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*resp.Response, error) {
@@ -347,7 +353,7 @@ func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*re
 	}
 
 	// Get all tickets for the current user with pagination
-	tickets, count, err := u.repo.GetAllByUserID(userID, params.PaginationRequestDto)
+	ticketsResult, err := u.repo.GetAllByUserID(userID, params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all tickets for user", map[string]interface{}{
 			"error":  err.Error(),
@@ -357,18 +363,18 @@ func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*re
 	}
 
 	// Enhance ticket responses
-	enhancedTickets := make([]map[string]interface{}, 0, len(tickets))
-	for _, t := range tickets {
+	enhancedTickets := make([]map[string]interface{}, 0, len(ticketsResult.Items))
+	for _, t := range ticketsResult.Items {
 		enhancedTickets = append(enhancedTickets, enhanceTicketResponse(t))
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedTickets,
-		"total":     count,
-		"page":      params.Page,
+		"total":     ticketsResult.TotalCount,
+		"page":      ticketsResult.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": ticketsResult.TotalPages,
+	}, "لیست تیکت ها با موفقیت دریافت شد"), nil
 }
 
 func (u *TicketUsecase) AdminGetAllTicketQuery(params *ticket.AdminGetAllTicketQuery) (*resp.Response, error) {
@@ -388,7 +394,7 @@ func (u *TicketUsecase) AdminGetAllTicketQuery(params *ticket.AdminGetAllTicketQ
 	}
 
 	// Get all tickets with pagination
-	tickets, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	ticketsResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all tickets for admin", map[string]interface{}{
 			"error": err.Error(),
@@ -397,18 +403,18 @@ func (u *TicketUsecase) AdminGetAllTicketQuery(params *ticket.AdminGetAllTicketQ
 	}
 
 	// Enhance ticket responses
-	enhancedTickets := make([]map[string]interface{}, 0, len(tickets))
-	for _, t := range tickets {
+	enhancedTickets := make([]map[string]interface{}, 0, len(ticketsResult.Items))
+	for _, t := range ticketsResult.Items {
 		enhancedTickets = append(enhancedTickets, enhanceTicketResponse(t))
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedTickets,
-		"total":     count,
-		"page":      params.Page,
+		"total":     ticketsResult.TotalCount,
+		"page":      ticketsResult.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": ticketsResult.TotalPages,
+	}, "لیست تیکت ها با موفقیت دریافت شد"), nil
 }
 
 // Helper function to enhance ticket response with structured data

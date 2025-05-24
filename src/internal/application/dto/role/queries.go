@@ -15,4 +15,5 @@ type GetAllRoleQuery struct {
 // GetRolePermissionsQuery represents a query to get role permissions
 type GetRolePermissionsQuery struct {
 	common.PaginationRequestDto
+	RoleID int64 `json:"roleId" form:"roleId" nameFa:"شناسه نقش" validate:"required"`
 }

@@ -2,16 +2,18 @@ package productcategoryusecase
 
 import (
 	"errors"
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_category"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -102,7 +104,9 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 		return nil, err
 	}
 
-	return createdCategory, nil
+	return resp.NewResponseData(resp.Created, resp.Data{
+		"category": createdCategory,
+	}, "دسته‌بندی با موفقیت ایجاد شد"), nil
 }
 
 func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.UpdateCategoryCommand) (*resp.Response, error) {
@@ -194,7 +198,9 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 		return nil, err
 	}
 
-	return updatedCategory, nil
+	return resp.NewResponseData(resp.Updated, resp.Data{
+		"category": updatedCategory,
+	}, "دسته‌بندی با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.DeleteCategoryCommand) (*resp.Response, error) {
@@ -232,9 +238,9 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Deleted, resp.Data{
 		"success": true,
-	}, nil
+	}, "دسته‌بندی با موفقیت حذف شد"), nil
 }
 
 func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.GetByIdCategoryQuery) (*resp.Response, error) {
@@ -294,7 +300,7 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 		response["media"] = mediaURLs
 	}
 
-	return response, nil
+	return resp.NewResponseData(resp.Retrieved, resp.Data(response), "دسته‌بندی با موفقیت دریافت شد"), nil
 }
 
 func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.GetAllCategoryQuery) (*resp.Response, error) {
@@ -308,10 +314,13 @@ func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.Ge
 	// In a real implementation, we would check if the user has access to this site
 
 	// Get all categories for the site
-	categories, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	result, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
+
+	categories := result.Items
+	count := result.TotalCount
 
 	// Prepare response items with media URLs
 	var items []map[string]interface{}
@@ -351,13 +360,13 @@ func (u *ProductCategoryUsecase) GetAllCategoryQuery(params *product_category.Ge
 	}
 
 	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":     items,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "دسته‌بندی‌ها با موفقیت دریافت شدند"), nil
 }
 
 func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
@@ -377,10 +386,13 @@ func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_catego
 	}
 
 	// Get all categories across all sites for admin
-	categories, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	result, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
+
+	categories := result.Items
+	count := result.TotalCount
 
 	// Prepare response items with media URLs
 	var items []map[string]interface{}
@@ -420,13 +432,13 @@ func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_catego
 	}
 
 	// Return paginated result
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":     items,
 		"total":     count,
 		"page":      params.Page,
 		"pageSize":  params.PageSize,
 		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+	}, "دسته‌بندی‌ها با موفقیت دریافت شدند"), nil
 }
 
 // Helper functions

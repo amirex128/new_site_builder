@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
@@ -299,19 +301,17 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 		"pageSize": params.PageSize,
 	})
 
-	var results []domain.Address
-	var count int64
+	var results *common.PaginationResponseDto[domain.Address]
 	var err error
 
 	// Try to get customer ID first
 	customerID, customerErr := u.authContext(u.Ctx).GetCustomerID()
 	if customerErr == nil && customerID > 0 {
 		// Get addresses for customer
-		results, err = u.addressRepo.GetAllByCustomerID(customerID)
+		results, err = u.addressRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
 		if err != nil {
 			return nil, errors.New("خطا در دریافت آدرس ها")
 		}
-		count = int64(len(results))
 	} else {
 		// Try user ID
 		userID, userErr := u.authContext(u.Ctx).GetUserID()
@@ -320,25 +320,24 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 		}
 
 		// Get addresses for user
-		results, err = u.addressRepo.GetAllByUserID(userID)
+		results, err = u.addressRepo.GetAllByUserID(userID, params.PaginationRequestDto)
 		if err != nil {
 			return nil, errors.New("خطا در دریافت آدرس ها")
 		}
-		count = int64(len(results))
 	}
 
 	// Enhance response with full details
-	enhancedAddresses := make([]map[string]interface{}, 0, len(results))
-	for _, addr := range results {
+	enhancedAddresses := make([]map[string]interface{}, 0, len(results.Items))
+	for _, addr := range results.Items {
 		enhancedAddresses = append(enhancedAddresses, enhanceAddressResponse(addr))
 	}
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedAddresses,
-		"total":     count,
-		"page":      params.Page,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
+		"totalPage": results.TotalPages,
 	}, "آدرس ها با موفقیت دریافت شدند"), nil
 }
 
@@ -360,7 +359,7 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 	}
 
 	// Get all addresses with pagination
-	results, count, err := u.addressRepo.GetAll(params.PaginationRequestDto)
+	results, err := u.addressRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all addresses", map[string]interface{}{
 			"error": err.Error(),
@@ -369,17 +368,17 @@ func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddr
 	}
 
 	// Enhance response with full details
-	enhancedAddresses := make([]map[string]interface{}, 0, len(results))
-	for _, addr := range results {
+	enhancedAddresses := make([]map[string]interface{}, 0, len(results.Items))
+	for _, addr := range results.Items {
 		enhancedAddresses = append(enhancedAddresses, enhanceAddressResponse(addr))
 	}
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     enhancedAddresses,
-		"total":     count,
-		"page":      params.Page,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
+		"totalPage": results.TotalPages,
 	}, "آدرس ها با موفقیت دریافت شدند"), nil
 }
 
@@ -391,7 +390,7 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (*resp
 	})
 
 	// Get all cities with pagination
-	results, count, err := u.cityRepo.GetAll(params.PaginationRequestDto)
+	results, err := u.cityRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all cities", map[string]interface{}{
 			"error": err.Error(),
@@ -400,8 +399,8 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (*resp
 	}
 
 	// Convert cities to simplified response format
-	cities := make([]map[string]interface{}, 0, len(results))
-	for _, city := range results {
+	cities := make([]map[string]interface{}, 0, len(results.Items))
+	for _, city := range results.Items {
 		cityData := map[string]interface{}{
 			"id":         city.ID,
 			"name":       city.Name,
@@ -423,10 +422,10 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (*resp
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     cities,
-		"total":     count,
-		"page":      params.Page,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
+		"totalPage": results.TotalPages,
 	}, "شهرها با موفقیت دریافت شدند"), nil
 }
 
@@ -438,7 +437,7 @@ func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery
 	})
 
 	// Get all provinces with pagination
-	results, count, err := u.provinceRepo.GetAll(params.PaginationRequestDto)
+	results, err := u.provinceRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all provinces", map[string]interface{}{
 			"error": err.Error(),
@@ -447,8 +446,8 @@ func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery
 	}
 
 	// Convert provinces to simplified response format
-	provinces := make([]map[string]interface{}, 0, len(results))
-	for _, province := range results {
+	provinces := make([]map[string]interface{}, 0, len(results.Items))
+	for _, province := range results.Items {
 		provinceData := map[string]interface{}{
 			"id":     province.ID,
 			"name":   province.Name,
@@ -461,10 +460,10 @@ func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     provinces,
-		"total":     count,
-		"page":      params.Page,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
+		"totalPage": results.TotalPages,
 	}, "استان ها با موفقیت دریافت شدند"), nil
 }
 

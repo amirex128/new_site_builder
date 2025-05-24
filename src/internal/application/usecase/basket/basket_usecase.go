@@ -172,13 +172,13 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				variantPrice = variant.Price
 			} else {
 				// If no variant is specified, try to get the first variant for this product
-				variants, count, err := u.productVariantRepo.GetAllByProductID(product.ID, common.PaginationRequestDto{
+				variantsResult, err := u.productVariantRepo.GetAllByProductID(product.ID, common.PaginationRequestDto{
 					Page:     1,
 					PageSize: 1,
 				})
-				if err == nil && count > 0 {
-					variantPrice = variants[0].Price
-					variant = variants[0]
+				if err == nil && len(variantsResult.Items) > 0 {
+					variantPrice = variantsResult.Items[0].Price
+					variant = variantsResult.Items[0]
 				}
 			}
 
@@ -346,14 +346,14 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 		return nil, err
 	}
 
-	baskets, count, err := u.basketRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
+	basketsResult, err := u.basketRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": baskets,
-		"total": count,
+		"items": basketsResult.Items,
+		"total": basketsResult.TotalCount,
 	}, "Customer baskets retrieved successfully"), nil
 }
 
@@ -362,13 +362,13 @@ func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBas
 		"params": params,
 	})
 
-	result, count, err := u.basketRepo.GetAll(params.PaginationRequestDto)
+	result, err := u.basketRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": result,
-		"total": count,
+		"items": result.Items,
+		"total": result.TotalCount,
 	}, "All baskets retrieved successfully (Admin)"), nil
 }

@@ -19,7 +19,7 @@ func NewCouponRepository(db *gorm.DB) *CouponRepo {
 	}
 }
 
-func (r *CouponRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Coupon, int64, error) {
+func (r *CouponRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Coupon], error) {
 	var coupons []domain.Coupon
 	var count int64
 
@@ -31,10 +31,10 @@ func (r *CouponRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([
 
 	result := query.Limit(limit).Offset(offset).Find(&coupons)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return coupons, count, nil
+	return buildPaginationResponse(coupons, paginationRequestDto, count)
 }
 
 func (r *CouponRepo) GetByProductID(productID int64) (domain.Coupon, error) {

@@ -19,7 +19,7 @@ func NewFileItemRepository(db *gorm.DB) *FileItemRepo {
 	}
 }
 
-func (r *FileItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.FileItem, int64, error) {
+func (r *FileItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.FileItem], error) {
 	var fileItems []domain.FileItem
 	var count int64
 
@@ -31,13 +31,13 @@ func (r *FileItemRepo) GetAll(paginationRequestDto common.PaginationRequestDto) 
 
 	result := query.Limit(limit).Offset(offset).Find(&fileItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return fileItems, count, nil
+	return buildPaginationResponse(fileItems, paginationRequestDto, count)
 }
 
-func (r *FileItemRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.FileItem, int64, error) {
+func (r *FileItemRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.FileItem], error) {
 	var fileItems []domain.FileItem
 	var count int64
 
@@ -49,13 +49,13 @@ func (r *FileItemRepo) GetAllByUserID(userID int64, paginationRequestDto common.
 
 	result := query.Limit(limit).Offset(offset).Find(&fileItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return fileItems, count, nil
+	return buildPaginationResponse(fileItems, paginationRequestDto, count)
 }
 
-func (r *FileItemRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.FileItem, int64, error) {
+func (r *FileItemRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.FileItem], error) {
 	var fileItems []domain.FileItem
 	var count int64
 
@@ -67,10 +67,10 @@ func (r *FileItemRepo) GetAllByParentID(parentID int64, paginationRequestDto com
 
 	result := query.Limit(limit).Offset(offset).Find(&fileItems)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return fileItems, count, nil
+	return buildPaginationResponse(fileItems, paginationRequestDto, count)
 }
 
 func (r *FileItemRepo) GetByID(id int64) (domain.FileItem, error) {

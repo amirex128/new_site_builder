@@ -81,7 +81,7 @@ func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitP
 		return nil, err
 	}
 
-	return existingUnitPrice, nil
+	return resp.NewResponseData(resp.Updated, map[string]interface{}{"unitPrice": existingUnitPrice}, "Unit price updated successfully"), nil
 }
 
 // CalculateUnitPriceQuery calculates the price for unit prices
@@ -104,7 +104,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 
 	// In a real implementation, we would need to add a method to get unit prices by names
 	// For now, we'll get all unit prices and filter them
-	allUnitPrices, _, err := u.unitPriceRepo.GetAll(common.PaginationRequestDto{Page: 1, PageSize: 100})
+	allUnitPricesResult, err := u.unitPriceRepo.GetAll(common.PaginationRequestDto{Page: 1, PageSize: 100})
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 	for _, unitPriceParam := range params.UnitPrices {
 		// Find the matching unit price
 		var matchingUnitPrice *enums.UnitPriceNameEnum
-		for _, up := range allUnitPrices {
+		for _, up := range allUnitPricesResult.Items {
 			if up.Name == string(*unitPriceParam.UnitPriceName) {
 				matchingUnitPrice = unitPriceParam.UnitPriceName
 
@@ -194,7 +194,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 		}
 	}
 
-	return data, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"calculatedPrices": data}, "Unit prices calculated successfully"), nil
 }
 
 // GetAllUnitPriceQuery gets all unit prices with pagination
@@ -210,13 +210,16 @@ func (u *UnitPriceUsecase) GetAllUnitPriceQuery(params *unit_price.GetAllUnitPri
 	}
 
 	// Get all unit prices
-	unitPrices, count, err := u.unitPriceRepo.GetAll(params.PaginationRequestDto)
+	unitPricesResult, err := u.unitPriceRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]interface{}{
-		"items": unitPrices,
-		"total": count,
-	}, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     unitPricesResult.Items,
+		"total":     unitPricesResult.TotalCount,
+		"page":      unitPricesResult.PageNumber,
+		"pageSize":  params.PageSize,
+		"totalPage": unitPricesResult.TotalPages,
+	}, "Unit prices retrieved successfully"), nil
 }

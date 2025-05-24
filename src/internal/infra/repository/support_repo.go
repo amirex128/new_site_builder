@@ -18,7 +18,7 @@ func NewTicketRepository(db *gorm.DB) *TicketRepo {
 	}
 }
 
-func (r *TicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error) {
+func (r *TicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Ticket], error) {
 	var tickets []domain.Ticket
 	var count int64
 
@@ -30,13 +30,13 @@ func (r *TicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([
 
 	result := query.Limit(limit).Offset(offset).Find(&tickets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return tickets, count, nil
+	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
-func (r *TicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error) {
+func (r *TicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Ticket], error) {
 	var tickets []domain.Ticket
 	var count int64
 
@@ -48,13 +48,13 @@ func (r *TicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.Pa
 
 	result := query.Limit(limit).Offset(offset).Find(&tickets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return tickets, count, nil
+	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
-func (r *TicketRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Ticket, int64, error) {
+func (r *TicketRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Ticket], error) {
 	var tickets []domain.Ticket
 	var count int64
 
@@ -66,10 +66,10 @@ func (r *TicketRepo) GetAllByUserID(userID int64, paginationRequestDto common.Pa
 
 	result := query.Limit(limit).Offset(offset).Find(&tickets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return tickets, count, nil
+	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
 func (r *TicketRepo) GetByID(id int64) (domain.Ticket, error) {
@@ -124,7 +124,7 @@ func NewCustomerTicketRepository(db *gorm.DB) *CustomerTicketRepo {
 	}
 }
 
-func (r *CustomerTicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
+func (r *CustomerTicketRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.CustomerTicket], error) {
 	var tickets []domain.CustomerTicket
 	var count int64
 
@@ -136,13 +136,13 @@ func (r *CustomerTicketRepo) GetAll(paginationRequestDto common.PaginationReques
 
 	result := query.Limit(limit).Offset(offset).Find(&tickets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return tickets, count, nil
+	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
-func (r *CustomerTicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
+func (r *CustomerTicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.CustomerTicket], error) {
 	var tickets []domain.CustomerTicket
 	var count int64
 
@@ -154,13 +154,13 @@ func (r *CustomerTicketRepo) GetAllBySiteID(siteID int64, paginationRequestDto c
 
 	result := query.Limit(limit).Offset(offset).Find(&tickets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return tickets, count, nil
+	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
-func (r *CustomerTicketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.CustomerTicket, int64, error) {
+func (r *CustomerTicketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.CustomerTicket], error) {
 	var tickets []domain.CustomerTicket
 	var count int64
 
@@ -172,10 +172,10 @@ func (r *CustomerTicketRepo) GetAllByCustomerID(customerID int64, paginationRequ
 
 	result := query.Limit(limit).Offset(offset).Find(&tickets)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return tickets, count, nil
+	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
 func (r *CustomerTicketRepo) GetByID(id int64) (domain.CustomerTicket, error) {

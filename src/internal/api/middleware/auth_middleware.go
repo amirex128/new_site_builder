@@ -38,14 +38,14 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			utils.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error(), map[string]any{})
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			utils.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error(), map[string]any{})
 			return
 		}
 
@@ -66,7 +66,7 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 				}
 			}
 			if !hasRole {
-				utils.Forbidden(c, "Insufficient permissions for role: "+requiredRole)
+				utils.Unauthorized(c, "Insufficient permissions for role: "+requiredRole, map[string]any{})
 				return
 			}
 		}
@@ -85,14 +85,14 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			utils.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error(), map[string]any{})
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			utils.Unauthorized(c, err.Error())
+			utils.Unauthorized(c, err.Error(), map[string]any{})
 			return
 		}
 
@@ -119,7 +119,7 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 			}
 
 			if !hasAnyRole {
-				utils.Forbidden(c, "Insufficient permissions, requires one of: "+strings.Join(roles, ", "))
+				utils.Unauthorized(c, "Insufficient permissions, requires one of: "+strings.Join(roles, ", "), map[string]any{})
 				return
 			}
 		}

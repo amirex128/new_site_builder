@@ -17,7 +17,7 @@ func NewCreditRepository(db *gorm.DB) *CreditRepo {
 	}
 }
 
-func (r *CreditRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Credit, int64, error) {
+func (r *CreditRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error) {
 	var credits []domain.Credit
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *CreditRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([
 
 	result := query.Limit(limit).Offset(offset).Find(&credits)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return credits, count, nil
+	return buildPaginationResponse(credits, paginationRequestDto, count)
 }
 
-func (r *CreditRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Credit, int64, error) {
+func (r *CreditRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error) {
 	var credits []domain.Credit
 	var count int64
 
@@ -47,13 +47,13 @@ func (r *CreditRepo) GetAllByUserID(userID int64, paginationRequestDto common.Pa
 
 	result := query.Limit(limit).Offset(offset).Find(&credits)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return credits, count, nil
+	return buildPaginationResponse(credits, paginationRequestDto, count)
 }
 
-func (r *CreditRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Credit, int64, error) {
+func (r *CreditRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error) {
 	var credits []domain.Credit
 	var count int64
 
@@ -65,10 +65,10 @@ func (r *CreditRepo) GetAllByCustomerID(customerID int64, paginationRequestDto c
 
 	result := query.Limit(limit).Offset(offset).Find(&credits)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return credits, count, nil
+	return buildPaginationResponse(credits, paginationRequestDto, count)
 }
 
 func (r *CreditRepo) GetByID(id int64) (domain.Credit, error) {

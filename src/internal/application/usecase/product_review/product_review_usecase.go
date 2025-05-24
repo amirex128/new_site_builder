@@ -2,14 +2,16 @@ package productreviewusecase
 
 import (
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_review"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -59,9 +61,9 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 
 	// Get customer ID if available (in this monolithic app, we may have a customer context too)
 	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
+	// Use userId if customerID is 0
 	if customerID == 0 {
-		// If no customer ID available, use a default or generate one
-		customerID = 1 // Default value, in a real app this would need proper handling
+		customerID = userID
 	}
 
 	// Create review entity
@@ -92,7 +94,7 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 		return nil, err
 	}
 
-	return createdReview, nil
+	return resp.NewResponseData(resp.Created, map[string]interface{}{"review": createdReview}, "نظر با موفقیت ایجاد شد"), nil
 }
 
 func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review.UpdateProductReviewCommand) (*resp.Response, error) {
@@ -166,7 +168,7 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 		return nil, err
 	}
 
-	return updatedReview, nil
+	return resp.NewResponseData(resp.Updated, map[string]interface{}{"review": updatedReview}, "نظر با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review.DeleteProductReviewCommand) (*resp.Response, error) {
@@ -205,9 +207,9 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 		return nil, err
 	}
 
-	return map[string]interface{}{
+	return resp.NewResponseData(resp.Deleted, map[string]interface{}{
 		"success": true,
-	}, nil
+	}, "نظر با موفقیت حذف شد"), nil
 }
 
 func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.GetByIdProductReviewQuery) (*resp.Response, error) {
@@ -234,7 +236,7 @@ func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.
 		}
 	}
 
-	return review, nil
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"review": review}, "نظر با موفقیت دریافت شد"), nil
 }
 
 func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.GetAllProductReviewQuery) (*resp.Response, error) {
@@ -249,19 +251,19 @@ func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.G
 	// For simplicity, we'll allow access to approved reviews for all
 
 	// Get all reviews for the site
-	reviews, count, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	reviewsResult, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	// Return paginated result
-	return map[string]interface{}{
-		"items":     reviews,
-		"total":     count,
-		"page":      params.Page,
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     reviewsResult.Items,
+		"total":     reviewsResult.TotalCount,
+		"page":      reviewsResult.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": reviewsResult.TotalPages,
+	}, "لیست نظرات با موفقیت دریافت شد"), nil
 }
 
 func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_review.AdminGetAllProductReviewQuery) (*resp.Response, error) {
@@ -281,17 +283,17 @@ func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_rev
 	}
 
 	// Get all reviews across all sites for admin
-	reviews, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	reviewsResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	// Return paginated result
-	return map[string]interface{}{
-		"items":     reviews,
-		"total":     count,
-		"page":      params.Page,
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     reviewsResult.Items,
+		"total":     reviewsResult.TotalCount,
+		"page":      reviewsResult.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": reviewsResult.TotalPages,
+	}, "لیست نظرات ادمین با موفقیت دریافت شد"), nil
 }

@@ -352,14 +352,12 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 		"pageSize": params.PageSize,
 	})
 
-	// Get customer ID from auth context
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, errors.New("خطا در احراز هویت مشتری")
 	}
 
-	// Get all tickets for the current customer with pagination
-	tickets, count, err := u.repo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
+	results, err := u.repo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all tickets for customer", map[string]interface{}{
 			"error":      err.Error(),
@@ -368,13 +366,13 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 		return nil, errors.New("خطا در دریافت تیکت های مشتری")
 	}
 
-	return map[string]interface{}{
-		"items":     enhancedTickets,
-		"total":     count,
-		"page":      params.Page,
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     results.Items,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": results.TotalPages,
+	}, "تیکت های مشتری با موفقیت دریافت شدند"), nil
 }
 
 func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_ticket.AdminGetAllCustomerTicketQuery) (*resp.Response, error) {
@@ -383,18 +381,15 @@ func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_
 		"pageSize": params.PageSize,
 	})
 
-	// Check if user is admin
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
-
 	if !isAdmin {
 		return nil, errors.New("شما دسترسی به این عملیات را ندارید")
 	}
 
-	// Get all tickets with pagination
-	tickets, count, err := u.repo.GetAll(params.PaginationRequestDto)
+	results, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		u.Logger.Error("Error getting all customer tickets for admin", map[string]interface{}{
 			"error": err.Error(),
@@ -402,17 +397,11 @@ func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_
 		return nil, errors.New("خطا در دریافت تیکت های مشتری")
 	}
 
-	// Enhance ticket responses
-	enhancedTickets := make([]map[string]interface{}, 0, len(tickets))
-	for _, t := range tickets {
-		enhancedTickets = append(enhancedTickets, enhanceCustomerTicketResponse(t))
-	}
-
-	return map[string]interface{}{
-		"items":     enhancedTickets,
-		"total":     count,
-		"page":      params.Page,
+	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+		"items":     results.Items,
+		"total":     results.TotalCount,
+		"page":      results.PageNumber,
 		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, nil
+		"totalPage": results.TotalPages,
+	}, "تیکت های مشتری با موفقیت دریافت شدند (ادمین)"), nil
 }

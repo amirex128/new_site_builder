@@ -17,7 +17,7 @@ func NewUserRepository(db *gorm.DB) *UserRepo {
 	}
 }
 
-func (r *UserRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.User, int64, error) {
+func (r *UserRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.User], error) {
 	var users []domain.User
 	var count int64
 
@@ -29,17 +29,16 @@ func (r *UserRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]d
 
 	result := query.Limit(limit).Offset(offset).Find(&users)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return users, count, nil
+	return buildPaginationResponse(users, paginationRequestDto, count)
 }
 
-func (r *UserRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.User, int64, error) {
+func (r *UserRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.User], error) {
 	var users []domain.User
 	var count int64
 
-	// Users related to sites might be through Site relation, adjust query as needed
 	query := r.database.Model(&domain.User{}).
 		Joins("JOIN sites ON sites.user_id = users.id").
 		Where("sites.id = ?", siteID)
@@ -51,10 +50,10 @@ func (r *UserRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.Pagi
 
 	result := query.Limit(limit).Offset(offset).Find(&users)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return users, count, nil
+	return buildPaginationResponse(users, paginationRequestDto, count)
 }
 
 func (r *UserRepo) GetByID(id int64) (domain.User, error) {

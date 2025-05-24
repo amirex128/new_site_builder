@@ -2,10 +2,11 @@ package defaultthemeusecase
 
 import (
 	"errors"
+	"time"
+
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -235,15 +236,18 @@ func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAl
 		"pageSize": params.PageSize,
 	})
 
-	// Get paginated list of themes
-	themes, _, err := u.defaultThemeRepo.GetAll(params.PaginationRequestDto)
+	themesResult, err := u.defaultThemeRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
 	return resp.NewResponseData(resp.Success,
 		resp.Data{
-			"default_theme": themes,
+			"default_theme": themesResult.Items,
+			"total":         themesResult.TotalCount,
+			"page":          themesResult.PageNumber,
+			"pageSize":      params.PageSize,
+			"totalPage":     themesResult.TotalPages,
 		},
 		"success"), nil
 }

@@ -19,7 +19,7 @@ func NewDiscountRepository(db *gorm.DB) *DiscountRepo {
 	}
 }
 
-func (r *DiscountRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Discount, int64, error) {
+func (r *DiscountRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Discount], error) {
 	var discounts []domain.Discount
 	var count int64
 
@@ -31,13 +31,13 @@ func (r *DiscountRepo) GetAll(paginationRequestDto common.PaginationRequestDto) 
 
 	result := query.Limit(limit).Offset(offset).Find(&discounts)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return discounts, count, nil
+	return buildPaginationResponse(discounts, paginationRequestDto, count)
 }
 
-func (r *DiscountRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Discount, int64, error) {
+func (r *DiscountRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Discount], error) {
 	var discounts []domain.Discount
 	var count int64
 
@@ -49,17 +49,16 @@ func (r *DiscountRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.
 
 	result := query.Limit(limit).Offset(offset).Find(&discounts)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return discounts, count, nil
+	return buildPaginationResponse(discounts, paginationRequestDto, count)
 }
 
-func (r *DiscountRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Discount, int64, error) {
+func (r *DiscountRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Discount], error) {
 	var discounts []domain.Discount
 	var count int64
 
-	// For many-to-many relationship using the join table
 	query := r.database.Model(&domain.Discount{}).
 		Joins("JOIN product_discount ON product_discount.discount_id = discounts.id").
 		Where("product_discount.product_id = ?", productID)
@@ -71,10 +70,10 @@ func (r *DiscountRepo) GetAllByProductID(productID int64, paginationRequestDto c
 
 	result := query.Limit(limit).Offset(offset).Find(&discounts)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return discounts, count, nil
+	return buildPaginationResponse(discounts, paginationRequestDto, count)
 }
 
 func (r *DiscountRepo) GetByID(id int64) (domain.Discount, error) {

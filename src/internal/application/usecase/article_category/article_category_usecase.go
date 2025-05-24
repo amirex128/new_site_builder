@@ -228,22 +228,15 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 }
 
 func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (*resp.Response, error) {
-	// Implementation to get all categories by site ID, based on .NET GetAllCategoryQuery
 	u.Logger.Info("Getting all categories by site ID", map[string]interface{}{"siteID": *params.SiteID})
 
-	// Check if user has access to this site
-	// In a real implementation, check if the current user has rights to view categories for this site
-	// This is equivalent to the gate.HasSiteAccess(request.SiteId) call in .NET
-
-	result, count, err := u.categoryRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
+	result, err := u.categoryRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// For each category, get media information
-	// In a more efficient implementation, this would be done in a single query
-	categoriesWithMedia := make([]map[string]interface{}, len(result))
-	for i, category := range result {
+	categoriesWithMedia := make([]map[string]interface{}, len(result.Items))
+	for i, category := range result.Items {
 		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
 		if err != nil {
 			u.Logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
@@ -258,26 +251,20 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": categoriesWithMedia,
-		"total": count,
+		"total": result.TotalCount,
 	}, "Article categories retrieved successfully"), nil
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
-	// Implementation to get all categories for admin, based on .NET AdminGetAllCategoryQuery
 	u.Logger.Info("Admin getting all categories", map[string]interface{}{})
 
-	// Check if user has admin access
-	// In a real implementation, check if the current user has admin rights
-	// This is equivalent to the gate.HasSiteAccess() call in .NET
-
-	result, count, err := u.categoryRepo.GetAll(params.PaginationRequestDto)
+	result, err := u.categoryRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, err
 	}
 
-	// For each category, get media information
-	categoriesWithMedia := make([]map[string]interface{}, len(result))
-	for i, category := range result {
+	categoriesWithMedia := make([]map[string]interface{}, len(result.Items))
+	for i, category := range result.Items {
 		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
 		if err != nil {
 			u.Logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
@@ -292,6 +279,6 @@ func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_catego
 
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": categoriesWithMedia,
-		"total": count,
+		"total": result.TotalCount,
 	}, "Article categories retrieved successfully (Admin)"), nil
 }

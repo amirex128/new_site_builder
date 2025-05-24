@@ -17,7 +17,7 @@ func NewProductCategoryRepository(db *gorm.DB) *ProductCategoryRepo {
 	}
 }
 
-func (r *ProductCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
+func (r *ProductCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductCategory], error) {
 	var categories []domain.ProductCategory
 	var count int64
 
@@ -29,13 +29,13 @@ func (r *ProductCategoryRepo) GetAll(paginationRequestDto common.PaginationReque
 
 	result := query.Limit(limit).Offset(offset).Find(&categories)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return categories, count, nil
+	return buildPaginationResponse(categories, paginationRequestDto, count)
 }
 
-func (r *ProductCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
+func (r *ProductCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductCategory], error) {
 	var categories []domain.ProductCategory
 	var count int64
 
@@ -47,13 +47,13 @@ func (r *ProductCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto 
 
 	result := query.Limit(limit).Offset(offset).Find(&categories)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return categories, count, nil
+	return buildPaginationResponse(categories, paginationRequestDto, count)
 }
 
-func (r *ProductCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ProductCategory, int64, error) {
+func (r *ProductCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductCategory], error) {
 	var categories []domain.ProductCategory
 	var count int64
 
@@ -65,10 +65,10 @@ func (r *ProductCategoryRepo) GetAllByParentID(parentID int64, paginationRequest
 
 	result := query.Limit(limit).Offset(offset).Find(&categories)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return categories, count, nil
+	return buildPaginationResponse(categories, paginationRequestDto, count)
 }
 
 func (r *ProductCategoryRepo) GetByID(id int64) (domain.ProductCategory, error) {

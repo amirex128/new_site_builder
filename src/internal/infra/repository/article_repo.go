@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strings"
+
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -20,7 +21,7 @@ func NewArticleRepository(db *gorm.DB) *ArticleRepo {
 	}
 }
 
-func (r *ArticleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error) {
+func (r *ArticleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Article], error) {
 	var articles []domain.Article
 	var count int64
 
@@ -32,13 +33,13 @@ func (r *ArticleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 
 	result := query.Limit(limit).Offset(offset).Find(&articles)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return articles, count, nil
+	return buildPaginationResponse(articles, paginationRequestDto, count)
 }
 
-func (r *ArticleRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error) {
+func (r *ArticleRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Article], error) {
 	var articles []domain.Article
 	var count int64
 
@@ -53,17 +54,16 @@ func (r *ArticleRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.P
 
 	result := query.Limit(limit).Offset(offset).Find(&articles)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return articles, count, nil
+	return buildPaginationResponse(articles, paginationRequestDto, count)
 }
 
-func (r *ArticleRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.Article, int64, error) {
+func (r *ArticleRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Article], error) {
 	var articles []domain.Article
 	var count int64
 
-	// For many-to-many relationship using the join table
 	query := r.database.Model(&domain.Article{}).
 		Joins("JOIN article_category ON article_category.article_id = articles.id").
 		Where("article_category.category_id = ?", categoryID).
@@ -76,10 +76,10 @@ func (r *ArticleRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto 
 
 	result := query.Limit(limit).Offset(offset).Find(&articles)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return articles, count, nil
+	return buildPaginationResponse(articles, paginationRequestDto, count)
 }
 
 func (r *ArticleRepo) GetAllByFilterAndSort(
@@ -87,21 +87,18 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 	filters map[enums.ArticleFilterEnum][]string,
 	sort *enums.ArticleSortEnum,
 	paginationRequestDto common.PaginationRequestDto,
-) ([]domain.Article, int64, error) {
+) (*common.PaginationResponseDto[domain.Article], error) {
 	var articles []domain.Article
 	var count int64
 
-	// Start building the query
 	query := r.database.Model(&domain.Article{}).
 		Where("site_id = ?", siteID).
 		Where("is_deleted = ?", false)
 
-	// Apply filters if they exist
 	if filters != nil {
 		for filterType, values := range filters {
 			switch filterType {
 			case "rate_range":
-				// Expects min,max format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
 					if len(parts) == 2 {
@@ -109,7 +106,6 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 					}
 				}
 			case "review_range":
-				// Expects min,max format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
 					if len(parts) == 2 {
@@ -117,7 +113,6 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 					}
 				}
 			case "visited_range":
-				// Expects min,max format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
 					if len(parts) == 2 {
@@ -125,7 +120,6 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 					}
 				}
 			case "added_range":
-				// Expects start,end date format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
 					if len(parts) == 2 {
@@ -133,7 +127,6 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 					}
 				}
 			case "updated_range":
-				// Expects start,end date format in the first value
 				if len(values) > 0 {
 					parts := strings.Split(values[0], ",")
 					if len(parts) == 2 {
@@ -141,20 +134,17 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 					}
 				}
 			case "category_ids":
-				// Join with category table to filter by categoryIds
 				if len(values) > 0 {
 					categoryIds := strings.Join(values, ",")
 					query = query.Joins("JOIN article_category ac ON ac.article_id = articles.id").
 						Where("ac.category_id IN (?)", categoryIds)
 				}
 			case "article_ids":
-				// Filter by article IDs
 				if len(values) > 0 {
 					articleIds := strings.Join(values, ",")
 					query = query.Where("id IN (?)", articleIds)
 				}
 			case "badges":
-				// Filter by badges (which are comma-separated in a single field)
 				if len(values) > 0 {
 					for _, badge := range values {
 						query = query.Where("badges LIKE ?", "%"+badge+"%")
@@ -164,7 +154,6 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 		}
 	}
 
-	// Apply sorting if specified
 	if sort != nil {
 		switch *sort {
 		case "title_az":
@@ -189,24 +178,20 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 			query = query.Order("review_count ASC")
 		}
 	} else {
-		// Default sort by recently updated
 		query = query.Order("updated_at DESC")
 	}
 
-	// Get count
 	query.Count(&count)
 
-	// Apply pagination
 	limit := paginationRequestDto.PageSize
 	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
 
-	// Get results
 	result := query.Limit(limit).Offset(offset).Find(&articles)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return articles, count, nil
+	return buildPaginationResponse(articles, paginationRequestDto, count)
 }
 
 func (r *ArticleRepo) GetByID(id int64) (domain.Article, error) {
@@ -264,13 +249,10 @@ func (r *ArticleRepo) Update(article domain.Article) error {
 }
 
 func (r *ArticleRepo) Delete(id int64) error {
-	// Soft delete
 	return r.database.Model(&domain.Article{}).
 		Where("id = ?", id).
 		Update("is_deleted", true).Error
 }
-
-// Media relationship methods
 
 func (r *ArticleRepo) GetArticleMedia(articleID int64) ([]domain.Media, error) {
 	var mediaItems []domain.Media
@@ -307,8 +289,6 @@ func (r *ArticleRepo) RemoveAllMediaFromArticle(articleID int64) error {
 		Where("article_id = ?", articleID).
 		Delete(&domain.ArticleMedia{}).Error
 }
-
-// Category relationship methods
 
 func (r *ArticleRepo) GetArticleCategories(articleID int64) ([]domain.ArticleCategory, error) {
 	var categories []domain.ArticleCategory
