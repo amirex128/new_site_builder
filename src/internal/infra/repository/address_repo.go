@@ -79,13 +79,13 @@ func (r *AddressRepo) GetByID(id int64) (domain.Address, error) {
 	return address, nil
 }
 
-func (r *AddressRepo) Create(address domain.Address) error {
-	result := r.database.Create(&address)
+func (r *AddressRepo) Create(address *domain.Address) error {
+	result := r.database.Create(address)
 	return result.Error
 }
 
-func (r *AddressRepo) Update(address domain.Address) error {
-	result := r.database.Save(&address)
+func (r *AddressRepo) Update(address *domain.Address) error {
+	result := r.database.Save(address)
 	return result.Error
 }
 

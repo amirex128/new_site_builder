@@ -26,3 +26,15 @@ type DefaultTheme struct {
 func (DefaultTheme) TableName() string {
 	return "default_themes"
 }
+func (m *DefaultTheme) GetID() int64 {
+	return m.ID
+}
+func (m *DefaultTheme) GetUserID() *int64 {
+	return nil
+}
+func (m *DefaultTheme) GetCutomerID() *int64 {
+	return nil
+}
+func (m *DefaultTheme) GetSiteID() *int64 {
+	return nil
+}

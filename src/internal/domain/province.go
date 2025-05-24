@@ -18,3 +18,15 @@ type Province struct {
 func (Province) TableName() string {
 	return "provinces"
 }
+func (m *Province) GetID() int64 {
+	return m.ID
+}
+func (m *Province) GetUserID() *int64 {
+	return nil
+}
+func (m *Province) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Province) GetSiteID() *int64 {
+	return nil
+}

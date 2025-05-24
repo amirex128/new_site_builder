@@ -26,3 +26,15 @@ type Storage struct {
 func (Storage) TableName() string {
 	return "storages"
 }
+func (m *Storage) GetID() int64 {
+	return m.ID
+}
+func (m *Storage) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Storage) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Storage) GetSiteID() *int64 {
+	return nil
+}

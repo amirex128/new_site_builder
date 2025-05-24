@@ -29,3 +29,15 @@ type HeaderFooter struct {
 func (HeaderFooter) TableName() string {
 	return "header_footers"
 }
+func (m *HeaderFooter) GetID() int64 {
+	return m.ID
+}
+func (m *HeaderFooter) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *HeaderFooter) GetCutomerID() *int64 {
+	return nil
+}
+func (m *HeaderFooter) GetSiteID() *int64 {
+	return &m.SiteID
+}

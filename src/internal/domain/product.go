@@ -42,6 +42,18 @@ type Product struct {
 func (Product) TableName() string {
 	return "products"
 }
+func (m *Product) GetID() int64 {
+	return m.ID
+}
+func (m *Product) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Product) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Product) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // ProductMedia represents Product.ProductMedia table - a join table
 type ProductMedia struct {

@@ -69,13 +69,14 @@ func parseSiteIDs(siteIDsStr string) ([]int64, error) {
 }
 
 // GetUserID returns the current authenticated user ID
-func (s *AuthContextService) GetUserID() (int64, error) {
+func (s *AuthContextService) GetUserID() (*int64, error) {
 	userIDStr, err := s.identity.GetClaim(s.ctx, "user_id")
 	if err != nil {
-		return 0, errors.New("authorization access exception: user ID not found")
+		return nil, errors.New("authorization access exception: user ID not found")
 	}
 
-	return parseID(userIDStr, "user ID")
+	id, err := parseID(userIDStr, "user ID")
+	return &id, err
 }
 
 // Helper function to parse an ID from a string
@@ -88,13 +89,14 @@ func parseID(idStr string, idType string) (int64, error) {
 }
 
 // GetCustomerID returns the current authenticated customer ID
-func (s *AuthContextService) GetCustomerID() (int64, error) {
+func (s *AuthContextService) GetCustomerID() (*int64, error) {
 	customerIDStr, err := s.identity.GetClaim(s.ctx, "customer_id")
 	if err != nil {
-		return 0, errors.New("authorization access exception: customer ID not found")
+		return nil, errors.New("authorization access exception: customer ID not found")
 	}
 
-	return parseID(customerIDStr, "customer ID")
+	id, err := parseID(customerIDStr, "customer ID")
+	return &id, err
 }
 
 // GetUserType returns the type of the current user
@@ -138,4 +140,31 @@ func (s *AuthContextService) IsAdmin() (bool, error) {
 	}
 
 	return isAdminStr == "true", nil
+}
+
+func (s *AuthContextService) GetUserOrCustomerID() (*int64, *int64, error) {
+	var customerID, userID *int64
+	var err error
+
+	userType, err := s.GetUserType()
+	if err != nil {
+		return nil, nil, errors.New("خطا در احراز هویت کاربر")
+	}
+
+	if userType == "customer" {
+		customerID, err = s.GetCustomerID()
+		if err != nil {
+			return nil, nil, errors.New("خطا در احراز هویت کاربر")
+		}
+		return userID, customerID, nil
+	}
+	if userType == "user" {
+		userID, err = s.GetUserID()
+		if err != nil {
+			return nil, nil, errors.New("خطا در احراز هویت کاربر")
+		}
+		return userID, customerID, nil
+	}
+
+	return nil, nil, errors.New("خطا در احراز هویت کاربر")
 }

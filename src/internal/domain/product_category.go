@@ -35,6 +35,18 @@ type ProductCategory struct {
 func (ProductCategory) TableName() string {
 	return "categories"
 }
+func (m *ProductCategory) GetID() int64 {
+	return m.ID
+}
+func (m *ProductCategory) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *ProductCategory) GetCutomerID() *int64 {
+	return nil
+}
+func (m *ProductCategory) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // ProductCategoryProduct represents Product.ProductCategoryProduct table - a join table
 type ProductCategoryProduct struct {

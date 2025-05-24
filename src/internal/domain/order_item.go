@@ -33,3 +33,15 @@ type OrderItem struct {
 func (OrderItem) TableName() string {
 	return "order_items"
 }
+func (m *OrderItem) GetID() int64 {
+	return m.ID
+}
+func (m *OrderItem) GetUserID() *int64 {
+	return nil
+}
+func (m *OrderItem) GetCutomerID() *int64 {
+	return nil
+}
+func (m *OrderItem) GetSiteID() *int64 {
+	return nil
+}

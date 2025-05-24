@@ -27,3 +27,15 @@ type ProductAttribute struct {
 func (ProductAttribute) TableName() string {
 	return "product_attributes"
 }
+func (m *ProductAttribute) GetID() int64 {
+	return m.ID
+}
+func (m *ProductAttribute) GetUserID() *int64 {
+	return nil
+}
+func (m *ProductAttribute) GetCutomerID() *int64 {
+	return nil
+}
+func (m *ProductAttribute) GetSiteID() *int64 {
+	return nil
+}

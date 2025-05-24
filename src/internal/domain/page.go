@@ -36,6 +36,18 @@ type Page struct {
 func (Page) TableName() string {
 	return "pages"
 }
+func (m *Page) GetID() int64 {
+	return m.ID
+}
+func (m *Page) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Page) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Page) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // PageMedia represents Site.PageMedia table - a join table
 type PageMedia struct {

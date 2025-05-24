@@ -35,6 +35,18 @@ type Ticket struct {
 func (Ticket) TableName() string {
 	return "tickets"
 }
+func (m *Ticket) GetID() int64 {
+	return m.ID
+}
+func (m *Ticket) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Ticket) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Ticket) GetSiteID() *int64 {
+	return nil
+}
 
 // Comment represents Support.Comments table
 type Comment struct {
@@ -56,6 +68,18 @@ type Comment struct {
 // TableName specifies the table name for Comment
 func (Comment) TableName() string {
 	return "comments"
+}
+func (m *Comment) GetID() int64 {
+	return m.ID
+}
+func (m *Comment) GetUserID() *int64 {
+	return nil
+}
+func (m *Comment) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Comment) GetSiteID() *int64 {
+	return nil
 }
 
 // TicketMedia represents Support.TicketMedia table - a join table
@@ -101,6 +125,18 @@ type CustomerTicket struct {
 func (CustomerTicket) TableName() string {
 	return "customer_tickets"
 }
+func (m *CustomerTicket) GetID() int64 {
+	return m.ID
+}
+func (m *CustomerTicket) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *CustomerTicket) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *CustomerTicket) GetSiteID() *int64 {
+	return nil
+}
 
 // CustomerComment represents Support.CustomerComments table
 type CustomerComment struct {
@@ -122,6 +158,18 @@ type CustomerComment struct {
 // TableName specifies the table name for CustomerComment
 func (CustomerComment) TableName() string {
 	return "customer_comments"
+}
+func (m *CustomerComment) GetID() int64 {
+	return m.ID
+}
+func (m *CustomerComment) GetUserID() *int64 {
+	return nil
+}
+func (m *CustomerComment) GetCutomerID() *int64 {
+	return nil
+}
+func (m *CustomerComment) GetSiteID() *int64 {
+	return nil
 }
 
 // CustomerTicketMedia represents Support.CustomerTicketMedia table - a join table

@@ -10,8 +10,8 @@ type IAddressRepository interface {
 	GetByID(id int64) (domain.Address, error)
 	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error)
 	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error)
-	Create(address domain.Address) error
-	Update(address domain.Address) error
+	Create(address *domain.Address) error
+	Update(address *domain.Address) error
 	Delete(id int64) error
 	AddAddressToUser(addressID int64, userID int64) error
 	RemoveAddressFromUser(addressID int64, userID int64) error

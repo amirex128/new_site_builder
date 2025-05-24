@@ -28,3 +28,15 @@ type Coupon struct {
 func (Coupon) TableName() string {
 	return "coupons"
 }
+func (m *Coupon) GetID() int64 {
+	return m.ID
+}
+func (m *Coupon) GetUserID() *int64 {
+	return nil
+}
+func (m *Coupon) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Coupon) GetSiteID() *int64 {
+	return nil
+}

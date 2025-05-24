@@ -32,6 +32,18 @@ type Discount struct {
 func (Discount) TableName() string {
 	return "discounts"
 }
+func (m *Discount) GetID() int64 {
+	return m.ID
+}
+func (m *Discount) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Discount) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Discount) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // DiscountProduct represents Product.DiscountProduct table - a join table
 type DiscountProduct struct {

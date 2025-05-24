@@ -18,3 +18,15 @@ type ParbadTransaction struct {
 func (ParbadTransaction) TableName() string {
 	return "parbad_transactions"
 }
+func (m *ParbadTransaction) GetID() int64 {
+	return m.ID
+}
+func (m *ParbadTransaction) GetUserID() *int64 {
+	return nil
+}
+func (m *ParbadTransaction) GetCutomerID() *int64 {
+	return nil
+}
+func (m *ParbadTransaction) GetSiteID() *int64 {
+	return nil
+}

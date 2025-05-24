@@ -26,3 +26,15 @@ type Setting struct {
 func (Setting) TableName() string {
 	return "settings"
 }
+func (m *Setting) GetID() int64 {
+	return m.ID
+}
+func (m *Setting) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Setting) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *Setting) GetSiteID() *int64 {
+	return &m.SiteID
+}

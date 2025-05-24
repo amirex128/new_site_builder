@@ -19,3 +19,15 @@ type Media struct {
 func (Media) TableName() string {
 	return "media"
 }
+func (m *Media) GetID() int64 {
+	return m.ID
+}
+func (m *Media) GetUserID() *int64 {
+	return nil
+}
+func (m *Media) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Media) GetSiteID() *int64 {
+	return nil
+}

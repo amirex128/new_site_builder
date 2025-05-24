@@ -29,3 +29,15 @@ type ProductVariant struct {
 func (ProductVariant) TableName() string {
 	return "product_variants"
 }
+func (m *ProductVariant) GetID() int64 {
+	return m.ID
+}
+func (m *ProductVariant) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *ProductVariant) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *ProductVariant) GetSiteID() *int64 {
+	return nil
+}

@@ -16,3 +16,15 @@ type UnitPrice struct {
 func (UnitPrice) TableName() string {
 	return "unit_prices"
 }
+func (m *UnitPrice) GetID() int64 {
+	return m.ID
+}
+func (m *UnitPrice) GetUserID() *int64 {
+	return nil
+}
+func (m *UnitPrice) GetCutomerID() *int64 {
+	return nil
+}
+func (m *UnitPrice) GetSiteID() *int64 {
+	return nil
+}

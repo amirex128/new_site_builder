@@ -23,3 +23,15 @@ type City struct {
 func (City) TableName() string {
 	return "cities"
 }
+func (m *City) GetID() int64 {
+	return m.ID
+}
+func (m *City) GetUserID() *int64 {
+	return nil
+}
+func (m *City) GetCutomerID() *int64 {
+	return nil
+}
+func (m *City) GetSiteID() *int64 {
+	return nil
+}

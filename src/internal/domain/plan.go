@@ -26,3 +26,15 @@ type Plan struct {
 func (Plan) TableName() string {
 	return "plans"
 }
+func (m *Plan) GetID() int64 {
+	return m.ID
+}
+func (m *Plan) GetUserID() *int64 {
+	return nil
+}
+func (m *Plan) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Plan) GetSiteID() *int64 {
+	return nil
+}

@@ -33,3 +33,15 @@ type ProductReview struct {
 func (ProductReview) TableName() string {
 	return "product_reviews"
 }
+func (m *ProductReview) GetID() int64 {
+	return m.ID
+}
+func (m *ProductReview) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *ProductReview) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *ProductReview) GetSiteID() *int64 {
+	return &m.SiteID
+}

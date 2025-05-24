@@ -13,3 +13,15 @@ type Permission struct {
 func (Permission) TableName() string {
 	return "permissions"
 }
+func (m *Permission) GetID() int64 {
+	return m.ID
+}
+func (m *Permission) GetUserID() *int64 {
+	return nil
+}
+func (m *Permission) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Permission) GetSiteID() *int64 {
+	return nil
+}

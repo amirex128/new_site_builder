@@ -39,36 +39,13 @@ func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 	}
 }
 
-// CreateAddressCommand handles the creation of a new address
 func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressCommand) (*resp.Response, error) {
-	var customerID, userID int64
 	var err error
-
-	// If customer ID is provided, use it
-	if params.CustomerID != nil {
-		customerID = *params.CustomerID
-	} else {
-		// Otherwise try to get from auth context
-		customerID, err = u.authContext(u.Ctx).GetCustomerID()
-		if err != nil {
-			u.Logger.Info("No customer ID in auth context, trying user ID", nil)
-			// Not a customer, try as a user
-			customerID = 0
-		}
+	userID, customerID, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 
-	// If user ID is provided, use it
-	if params.UserID != nil {
-		userID = *params.UserID
-	} else if customerID == 0 {
-		// If no customer ID, try to get user ID from auth context
-		userID, err = u.authContext(u.Ctx).GetUserID()
-		if err != nil {
-			return nil, errors.New("خطا در احراز هویت کاربر")
-		}
-	}
-
-	// Validate city and province exist
 	_, err = u.cityRepo.GetByID(*params.CityID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -85,8 +62,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		return nil, err
 	}
 
-	// Create new address
-	newAddress := domain.Address{
+	newAddress := &domain.Address{
 		Title:       *params.Title,
 		Latitude:    params.Latitude,
 		Longitude:   params.Longitude,
@@ -101,7 +77,6 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		IsDeleted:   false,
 	}
 
-	// Save to repository
 	err = u.addressRepo.Create(newAddress)
 	if err != nil {
 		u.Logger.Error("Error creating address", map[string]interface{}{
@@ -110,62 +85,22 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 		return nil, errors.New("خطا در ایجاد آدرس")
 	}
 
-	// If we have a customer or user ID, add the relationship
-	if customerID > 0 {
-		// This would typically involve updating a many-to-many relationship
-		// For simplicity, we'll just log that this would happen
-		u.Logger.Info("Would add address to customer", map[string]interface{}{
-			"addressId":  newAddress.ID,
-			"customerId": customerID,
-		})
-	} else if userID > 0 {
-		err = u.addressRepo.AddAddressToUser(newAddress.ID, userID)
-		if err != nil {
-			u.Logger.Error("Error adding address to user", map[string]interface{}{
-				"error":     err.Error(),
-				"addressId": newAddress.ID,
-				"userId":    userID,
-			})
-			// Continue despite error - the address was created
-		}
-	}
-
-	// Retrieve the address with relations to return
-	fullAddress, err := u.addressRepo.GetByID(newAddress.ID)
-	if err != nil {
-		return resp.NewResponseData(resp.Created, enhanceAddressResponse(newAddress), "آدرس با موفقیت ایجاد شد"), nil // Return the basic address if can't retrieve with relations
-	}
-
-	return resp.NewResponseData(resp.Created, enhanceAddressResponse(fullAddress), "آدرس با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, resp.Data{
+		"address": newAddress,
+	}, "آدرس با موفقیت ایجاد شد"), nil
 }
 
-// UpdateAddressCommand handles updating an existing address
 func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressCommand) (*resp.Response, error) {
-	u.Logger.Info("UpdateAddressCommand called", map[string]interface{}{
-		"id": *params.ID,
-	})
+	userID, customerID, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
+	}
 
-	// Get existing address
 	existingAddress, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("آدرس مورد نظر یافت نشد")
-		}
-		return nil, err
+		return nil, resp.NewError(resp.NotFound, "آدرس یافت نشد")
 	}
 
-	// Check ownership
-	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
-	userID, _ := u.authContext(u.Ctx).GetUserID()
-
-	isAdmin, _ := u.authContext(u.Ctx).IsAdmin()
-
-	// Check if user has access to this address
-	if !isAdmin && existingAddress.CustomerID != customerID && existingAddress.UserID != userID {
-		return nil, errors.New("شما دسترسی به این آدرس ندارید")
-	}
-
-	// Validate city and province exist
 	_, err = u.cityRepo.GetByID(*params.CityID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -182,7 +117,6 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 		return nil, err
 	}
 
-	// Update fields if provided
 	if params.Title != nil {
 		existingAddress.Title = *params.Title
 	}
@@ -465,40 +399,4 @@ func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery
 		"pageSize":  params.PageSize,
 		"totalPage": results.TotalPages,
 	}, "استان ها با موفقیت دریافت شدند"), nil
-}
-
-// Helper function to enhance address response with structured data
-func enhanceAddressResponse(a domain.Address) map[string]interface{} {
-	response := map[string]interface{}{
-		"id":          a.ID,
-		"title":       a.Title,
-		"latitude":    a.Latitude,
-		"longitude":   a.Longitude,
-		"addressLine": a.AddressLine,
-		"postalCode":  a.PostalCode,
-		"cityId":      a.CityID,
-		"provinceId":  a.ProvinceID,
-		"userId":      a.UserID,
-		"customerId":  a.CustomerID,
-		"createdAt":   a.CreatedAt,
-		"updatedAt":   a.UpdatedAt,
-	}
-
-	// Add city info if available
-	if a.City != nil {
-		response["city"] = map[string]interface{}{
-			"id":   a.City.ID,
-			"name": a.City.Name,
-		}
-	}
-
-	// Add province info if available
-	if a.Province != nil {
-		response["province"] = map[string]interface{}{
-			"id":   a.Province.ID,
-			"name": a.Province.Name,
-		}
-	}
-
-	return response
 }

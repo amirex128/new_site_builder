@@ -30,3 +30,15 @@ type ReturnItem struct {
 func (ReturnItem) TableName() string {
 	return "return_item"
 }
+func (m *ReturnItem) GetID() int64 {
+	return m.ID
+}
+func (m *ReturnItem) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *ReturnItem) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *ReturnItem) GetSiteID() *int64 {
+	return nil
+}

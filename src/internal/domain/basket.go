@@ -30,3 +30,15 @@ type Basket struct {
 func (Basket) TableName() string {
 	return "baskets"
 }
+func (m *Basket) GetID() int64 {
+	return m.ID
+}
+func (m *Basket) GetUserID() *int64 {
+	return nil
+}
+func (m *Basket) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *Basket) GetSiteID() *int64 {
+	return &m.SiteID
+}

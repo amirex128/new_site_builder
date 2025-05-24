@@ -2,8 +2,6 @@ package address
 
 // CreateAddressCommand represents a command to create a new address
 type CreateAddressCommand struct {
-	CustomerID  *int64   `json:"customerId,omitempty" nameFa:"شناسه مشتری" validate:"omitempty,gt=0"`
-	UserID      *int64   `json:"userId,omitempty" nameFa:"شناسه کاربر" validate:"omitempty,gt=0"`
 	Title       *string  `json:"title" nameFa:"عنوان" validate:"required_text=1 100"  errors:"required_text=this field is required,min=this field must be at least 1 character,max=this field must be at most 100 characters,min=this field must be at least 1 character,max=this field must be at most 100 characters"`
 	Latitude    *float32 `json:"latitude" nameFa:"عرض جغرافیایی" validate:"required,min=-90,max=90"`
 	Longitude   *float32 `json:"longitude" nameFa:"طول جغرافیایی" validate:"required,min=-180,max=180"`

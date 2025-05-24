@@ -34,6 +34,18 @@ type ArticleCategory struct {
 func (ArticleCategory) TableName() string {
 	return "categories"
 }
+func (m *ArticleCategory) GetID() int64 {
+	return m.ID
+}
+func (m *ArticleCategory) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *ArticleCategory) GetCutomerID() *int64 {
+	return nil
+}
+func (m *ArticleCategory) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // ArticleCategoryMedia represents Blog.CategoryMedia table - a join table
 type ArticleCategoryMedia struct {

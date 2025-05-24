@@ -32,3 +32,15 @@ type Site struct {
 func (Site) TableName() string {
 	return "sites"
 }
+func (m *Site) GetID() int64 {
+	return m.ID
+}
+func (m *Site) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Site) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Site) GetSiteID() *int64 {
+	return nil
+}

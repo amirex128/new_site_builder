@@ -4,9 +4,10 @@ package service
 type IAuthService interface {
 	GetRoles() ([]string, error)
 	GetSiteIDs() ([]int64, error)
-	GetUserID() (int64, error)
-	GetCustomerID() (int64, error)
+	GetUserID() (*int64, error)
+	GetCustomerID() (*int64, error)
 	GetUserType() (string, error)
 	GetEmail() (string, error)
 	IsAdmin() (bool, error)
+	GetUserOrCustomerID() (*int64, *int64, error)
 }

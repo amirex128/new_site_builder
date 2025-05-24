@@ -23,3 +23,15 @@ type Role struct {
 func (Role) TableName() string {
 	return "roles"
 }
+func (m *Role) GetID() int64 {
+	return m.ID
+}
+func (m *Role) GetUserID() *int64 {
+	return nil
+}
+func (m *Role) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Role) GetSiteID() *int64 {
+	return nil
+}

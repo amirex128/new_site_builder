@@ -36,6 +36,18 @@ type Article struct {
 func (Article) TableName() string {
 	return "articles"
 }
+func (m *Article) GetID() int64 {
+	return m.ID
+}
+func (m *Article) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Article) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Article) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // ArticleMedia represents Blog.ArticleMedia table - a join table
 type ArticleMedia struct {

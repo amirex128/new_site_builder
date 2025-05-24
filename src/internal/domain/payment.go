@@ -46,3 +46,15 @@ type Payment struct {
 func (Payment) TableName() string {
 	return "payments"
 }
+func (m *Payment) GetID() int64 {
+	return m.ID
+}
+func (m *Payment) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Payment) GetCutomerID() *int64 {
+	return &m.CustomerID
+}
+func (m *Payment) GetSiteID() *int64 {
+	return &m.SiteID
+}

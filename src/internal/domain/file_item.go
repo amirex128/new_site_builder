@@ -34,3 +34,15 @@ type FileItem struct {
 func (FileItem) TableName() string {
 	return "file_items"
 }
+func (m *FileItem) GetID() int64 {
+	return m.ID
+}
+func (m *FileItem) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *FileItem) GetCutomerID() *int64 {
+	return nil
+}
+func (m *FileItem) GetSiteID() *int64 {
+	return nil
+}

@@ -19,6 +19,18 @@ type PageArticleUsage struct {
 func (PageArticleUsage) TableName() string {
 	return "page_article_usages"
 }
+func (m *PageArticleUsage) GetID() int64 {
+	return m.ID
+}
+func (m *PageArticleUsage) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *PageArticleUsage) GetCutomerID() *int64 {
+	return nil
+}
+func (m *PageArticleUsage) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // PageProductUsage represents Site.PageProductUsages table - a join table
 type PageProductUsage struct {
@@ -39,6 +51,18 @@ type PageProductUsage struct {
 func (PageProductUsage) TableName() string {
 	return "page_product_usages"
 }
+func (m *PageProductUsage) GetID() int64 {
+	return m.ID
+}
+func (m *PageProductUsage) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *PageProductUsage) GetCutomerID() *int64 {
+	return nil
+}
+func (m *PageProductUsage) GetSiteID() *int64 {
+	return &m.SiteID
+}
 
 // PageHeaderFooterUsage represents Site.PageHeaderFooterUsages table - a join table
 type PageHeaderFooterUsage struct {
@@ -58,4 +82,16 @@ type PageHeaderFooterUsage struct {
 // TableName specifies the table name for PageHeaderFooterUsage
 func (PageHeaderFooterUsage) TableName() string {
 	return "page_header_footer_usages"
+}
+func (m *PageHeaderFooterUsage) GetID() int64 {
+	return m.ID
+}
+func (m *PageHeaderFooterUsage) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *PageHeaderFooterUsage) GetCutomerID() *int64 {
+	return nil
+}
+func (m *PageHeaderFooterUsage) GetSiteID() *int64 {
+	return &m.SiteID
 }

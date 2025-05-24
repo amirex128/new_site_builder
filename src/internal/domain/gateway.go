@@ -69,3 +69,15 @@ type Gateway struct {
 func (Gateway) TableName() string {
 	return "gateways"
 }
+func (m *Gateway) GetID() int64 {
+	return m.ID
+}
+func (m *Gateway) GetUserID() *int64 {
+	return &m.UserID
+}
+func (m *Gateway) GetCutomerID() *int64 {
+	return nil
+}
+func (m *Gateway) GetSiteID() *int64 {
+	return &m.SiteID
+}
