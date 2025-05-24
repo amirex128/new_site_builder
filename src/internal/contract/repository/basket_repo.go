@@ -6,9 +6,9 @@ import (
 )
 
 type IBasketRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Basket], int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Basket], int64, error)
-	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Basket], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Basket], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Basket], error)
+	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Basket], error)
 	GetByID(id int64) (domain.Basket, error)
 	GetBasketByCustomerIDAndSiteID(customerID, siteID int64) (domain.Basket, error)
 	GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID int64) (domain.Basket, error)

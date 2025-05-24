@@ -6,10 +6,10 @@ import (
 )
 
 type IProductReviewRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ProductReview], int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ProductReview], int64, error)
-	GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ProductReview], int64, error)
-	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ProductReview], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error)
+	GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error)
+	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductReview], error)
 	GetByID(id int64) (domain.ProductReview, error)
 	Create(review domain.ProductReview) error
 	Update(review domain.ProductReview) error

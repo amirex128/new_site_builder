@@ -6,9 +6,9 @@ import (
 )
 
 type ICreditRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Credit], int64, error)
-	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Credit], int64, error)
-	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Credit], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error)
+	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error)
+	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error)
 	GetByID(id int64) (domain.Credit, error)
 	Create(credit domain.Credit) error
 	Update(credit domain.Credit) error

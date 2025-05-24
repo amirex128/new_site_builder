@@ -6,8 +6,8 @@ import (
 )
 
 type ICustomerRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Customer], int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Customer], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Customer], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Customer], error)
 	GetByID(id int64) (domain.Customer, error)
 	GetByEmail(email string) (domain.Customer, error)
 	GetByPhone(phone string) (domain.Customer, error)

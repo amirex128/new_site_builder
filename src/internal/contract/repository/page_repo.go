@@ -6,8 +6,8 @@ import (
 )
 
 type IPageRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Page], int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Page], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Page], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Page], error)
 	GetByID(id int64) (domain.Page, error)
 	GetByIDAndSiteID(id, siteID int64) (domain.Page, error)
 	GetBySlug(slug string, siteID int64) (domain.Page, error)

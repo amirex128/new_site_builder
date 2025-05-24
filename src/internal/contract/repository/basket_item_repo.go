@@ -6,8 +6,8 @@ import (
 )
 
 type IBasketItemRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.BasketItem], int64, error)
-	GetAllByBasketID(basketID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.BasketItem], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.BasketItem], error)
+	GetAllByBasketID(basketID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.BasketItem], error)
 	GetByID(id int64) (domain.BasketItem, error)
 	Create(basketItem domain.BasketItem) error
 	Update(basketItem domain.BasketItem) error

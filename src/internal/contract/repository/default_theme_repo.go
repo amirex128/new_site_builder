@@ -6,7 +6,7 @@ import (
 )
 
 type IDefaultThemeRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.DefaultTheme], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.DefaultTheme], error)
 	GetByID(id int64) (domain.DefaultTheme, error)
 	Create(theme domain.DefaultTheme) error
 	Update(theme domain.DefaultTheme) error

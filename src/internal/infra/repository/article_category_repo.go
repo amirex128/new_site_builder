@@ -17,7 +17,7 @@ func NewArticleCategoryRepository(db *gorm.DB) *ArticleCategoryRepo {
 	}
 }
 
-func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error) {
+func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ArticleCategory], error) {
 	var categories []domain.ArticleCategory
 	var count int64
 
@@ -29,10 +29,10 @@ func (r *ArticleCategoryRepo) GetAll(paginationRequestDto common.PaginationReque
 
 	result := query.Limit(limit).Offset(offset).Find(&categories)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, 0
 	}
 
-	return categories, count, nil
+	return buildPaginationResponse(categories, paginationRequestDto, count)
 }
 
 func (r *ArticleCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error) {
@@ -53,10 +53,10 @@ func (r *ArticleCategoryRepo) GetAllBySiteID(siteID int64, paginationRequestDto 
 		return nil, 0, result.Error
 	}
 
-	return categories, count, nil
+	return buildPaginationResponse(addresses, paginationRequestDto, count)
 }
 
-func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, int64, error) {
+func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) ([]domain.ArticleCategory, error) {
 	var categories []domain.ArticleCategory
 	var count int64
 
@@ -74,7 +74,7 @@ func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequest
 		return nil, 0, result.Error
 	}
 
-	return categories, count, nil
+	return buildPaginationResponse(addresses, paginationRequestDto, count)
 }
 
 func (r *ArticleCategoryRepo) GetByID(id int64) (domain.ArticleCategory, error) {

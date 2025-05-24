@@ -6,10 +6,10 @@ import (
 )
 
 type IPaymentRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Payment], int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Payment], int64, error)
-	GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Payment], int64, error)
-	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Payment], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error)
+	GetAllByOrderID(orderID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error)
+	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Payment], error)
 	GetByID(id int64) (domain.Payment, error)
 	GetByTrackingNumber(trackingNumber string) (domain.Payment, error)
 	Create(payment domain.Payment) error

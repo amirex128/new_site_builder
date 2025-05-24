@@ -6,7 +6,7 @@ import (
 )
 
 type IProvinceRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.Province], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Province], error)
 	GetByID(id int64) (domain.Province, error)
 	GetByName(name string) (domain.Province, error)
 	Create(province domain.Province) error

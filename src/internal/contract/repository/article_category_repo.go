@@ -6,9 +6,9 @@ import (
 )
 
 type IArticleCategoryRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ArticleCategory], int64, error)
-	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ArticleCategory], int64, error)
-	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) (common.PaginationResponseDto[domain.ArticleCategory], int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ArticleCategory], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ArticleCategory], int64, error)
+	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ArticleCategory], int64, error)
 	GetByID(id int64) (domain.ArticleCategory, error)
 	GetBySlug(slug string) (domain.ArticleCategory, error)
 	GetBySlugAndSiteID(slug string, siteID int64) (domain.ArticleCategory, error)

@@ -6,7 +6,7 @@ import (
 )
 
 type IPermissionRepository interface {
-	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, int64, error)
+	GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Permission, error)
 	GetByID(id int64) (domain.Permission, error)
 	GetByName(name string) (domain.Permission, error)
 	Create(permission domain.Permission) error

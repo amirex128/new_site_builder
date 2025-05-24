@@ -1,7 +1,7 @@
 package repository
 
 import (
-	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
+	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ func NewAddressRepository(db *gorm.DB) *AddressRepo {
 	}
 }
 
-func (r *AddressRepo) GetAll(paginationRequestDto common.PaginationRequestDto) ([]domain.Address, int64, error) {
+func (r *AddressRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error) {
 	var addresses []domain.Address
 	var count int64
 
@@ -29,12 +29,47 @@ func (r *AddressRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 
 	result := query.Limit(limit).Offset(offset).Find(&addresses)
 	if result.Error != nil {
-		return nil, 0, result.Error
+		return nil, result.Error
 	}
 
-	return addresses, count, nil
+	return buildPaginationResponse(addresses, paginationRequestDto, count)
 }
 
+func (r *AddressRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error) {
+	var addresses []domain.Address
+	var count int64
+
+	query := r.database.Where("user_id = ?", userID).Model(&domain.Address{})
+	query.Count(&count)
+
+	limit := paginationRequestDto.PageSize
+	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
+
+	result := query.Limit(limit).Offset(offset).Find(&addresses)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return buildPaginationResponse(addresses, paginationRequestDto, count)
+}
+
+func (r *AddressRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error) {
+	var addresses []domain.Address
+	var count int64
+
+	query := r.database.Where("customer_id = ?", customerID).Model(&domain.Address{})
+	query.Count(&count)
+
+	limit := paginationRequestDto.PageSize
+	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
+
+	result := query.Limit(limit).Offset(offset).Find(&addresses)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return buildPaginationResponse(addresses, paginationRequestDto, count)
+}
 func (r *AddressRepo) GetByID(id int64) (domain.Address, error) {
 	var address domain.Address
 	result := r.database.First(&address, id)
@@ -42,24 +77,6 @@ func (r *AddressRepo) GetByID(id int64) (domain.Address, error) {
 		return address, result.Error
 	}
 	return address, nil
-}
-
-func (r *AddressRepo) GetAllByUserID(userID int64) ([]domain.Address, error) {
-	var addresses []domain.Address
-	result := r.database.Where("user_id = ?", userID).Find(&addresses)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return addresses, nil
-}
-
-func (r *AddressRepo) GetAllByCustomerID(customerID int64) ([]domain.Address, error) {
-	var addresses []domain.Address
-	result := r.database.Where("customer_id = ?", customerID).Find(&addresses)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return addresses, nil
 }
 
 func (r *AddressRepo) Create(address domain.Address) error {
