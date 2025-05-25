@@ -71,31 +71,31 @@ func (r *OrderRepo) GetAllByCustomerID(customerID int64, paginationRequestDto co
 	return buildPaginationResponse(orders, paginationRequestDto, count)
 }
 
-func (r *OrderRepo) GetByID(id int64) (domain.Order, error) {
-	var order domain.Order
+func (r *OrderRepo) GetByID(id int64) (*domain.Order, error) {
+	var order *domain.Order
 	result := r.database.First(&order, id)
 	if result.Error != nil {
-		return order, result.Error
+		return nil, result.Error
 	}
 	return order, nil
 }
 
-func (r *OrderRepo) GetByOrderNumber(orderNumber string) (domain.Order, error) {
-	var order domain.Order
+func (r *OrderRepo) GetByOrderNumber(orderNumber string) (*domain.Order, error) {
+	var order *domain.Order
 	result := r.database.Where("order_number = ?", orderNumber).First(&order)
 	if result.Error != nil {
-		return order, result.Error
+		return nil, result.Error
 	}
 	return order, nil
 }
 
-func (r *OrderRepo) Create(order domain.Order) error {
-	result := r.database.Create(&order)
+func (r *OrderRepo) Create(order *domain.Order) error {
+	result := r.database.Create(order)
 	return result.Error
 }
 
-func (r *OrderRepo) Update(order domain.Order) error {
-	result := r.database.Save(&order)
+func (r *OrderRepo) Update(order *domain.Order) error {
+	result := r.database.Save(order)
 	return result.Error
 }
 

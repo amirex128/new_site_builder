@@ -84,7 +84,7 @@ func (s *PaymentService) RequestPayment(amount int64, orderID int64, userID int6
 	}
 
 	// Save payment record
-	if err := s.paymentRepo.Create(payment); err != nil {
+	if err := s.paymentRepo.Create(&payment); err != nil {
 		return "", err
 	}
 
@@ -183,19 +183,19 @@ func (s *PaymentService) GetPaymentStatus(paymentID int64) (enums.StatusEnum, er
 }
 
 // GetGatewayByID gets gateway configuration by ID
-func (s *PaymentService) GetGatewayByID(gatewayID int64) (domain.Gateway, error) {
+func (s *PaymentService) GetGatewayByID(gatewayID int64) (*domain.Gateway, error) {
 	return s.gatewayRepo.GetByID(gatewayID)
 }
 
 // GetGatewayBySiteID gets gateway configuration by site ID
-func (s *PaymentService) GetGatewayBySiteID(siteID int64) (domain.Gateway, error) {
+func (s *PaymentService) GetGatewayBySiteID(siteID int64) (*domain.Gateway, error) {
 	return s.gatewayRepo.GetBySiteID(siteID)
 }
 
 // Helper methods
 
 // isGatewayActive checks if a gateway is active
-func (s *PaymentService) isGatewayActive(gateway domain.Gateway, gatewayType int) bool {
+func (s *PaymentService) isGatewayActive(gateway *domain.Gateway, gatewayType int) bool {
 	switch gatewayType {
 	case 1: // Saman
 		return gateway.IsActiveSaman == "Active"

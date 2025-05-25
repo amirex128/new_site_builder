@@ -5,8 +5,8 @@ import (
 )
 
 type IParbadPaymentRepository interface {
-	GetByTrackingNumber(trackingNumber int64) (domain.ParbadPayment, error)
-	GetByID(id int64) (domain.ParbadPayment, error)
-	Create(payment domain.ParbadPayment) error
-	Update(payment domain.ParbadPayment) error
+	GetByTrackingNumber(trackingNumber int64) (*domain.ParbadPayment, error)
+	GetByID(id int64) (*domain.ParbadPayment, error)
+	Create(payment *domain.ParbadPayment) error
+	Update(payment *domain.ParbadPayment) error
 }

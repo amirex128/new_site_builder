@@ -71,31 +71,31 @@ func (r *ProductCategoryRepo) GetAllByParentID(parentID int64, paginationRequest
 	return buildPaginationResponse(categories, paginationRequestDto, count)
 }
 
-func (r *ProductCategoryRepo) GetByID(id int64) (domain.ProductCategory, error) {
-	var category domain.ProductCategory
+func (r *ProductCategoryRepo) GetByID(id int64) (*domain.ProductCategory, error) {
+	var category *domain.ProductCategory
 	result := r.database.First(&category, id)
 	if result.Error != nil {
-		return category, result.Error
+		return nil, result.Error
 	}
 	return category, nil
 }
 
-func (r *ProductCategoryRepo) GetBySlug(slug string) (domain.ProductCategory, error) {
-	var category domain.ProductCategory
+func (r *ProductCategoryRepo) GetBySlug(slug string) (*domain.ProductCategory, error) {
+	var category *domain.ProductCategory
 	result := r.database.Where("slug = ?", slug).First(&category)
 	if result.Error != nil {
-		return category, result.Error
+		return nil, result.Error
 	}
 	return category, nil
 }
 
-func (r *ProductCategoryRepo) Create(category domain.ProductCategory) error {
-	result := r.database.Create(&category)
+func (r *ProductCategoryRepo) Create(category *domain.ProductCategory) error {
+	result := r.database.Create(category)
 	return result.Error
 }
 
-func (r *ProductCategoryRepo) Update(category domain.ProductCategory) error {
-	result := r.database.Save(&category)
+func (r *ProductCategoryRepo) Update(category *domain.ProductCategory) error {
+	result := r.database.Save(category)
 	return result.Error
 }
 

@@ -23,8 +23,8 @@ type IPaymentService interface {
 	GetPaymentStatus(paymentID int64) (enums.StatusEnum, error)
 
 	// GetGatewayByID gets gateway configuration by ID
-	GetGatewayByID(gatewayID int64) (domain.Gateway, error)
+	GetGatewayByID(gatewayID int64) (*domain.Gateway, error)
 
 	// GetGatewayBySiteID gets gateway configuration by site ID
-	GetGatewayBySiteID(siteID int64) (domain.Gateway, error)
+	GetGatewayBySiteID(siteID int64) (*domain.Gateway, error)
 }

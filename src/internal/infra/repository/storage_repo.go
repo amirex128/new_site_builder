@@ -19,13 +19,13 @@ func NewStorageRepository(db *gorm.DB) *StorageRepo {
 	}
 }
 
-func (r *StorageRepo) GetByUserID(userID int64) (domain.Storage, error) {
+func (r *StorageRepo) GetByUserID(userID int64) (*domain.Storage, error) {
 	var storage domain.Storage
 	result := r.database.Where("user_id = ?", userID).First(&storage)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			// Create a new storage record if none exists
-			storage = domain.Storage{
+			newStorage := domain.Storage{
 				UsedSpaceKb: 0,
 				QuotaKb:     0,
 				ChargedAt:   time.Now(),
@@ -35,32 +35,32 @@ func (r *StorageRepo) GetByUserID(userID int64) (domain.Storage, error) {
 				UpdatedAt:   time.Now(),
 				IsDeleted:   false,
 			}
-			if err := r.Create(storage); err != nil {
-				return storage, err
+			if err := r.Create(&newStorage); err != nil {
+				return nil, err
 			}
-			return storage, nil
+			return &newStorage, nil
 		}
-		return storage, result.Error
+		return nil, result.Error
 	}
-	return storage, nil
+	return &storage, nil
 }
 
-func (r *StorageRepo) GetByID(id int64) (domain.Storage, error) {
+func (r *StorageRepo) GetByID(id int64) (*domain.Storage, error) {
 	var storage domain.Storage
 	result := r.database.First(&storage, id)
 	if result.Error != nil {
-		return storage, result.Error
+		return nil, result.Error
 	}
-	return storage, nil
+	return &storage, nil
 }
 
-func (r *StorageRepo) Create(storage domain.Storage) error {
-	result := r.database.Create(&storage)
+func (r *StorageRepo) Create(storage *domain.Storage) error {
+	result := r.database.Create(storage)
 	return result.Error
 }
 
-func (r *StorageRepo) Update(storage domain.Storage) error {
-	result := r.database.Save(&storage)
+func (r *StorageRepo) Update(storage *domain.Storage) error {
+	result := r.database.Save(storage)
 	return result.Error
 }
 

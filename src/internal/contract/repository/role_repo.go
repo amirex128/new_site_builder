@@ -7,10 +7,10 @@ import (
 
 type IRoleRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Role], error)
-	GetByID(id int64) (domain.Role, error)
-	GetByName(name string) (domain.Role, error)
-	Create(role domain.Role) (int64, error)
-	Update(role domain.Role) error
+	GetByID(id int64) (*domain.Role, error)
+	GetByName(name string) (*domain.Role, error)
+	Create(role *domain.Role) (int64, error)
+	Update(role *domain.Role) error
 	Delete(id int64) error
 
 	// Role-Permission operations

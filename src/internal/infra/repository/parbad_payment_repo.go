@@ -16,30 +16,30 @@ func NewParbadPaymentRepository(db *gorm.DB) *ParbadPaymentRepo {
 	}
 }
 
-func (r *ParbadPaymentRepo) GetByTrackingNumber(trackingNumber int64) (domain.ParbadPayment, error) {
+func (r *ParbadPaymentRepo) GetByTrackingNumber(trackingNumber int64) (*domain.ParbadPayment, error) {
 	var payment domain.ParbadPayment
 	result := r.database.Where("tracking_number = ?", trackingNumber).First(&payment)
 	if result.Error != nil {
-		return payment, result.Error
+		return nil, result.Error
 	}
-	return payment, nil
+	return &payment, nil
 }
 
-func (r *ParbadPaymentRepo) GetByID(id int64) (domain.ParbadPayment, error) {
+func (r *ParbadPaymentRepo) GetByID(id int64) (*domain.ParbadPayment, error) {
 	var payment domain.ParbadPayment
 	result := r.database.First(&payment, id)
 	if result.Error != nil {
-		return payment, result.Error
+		return nil, result.Error
 	}
-	return payment, nil
+	return &payment, nil
 }
 
-func (r *ParbadPaymentRepo) Create(payment domain.ParbadPayment) error {
-	result := r.database.Create(&payment)
+func (r *ParbadPaymentRepo) Create(payment *domain.ParbadPayment) error {
+	result := r.database.Create(payment)
 	return result.Error
 }
 
-func (r *ParbadPaymentRepo) Update(payment domain.ParbadPayment) error {
-	result := r.database.Save(&payment)
+func (r *ParbadPaymentRepo) Update(payment *domain.ParbadPayment) error {
+	result := r.database.Save(payment)
 	return result.Error
 }

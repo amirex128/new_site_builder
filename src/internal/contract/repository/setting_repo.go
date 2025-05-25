@@ -5,7 +5,7 @@ import (
 )
 
 type ISettingRepository interface {
-	GetBySiteID(siteID int64) (domain.Setting, error)
-	Create(setting domain.Setting) error
-	Update(setting domain.Setting) error
+	GetBySiteID(siteID int64) (*domain.Setting, error)
+	Create(setting *domain.Setting) error
+	Update(setting *domain.Setting) error
 }

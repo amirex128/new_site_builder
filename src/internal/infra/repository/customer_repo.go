@@ -53,40 +53,40 @@ func (r *CustomerRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.
 	return buildPaginationResponse(customers, paginationRequestDto, count)
 }
 
-func (r *CustomerRepo) GetByID(id int64) (domain.Customer, error) {
-	var customer domain.Customer
+func (r *CustomerRepo) GetByID(id int64) (*domain.Customer, error) {
+	var customer *domain.Customer
 	result := r.database.First(&customer, id)
 	if result.Error != nil {
-		return customer, result.Error
+		return nil, result.Error
 	}
 	return customer, nil
 }
 
-func (r *CustomerRepo) GetByEmail(email string) (domain.Customer, error) {
-	var customer domain.Customer
+func (r *CustomerRepo) GetByEmail(email string) (*domain.Customer, error) {
+	var customer *domain.Customer
 	result := r.database.Where("email = ?", email).First(&customer)
 	if result.Error != nil {
-		return customer, result.Error
+		return nil, result.Error
 	}
 	return customer, nil
 }
 
-func (r *CustomerRepo) GetByPhone(phone string) (domain.Customer, error) {
-	var customer domain.Customer
+func (r *CustomerRepo) GetByPhone(phone string) (*domain.Customer, error) {
+	var customer *domain.Customer
 	result := r.database.Where("phone = ?", phone).First(&customer)
 	if result.Error != nil {
-		return customer, result.Error
+		return nil, result.Error
 	}
 	return customer, nil
 }
 
-func (r *CustomerRepo) Create(customer domain.Customer) error {
-	result := r.database.Create(&customer)
+func (r *CustomerRepo) Create(customer *domain.Customer) error {
+	result := r.database.Create(customer)
 	return result.Error
 }
 
-func (r *CustomerRepo) Update(customer domain.Customer) error {
-	result := r.database.Save(&customer)
+func (r *CustomerRepo) Update(customer *domain.Customer) error {
+	result := r.database.Save(customer)
 	return result.Error
 }
 

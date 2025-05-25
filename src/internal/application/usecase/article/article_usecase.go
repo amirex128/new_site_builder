@@ -37,11 +37,9 @@ func NewArticleUsecase(c contract.IContainer) *ArticleUsecase {
 func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleCommand) (*resp.Response, error) {
 	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if params.Title == nil || params.Description == nil || params.Body == nil || params.Slug == nil || params.SiteID == nil {
-		return nil, resp.NewError(resp.BadRequest, "اطلاعات اجباری ناقص است")
-	}
+
 	var seoTags string
 	if params.SeoTags != nil && len(params.SeoTags) > 0 {
 		seoTags = strings.Join(params.SeoTags, ",")
@@ -67,12 +65,18 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 	}
 	if params.MediaIDs != nil && len(params.MediaIDs) > 0 {
 		for _, mediaID := range params.MediaIDs {
-			_ = u.articleRepo.AddMediaToArticle(newArticle.ID, mediaID)
+			err = u.articleRepo.AddMediaToArticle(newArticle.ID, mediaID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن رسانه به مقاله")
+			}
 		}
 	}
 	if params.CategoryIDs != nil && len(params.CategoryIDs) > 0 {
 		for _, categoryID := range params.CategoryIDs {
-			_ = u.articleRepo.AddCategoryToArticle(newArticle.ID, categoryID)
+			err = u.articleRepo.AddCategoryToArticle(newArticle.ID, categoryID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن دسته بندی به مقاله")
+			}
 		}
 	}
 	return resp.NewResponseData(resp.Created, newArticle, "مقاله با موفقیت ایجاد شد"), nil
@@ -81,18 +85,16 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (*resp.Response, error) {
 	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if params.ID == nil {
-		return nil, resp.NewError(resp.BadRequest, "شناسه مقاله اجباری است")
-	}
+
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
 	err = u.CheckAccessUserModel(&existingArticle, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if params.Title != nil {
 		existingArticle.Title = *params.Title
@@ -117,13 +119,19 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 	if params.MediaIDs != nil {
 		_ = u.articleRepo.RemoveAllMediaFromArticle(existingArticle.ID)
 		for _, mediaID := range params.MediaIDs {
-			_ = u.articleRepo.AddMediaToArticle(existingArticle.ID, mediaID)
+			err = u.articleRepo.AddMediaToArticle(existingArticle.ID, mediaID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن رسانه به مقاله")
+			}
 		}
 	}
 	if params.CategoryIDs != nil {
 		_ = u.articleRepo.RemoveAllCategoriesFromArticle(existingArticle.ID)
 		for _, categoryID := range params.CategoryIDs {
-			_ = u.articleRepo.AddCategoryToArticle(existingArticle.ID, categoryID)
+			err = u.articleRepo.AddCategoryToArticle(existingArticle.ID, categoryID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن دسته بندی به مقاله")
+			}
 		}
 	}
 	return resp.NewResponseData(resp.Updated, existingArticle, "مقاله با موفقیت ویرایش شد"), nil
@@ -132,10 +140,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (*resp.Response, error) {
 	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
-	}
-	if params.ID == nil {
-		return nil, resp.NewError(resp.BadRequest, "شناسه مقاله اجباری است")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
@@ -143,7 +148,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 	}
 	err = u.CheckAccessUserModel(&existingArticle, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	err = u.articleRepo.Delete(*params.ID)
 	if err != nil {
@@ -153,61 +158,55 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 }
 
 func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery) (*resp.Response, error) {
-	if params.ID == nil {
-		return nil, resp.NewError(resp.BadRequest, "شناسه مقاله اجباری است")
-	}
 	result, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
-	mediaItems, _ := u.articleRepo.GetArticleMedia(result.ID)
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+	mediaItems, err := u.articleRepo.GetArticleMedia(result.ID)
+	if err != nil {
+		return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+	}
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"article": result,
 		"media":   mediaItems,
 	}, "مقاله با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQuery) (*resp.Response, error) {
-	if params.Slug == nil || params.SiteID == nil {
-		return nil, resp.NewError(resp.BadRequest, "اطلاعات اجباری ناقص است")
-	}
 	result, err := u.articleRepo.GetBySlugAndSiteID(*params.Slug, *params.SiteID)
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
-	mediaItems, _ := u.articleRepo.GetArticleMedia(result.ID)
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+	mediaItems, err := u.articleRepo.GetArticleMedia(result.ID)
+	if err != nil {
+		return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+	}
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"article": result,
 		"media":   mediaItems,
 	}, "مقاله با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) (*resp.Response, error) {
-	if params.SiteID == nil {
-		return nil, resp.NewError(resp.BadRequest, "شناسه سایت اجباری است")
-	}
 	result, err := u.articleRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت مقالات")
 	}
 	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, article := range result.Items {
-		media, _ := u.articleRepo.GetArticleMedia(article.ID)
+		media, err := u.articleRepo.GetArticleMedia(article.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
 			"media":   media,
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": articlesWithMedia,
-		"total": result.TotalCount,
-	}, "مقالات با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, articlesWithMedia, "مقالات با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (*resp.Response, error) {
-	if params.Slug == nil || params.SiteID == nil {
-		return nil, resp.NewError(resp.BadRequest, "اطلاعات اجباری ناقص است")
-	}
 	category, err := u.categoryRepo.GetBySlugAndSiteID(*params.Slug, *params.SiteID)
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
@@ -218,23 +217,22 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 	}
 	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, article := range result.Items {
-		media, _ := u.articleRepo.GetArticleMedia(article.ID)
+		media, err := u.articleRepo.GetArticleMedia(article.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
 			"media":   media,
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"items":    articlesWithMedia,
-		"total":    result.TotalCount,
 		"category": category,
 	}, "مقالات با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFiltersSortArticleQuery) (*resp.Response, error) {
-	if params.SiteID == nil {
-		return nil, resp.NewError(resp.BadRequest, "شناسه سایت اجباری است")
-	}
 	result, err := u.articleRepo.GetAllByFilterAndSort(
 		*params.SiteID,
 		params.SelectedFilters,
@@ -246,16 +244,16 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 	}
 	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, article := range result.Items {
-		media, _ := u.articleRepo.GetArticleMedia(article.ID)
+		media, err := u.articleRepo.GetArticleMedia(article.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
 			"media":   media,
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": articlesWithMedia,
-		"total": result.TotalCount,
-	}, "مقالات با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, articlesWithMedia, "مقالات با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (*resp.Response, error) {
@@ -265,14 +263,14 @@ func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArti
 	}
 	articlesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, article := range result.Items {
-		media, _ := u.articleRepo.GetArticleMedia(article.ID)
+		media, err := u.articleRepo.GetArticleMedia(article.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
 			"media":   media,
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": articlesWithMedia,
-		"total": result.TotalCount,
-	}, "مقالات با موفقیت دریافت شد (مدیر)"), nil
+	return resp.NewResponseData(resp.Retrieved, articlesWithMedia, "مقالات با موفقیت دریافت شد (مدیر)"), nil
 }

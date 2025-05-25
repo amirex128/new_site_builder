@@ -49,12 +49,12 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 
 	_, err = u.cityRepo.GetByID(*params.CityID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, "خطا در دریافت آدرس")
+		return nil, resp.NewError(resp.NotFound, "شهر مورد نظر یافت نشد")
 	}
 
 	_, err = u.provinceRepo.GetByID(*params.ProvinceID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, "خطا در دریافت آدرس")
+		return nil, resp.NewError(resp.NotFound, "استان مورد نظر یافت نشد")
 	}
 
 	newAddress := &domain.Address{

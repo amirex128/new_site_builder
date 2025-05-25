@@ -8,9 +8,9 @@ import (
 type IProductVariantRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductVariant], error)
 	GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductVariant], error)
-	GetByID(id int64) (domain.ProductVariant, error)
-	Create(variant domain.ProductVariant) error
-	Update(variant domain.ProductVariant) error
+	GetByID(id int64) (*domain.ProductVariant, error)
+	Create(variant *domain.ProductVariant) error
+	Update(variant *domain.ProductVariant) error
 	Delete(id int64) error
 	DecreaseStock(variantID int64, quantity int) error
 }

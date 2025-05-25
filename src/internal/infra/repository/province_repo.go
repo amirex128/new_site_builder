@@ -35,31 +35,31 @@ func (r *ProvinceRepo) GetAll(paginationRequestDto common.PaginationRequestDto) 
 	return buildPaginationResponse(provinces, paginationRequestDto, count)
 }
 
-func (r *ProvinceRepo) GetByID(id int64) (domain.Province, error) {
-	var province domain.Province
+func (r *ProvinceRepo) GetByID(id int64) (*domain.Province, error) {
+	var province *domain.Province
 	result := r.database.First(&province, id)
 	if result.Error != nil {
-		return province, result.Error
+		return nil, result.Error
 	}
 	return province, nil
 }
 
-func (r *ProvinceRepo) GetByName(name string) (domain.Province, error) {
-	var province domain.Province
+func (r *ProvinceRepo) GetByName(name string) (*domain.Province, error) {
+	var province *domain.Province
 	result := r.database.Where("name = ?", name).First(&province)
 	if result.Error != nil {
-		return province, result.Error
+		return nil, result.Error
 	}
 	return province, nil
 }
 
-func (r *ProvinceRepo) Create(province domain.Province) error {
-	result := r.database.Create(&province)
+func (r *ProvinceRepo) Create(province *domain.Province) error {
+	result := r.database.Create(province)
 	return result.Error
 }
 
-func (r *ProvinceRepo) Update(province domain.Province) error {
-	result := r.database.Save(&province)
+func (r *ProvinceRepo) Update(province *domain.Province) error {
+	result := r.database.Save(province)
 	return result.Error
 }
 

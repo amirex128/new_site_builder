@@ -10,7 +10,7 @@ type ICreditRepository interface {
 	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error)
 	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Credit], error)
 	GetByID(id int64) (domain.Credit, error)
-	Create(credit domain.Credit) error
-	Update(credit domain.Credit) error
+	Create(credit *domain.Credit) error
+	Update(credit *domain.Credit) error
 	Delete(id int64) error
 }

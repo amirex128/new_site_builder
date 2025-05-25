@@ -35,31 +35,31 @@ func (r *UnitPriceRepo) GetAll(paginationRequestDto common.PaginationRequestDto)
 	return buildPaginationResponse(unitPrices, paginationRequestDto, count)
 }
 
-func (r *UnitPriceRepo) GetByID(id int64) (domain.UnitPrice, error) {
-	var unitPrice domain.UnitPrice
+func (r *UnitPriceRepo) GetByID(id int64) (*domain.UnitPrice, error) {
+	var unitPrice *domain.UnitPrice
 	result := r.database.First(&unitPrice, id)
 	if result.Error != nil {
-		return unitPrice, result.Error
+		return nil, result.Error
 	}
 	return unitPrice, nil
 }
 
-func (r *UnitPriceRepo) GetByName(name string) (domain.UnitPrice, error) {
-	var unitPrice domain.UnitPrice
+func (r *UnitPriceRepo) GetByName(name string) (*domain.UnitPrice, error) {
+	var unitPrice *domain.UnitPrice
 	result := r.database.Where("name = ?", name).First(&unitPrice)
 	if result.Error != nil {
-		return unitPrice, result.Error
+		return nil, result.Error
 	}
 	return unitPrice, nil
 }
 
-func (r *UnitPriceRepo) Create(unitPrice domain.UnitPrice) error {
-	result := r.database.Create(&unitPrice)
+func (r *UnitPriceRepo) Create(unitPrice *domain.UnitPrice) error {
+	result := r.database.Create(unitPrice)
 	return result.Error
 }
 
-func (r *UnitPriceRepo) Update(unitPrice domain.UnitPrice) error {
-	result := r.database.Save(&unitPrice)
+func (r *UnitPriceRepo) Update(unitPrice *domain.UnitPrice) error {
+	result := r.database.Save(unitPrice)
 	return result.Error
 }
 

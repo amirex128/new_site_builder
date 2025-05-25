@@ -25,22 +25,22 @@ func (r *CommentRepo) GetAllByTicketID(ticketID int64) ([]domain.Comment, error)
 	return comments, nil
 }
 
-func (r *CommentRepo) GetByID(id int64) (domain.Comment, error) {
+func (r *CommentRepo) GetByID(id int64) (*domain.Comment, error) {
 	var comment domain.Comment
 	result := r.database.First(&comment, id)
 	if result.Error != nil {
-		return comment, result.Error
+		return nil, result.Error
 	}
-	return comment, nil
+	return &comment, nil
 }
 
-func (r *CommentRepo) Create(comment domain.Comment) error {
-	result := r.database.Create(&comment)
+func (r *CommentRepo) Create(comment *domain.Comment) error {
+	result := r.database.Create(comment)
 	return result.Error
 }
 
-func (r *CommentRepo) Update(comment domain.Comment) error {
-	result := r.database.Save(&comment)
+func (r *CommentRepo) Update(comment *domain.Comment) error {
+	result := r.database.Save(comment)
 	return result.Error
 }
 
@@ -69,22 +69,22 @@ func (r *CustomerCommentRepo) GetAllByCustomerTicketID(customerTicketID int64) (
 	return comments, nil
 }
 
-func (r *CustomerCommentRepo) GetByID(id int64) (domain.CustomerComment, error) {
+func (r *CustomerCommentRepo) GetByID(id int64) (*domain.CustomerComment, error) {
 	var comment domain.CustomerComment
 	result := r.database.First(&comment, id)
 	if result.Error != nil {
-		return comment, result.Error
+		return nil, result.Error
 	}
-	return comment, nil
+	return &comment, nil
 }
 
-func (r *CustomerCommentRepo) Create(comment domain.CustomerComment) error {
-	result := r.database.Create(&comment)
+func (r *CustomerCommentRepo) Create(comment *domain.CustomerComment) error {
+	result := r.database.Create(comment)
 	return result.Error
 }
 
-func (r *CustomerCommentRepo) Update(comment domain.CustomerComment) error {
-	result := r.database.Save(&comment)
+func (r *CustomerCommentRepo) Update(comment *domain.CustomerComment) error {
+	result := r.database.Save(comment)
 	return result.Error
 }
 

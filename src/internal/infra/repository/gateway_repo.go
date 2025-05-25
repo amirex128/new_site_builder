@@ -35,31 +35,31 @@ func (r *GatewayRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 	return buildPaginationResponse(gateways, paginationRequestDto, count)
 }
 
-func (r *GatewayRepo) GetBySiteID(siteID int64) (domain.Gateway, error) {
-	var gateway domain.Gateway
+func (r *GatewayRepo) GetBySiteID(siteID int64) (*domain.Gateway, error) {
+	var gateway *domain.Gateway
 	result := r.database.Where("site_id = ?", siteID).First(&gateway)
 	if result.Error != nil {
-		return gateway, result.Error
+		return nil, result.Error
 	}
 	return gateway, nil
 }
 
-func (r *GatewayRepo) GetByID(id int64) (domain.Gateway, error) {
-	var gateway domain.Gateway
+func (r *GatewayRepo) GetByID(id int64) (*domain.Gateway, error) {
+	var gateway *domain.Gateway
 	result := r.database.First(&gateway, id)
 	if result.Error != nil {
-		return gateway, result.Error
+		return nil, result.Error
 	}
 	return gateway, nil
 }
 
-func (r *GatewayRepo) Create(gateway domain.Gateway) error {
-	result := r.database.Create(&gateway)
+func (r *GatewayRepo) Create(gateway *domain.Gateway) error {
+	result := r.database.Create(gateway)
 	return result.Error
 }
 
-func (r *GatewayRepo) Update(gateway domain.Gateway) error {
-	result := r.database.Save(&gateway)
+func (r *GatewayRepo) Update(gateway *domain.Gateway) error {
+	result := r.database.Save(gateway)
 	return result.Error
 }
 

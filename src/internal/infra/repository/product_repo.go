@@ -76,31 +76,31 @@ func (r *ProductRepo) GetAllByCategoryID(categoryID int64, paginationRequestDto 
 	return buildPaginationResponse(products, paginationRequestDto, count)
 }
 
-func (r *ProductRepo) GetByID(id int64) (domain.Product, error) {
-	var product domain.Product
+func (r *ProductRepo) GetByID(id int64) (*domain.Product, error) {
+	var product *domain.Product
 	result := r.database.First(&product, id)
 	if result.Error != nil {
-		return product, result.Error
+		return nil, result.Error
 	}
 	return product, nil
 }
 
-func (r *ProductRepo) GetBySlug(slug string) (domain.Product, error) {
-	var product domain.Product
+func (r *ProductRepo) GetBySlug(slug string) (*domain.Product, error) {
+	var product *domain.Product
 	result := r.database.Where("slug = ?", slug).First(&product)
 	if result.Error != nil {
-		return product, result.Error
+		return nil, result.Error
 	}
 	return product, nil
 }
 
-func (r *ProductRepo) Create(product domain.Product) error {
-	result := r.database.Create(&product)
+func (r *ProductRepo) Create(product *domain.Product) error {
+	result := r.database.Create(product)
 	return result.Error
 }
 
-func (r *ProductRepo) Update(product domain.Product) error {
-	result := r.database.Save(&product)
+func (r *ProductRepo) Update(product *domain.Product) error {
+	result := r.database.Save(product)
 	return result.Error
 }
 

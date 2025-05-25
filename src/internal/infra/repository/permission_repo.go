@@ -30,31 +30,31 @@ func (r *PermissionRepo) GetAll() ([]domain.Permission, error) {
 	return permissions, nil
 }
 
-func (r *PermissionRepo) GetByID(id int64) (domain.Permission, error) {
+func (r *PermissionRepo) GetByID(id int64) (*domain.Permission, error) {
 	var permission domain.Permission
 	result := r.database.First(&permission, id)
 	if result.Error != nil {
-		return permission, result.Error
+		return nil, result.Error
 	}
-	return permission, nil
+	return &permission, nil
 }
 
-func (r *PermissionRepo) GetByName(name string) (domain.Permission, error) {
+func (r *PermissionRepo) GetByName(name string) (*domain.Permission, error) {
 	var permission domain.Permission
 	result := r.database.Where("name = ?", name).First(&permission)
 	if result.Error != nil {
-		return permission, result.Error
+		return nil, result.Error
 	}
-	return permission, nil
+	return &permission, nil
 }
 
-func (r *PermissionRepo) Create(permission domain.Permission) error {
-	result := r.database.Create(&permission)
+func (r *PermissionRepo) Create(permission *domain.Permission) error {
+	result := r.database.Create(permission)
 	return result.Error
 }
 
-func (r *PermissionRepo) Update(permission domain.Permission) error {
-	result := r.database.Save(&permission)
+func (r *PermissionRepo) Update(permission *domain.Permission) error {
+	result := r.database.Save(permission)
 	return result.Error
 }
 

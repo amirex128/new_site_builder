@@ -77,8 +77,8 @@ func (r *ArticleCategoryRepo) GetAllByParentID(parentID int64, paginationRequest
 	return buildPaginationResponse(categories, paginationRequestDto, count)
 }
 
-func (r *ArticleCategoryRepo) GetByID(id int64) (domain.ArticleCategory, error) {
-	var category domain.ArticleCategory
+func (r *ArticleCategoryRepo) GetByID(id int64) (*domain.ArticleCategory, error) {
+	var category *domain.ArticleCategory
 
 	result := r.database.
 		Where("id = ?", id).
@@ -86,14 +86,14 @@ func (r *ArticleCategoryRepo) GetByID(id int64) (domain.ArticleCategory, error) 
 		First(&category)
 
 	if result.Error != nil {
-		return domain.ArticleCategory{}, result.Error
+		return nil, result.Error
 	}
 
 	return category, nil
 }
 
-func (r *ArticleCategoryRepo) GetBySlug(slug string) (domain.ArticleCategory, error) {
-	var category domain.ArticleCategory
+func (r *ArticleCategoryRepo) GetBySlug(slug string) (*domain.ArticleCategory, error) {
+	var category *domain.ArticleCategory
 
 	result := r.database.
 		Where("slug = ?", slug).
@@ -101,14 +101,14 @@ func (r *ArticleCategoryRepo) GetBySlug(slug string) (domain.ArticleCategory, er
 		First(&category)
 
 	if result.Error != nil {
-		return domain.ArticleCategory{}, result.Error
+		return nil, result.Error
 	}
 
 	return category, nil
 }
 
-func (r *ArticleCategoryRepo) GetBySlugAndSiteID(slug string, siteID int64) (domain.ArticleCategory, error) {
-	var category domain.ArticleCategory
+func (r *ArticleCategoryRepo) GetBySlugAndSiteID(slug string, siteID int64) (*domain.ArticleCategory, error) {
+	var category *domain.ArticleCategory
 
 	result := r.database.
 		Where("slug = ?", slug).
@@ -117,18 +117,18 @@ func (r *ArticleCategoryRepo) GetBySlugAndSiteID(slug string, siteID int64) (dom
 		First(&category)
 
 	if result.Error != nil {
-		return domain.ArticleCategory{}, result.Error
+		return nil, result.Error
 	}
 
 	return category, nil
 }
 
-func (r *ArticleCategoryRepo) Create(category domain.ArticleCategory) error {
-	return r.database.Create(&category).Error
+func (r *ArticleCategoryRepo) Create(category *domain.ArticleCategory) error {
+	return r.database.Create(category).Error
 }
 
-func (r *ArticleCategoryRepo) Update(category domain.ArticleCategory) error {
-	return r.database.Save(&category).Error
+func (r *ArticleCategoryRepo) Update(category *domain.ArticleCategory) error {
+	return r.database.Save(category).Error
 }
 
 func (r *ArticleCategoryRepo) Delete(id int64) error {

@@ -2682,7 +2682,7 @@ const docTemplate = `{
                 "summary": "Verify customer email",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "code",
                         "in": "query",
                         "required": true
@@ -8178,6 +8178,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "name": "roleId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "name": "search",
                         "in": "query"
@@ -10814,9 +10820,6 @@ const docTemplate = `{
                 "cityId": {
                     "type": "integer"
                 },
-                "customerId": {
-                    "type": "integer"
-                },
                 "latitude": {
                     "type": "number",
                     "maximum": 90,
@@ -10835,9 +10838,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 }
             }
         },
@@ -11184,33 +11184,6 @@ const docTemplate = `{
                 }
             }
         },
-        "common_dto.PaginationJson": {
-            "type": "object",
-            "properties": {
-                "hasNextPage": {
-                    "type": "boolean"
-                },
-                "hasPreviousPage": {
-                    "type": "boolean"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {}
-                },
-                "pageNumber": {
-                    "type": "integer"
-                },
-                "search": {
-                    "type": "string"
-                },
-                "totalCount": {
-                    "type": "integer"
-                },
-                "totalPages": {
-                    "type": "integer"
-                }
-            }
-        },
         "customer.LoginCustomerCommand": {
             "type": "object",
             "required": [
@@ -11321,13 +11294,13 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/enums.CustomerTicketPriorityEnum"
+                    "$ref": "#/definitions/enums.TicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/enums.CustomerTicketCategoryEnum"
+                    "$ref": "#/definitions/enums.TicketCategoryEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/enums.CustomerTicketStatusEnum"
+                    "$ref": "#/definitions/enums.TicketStatusEnum"
                 }
             }
         },
@@ -11353,10 +11326,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "priority": {
-                    "$ref": "#/definitions/enums.CustomerTicketPriorityEnum"
+                    "$ref": "#/definitions/enums.TicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/enums.CustomerTicketCategoryEnum"
+                    "$ref": "#/definitions/enums.TicketCategoryEnum"
                 },
                 "title": {
                     "type": "string"
@@ -11404,13 +11377,13 @@ const docTemplate = `{
                     }
                 },
                 "priority": {
-                    "$ref": "#/definitions/enums.CustomerTicketPriorityEnum"
+                    "$ref": "#/definitions/enums.TicketPriorityEnum"
                 },
                 "product_category": {
-                    "$ref": "#/definitions/enums.CustomerTicketCategoryEnum"
+                    "$ref": "#/definitions/enums.TicketCategoryEnum"
                 },
                 "status": {
-                    "$ref": "#/definitions/enums.CustomerTicketStatusEnum"
+                    "$ref": "#/definitions/enums.TicketStatusEnum"
                 }
             }
         },
@@ -11593,53 +11566,6 @@ const docTemplate = `{
                 "TipaxCourier"
             ]
         },
-        "enums.CustomerTicketCategoryEnum": {
-            "type": "string",
-            "enum": [
-                "bug",
-                "enhancement",
-                "feature_request",
-                "question",
-                "documentation",
-                "financial"
-            ],
-            "x-enum-varnames": [
-                "CustomerTicketBugCategory",
-                "CustomerTicketEnhancementCategory",
-                "CustomerTicketFeatureRequestCategory",
-                "CustomerTicketQuestionCategory",
-                "CustomerTicketDocumentationCategory",
-                "CustomerTicketFinancialCategory"
-            ]
-        },
-        "enums.CustomerTicketPriorityEnum": {
-            "type": "string",
-            "enum": [
-                "low",
-                "medium",
-                "high",
-                "critical"
-            ],
-            "x-enum-varnames": [
-                "CustomerTicketLowPriority",
-                "CustomerTicketMediumPriority",
-                "CustomerTicketHighPriority",
-                "CustomerTicketCriticalPriority"
-            ]
-        },
-        "enums.CustomerTicketStatusEnum": {
-            "type": "string",
-            "enum": [
-                "new",
-                "in_progress",
-                "closed"
-            ],
-            "x-enum-varnames": [
-                "CustomerTicketNewStatus",
-                "CustomerTicketInProgressStatus",
-                "CustomerTicketClosedStatus"
-            ]
-        },
         "enums.DiscountTypeEnum": {
             "type": "string",
             "enum": [
@@ -11666,15 +11592,11 @@ const docTemplate = `{
             "type": "string",
             "enum": [
                 "private",
-                "public",
-                "private",
                 "public"
             ],
             "x-enum-varnames": [
                 "FileItemPrivatePermission",
-                "FileItemPublicPermission",
-                "PrivatePermission",
-                "PublicPermission"
+                "FileItemPublicPermission"
             ]
         },
         "enums.OperationType": {
@@ -11793,18 +11715,12 @@ const docTemplate = `{
             "enum": [
                 "inactive",
                 "active",
-                "pending",
-                "deleted",
-                "disabled",
-                "enabled"
+                "pending"
             ],
             "x-enum-varnames": [
                 "InactiveStatus",
                 "ActiveStatus",
-                "PendingStatus",
-                "DeletedStatus",
-                "DisabledStatus",
-                "EnabledStatus"
+                "PendingStatus"
             ]
         },
         "enums.TicketCategoryEnum": {
@@ -11849,9 +11765,9 @@ const docTemplate = `{
                 "closed"
             ],
             "x-enum-varnames": [
-                "NewTicketStatus",
-                "InProgressTicketStatus",
-                "ClosedTicketStatus"
+                "TicketNewStatus",
+                "TicketInProgressStatus",
+                "TicketClosedStatus"
             ]
         },
         "enums.UnitPriceNameEnum": {
@@ -12027,29 +11943,7 @@ const docTemplate = `{
             }
         },
         "header_footer.CreateHeaderFooterCommand": {
-            "type": "object",
-            "required": [
-                "body",
-                "siteId",
-                "type"
-            ],
-            "properties": {
-                "body": {
-                    "$ref": "#/definitions/header_footer.HeaderFooterBody"
-                },
-                "isMain": {
-                    "type": "boolean"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/header_footer.HeaderFooterTypeEnum"
-                }
-            }
+            "type": "object"
         },
         "header_footer.DeleteHeaderFooterCommand": {
             "type": "object",
@@ -12063,77 +11957,7 @@ const docTemplate = `{
             }
         },
         "header_footer.HeaderFooterBody": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "props": {},
-                "rows": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/header_footer.HeaderFooterRow"
-                    }
-                }
-            }
-        },
-        "header_footer.HeaderFooterColumn": {
-            "type": "object",
-            "properties": {
-                "components": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/header_footer.HeaderFooterComponent"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "props": {},
-                "style": {}
-            }
-        },
-        "header_footer.HeaderFooterComponent": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/common_dto.PaginationJson"
-                },
-                "filters": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "props": {},
-                "sort": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "header_footer.HeaderFooterRow": {
-            "type": "object",
-            "properties": {
-                "columns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/header_footer.HeaderFooterColumn"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "props": {}
-            }
+            "type": "object"
         },
         "header_footer.HeaderFooterTypeEnum": {
             "type": "string",
@@ -12226,49 +12050,7 @@ const docTemplate = `{
             }
         },
         "page.CreatePageCommand": {
-            "type": "object",
-            "required": [
-                "body",
-                "footerId",
-                "headerId",
-                "siteId",
-                "slug"
-            ],
-            "properties": {
-                "body": {
-                    "$ref": "#/definitions/page.PageBody"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "footerId": {
-                    "type": "integer"
-                },
-                "headerId": {
-                    "type": "integer"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "seoTags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "page.DeletePageCommand": {
             "type": "object",
@@ -12282,77 +12064,7 @@ const docTemplate = `{
             }
         },
         "page.PageBody": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "props": {},
-                "rows": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/page.PageRow"
-                    }
-                }
-            }
-        },
-        "page.PageColumn": {
-            "type": "object",
-            "properties": {
-                "components": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/page.PageComponent"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "props": {},
-                "style": {}
-            }
-        },
-        "page.PageComponent": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/common_dto.PaginationJson"
-                },
-                "filters": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "props": {},
-                "sort": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "page.PageRow": {
-            "type": "object",
-            "properties": {
-                "columns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/page.PageColumn"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "props": {}
-            }
+            "type": "object"
         },
         "page.UpdatePageCommand": {
             "type": "object",
@@ -13909,16 +13621,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {},
-                "errorData": {
-                    "type": "array",
-                    "items": {}
-                },
-                "errors": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "message": {
                     "type": "string"
                 },
@@ -13927,6 +13629,9 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                },
+                "systemMessage": {
+                    "type": "string"
                 }
             }
         },

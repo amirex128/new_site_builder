@@ -76,31 +76,31 @@ func (r *DiscountRepo) GetAllByProductID(productID int64, paginationRequestDto c
 	return buildPaginationResponse(discounts, paginationRequestDto, count)
 }
 
-func (r *DiscountRepo) GetByID(id int64) (domain.Discount, error) {
-	var discount domain.Discount
+func (r *DiscountRepo) GetByID(id int64) (*domain.Discount, error) {
+	var discount *domain.Discount
 	result := r.database.First(&discount, id)
 	if result.Error != nil {
-		return discount, result.Error
+		return nil, result.Error
 	}
 	return discount, nil
 }
 
-func (r *DiscountRepo) GetByCode(code string) (domain.Discount, error) {
-	var discount domain.Discount
+func (r *DiscountRepo) GetByCode(code string) (*domain.Discount, error) {
+	var discount *domain.Discount
 	result := r.database.Where("code = ?", code).First(&discount)
 	if result.Error != nil {
-		return discount, result.Error
+		return nil, result.Error
 	}
 	return discount, nil
 }
 
-func (r *DiscountRepo) Create(discount domain.Discount) error {
-	result := r.database.Create(&discount)
+func (r *DiscountRepo) Create(discount *domain.Discount) error {
+	result := r.database.Create(discount)
 	return result.Error
 }
 
-func (r *DiscountRepo) Update(discount domain.Discount) error {
-	result := r.database.Save(&discount)
+func (r *DiscountRepo) Update(discount *domain.Discount) error {
+	result := r.database.Save(discount)
 	return result.Error
 }
 

@@ -6,8 +6,6 @@ definitions:
         type: string
       cityId:
         type: integer
-      customerId:
-        type: integer
       latitude:
         maximum: 90
         minimum: -90
@@ -22,8 +20,6 @@ definitions:
         type: integer
       title:
         type: string
-      userId:
-        type: integer
     required:
     - cityId
     - latitude
@@ -262,24 +258,6 @@ definitions:
     - basketItems
     - siteId
     type: object
-  common_dto.PaginationJson:
-    properties:
-      hasNextPage:
-        type: boolean
-      hasPreviousPage:
-        type: boolean
-      items:
-        items: {}
-        type: array
-      pageNumber:
-        type: integer
-      search:
-        type: string
-      totalCount:
-        type: integer
-      totalPages:
-        type: integer
-    type: object
   customer.LoginCustomerCommand:
     properties:
       email:
@@ -348,11 +326,11 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/enums.CustomerTicketPriorityEnum'
+        $ref: '#/definitions/enums.TicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/enums.CustomerTicketCategoryEnum'
+        $ref: '#/definitions/enums.TicketCategoryEnum'
       status:
-        $ref: '#/definitions/enums.CustomerTicketStatusEnum'
+        $ref: '#/definitions/enums.TicketStatusEnum'
     required:
     - assignedTo
     - comment
@@ -372,9 +350,9 @@ definitions:
       ownerUserId:
         type: integer
       priority:
-        $ref: '#/definitions/enums.CustomerTicketPriorityEnum'
+        $ref: '#/definitions/enums.TicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/enums.CustomerTicketCategoryEnum'
+        $ref: '#/definitions/enums.TicketCategoryEnum'
       title:
         type: string
     required:
@@ -405,11 +383,11 @@ definitions:
           type: integer
         type: array
       priority:
-        $ref: '#/definitions/enums.CustomerTicketPriorityEnum'
+        $ref: '#/definitions/enums.TicketPriorityEnum'
       product_category:
-        $ref: '#/definitions/enums.CustomerTicketCategoryEnum'
+        $ref: '#/definitions/enums.TicketCategoryEnum'
       status:
-        $ref: '#/definitions/enums.CustomerTicketStatusEnum'
+        $ref: '#/definitions/enums.TicketStatusEnum'
     required:
     - assignedTo
     - comment
@@ -545,44 +523,6 @@ definitions:
     x-enum-varnames:
     - PostCourier
     - TipaxCourier
-  enums.CustomerTicketCategoryEnum:
-    enum:
-    - bug
-    - enhancement
-    - feature_request
-    - question
-    - documentation
-    - financial
-    type: string
-    x-enum-varnames:
-    - CustomerTicketBugCategory
-    - CustomerTicketEnhancementCategory
-    - CustomerTicketFeatureRequestCategory
-    - CustomerTicketQuestionCategory
-    - CustomerTicketDocumentationCategory
-    - CustomerTicketFinancialCategory
-  enums.CustomerTicketPriorityEnum:
-    enum:
-    - low
-    - medium
-    - high
-    - critical
-    type: string
-    x-enum-varnames:
-    - CustomerTicketLowPriority
-    - CustomerTicketMediumPriority
-    - CustomerTicketHighPriority
-    - CustomerTicketCriticalPriority
-  enums.CustomerTicketStatusEnum:
-    enum:
-    - new
-    - in_progress
-    - closed
-    type: string
-    x-enum-varnames:
-    - CustomerTicketNewStatus
-    - CustomerTicketInProgressStatus
-    - CustomerTicketClosedStatus
   enums.DiscountTypeEnum:
     enum:
     - fixed
@@ -603,14 +543,10 @@ definitions:
     enum:
     - private
     - public
-    - private
-    - public
     type: string
     x-enum-varnames:
     - FileItemPrivatePermission
     - FileItemPublicPermission
-    - PrivatePermission
-    - PublicPermission
   enums.OperationType:
     enum:
     - copy
@@ -712,17 +648,11 @@ definitions:
     - inactive
     - active
     - pending
-    - deleted
-    - disabled
-    - enabled
     type: string
     x-enum-varnames:
     - InactiveStatus
     - ActiveStatus
     - PendingStatus
-    - DeletedStatus
-    - DisabledStatus
-    - EnabledStatus
   enums.TicketCategoryEnum:
     enum:
     - bug
@@ -758,9 +688,9 @@ definitions:
     - closed
     type: string
     x-enum-varnames:
-    - NewTicketStatus
-    - InProgressTicketStatus
-    - ClosedTicketStatus
+    - TicketNewStatus
+    - TicketInProgressStatus
+    - TicketClosedStatus
   enums.UnitPriceNameEnum:
     enum:
     - storage_mb_credits
@@ -884,21 +814,6 @@ definitions:
     - id
     type: object
   header_footer.CreateHeaderFooterCommand:
-    properties:
-      body:
-        $ref: '#/definitions/header_footer.HeaderFooterBody'
-      isMain:
-        type: boolean
-      siteId:
-        type: integer
-      title:
-        type: string
-      type:
-        $ref: '#/definitions/header_footer.HeaderFooterTypeEnum'
-    required:
-    - body
-    - siteId
-    - type
     type: object
   header_footer.DeleteHeaderFooterCommand:
     properties:
@@ -908,53 +823,6 @@ definitions:
     - id
     type: object
   header_footer.HeaderFooterBody:
-    properties:
-      id:
-        type: string
-      props: {}
-      rows:
-        items:
-          $ref: '#/definitions/header_footer.HeaderFooterRow'
-        type: array
-    type: object
-  header_footer.HeaderFooterColumn:
-    properties:
-      components:
-        items:
-          $ref: '#/definitions/header_footer.HeaderFooterComponent'
-        type: array
-      id:
-        type: string
-      props: {}
-      style: {}
-    type: object
-  header_footer.HeaderFooterComponent:
-    properties:
-      data:
-        $ref: '#/definitions/common_dto.PaginationJson'
-      filters:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
-      name:
-        type: string
-      props: {}
-      sort:
-        type: string
-      title:
-        type: string
-    type: object
-  header_footer.HeaderFooterRow:
-    properties:
-      columns:
-        items:
-          $ref: '#/definitions/header_footer.HeaderFooterColumn'
-        type: array
-      id:
-        type: string
-      props: {}
     type: object
   header_footer.HeaderFooterTypeEnum:
     enum:
@@ -1018,35 +886,6 @@ definitions:
     - orderData
     type: object
   page.CreatePageCommand:
-    properties:
-      body:
-        $ref: '#/definitions/page.PageBody'
-      description:
-        type: string
-      footerId:
-        type: integer
-      headerId:
-        type: integer
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      seoTags:
-        items:
-          type: string
-        type: array
-      siteId:
-        type: integer
-      slug:
-        type: string
-      title:
-        type: string
-    required:
-    - body
-    - footerId
-    - headerId
-    - siteId
-    - slug
     type: object
   page.DeletePageCommand:
     properties:
@@ -1056,53 +895,6 @@ definitions:
     - id
     type: object
   page.PageBody:
-    properties:
-      id:
-        type: string
-      props: {}
-      rows:
-        items:
-          $ref: '#/definitions/page.PageRow'
-        type: array
-    type: object
-  page.PageColumn:
-    properties:
-      components:
-        items:
-          $ref: '#/definitions/page.PageComponent'
-        type: array
-      id:
-        type: string
-      props: {}
-      style: {}
-    type: object
-  page.PageComponent:
-    properties:
-      data:
-        $ref: '#/definitions/common_dto.PaginationJson'
-      filters:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
-      name:
-        type: string
-      props: {}
-      sort:
-        type: string
-      title:
-        type: string
-    type: object
-  page.PageRow:
-    properties:
-      columns:
-        items:
-          $ref: '#/definitions/page.PageColumn'
-        type: array
-      id:
-        type: string
-      props: {}
     type: object
   page.UpdatePageCommand:
     properties:
@@ -2158,19 +1950,14 @@ definitions:
   utils.Result:
     properties:
       data: {}
-      errorData:
-        items: {}
-        type: array
-      errors:
-        items:
-          type: string
-        type: array
       message:
         type: string
       statusCode:
         type: integer
       success:
         type: boolean
+      systemMessage:
+        type: string
     type: object
   website.GetSingleArticleBySlugQuery:
     properties:
@@ -3921,7 +3708,7 @@ paths:
       - in: query
         name: code
         required: true
-        type: integer
+        type: string
       - in: query
         name: email
         required: true
@@ -7456,6 +7243,10 @@ paths:
         maximum: 100
         minimum: 1
         name: pageSize
+        required: true
+        type: integer
+      - in: query
+        name: roleId
         required: true
         type: integer
       - in: query

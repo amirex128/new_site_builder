@@ -1,5 +1,7 @@
 package resp
 
+import "strings"
+
 type ErrorType string
 type ResponseType string
 type Data map[string]any
@@ -31,31 +33,32 @@ type Response struct {
 	Data    any
 }
 
-func NewError(typ ErrorType, msg string) *Error {
+func NewError(typ ErrorType, msg ...string) *Error {
 	return &Error{
-		Message: msg,
+		Message: strings.Join(msg, "|"),
 		Type:    typ,
 	}
 }
 
-func NewErrorData(typ ErrorType, data any, msg string) *Error {
+func NewErrorData(typ ErrorType, data any, msg ...string) *Error {
 	return &Error{
-		Message: msg,
+		Message: strings.Join(msg, "|"),
 		Type:    typ,
 		Data:    data,
 	}
 }
-func NewResponseData(typ ResponseType, data any, msg string) *Response {
+func NewResponseData(typ ResponseType, data any, msg ...string) *Response {
 	return &Response{
-		Message: msg,
+		Message: strings.Join(msg, "|"),
 		Type:    typ,
 		Data:    data,
 	}
 }
-func NewResponse(typ ResponseType, msg string) *Response {
+func NewResponse(typ ResponseType, msg ...string) *Response {
 	return &Response{
-		Message: msg,
-		Type:    typ}
+		Message: strings.Join(msg, "|"),
+		Type:    typ,
+	}
 }
 
 func (e *Error) Error() string {

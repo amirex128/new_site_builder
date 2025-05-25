@@ -53,22 +53,22 @@ func (r *BasketItemRepo) GetAllByBasketID(basketID int64, paginationRequestDto c
 	return buildPaginationResponse(basketItems, paginationRequestDto, count)
 }
 
-func (r *BasketItemRepo) GetByID(id int64) (domain.BasketItem, error) {
+func (r *BasketItemRepo) GetByID(id int64) (*domain.BasketItem, error) {
 	var basketItem domain.BasketItem
 	result := r.database.First(&basketItem, id)
 	if result.Error != nil {
-		return basketItem, result.Error
+		return nil, result.Error
 	}
-	return basketItem, nil
+	return &basketItem, nil
 }
 
-func (r *BasketItemRepo) Create(basketItem domain.BasketItem) error {
-	result := r.database.Create(&basketItem)
+func (r *BasketItemRepo) Create(basketItem *domain.BasketItem) error {
+	result := r.database.Create(basketItem)
 	return result.Error
 }
 
-func (r *BasketItemRepo) Update(basketItem domain.BasketItem) error {
-	result := r.database.Save(&basketItem)
+func (r *BasketItemRepo) Update(basketItem *domain.BasketItem) error {
+	result := r.database.Save(basketItem)
 	return result.Error
 }
 

@@ -71,22 +71,22 @@ func (r *ReturnItemRepo) GetAllByCustomerID(customerID int64, paginationRequestD
 	return buildPaginationResponse(returnItems, paginationRequestDto, count)
 }
 
-func (r *ReturnItemRepo) GetByID(id int64) (domain.ReturnItem, error) {
-	var returnItem domain.ReturnItem
+func (r *ReturnItemRepo) GetByID(id int64) (*domain.ReturnItem, error) {
+	var returnItem *domain.ReturnItem
 	result := r.database.First(&returnItem, id)
 	if result.Error != nil {
-		return returnItem, result.Error
+		return nil, result.Error
 	}
 	return returnItem, nil
 }
 
-func (r *ReturnItemRepo) Create(returnItem domain.ReturnItem) error {
-	result := r.database.Create(&returnItem)
+func (r *ReturnItemRepo) Create(returnItem *domain.ReturnItem) error {
+	result := r.database.Create(returnItem)
 	return result.Error
 }
 
-func (r *ReturnItemRepo) Update(returnItem domain.ReturnItem) error {
-	result := r.database.Save(&returnItem)
+func (r *ReturnItemRepo) Update(returnItem *domain.ReturnItem) error {
+	result := r.database.Save(returnItem)
 	return result.Error
 }
 

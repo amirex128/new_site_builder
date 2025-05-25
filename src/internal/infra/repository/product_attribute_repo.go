@@ -53,22 +53,22 @@ func (r *ProductAttributeRepo) GetAllByProductID(productID int64, paginationRequ
 	return buildPaginationResponse(attributes, paginationRequestDto, count)
 }
 
-func (r *ProductAttributeRepo) GetByID(id int64) (domain.ProductAttribute, error) {
-	var attribute domain.ProductAttribute
+func (r *ProductAttributeRepo) GetByID(id int64) (*domain.ProductAttribute, error) {
+	var attribute *domain.ProductAttribute
 	result := r.database.First(&attribute, id)
 	if result.Error != nil {
-		return attribute, result.Error
+		return nil, result.Error
 	}
 	return attribute, nil
 }
 
-func (r *ProductAttributeRepo) Create(attribute domain.ProductAttribute) error {
-	result := r.database.Create(&attribute)
+func (r *ProductAttributeRepo) Create(attribute *domain.ProductAttribute) error {
+	result := r.database.Create(attribute)
 	return result.Error
 }
 
-func (r *ProductAttributeRepo) Update(attribute domain.ProductAttribute) error {
-	result := r.database.Save(&attribute)
+func (r *ProductAttributeRepo) Update(attribute *domain.ProductAttribute) error {
+	result := r.database.Save(attribute)
 	return result.Error
 }
 

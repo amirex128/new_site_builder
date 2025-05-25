@@ -35,22 +35,22 @@ func (r *PlanRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*co
 	return buildPaginationResponse(plans, paginationRequestDto, count)
 }
 
-func (r *PlanRepo) GetByID(id int64) (domain.Plan, error) {
-	var plan domain.Plan
+func (r *PlanRepo) GetByID(id int64) (*domain.Plan, error) {
+	var plan *domain.Plan
 	result := r.database.First(&plan, id)
 	if result.Error != nil {
-		return plan, result.Error
+		return nil, result.Error
 	}
 	return plan, nil
 }
 
-func (r *PlanRepo) Create(plan domain.Plan) error {
-	result := r.database.Create(&plan)
+func (r *PlanRepo) Create(plan *domain.Plan) error {
+	result := r.database.Create(plan)
 	return result.Error
 }
 
-func (r *PlanRepo) Update(plan domain.Plan) error {
-	result := r.database.Save(&plan)
+func (r *PlanRepo) Update(plan *domain.Plan) error {
+	result := r.database.Save(plan)
 	return result.Error
 }
 

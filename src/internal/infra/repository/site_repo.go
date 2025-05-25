@@ -53,31 +53,31 @@ func (r *SiteRepo) GetAllByUserID(userID int64, paginationRequestDto common.Pagi
 	return buildPaginationResponse(sites, paginationRequestDto, count)
 }
 
-func (r *SiteRepo) GetByID(id int64) (domain.Site, error) {
-	var site domain.Site
+func (r *SiteRepo) GetByID(id int64) (*domain.Site, error) {
+	var site *domain.Site
 	result := r.database.First(&site, id)
 	if result.Error != nil {
-		return site, result.Error
+		return nil, result.Error
 	}
 	return site, nil
 }
 
-func (r *SiteRepo) GetByDomain(domainName string) (domain.Site, error) {
-	var site domain.Site
+func (r *SiteRepo) GetByDomain(domainName string) (*domain.Site, error) {
+	var site *domain.Site
 	result := r.database.Where("domain = ?", domainName).First(&site)
 	if result.Error != nil {
-		return site, result.Error
+		return nil, result.Error
 	}
 	return site, nil
 }
 
-func (r *SiteRepo) Create(site domain.Site) error {
-	result := r.database.Create(&site)
+func (r *SiteRepo) Create(site *domain.Site) error {
+	result := r.database.Create(site)
 	return result.Error
 }
 
-func (r *SiteRepo) Update(site domain.Site) error {
-	result := r.database.Save(&site)
+func (r *SiteRepo) Update(site *domain.Site) error {
+	result := r.database.Save(site)
 	return result.Error
 }
 

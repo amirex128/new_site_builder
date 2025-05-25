@@ -35,22 +35,22 @@ func (r *MediaRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*c
 	return buildPaginationResponse(media, paginationRequestDto, count)
 }
 
-func (r *MediaRepo) GetByID(id int64) (domain.Media, error) {
-	var media domain.Media
+func (r *MediaRepo) GetByID(id int64) (*domain.Media, error) {
+	var media *domain.Media
 	result := r.database.First(&media, id)
 	if result.Error != nil {
-		return media, result.Error
+		return nil, result.Error
 	}
 	return media, nil
 }
 
-func (r *MediaRepo) Create(media domain.Media) error {
-	result := r.database.Create(&media)
+func (r *MediaRepo) Create(media *domain.Media) error {
+	result := r.database.Create(media)
 	return result.Error
 }
 
-func (r *MediaRepo) Update(media domain.Media) error {
-	result := r.database.Save(&media)
+func (r *MediaRepo) Update(media *domain.Media) error {
+	result := r.database.Save(media)
 	return result.Error
 }
 

@@ -7,9 +7,9 @@ import (
 
 type ICityRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.City], error)
-	GetByID(id int64) (domain.City, error)
-	GetByName(name string) (domain.City, error)
-	Create(city domain.City) error
-	Update(city domain.City) error
+	GetByID(id int64) (*domain.City, error)
+	GetByName(name string) (*domain.City, error)
+	Create(city *domain.City) error
+	Update(city *domain.City) error
 	Delete(id int64) error
 }

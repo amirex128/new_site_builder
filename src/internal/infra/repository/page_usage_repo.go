@@ -46,13 +46,13 @@ func (r *PageArticleUsageRepo) DeleteByPageIDAndSiteID(pageID, siteID int64) err
 		Error
 }
 
-func (r *PageArticleUsageRepo) Create(usage domain.PageArticleUsage) error {
-	result := r.database.Create(&usage)
+func (r *PageArticleUsageRepo) Create(usage *domain.PageArticleUsage) error {
+	result := r.database.Create(usage)
 	return result.Error
 }
 
 func (r *PageArticleUsageRepo) CreateBatch(usages []domain.PageArticleUsage) error {
-	result := r.database.Create(&usages)
+	result := r.database.Create(usages)
 	return result.Error
 }
 
@@ -120,13 +120,13 @@ func (r *PageProductUsageRepo) DeleteByPageIDAndSiteID(pageID, siteID int64) err
 		Error
 }
 
-func (r *PageProductUsageRepo) Create(usage domain.PageProductUsage) error {
-	result := r.database.Create(&usage)
+func (r *PageProductUsageRepo) Create(usage *domain.PageProductUsage) error {
+	result := r.database.Create(usage)
 	return result.Error
 }
 
 func (r *PageProductUsageRepo) CreateBatch(usages []domain.PageProductUsage) error {
-	result := r.database.Create(&usages)
+	result := r.database.Create(usages)
 	return result.Error
 }
 
@@ -194,13 +194,13 @@ func (r *PageHeaderFooterUsageRepo) DeleteByPageIDAndSiteID(pageID, siteID int64
 		Error
 }
 
-func (r *PageHeaderFooterUsageRepo) Create(usage domain.PageHeaderFooterUsage) error {
-	result := r.database.Create(&usage)
+func (r *PageHeaderFooterUsageRepo) Create(usage *domain.PageHeaderFooterUsage) error {
+	result := r.database.Create(usage)
 	return result.Error
 }
 
 func (r *PageHeaderFooterUsageRepo) CreateBatch(usages []domain.PageHeaderFooterUsage) error {
-	result := r.database.Create(&usages)
+	result := r.database.Create(usages)
 	return result.Error
 }
 

@@ -8,9 +8,9 @@ import (
 type ISiteRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Site], error)
 	GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Site], error)
-	GetByID(id int64) (domain.Site, error)
-	GetByDomain(domain string) (domain.Site, error)
-	Create(site domain.Site) error
-	Update(site domain.Site) error
+	GetByID(id int64) (*domain.Site, error)
+	GetByDomain(domain string) (*domain.Site, error)
+	Create(site *domain.Site) error
+	Update(site *domain.Site) error
 	Delete(id int64) error
 }

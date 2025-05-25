@@ -16,21 +16,21 @@ func NewSettingRepository(db *gorm.DB) *SettingRepo {
 	}
 }
 
-func (r *SettingRepo) GetBySiteID(siteID int64) (domain.Setting, error) {
+func (r *SettingRepo) GetBySiteID(siteID int64) (*domain.Setting, error) {
 	var setting domain.Setting
 	result := r.database.Where("site_id = ?", siteID).First(&setting)
 	if result.Error != nil {
-		return setting, result.Error
+		return nil, result.Error
 	}
-	return setting, nil
+	return &setting, nil
 }
 
-func (r *SettingRepo) Create(setting domain.Setting) error {
-	result := r.database.Create(&setting)
+func (r *SettingRepo) Create(setting *domain.Setting) error {
+	result := r.database.Create(setting)
 	return result.Error
 }
 
-func (r *SettingRepo) Update(setting domain.Setting) error {
-	result := r.database.Save(&setting)
+func (r *SettingRepo) Update(setting *domain.Setting) error {
+	result := r.database.Save(setting)
 	return result.Error
 }

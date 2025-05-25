@@ -53,22 +53,22 @@ func (r *HeaderFooterRepo) GetAllBySiteID(siteID int64, paginationRequestDto com
 	return buildPaginationResponse(headerFooters, paginationRequestDto, count)
 }
 
-func (r *HeaderFooterRepo) GetByID(id int64) (domain.HeaderFooter, error) {
-	var headerFooter domain.HeaderFooter
+func (r *HeaderFooterRepo) GetByID(id int64) (*domain.HeaderFooter, error) {
+	var headerFooter *domain.HeaderFooter
 	result := r.database.First(&headerFooter, id)
 	if result.Error != nil {
-		return headerFooter, result.Error
+		return nil, result.Error
 	}
 	return headerFooter, nil
 }
 
-func (r *HeaderFooterRepo) Create(headerFooter domain.HeaderFooter) error {
-	result := r.database.Create(&headerFooter)
+func (r *HeaderFooterRepo) Create(headerFooter *domain.HeaderFooter) error {
+	result := r.database.Create(headerFooter)
 	return result.Error
 }
 
-func (r *HeaderFooterRepo) Update(headerFooter domain.HeaderFooter) error {
-	result := r.database.Save(&headerFooter)
+func (r *HeaderFooterRepo) Update(headerFooter *domain.HeaderFooter) error {
+	result := r.database.Save(headerFooter)
 	return result.Error
 }
 

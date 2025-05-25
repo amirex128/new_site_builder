@@ -53,31 +53,31 @@ func (r *PageRepo) GetAllBySiteID(siteID int64, paginationRequestDto common.Pagi
 	return buildPaginationResponse(pages, paginationRequestDto, count)
 }
 
-func (r *PageRepo) GetByID(id int64) (domain.Page, error) {
-	var page domain.Page
+func (r *PageRepo) GetByID(id int64) (*domain.Page, error) {
+	var page *domain.Page
 	result := r.database.First(&page, id)
 	if result.Error != nil {
-		return page, result.Error
+		return nil, result.Error
 	}
 	return page, nil
 }
 
-func (r *PageRepo) GetBySlug(slug string, siteID int64) (domain.Page, error) {
-	var page domain.Page
+func (r *PageRepo) GetBySlug(slug string, siteID int64) (*domain.Page, error) {
+	var page *domain.Page
 	result := r.database.Where("slug = ? AND site_id = ?", slug, siteID).First(&page)
 	if result.Error != nil {
-		return page, result.Error
+		return nil, result.Error
 	}
 	return page, nil
 }
 
-func (r *PageRepo) Create(page domain.Page) error {
-	result := r.database.Create(&page)
+func (r *PageRepo) Create(page *domain.Page) error {
+	result := r.database.Create(page)
 	return result.Error
 }
 
-func (r *PageRepo) Update(page domain.Page) error {
-	result := r.database.Save(&page)
+func (r *PageRepo) Update(page *domain.Page) error {
+	result := r.database.Save(page)
 	return result.Error
 }
 
@@ -115,11 +115,11 @@ func (r *PageRepo) RemoveAllMediaFromPage(pageID int64) error {
 	return r.database.Exec("DELETE FROM page_media WHERE page_id = ?", pageID).Error
 }
 
-func (r *PageRepo) GetByIDAndSiteID(id, siteID int64) (domain.Page, error) {
-	var page domain.Page
+func (r *PageRepo) GetByIDAndSiteID(id, siteID int64) (*domain.Page, error) {
+	var page *domain.Page
 	result := r.database.Where("id = ? AND site_id = ?", id, siteID).First(&page)
 	if result.Error != nil {
-		return page, result.Error
+		return nil, result.Error
 	}
 	return page, nil
 }

@@ -9,11 +9,11 @@ type IArticleCategoryRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ArticleCategory], error)
 	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ArticleCategory], error)
 	GetAllByParentID(parentID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ArticleCategory], error)
-	GetByID(id int64) (domain.ArticleCategory, error)
-	GetBySlug(slug string) (domain.ArticleCategory, error)
-	GetBySlugAndSiteID(slug string, siteID int64) (domain.ArticleCategory, error)
-	Create(category domain.ArticleCategory) error
-	Update(category domain.ArticleCategory) error
+	GetByID(id int64) (*domain.ArticleCategory, error)
+	GetBySlug(slug string) (*domain.ArticleCategory, error)
+	GetBySlugAndSiteID(slug string, siteID int64) (*domain.ArticleCategory, error)
+	Create(category *domain.ArticleCategory) error
+	Update(category *domain.ArticleCategory) error
 	Delete(id int64) error
 
 	// Media relationship methods

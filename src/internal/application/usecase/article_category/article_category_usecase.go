@@ -35,11 +35,9 @@ func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (*resp.Response, error) {
 	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if params.Name == nil || params.Slug == nil || params.SiteID == nil || params.Order == nil {
-		return nil, resp.NewError(resp.BadRequest, "اطلاعات اجباری ناقص است")
-	}
+
 	var seoTags string
 	if params.SeoTags != nil && len(params.SeoTags) > 0 {
 		seoTags = strings.Join(params.SeoTags, ",")
@@ -67,7 +65,10 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 	}
 	if params.MediaIDs != nil && len(params.MediaIDs) > 0 {
 		for _, mediaID := range params.MediaIDs {
-			_ = u.categoryRepo.AddMediaToCategory(newCategory.ID, mediaID)
+			err = u.categoryRepo.AddMediaToCategory(newCategory.ID, mediaID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن رسانه به دسته‌بندی")
+			}
 		}
 	}
 	return resp.NewResponseData(resp.Created, newCategory, "دسته‌بندی با موفقیت ایجاد شد"), nil
@@ -76,7 +77,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
 	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if params.ID == nil {
 		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
@@ -87,7 +88,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	}
 	err = u.CheckAccessUserModel(&existingCategory, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if params.Name != nil {
 		existingCategory.Name = *params.Name
@@ -115,7 +116,10 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	if params.MediaIDs != nil {
 		_ = u.categoryRepo.RemoveAllMediaFromCategory(existingCategory.ID)
 		for _, mediaID := range params.MediaIDs {
-			_ = u.categoryRepo.AddMediaToCategory(existingCategory.ID, mediaID)
+			err = u.categoryRepo.AddMediaToCategory(existingCategory.ID, mediaID)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن رسانه به دسته‌بندی")
+			}
 		}
 	}
 	return resp.NewResponseData(resp.Updated, existingCategory, "دسته‌بندی با موفقیت ویرایش شد"), nil
@@ -124,7 +128,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
 	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if params.ID == nil {
 		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
@@ -135,7 +139,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 	}
 	err = u.CheckAccessUserModel(&existingCategory, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	err = u.categoryRepo.Delete(*params.ID)
 	if err != nil {
@@ -152,33 +156,33 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-	mediaItems, _ := u.categoryRepo.GetCategoryMedia(result.ID)
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
+	mediaItems, err := u.categoryRepo.GetCategoryMedia(result.ID)
+	if err != nil {
+		return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+	}
+	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"category": result,
 		"media":    mediaItems,
 	}, "دسته‌بندی با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (*resp.Response, error) {
-	if params.SiteID == nil {
-		return nil, resp.NewError(resp.BadRequest, "شناسه سایت اجباری است")
-	}
 	result, err := u.categoryRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت دسته‌بندی‌ها")
 	}
 	categoriesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, category := range result.Items {
-		media, _ := u.categoryRepo.GetCategoryMedia(category.ID)
+		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		}
 		categoriesWithMedia[i] = map[string]interface{}{
 			"category": category,
 			"media":    media,
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": categoriesWithMedia,
-		"total": result.TotalCount,
-	}, "دسته‌بندی‌ها با موفقیت دریافت شدند"), nil
+	return resp.NewResponseData(resp.Retrieved, categoriesWithMedia, "دسته‌بندی‌ها با موفقیت دریافت شدند"), nil
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
@@ -188,14 +192,14 @@ func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_catego
 	}
 	categoriesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, category := range result.Items {
-		media, _ := u.categoryRepo.GetCategoryMedia(category.ID)
+		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		}
 		categoriesWithMedia[i] = map[string]interface{}{
 			"category": category,
 			"media":    media,
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items": categoriesWithMedia,
-		"total": result.TotalCount,
-	}, "دسته‌بندی‌ها با موفقیت دریافت شدند (مدیر)"), nil
+	return resp.NewResponseData(resp.Retrieved, categoriesWithMedia, "دسته‌بندی‌ها با موفقیت دریافت شدند (مدیر)"), nil
 }

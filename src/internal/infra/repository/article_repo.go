@@ -194,58 +194,49 @@ func (r *ArticleRepo) GetAllByFilterAndSort(
 	return buildPaginationResponse(articles, paginationRequestDto, count)
 }
 
-func (r *ArticleRepo) GetByID(id int64) (domain.Article, error) {
+func (r *ArticleRepo) GetByID(id int64) (*domain.Article, error) {
 	var article domain.Article
-
 	result := r.database.
 		Where("id = ?", id).
 		Where("is_deleted = ?", false).
 		First(&article)
-
 	if result.Error != nil {
-		return domain.Article{}, result.Error
+		return nil, result.Error
 	}
-
-	return article, nil
+	return &article, nil
 }
 
-func (r *ArticleRepo) GetBySlug(slug string) (domain.Article, error) {
+func (r *ArticleRepo) GetBySlug(slug string) (*domain.Article, error) {
 	var article domain.Article
-
 	result := r.database.
 		Where("slug = ?", slug).
 		Where("is_deleted = ?", false).
 		First(&article)
-
 	if result.Error != nil {
-		return domain.Article{}, result.Error
+		return nil, result.Error
 	}
-
-	return article, nil
+	return &article, nil
 }
 
-func (r *ArticleRepo) GetBySlugAndSiteID(slug string, siteID int64) (domain.Article, error) {
+func (r *ArticleRepo) GetBySlugAndSiteID(slug string, siteID int64) (*domain.Article, error) {
 	var article domain.Article
-
 	result := r.database.
 		Where("slug = ?", slug).
 		Where("site_id = ?", siteID).
 		Where("is_deleted = ?", false).
 		First(&article)
-
 	if result.Error != nil {
-		return domain.Article{}, result.Error
+		return nil, result.Error
 	}
-
-	return article, nil
+	return &article, nil
 }
 
-func (r *ArticleRepo) Create(article domain.Article) error {
-	return r.database.Create(&article).Error
+func (r *ArticleRepo) Create(article *domain.Article) error {
+	return r.database.Create(article).Error
 }
 
-func (r *ArticleRepo) Update(article domain.Article) error {
-	return r.database.Save(&article).Error
+func (r *ArticleRepo) Update(article *domain.Article) error {
+	return r.database.Save(article).Error
 }
 
 func (r *ArticleRepo) Delete(id int64) error {

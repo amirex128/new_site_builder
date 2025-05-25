@@ -11,11 +11,11 @@ type IArticleRepository interface {
 	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Article], error)
 	GetAllByCategoryID(categoryID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Article], error)
 	GetAllByFilterAndSort(siteID int64, filters map[enums.ArticleFilterEnum][]string, sort *enums.ArticleSortEnum, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Article], error)
-	GetByID(id int64) (domain.Article, error)
-	GetBySlug(slug string) (domain.Article, error)
-	GetBySlugAndSiteID(slug string, siteID int64) (domain.Article, error)
-	Create(article domain.Article) error
-	Update(article domain.Article) error
+	GetByID(id int64) (*domain.Article, error)
+	GetBySlug(slug string) (*domain.Article, error)
+	GetBySlugAndSiteID(slug string, siteID int64) (*domain.Article, error)
+	Create(article *domain.Article) error
+	Update(article *domain.Article) error
 	Delete(id int64) error
 
 	// Media relationship methods

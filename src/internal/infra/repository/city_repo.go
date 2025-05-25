@@ -35,31 +35,31 @@ func (r *CityRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*co
 	return buildPaginationResponse(cities, paginationRequestDto, count)
 }
 
-func (r *CityRepo) GetByID(id int64) (domain.City, error) {
+func (r *CityRepo) GetByID(id int64) (*domain.City, error) {
 	var city domain.City
 	result := r.database.First(&city, id)
 	if result.Error != nil {
-		return city, result.Error
+		return nil, result.Error
 	}
-	return city, nil
+	return &city, nil
 }
 
-func (r *CityRepo) GetByName(name string) (domain.City, error) {
+func (r *CityRepo) GetByName(name string) (*domain.City, error) {
 	var city domain.City
 	result := r.database.Where("name = ?", name).First(&city)
 	if result.Error != nil {
-		return city, result.Error
+		return nil, result.Error
 	}
-	return city, nil
+	return &city, nil
 }
 
-func (r *CityRepo) Create(city domain.City) error {
-	result := r.database.Create(&city)
+func (r *CityRepo) Create(city *domain.City) error {
+	result := r.database.Create(city)
 	return result.Error
 }
 
-func (r *CityRepo) Update(city domain.City) error {
-	result := r.database.Save(&city)
+func (r *CityRepo) Update(city *domain.City) error {
+	result := r.database.Save(city)
 	return result.Error
 }
 

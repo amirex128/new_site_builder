@@ -9,8 +9,8 @@ type IReturnItemRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ReturnItem], error)
 	GetAllByOrderItemID(orderItemID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ReturnItem], error)
 	GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ReturnItem], error)
-	GetByID(id int64) (domain.ReturnItem, error)
-	Create(returnItem domain.ReturnItem) error
-	Update(returnItem domain.ReturnItem) error
+	GetByID(id int64) (*domain.ReturnItem, error)
+	Create(returnItem *domain.ReturnItem) error
+	Update(returnItem *domain.ReturnItem) error
 	Delete(id int64) error
 }

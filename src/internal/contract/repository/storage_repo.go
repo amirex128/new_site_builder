@@ -7,10 +7,10 @@ import (
 )
 
 type IStorageRepository interface {
-	GetByUserID(userID int64) (domain.Storage, error)
-	GetByID(id int64) (domain.Storage, error)
-	Create(storage domain.Storage) error
-	Update(storage domain.Storage) error
+	GetByUserID(userID int64) (*domain.Storage, error)
+	GetByID(id int64) (*domain.Storage, error)
+	Create(storage *domain.Storage) error
+	Update(storage *domain.Storage) error
 	Delete(id int64) error
 	SetIncreaseUsedSpaceKb(id int64, sizeKb int64) error
 	CheckQuotaExceeded(id int64, sizeBytes int64) (bool, error)

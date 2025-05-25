@@ -53,22 +53,22 @@ func (r *OrderItemRepo) GetAllByOrderID(orderID int64, paginationRequestDto comm
 	return buildPaginationResponse(orderItems, paginationRequestDto, count)
 }
 
-func (r *OrderItemRepo) GetByID(id int64) (domain.OrderItem, error) {
-	var orderItem domain.OrderItem
+func (r *OrderItemRepo) GetByID(id int64) (*domain.OrderItem, error) {
+	var orderItem *domain.OrderItem
 	result := r.database.First(&orderItem, id)
 	if result.Error != nil {
-		return orderItem, result.Error
+		return nil, result.Error
 	}
 	return orderItem, nil
 }
 
-func (r *OrderItemRepo) Create(orderItem domain.OrderItem) error {
-	result := r.database.Create(&orderItem)
+func (r *OrderItemRepo) Create(orderItem *domain.OrderItem) error {
+	result := r.database.Create(orderItem)
 	return result.Error
 }
 
-func (r *OrderItemRepo) Update(orderItem domain.OrderItem) error {
-	result := r.database.Save(&orderItem)
+func (r *OrderItemRepo) Update(orderItem *domain.OrderItem) error {
+	result := r.database.Save(orderItem)
 	return result.Error
 }
 

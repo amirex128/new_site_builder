@@ -35,22 +35,22 @@ func (r *DefaultThemeRepo) GetAll(paginationRequestDto common.PaginationRequestD
 	return buildPaginationResponse(themes, paginationRequestDto, count)
 }
 
-func (r *DefaultThemeRepo) GetByID(id int64) (domain.DefaultTheme, error) {
-	var theme domain.DefaultTheme
+func (r *DefaultThemeRepo) GetByID(id int64) (*domain.DefaultTheme, error) {
+	var theme *domain.DefaultTheme
 	result := r.database.First(&theme, id)
 	if result.Error != nil {
-		return theme, result.Error
+		return nil, result.Error
 	}
 	return theme, nil
 }
 
-func (r *DefaultThemeRepo) Create(theme domain.DefaultTheme) error {
-	result := r.database.Create(&theme)
+func (r *DefaultThemeRepo) Create(theme *domain.DefaultTheme) error {
+	result := r.database.Create(theme)
 	return result.Error
 }
 
-func (r *DefaultThemeRepo) Update(theme domain.DefaultTheme) error {
-	result := r.database.Save(&theme)
+func (r *DefaultThemeRepo) Update(theme *domain.DefaultTheme) error {
+	result := r.database.Save(theme)
 	return result.Error
 }
 

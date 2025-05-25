@@ -25,21 +25,21 @@ func (r *ParbadTransactionRepo) GetByPaymentID(paymentID int64) ([]domain.Parbad
 	return transactions, nil
 }
 
-func (r *ParbadTransactionRepo) GetByID(id int64) (domain.ParbadTransaction, error) {
+func (r *ParbadTransactionRepo) GetByID(id int64) (*domain.ParbadTransaction, error) {
 	var transaction domain.ParbadTransaction
 	result := r.database.First(&transaction, id)
 	if result.Error != nil {
-		return transaction, result.Error
+		return nil, result.Error
 	}
-	return transaction, nil
+	return &transaction, nil
 }
 
-func (r *ParbadTransactionRepo) Create(transaction domain.ParbadTransaction) error {
-	result := r.database.Create(&transaction)
+func (r *ParbadTransactionRepo) Create(transaction *domain.ParbadTransaction) error {
+	result := r.database.Create(transaction)
 	return result.Error
 }
 
-func (r *ParbadTransactionRepo) Update(transaction domain.ParbadTransaction) error {
-	result := r.database.Save(&transaction)
+func (r *ParbadTransactionRepo) Update(transaction *domain.ParbadTransaction) error {
+	result := r.database.Save(transaction)
 	return result.Error
 }

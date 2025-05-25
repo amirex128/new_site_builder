@@ -73,11 +73,11 @@ func (r *FileItemRepo) GetAllByParentID(parentID int64, paginationRequestDto com
 	return buildPaginationResponse(fileItems, paginationRequestDto, count)
 }
 
-func (r *FileItemRepo) GetByID(id int64) (domain.FileItem, error) {
-	var fileItem domain.FileItem
+func (r *FileItemRepo) GetByID(id int64) (*domain.FileItem, error) {
+	var fileItem *domain.FileItem
 	result := r.database.Where("is_deleted = ?", false).First(&fileItem, id)
 	if result.Error != nil {
-		return fileItem, result.Error
+		return nil, result.Error
 	}
 	return fileItem, nil
 }
@@ -138,13 +138,13 @@ func (r *FileItemRepo) SetRestore(id int64) error {
 
 func (r *FileItemRepo) ForceDelete(id int64) error {
 	// First get the file item to check if it's a directory
-	var fileItem domain.FileItem
+	var fileItem *domain.FileItem
 	if err := r.database.First(&fileItem, id).Error; err != nil {
 		return err
 	}
 
 	// If it's a directory, also delete all its children recursively
-	if fileItem.IsDirectory {
+	if fileItem != nil && fileItem.IsDirectory {
 		// Get all children
 		var children []domain.FileItem
 		if err := r.database.Where("parent_id = ?", id).Find(&children).Error; err != nil {
@@ -163,13 +163,13 @@ func (r *FileItemRepo) ForceDelete(id int64) error {
 	return r.database.Delete(&domain.FileItem{}, id).Error
 }
 
-func (r *FileItemRepo) Create(fileItem domain.FileItem) error {
-	result := r.database.Create(&fileItem)
+func (r *FileItemRepo) Create(fileItem *domain.FileItem) error {
+	result := r.database.Create(fileItem)
 	return result.Error
 }
 
-func (r *FileItemRepo) Update(fileItem domain.FileItem) error {
-	result := r.database.Save(&fileItem)
+func (r *FileItemRepo) Update(fileItem *domain.FileItem) error {
+	result := r.database.Save(fileItem)
 	return result.Error
 }
 

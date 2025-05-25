@@ -72,16 +72,16 @@ func (r *TicketRepo) GetAllByUserID(userID int64, paginationRequestDto common.Pa
 	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
-func (r *TicketRepo) GetByID(id int64) (domain.Ticket, error) {
+func (r *TicketRepo) GetByID(id int64) (*domain.Ticket, error) {
 	var ticket domain.Ticket
 	result := r.database.First(&ticket, id)
 	if result.Error != nil {
-		return ticket, result.Error
+		return nil, result.Error
 	}
-	return ticket, nil
+	return &ticket, nil
 }
 
-func (r *TicketRepo) GetByIDWithRelations(id int64) (domain.Ticket, error) {
+func (r *TicketRepo) GetByIDWithRelations(id int64) (*domain.Ticket, error) {
 	var ticket domain.Ticket
 
 	// Get ticket with preloaded relations
@@ -92,19 +92,19 @@ func (r *TicketRepo) GetByIDWithRelations(id int64) (domain.Ticket, error) {
 		First(&ticket, id)
 
 	if result.Error != nil {
-		return ticket, result.Error
+		return nil, result.Error
 	}
 
-	return ticket, nil
+	return &ticket, nil
 }
 
-func (r *TicketRepo) Create(ticket domain.Ticket) error {
-	result := r.database.Create(&ticket)
+func (r *TicketRepo) Create(ticket *domain.Ticket) error {
+	result := r.database.Create(ticket)
 	return result.Error
 }
 
-func (r *TicketRepo) Update(ticket domain.Ticket) error {
-	result := r.database.Save(&ticket)
+func (r *TicketRepo) Update(ticket *domain.Ticket) error {
+	result := r.database.Save(ticket)
 	return result.Error
 }
 
@@ -178,16 +178,16 @@ func (r *CustomerTicketRepo) GetAllByCustomerID(customerID int64, paginationRequ
 	return buildPaginationResponse(tickets, paginationRequestDto, count)
 }
 
-func (r *CustomerTicketRepo) GetByID(id int64) (domain.CustomerTicket, error) {
+func (r *CustomerTicketRepo) GetByID(id int64) (*domain.CustomerTicket, error) {
 	var ticket domain.CustomerTicket
 	result := r.database.First(&ticket, id)
 	if result.Error != nil {
-		return ticket, result.Error
+		return nil, result.Error
 	}
-	return ticket, nil
+	return &ticket, nil
 }
 
-func (r *CustomerTicketRepo) GetByIDWithRelations(id int64) (domain.CustomerTicket, error) {
+func (r *CustomerTicketRepo) GetByIDWithRelations(id int64) (*domain.CustomerTicket, error) {
 	var ticket domain.CustomerTicket
 
 	// Get customer ticket with preloaded relations
@@ -198,19 +198,19 @@ func (r *CustomerTicketRepo) GetByIDWithRelations(id int64) (domain.CustomerTick
 		First(&ticket, id)
 
 	if result.Error != nil {
-		return ticket, result.Error
+		return nil, result.Error
 	}
 
-	return ticket, nil
+	return &ticket, nil
 }
 
-func (r *CustomerTicketRepo) Create(ticket domain.CustomerTicket) error {
-	result := r.database.Create(&ticket)
+func (r *CustomerTicketRepo) Create(ticket *domain.CustomerTicket) error {
+	result := r.database.Create(ticket)
 	return result.Error
 }
 
-func (r *CustomerTicketRepo) Update(ticket domain.CustomerTicket) error {
-	result := r.database.Save(&ticket)
+func (r *CustomerTicketRepo) Update(ticket *domain.CustomerTicket) error {
+	result := r.database.Save(ticket)
 	return result.Error
 }
 

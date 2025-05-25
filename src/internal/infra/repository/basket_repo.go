@@ -71,22 +71,25 @@ func (r *BasketRepo) GetAllByCustomerID(customerID int64, paginationRequestDto c
 	return buildPaginationResponse(baskets, paginationRequestDto, count)
 }
 
-func (r *BasketRepo) GetByID(id int64) (domain.Basket, error) {
+func (r *BasketRepo) GetByID(id int64) (*domain.Basket, error) {
 	var basket domain.Basket
 	result := r.database.First(&basket, id)
 	if result.Error != nil {
-		return basket, result.Error
+		return nil, result.Error
 	}
-	return basket, nil
+	return &basket, nil
 }
 
-func (r *BasketRepo) GetBasketByCustomerIDAndSiteID(customerID, siteID int64) (domain.Basket, error) {
+func (r *BasketRepo) GetBasketByCustomerIDAndSiteID(customerID, siteID int64) (*domain.Basket, error) {
 	var basket domain.Basket
 	result := r.database.Where("customer_id = ? AND site_id = ?", customerID, siteID).First(&basket)
-	return basket, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &basket, nil
 }
 
-func (r *BasketRepo) GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID int64) (domain.Basket, error) {
+func (r *BasketRepo) GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID int64) (*domain.Basket, error) {
 	var basket domain.Basket
 
 	// Get the basket with items preloaded
@@ -97,7 +100,10 @@ func (r *BasketRepo) GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID 
 		Where("customer_id = ? AND site_id = ?", customerID, siteID).
 		First(&basket)
 
-	return basket, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &basket, nil
 }
 
 func (r *BasketRepo) GetActiveBasketByCustomerID(customerID int64) (domain.Basket, error) {
@@ -109,17 +115,17 @@ func (r *BasketRepo) GetActiveBasketByCustomerID(customerID int64) (domain.Baske
 	return basket, nil
 }
 
-func (r *BasketRepo) Create(basket domain.Basket) error {
-	result := r.database.Create(&basket)
+func (r *BasketRepo) Create(basket *domain.Basket) error {
+	result := r.database.Create(basket)
 	return result.Error
 }
 
-func (r *BasketRepo) Update(basket domain.Basket) error {
-	result := r.database.Save(&basket)
+func (r *BasketRepo) Update(basket *domain.Basket) error {
+	result := r.database.Save(basket)
 	return result.Error
 }
 
-func (r *BasketRepo) UpsertBasket(basket domain.Basket) error {
+func (r *BasketRepo) UpsertBasket(basket *domain.Basket) error {
 	// Check if basket exists
 	var existingBasket domain.Basket
 	result := r.database.Where("customer_id = ? AND site_id = ?", basket.CustomerID, basket.SiteID).First(&existingBasket)

@@ -35,34 +35,34 @@ func (r *RoleRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*co
 	return buildPaginationResponse(roles, paginationRequestDto, count)
 }
 
-func (r *RoleRepo) GetByID(id int64) (domain.Role, error) {
-	var role domain.Role
+func (r *RoleRepo) GetByID(id int64) (*domain.Role, error) {
+	var role *domain.Role
 	result := r.database.First(&role, id)
 	if result.Error != nil {
-		return role, result.Error
+		return nil, result.Error
 	}
 	return role, nil
 }
 
-func (r *RoleRepo) GetByName(name string) (domain.Role, error) {
-	var role domain.Role
+func (r *RoleRepo) GetByName(name string) (*domain.Role, error) {
+	var role *domain.Role
 	result := r.database.Where("name = ?", name).First(&role)
 	if result.Error != nil {
-		return role, result.Error
+		return nil, result.Error
 	}
 	return role, nil
 }
 
-func (r *RoleRepo) Create(role domain.Role) (int64, error) {
-	result := r.database.Create(&role)
+func (r *RoleRepo) Create(role *domain.Role) (int64, error) {
+	result := r.database.Create(role)
 	if result.Error != nil {
 		return 0, result.Error
 	}
 	return role.ID, nil
 }
 
-func (r *RoleRepo) Update(role domain.Role) error {
-	result := r.database.Save(&role)
+func (r *RoleRepo) Update(role *domain.Role) error {
+	result := r.database.Save(role)
 	return result.Error
 }
 
@@ -91,7 +91,7 @@ func (r *RoleRepo) RemoveAllPermissionsFromRole(roleID int64) error {
 	return result.Error
 }
 
-// GetAllPermissions retrieves all permissions with pagination
+// GetAllPermissions retrieves all permissions
 func (r *RoleRepo) GetAllPermissions() ([]domain.Permission, error) {
 	var permissions []domain.Permission
 	var count int64

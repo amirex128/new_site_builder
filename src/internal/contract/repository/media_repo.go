@@ -7,8 +7,8 @@ import (
 
 type IMediaRepository interface {
 	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Media], error)
-	GetByID(id int64) (domain.Media, error)
-	Create(media domain.Media) error
-	Update(media domain.Media) error
+	GetByID(id int64) (*domain.Media, error)
+	Create(media *domain.Media) error
+	Update(media *domain.Media) error
 	Delete(id int64) error
 }

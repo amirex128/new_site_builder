@@ -55,22 +55,22 @@ func (r *ProductVariantRepo) GetAllByProductID(productID int64, paginationReques
 	return buildPaginationResponse(variants, paginationRequestDto, count)
 }
 
-func (r *ProductVariantRepo) GetByID(id int64) (domain.ProductVariant, error) {
+func (r *ProductVariantRepo) GetByID(id int64) (*domain.ProductVariant, error) {
 	var variant domain.ProductVariant
 	result := r.database.First(&variant, id)
 	if result.Error != nil {
-		return variant, result.Error
+		return nil, result.Error
 	}
-	return variant, nil
+	return &variant, nil
 }
 
-func (r *ProductVariantRepo) Create(variant domain.ProductVariant) error {
-	result := r.database.Create(&variant)
+func (r *ProductVariantRepo) Create(variant *domain.ProductVariant) error {
+	result := r.database.Create(variant)
 	return result.Error
 }
 
-func (r *ProductVariantRepo) Update(variant domain.ProductVariant) error {
-	result := r.database.Save(&variant)
+func (r *ProductVariantRepo) Update(variant *domain.ProductVariant) error {
+	result := r.database.Save(variant)
 	return result.Error
 }
 

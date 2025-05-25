@@ -93,31 +93,31 @@ func (r *PaymentRepo) GetAllByCustomerID(customerID int64, paginationRequestDto 
 	return buildPaginationResponse(payments, paginationRequestDto, count)
 }
 
-func (r *PaymentRepo) GetByID(id int64) (domain.Payment, error) {
-	var payment domain.Payment
+func (r *PaymentRepo) GetByID(id int64) (*domain.Payment, error) {
+	var payment *domain.Payment
 	result := r.database.First(&payment, id)
 	if result.Error != nil {
-		return payment, result.Error
+		return nil, result.Error
 	}
 	return payment, nil
 }
 
-func (r *PaymentRepo) GetByTrackingNumber(trackingNumber string) (domain.Payment, error) {
-	var payment domain.Payment
+func (r *PaymentRepo) GetByTrackingNumber(trackingNumber string) (*domain.Payment, error) {
+	var payment *domain.Payment
 	result := r.database.Where("tracking_number = ?", trackingNumber).First(&payment)
 	if result.Error != nil {
-		return payment, result.Error
+		return nil, result.Error
 	}
 	return payment, nil
 }
 
-func (r *PaymentRepo) Create(payment domain.Payment) error {
-	result := r.database.Create(&payment)
+func (r *PaymentRepo) Create(payment *domain.Payment) error {
+	result := r.database.Create(payment)
 	return result.Error
 }
 
-func (r *PaymentRepo) Update(payment domain.Payment) error {
-	result := r.database.Save(&payment)
+func (r *PaymentRepo) Update(payment *domain.Payment) error {
+	result := r.database.Save(payment)
 	return result.Error
 }
 
@@ -160,7 +160,7 @@ func (r *PaymentRepo) RequestPayment(amount int64, orderID int64, userID int64, 
 	}
 
 	// Save the payment
-	err = r.Create(payment)
+	err = r.Create(&payment)
 	if err != nil {
 		return "", err
 	}

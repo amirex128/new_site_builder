@@ -37,31 +37,31 @@ func (r *CouponRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (*
 	return buildPaginationResponse(coupons, paginationRequestDto, count)
 }
 
-func (r *CouponRepo) GetByProductID(productID int64) (domain.Coupon, error) {
+func (r *CouponRepo) GetByProductID(productID int64) (*domain.Coupon, error) {
 	var coupon domain.Coupon
 	result := r.database.Where("product_id = ?", productID).First(&coupon)
 	if result.Error != nil {
-		return coupon, result.Error
+		return nil, result.Error
 	}
-	return coupon, nil
+	return &coupon, nil
 }
 
-func (r *CouponRepo) GetByID(id int64) (domain.Coupon, error) {
+func (r *CouponRepo) GetByID(id int64) (*domain.Coupon, error) {
 	var coupon domain.Coupon
 	result := r.database.First(&coupon, id)
 	if result.Error != nil {
-		return coupon, result.Error
+		return nil, result.Error
 	}
-	return coupon, nil
+	return &coupon, nil
 }
 
-func (r *CouponRepo) Create(coupon domain.Coupon) error {
-	result := r.database.Create(&coupon)
+func (r *CouponRepo) Create(coupon *domain.Coupon) error {
+	result := r.database.Create(coupon)
 	return result.Error
 }
 
-func (r *CouponRepo) Update(coupon domain.Coupon) error {
-	result := r.database.Save(&coupon)
+func (r *CouponRepo) Update(coupon *domain.Coupon) error {
+	result := r.database.Save(coupon)
 	return result.Error
 }
 

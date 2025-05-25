@@ -89,22 +89,22 @@ func (r *ProductReviewRepo) GetAllByCustomerID(customerID int64, paginationReque
 	return buildPaginationResponse(reviews, paginationRequestDto, count)
 }
 
-func (r *ProductReviewRepo) GetByID(id int64) (domain.ProductReview, error) {
+func (r *ProductReviewRepo) GetByID(id int64) (*domain.ProductReview, error) {
 	var review domain.ProductReview
 	result := r.database.First(&review, id)
 	if result.Error != nil {
-		return review, result.Error
+		return nil, result.Error
 	}
-	return review, nil
+	return &review, nil
 }
 
-func (r *ProductReviewRepo) Create(review domain.ProductReview) error {
-	result := r.database.Create(&review)
+func (r *ProductReviewRepo) Create(review *domain.ProductReview) error {
+	result := r.database.Create(review)
 	return result.Error
 }
 
-func (r *ProductReviewRepo) Update(review domain.ProductReview) error {
-	result := r.database.Save(&review)
+func (r *ProductReviewRepo) Update(review *domain.ProductReview) error {
+	result := r.database.Save(review)
 	return result.Error
 }
 
