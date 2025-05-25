@@ -1,9 +1,5 @@
 package resp
 
-import (
-	"fmt"
-)
-
 type ErrorType string
 type ResponseType string
 type Data map[string]any
@@ -35,30 +31,30 @@ type Response struct {
 	Data    any
 }
 
-func NewError(typ ErrorType, msg string, format ...any) *Error {
+func NewError(typ ErrorType, msg string) *Error {
 	return &Error{
-		Message: fmt.Sprintf(msg, format...),
+		Message: msg,
 		Type:    typ,
 	}
 }
 
-func NewErrorData(typ ErrorType, data any, msg string, format ...any) *Error {
+func NewErrorData(typ ErrorType, data any, msg string) *Error {
 	return &Error{
-		Message: fmt.Sprintf(msg, format...),
+		Message: msg,
 		Type:    typ,
 		Data:    data,
 	}
 }
-func NewResponseData(typ ResponseType, data any, msg string, format ...any) *Response {
+func NewResponseData(typ ResponseType, data any, msg string) *Response {
 	return &Response{
-		Message: fmt.Sprintf(msg, format...),
+		Message: msg,
 		Type:    typ,
 		Data:    data,
 	}
 }
-func NewResponse(typ ResponseType, msg string, format ...any) *Response {
+func NewResponse(typ ResponseType, msg string) *Response {
 	return &Response{
-		Message: fmt.Sprintf(msg, format...),
+		Message: msg,
 		Type:    typ}
 }
 

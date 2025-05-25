@@ -1,6 +1,7 @@
 package unitpriceusecase
 
 import (
+	"fmt"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/unit_price"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
@@ -135,7 +136,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 			}
 		}
 		if matchingUnitPrice == nil {
-			return nil, resp.NewError(resp.NotFound, "unit price not found for name: %s", string(*unitPriceParam.UnitPriceName))
+			return nil, resp.NewError(resp.NotFound, fmt.Sprintf("unit price not found for name: %s", string(*unitPriceParam.UnitPriceName)))
 		}
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"calculatedPrices": data}, "Unit prices calculated successfully"), nil

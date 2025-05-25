@@ -135,7 +135,7 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
-		return nil, resp.NewError(resp.BadRequest, "user with email %s already exists", *params.Email)
+		return nil, resp.NewError(resp.BadRequest, fmt.Sprintf("user with email %s already exists", *params.Email))
 	}
 
 	hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
@@ -158,7 +158,7 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 			"error": err.Error(),
 			"email": *params.Email,
 		})
-		return nil, resp.NewError(resp.Internal, "Error creating user: %s", err.Error())
+		return nil, resp.NewError(resp.Internal, fmt.Sprintf("Error creating user: %s", err.Error()))
 	}
 
 	token := u.identitySvc.TokenForUser(newUser).Make()
@@ -363,7 +363,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 		// Fetch actual unit price from database
 		unitPriceObj, err := u.unitPriceRepo.GetByName(string(*unitPrice.UnitPriceName))
 		if err != nil {
-			return nil, resp.NewError(resp.BadRequest, "unit price not found: %s", *unitPrice.UnitPriceName)
+			return nil, resp.NewError(resp.BadRequest, fmt.Sprintf("unit price not found: %s", *unitPrice.UnitPriceName))
 		}
 		var itemPrice int64 = unitPriceObj.Price * int64(*unitPrice.UnitPriceCount)
 
@@ -410,7 +410,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	// Get the current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "error : %s", err.Error())
+		return nil, resp.NewError(resp.Unauthorized, fmt.Sprintf("error : %s", err.Error()))
 	}
 	if userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
