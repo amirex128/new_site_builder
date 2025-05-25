@@ -92,7 +92,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		} else {
 			newOrder.Courier = "Post"
 		}
-		err = u.orderRepo.Create(newOrder)
+		err = u.orderRepo.Create(&newOrder)
 		if err != nil {
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
@@ -110,7 +110,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-			err = u.orderItemRepo.Create(orderItem)
+			err = u.orderItemRepo.Create(&orderItem)
 			if err != nil {
 				return nil, resp.NewError(resp.Internal, err.Error())
 			}
@@ -156,12 +156,12 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-			err = u.orderItemRepo.Create(orderItem)
+			err = u.orderItemRepo.Create(&orderItem)
 			if err != nil {
 				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-		newOrder = existingOrder
+		newOrder = *existingOrder
 	}
 	orderData := map[string]string{
 		"OrderId": strconv.FormatInt(newOrder.ID, 10),
@@ -179,6 +179,7 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 	return resp.NewResponseData(resp.Success, resp.Data{
 		"success":    true,
 		"paymentUrl": paymentURL,
+		"IsDeleted":  false,
 	}, "پرداخت با موفقیت انجام شد"), nil
 }
 
@@ -219,7 +220,7 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 		}
 		payment.PaymentStatusEnum = "Verified"
 		payment.UpdatedAt = time.Now()
-		err = u.paymentRepo.Update(payment)
+		err = u.paymentRepo.Update(&payment)
 		if err != nil {
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
@@ -231,7 +232,7 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 	}
 	payment.PaymentStatusEnum = "Failed"
 	payment.UpdatedAt = time.Now()
-	err = u.paymentRepo.Update(payment)
+	err = u.paymentRepo.Update(&payment)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

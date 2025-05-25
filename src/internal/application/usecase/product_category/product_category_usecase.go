@@ -79,7 +79,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 	}
 
 	// Create the category in the database
-	err = u.repo.Create(category)
+	err = u.repo.Create(&category)
 	if err != nil {
 		return nil, err
 	}

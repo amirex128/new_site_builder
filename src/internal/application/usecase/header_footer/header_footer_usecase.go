@@ -76,7 +76,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 		IsDeleted: false,
 	}
 
-	err = u.repo.Create(headerFooter)
+	err = u.repo.Create(&headerFooter)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -244,7 +244,7 @@ func (u *HeaderFooterUsecase) GetByIdHeaderFooterQuery(params *header_footer.Get
 		for _, id := range params.IDs {
 			headerFooter, err := u.repo.GetByID(id)
 			if err == nil && headerFooter.SiteID == *params.SiteID {
-				result = append(result, headerFooter)
+				result = append(result, *headerFooter)
 			}
 		}
 		return resp.NewResponseData(resp.Retrieved, resp.Data{

@@ -89,7 +89,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 		if err != nil {
 			return nil, fmt.Errorf("parent directory not found: %v", err)
 		}
-		parentPath = getFullPath(&parent)
+		parentPath = getFullPath(parent)
 	}
 
 	// Generate server info
@@ -198,7 +198,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 	}
 
 	// Save file item to database
-	if err := u.FileItemRepo.Create(fileItem); err != nil {
+	if err := u.FileItemRepo.Create(&fileItem); err != nil {
 		return nil, fmt.Errorf("error saving file item: %v", err)
 	}
 
@@ -252,7 +252,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 	}
 
 	// Delete from storage
-	fullPath := getFullPath(&fileItem)
+	fullPath := getFullPath(fileItem)
 	success, err := u.storageService.RemoveFileOrDirectoryIfExists(fileItem.ServerKey, fileItem.BucketName, fullPath)
 	if err != nil {
 		return nil, fmt.Errorf("error removing from storage: %v", err)
@@ -334,7 +334,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 		fileItem.Permission = newPermission
 
 		// Update permission in storage
-		fullPath := getFullPath(&fileItem)
+		fullPath := getFullPath(fileItem)
 		if err := u.storageService.AddOrRemoveOrChangePermission(
 			fileItem.ServerKey,
 			fileItem.BucketName,
@@ -373,7 +373,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 	}
 
 	// Get source path
-	oldFullPath := getFullPath(&fileItem)
+	oldFullPath := getFullPath(fileItem)
 	var newFullPath string
 
 	switch params.OperationType {
@@ -421,7 +421,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		}
 
 		// Get the parent directory
-		var newParent domain.FileItem
+		var newParent *domain.FileItem
 		var newParentPath string
 
 		if *params.NewParentID == 0 {
@@ -438,7 +438,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 				return nil, fmt.Errorf("destination must be a directory")
 			}
 
-			newParentPath = getFullPath(&newParent)
+			newParentPath = getFullPath(newParent)
 		}
 
 		// Set new path
@@ -508,7 +508,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		}
 
 		// Get the parent directory
-		var newParent domain.FileItem
+		var newParent *domain.FileItem
 		var newParentPath string
 
 		if *params.NewParentID == 0 {
@@ -525,7 +525,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 				return nil, fmt.Errorf("destination must be a directory")
 			}
 
-			newParentPath = getFullPath(&newParent)
+			newParentPath = getFullPath(newParent)
 		}
 
 		// Set new path
@@ -714,7 +714,7 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 	stream, err := u.storageService.DownloadFileOrDirectory(
 		fileItem.ServerKey,
 		fileItem.BucketName,
-		getFullPath(&fileItem))
+		getFullPath(fileItem))
 	if err != nil {
 		return nil, fmt.Errorf("error downloading file: %v", err)
 	}

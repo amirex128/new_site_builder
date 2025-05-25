@@ -40,7 +40,7 @@ func (u *RoleUsecase) CreateRoleCommand(params *role.CreateRoleCommand) (*resp.R
 		UpdatedAt: time.Now(),
 		IsDeleted: false,
 	}
-	roleID, err := u.roleRepo.Create(newRole)
+	roleID, err := u.roleRepo.Create(&newRole)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

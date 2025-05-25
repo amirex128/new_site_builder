@@ -84,7 +84,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 		UpdatedAt:       time.Now(),
 		IsDeleted:       false,
 	}
-	err = u.productRepo.Create(newProduct)
+	err = u.productRepo.Create(&newProduct)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -98,7 +98,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}
-			err = u.productVariantRepo.Create(variant)
+			err = u.productVariantRepo.Create(&variant)
 			if err != nil {
 				continue
 			}
@@ -114,7 +114,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}
-			err = u.productAttributeRepo.Create(attr)
+			err = u.productAttributeRepo.Create(&attr)
 			if err != nil {
 				continue
 			}
@@ -130,7 +130,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 			CreatedAt:  time.Now(),
 			UpdatedAt:  time.Now(),
 		}
-		err = u.couponRepo.Create(coupon)
+		err = u.couponRepo.Create(&coupon)
 		if err != nil {
 			// continue
 		}
@@ -435,7 +435,14 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 			"responseStatus":               response.ResponseStatus,
 		}, response.ResponseStatus.Message), nil
 	}
-	var discount domain.Discount
+
+	// Get the customer ID from context (or token)
+	customerID, err := u.authContext(u.Ctx).GetCustomerID()
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
+	}
+
+	var discount *domain.Discount
 	var discountFound bool
 	var isDiscountUsed bool
 	if params.Code != nil && *params.Code != "" {
@@ -444,58 +451,30 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 			discountID, parseErr := strconv.ParseInt(*params.Code, 10, 64)
 			if parseErr == nil {
 				discount, err = u.discountRepo.GetByID(discountID)
-				if err == nil {
-					discountFound = true
+				if err != nil && err != gorm.ErrRecordNotFound {
+					return nil, resp.NewError(resp.Internal, err.Error())
 				}
 			}
 		} else {
 			discount, err = u.discountRepo.GetByCode(*params.Code)
-			if err == nil {
-				discountFound = true
-			}
-		}
-		if err != nil {
-			if !errors.Is(err, gorm.ErrRecordNotFound) {
+			if err != nil && err != gorm.ErrRecordNotFound {
 				return nil, resp.NewError(resp.Internal, err.Error())
 			}
-		} else if discountFound {
-			if discount.SiteID != *params.SiteID {
-				response.ResponseStatus.IsSuccess = false
-				response.ResponseStatus.Message = "کد تخفیف معتبر نیست"
-				return resp.NewResponseData(resp.Retrieved, resp.Data{
-					"calculatedPrices":             response.CalculatedPrices,
-					"totalRawPrice":                response.TotalRawPrice,
-					"totalCouponDiscount":          response.TotalCouponDiscount,
-					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
-					"discountId":                   response.DiscountID,
-					"responseStatus":               response.ResponseStatus,
-				}, response.ResponseStatus.Message), nil
+		}
+		if discount != nil {
+			discountFound = true
+
+			if *discount.MaxUsagePerUser > 0 && customerID != nil {
+				used, err := u.discountRepo.HasCustomerUsedDiscount(discount.ID, *customerID)
+				if err != nil {
+					return nil, resp.NewError(resp.Internal, err.Error())
+				}
+				isDiscountUsed = used
 			}
-			if discount.Quantity <= 0 {
-				response.ResponseStatus.IsSuccess = false
-				response.ResponseStatus.Message = "ظرفیت استفاده از این کد تخفیف به پایان رسیده است"
-				return resp.NewResponseData(resp.Retrieved, resp.Data{
-					"calculatedPrices":             response.CalculatedPrices,
-					"totalRawPrice":                response.TotalRawPrice,
-					"totalCouponDiscount":          response.TotalCouponDiscount,
-					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
-					"discountId":                   response.DiscountID,
-					"responseStatus":               response.ResponseStatus,
-				}, response.ResponseStatus.Message), nil
+
+			if discount.Quantity <= 0 || (discount.ExpiryDate != nil && discount.ExpiryDate.Before(time.Now())) || isDiscountUsed {
+				discountFound = false
 			}
-			if discount.ExpiryDate.Before(time.Now()) {
-				response.ResponseStatus.IsSuccess = false
-				response.ResponseStatus.Message = "این کد تخفیف منقضی شده است"
-				return resp.NewResponseData(resp.Retrieved, resp.Data{
-					"calculatedPrices":             response.CalculatedPrices,
-					"totalRawPrice":                response.TotalRawPrice,
-					"totalCouponDiscount":          response.TotalCouponDiscount,
-					"totalPriceWithCouponDiscount": response.TotalPriceWithCouponDiscount,
-					"discountId":                   response.DiscountID,
-					"responseStatus":               response.ResponseStatus,
-				}, response.ResponseStatus.Message), nil
-			}
-			isDiscountUsed = false
 		}
 	}
 	var productIDs []int64

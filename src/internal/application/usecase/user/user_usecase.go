@@ -152,7 +152,7 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 	verificationCode := utils.GenerateVerificationCode()
 	newUser.VerifyCode = &verificationCode
 
-	err = u.userRepo.Create(newUser)
+	err = u.userRepo.Create(&newUser)
 	if err != nil {
 		u.Logger.Error("Error creating user", map[string]interface{}{
 			"error": err.Error(),
@@ -200,7 +200,7 @@ func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Res
 		return nil, resp.NewError(resp.Unauthorized, "invalid email or password")
 	}
 
-	token := u.identitySvc.TokenForUser(existingUser).Make()
+	token := u.identitySvc.TokenForUser(*existingUser).Make()
 
 	return resp.NewResponseData(
 		resp.Created,
@@ -212,7 +212,7 @@ func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Res
 }
 
 func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVerifyAndForgetUserCommand) (*resp.Response, error) {
-	var existingUser domain.User
+	var existingUser *domain.User
 	var err error
 
 	// Get user by email or phone based on the verification type

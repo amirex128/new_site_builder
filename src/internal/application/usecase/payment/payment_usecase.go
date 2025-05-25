@@ -120,9 +120,9 @@ func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUp
 	}
 	u.setGatewayValues(&gateway, params)
 	if isCreating {
-		err = u.gatewayRepo.Create(gateway)
+		err = u.gatewayRepo.Create(&gateway)
 	} else {
-		err = u.gatewayRepo.Update(gateway)
+		err = u.gatewayRepo.Update(&gateway)
 	}
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
@@ -419,7 +419,7 @@ func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaym
 	}, "لیست پرداخت ها با موفقیت دریافت شد"), nil
 }
 
-func (u *PaymentUsecase) isGatewayActive(gateway domain.Gateway, gatewayType enums.PaymentGatewaysEnum) bool {
+func (u *PaymentUsecase) isGatewayActive(gateway *domain.Gateway, gatewayType enums.PaymentGatewaysEnum) bool {
 	switch gatewayType {
 	case enums.SamanGatewayEnum:
 		return gateway.IsActiveSaman == "Active"
@@ -454,7 +454,7 @@ func (u *PaymentUsecase) isGatewayActive(gateway domain.Gateway, gatewayType enu
 	}
 }
 
-func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSuccess bool) bool {
+func (u *PaymentUsecase) handleChargeCreditVerify(payment *domain.Payment, isSuccess bool) bool {
 	if !isSuccess {
 		return false
 	}
@@ -533,7 +533,7 @@ func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSucc
 	return true
 }
 
-func (u *PaymentUsecase) handleUpgradePlanVerify(payment domain.Payment, isSuccess bool) bool {
+func (u *PaymentUsecase) handleUpgradePlanVerify(payment *domain.Payment, isSuccess bool) bool {
 	if !isSuccess {
 		return false
 	}
@@ -600,7 +600,7 @@ func (u *PaymentUsecase) handleUpgradePlanVerify(payment domain.Payment, isSucce
 	return true
 }
 
-func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSuccess bool) bool {
+func (u *PaymentUsecase) handleCreateOrderVerify(payment *domain.Payment, isSuccess bool) bool {
 	if !isSuccess {
 		return false
 	}

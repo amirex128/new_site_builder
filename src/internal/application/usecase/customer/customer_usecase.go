@@ -76,7 +76,7 @@ func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCom
 	if len(roleNames) == 0 {
 		roleNames = append(roleNames, "Customer")
 	}
-	token := u.identitySvc.TokenForCustomer(existingCustomer).AddRoles(roleNames).Make()
+	token := u.identitySvc.TokenForCustomer(*existingCustomer).AddRoles(roleNames).Make()
 
 	return resp.NewResponseData(resp.Created, map[string]interface{}{
 		"token": token,
@@ -109,7 +109,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 	verificationCode := utils.GenerateVerificationCode()
 	newCustomer.VerifyCode = &verificationCode
 
-	err = u.repo.Create(newCustomer)
+	err = u.repo.Create(&newCustomer)
 	if err != nil {
 		u.Logger.Error("Error creating customer", map[string]interface{}{
 			"error": err.Error(),
@@ -133,7 +133,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 			})
 		}
 	}
-	token := u.identitySvc.TokenForCustomer(createdCustomer).AddRoles([]string{"Customer"}).Make()
+	token := u.identitySvc.TokenForCustomer(*createdCustomer).AddRoles([]string{"Customer"}).Make()
 
 	u.messageSvc.SendEmail(struct {
 		To      string

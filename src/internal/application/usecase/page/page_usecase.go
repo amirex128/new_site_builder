@@ -96,7 +96,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.R
 		UpdatedAt:   time.Now(),
 		IsDeleted:   false,
 	}
-	err = u.repo.Create(pageEntity)
+	err = u.repo.Create(&pageEntity)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -110,7 +110,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	return resp.NewResponseData(resp.Created, enhancePageResponse(createdPage), "صفحه با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, enhancePageResponse(*createdPage), "صفحه با موفقیت ایجاد شد"), nil
 }
 
 func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.Response, error) {
@@ -216,7 +216,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	return resp.NewResponseData(resp.Updated, enhancePageResponse(updatedPage), "صفحه با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, enhancePageResponse(*updatedPage), "صفحه با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.Response, error) {
@@ -254,7 +254,7 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Res
 			}
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-		return resp.NewResponseData(resp.Retrieved, enhancePageResponse(pageItem), "صفحه با موفقیت دریافت شد"), nil
+		return resp.NewResponseData(resp.Retrieved, enhancePageResponse(*pageItem), "صفحه با موفقیت دریافت شد"), nil
 	} else if params.IDs != nil && len(params.IDs) > 0 {
 		pages, err := u.repo.GetByIDs(params.IDs, *params.SiteID)
 		if err != nil {

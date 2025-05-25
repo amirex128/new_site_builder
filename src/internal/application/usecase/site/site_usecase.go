@@ -70,7 +70,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 		UpdatedAt:  time.Now(),
 		IsDeleted:  false,
 	}
-	err = u.repo.Create(site)
+	err = u.repo.Create(&site)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد سایت")
 	}
@@ -82,7 +82,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 		UpdatedAt:  time.Now(),
 		IsDeleted:  false,
 	}
-	err = u.settingRepo.Create(setting)
+	err = u.settingRepo.Create(&setting)
 	if err != nil {
 		// continue
 	}
@@ -90,7 +90,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	return resp.NewResponseData(resp.Created, enhanceSiteResponse(createdSite), "سایت با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, enhanceSiteResponse(*createdSite), "سایت با موفقیت ایجاد شد"), nil
 }
 
 func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.Response, error) {
@@ -142,7 +142,7 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	return resp.NewResponseData(resp.Updated, enhanceSiteResponse(updatedSite), "سایت با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, enhanceSiteResponse(*updatedSite), "سایت با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (*resp.Response, error) {
@@ -179,7 +179,7 @@ func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (*resp.Res
 		}
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	return resp.NewResponseData(resp.Retrieved, enhanceSiteResponse(site), "اطلاعات سایت با موفقیت بازیابی شد"), nil
+	return resp.NewResponseData(resp.Retrieved, enhanceSiteResponse(*site), "اطلاعات سایت با موفقیت بازیابی شد"), nil
 }
 
 func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*resp.Response, error) {
@@ -190,7 +190,7 @@ func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*
 		}
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	return resp.NewResponseData(resp.Retrieved, enhanceSiteResponse(site), "اطلاعات سایت با موفقیت بازیابی شد"), nil
+	return resp.NewResponseData(resp.Retrieved, enhanceSiteResponse(*site), "اطلاعات سایت با موفقیت بازیابی شد"), nil
 }
 
 func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Response, error) {

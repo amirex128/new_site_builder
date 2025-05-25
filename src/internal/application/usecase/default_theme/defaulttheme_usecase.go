@@ -73,7 +73,7 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 		IsDeleted:   false,
 	}
 
-	err = u.defaultThemeRepo.Create(theme)
+	err = u.defaultThemeRepo.Create(&theme)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

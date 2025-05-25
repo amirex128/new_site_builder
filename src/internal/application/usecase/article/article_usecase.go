@@ -59,7 +59,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 		UpdatedAt:    time.Now(),
 		IsDeleted:    false,
 	}
-	err = u.articleRepo.Create(newArticle)
+	err = u.articleRepo.Create(&newArticle)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد مقاله")
 	}
@@ -92,7 +92,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
-	err = u.CheckAccessUserModel(&existingArticle, userID)
+	err = u.CheckAccessUserModel(existingArticle, userID)
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -146,7 +146,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
-	err = u.CheckAccessUserModel(&existingArticle, userID)
+	err = u.CheckAccessUserModel(existingArticle, userID)
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}

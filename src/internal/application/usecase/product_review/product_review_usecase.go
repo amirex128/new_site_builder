@@ -67,7 +67,7 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 		UpdatedAt:  time.Now(),
 		IsDeleted:  false,
 	}
-	err = u.repo.Create(newReview)
+	err = u.repo.Create(&newReview)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

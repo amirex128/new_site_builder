@@ -57,7 +57,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (*resp.R
 	if params.Feature != nil {
 		newPlan.Feature = *params.Feature
 	}
-	err = u.planRepo.Create(newPlan)
+	err = u.planRepo.Create(&newPlan)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

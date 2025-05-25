@@ -34,13 +34,11 @@ func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 }
 
 func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (*resp.Response, error) {
-	u.Logger.Info("CreateDiscountCommand called", map[string]interface{}{
-		"code":   params.Code,
-		"siteId": params.SiteID,
-	})
-
 	existingDiscount, err := u.discountRepo.GetByCode(*params.Code)
-	if err == nil && existingDiscount.SiteID == *params.SiteID {
+	if err != nil {
+
+	}
+	if existingDiscount.SiteID == *params.SiteID {
 		return nil, resp.NewError(resp.BadRequest, "کد تخفیف تکراری است")
 	}
 
@@ -54,19 +52,20 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	}
 
 	newDiscount := domain.Discount{
-		Code:       *params.Code,
-		Quantity:   *params.Quantity,
-		Type:       *params.Type,
-		Value:      *params.Value,
-		ExpiryDate: *params.ExpiryDate,
-		SiteID:     *params.SiteID,
-		UserID:     *userID,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-		IsDeleted:  false,
+		Code:            *params.Code,
+		Quantity:        *params.Quantity,
+		Type:            *params.Type,
+		Value:           *params.Value,
+		ExpiryDate:      params.ExpiryDate,
+		MaxUsagePerUser: params.MaxUsagePerUser,
+		SiteID:          *params.SiteID,
+		UserID:          *userID,
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
+		IsDeleted:       false,
 	}
 
-	err = u.discountRepo.Create(newDiscount)
+	err = u.discountRepo.Create(&newDiscount)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -127,7 +126,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 		if params.ExpiryDate.Before(time.Now()) {
 			return nil, resp.NewError(resp.BadRequest, "تاریخ انقضا باید در آینده باشد")
 		}
-		existingDiscount.ExpiryDate = *params.ExpiryDate
+		existingDiscount.ExpiryDate = params.ExpiryDate
 	}
 
 	existingDiscount.UpdatedAt = time.Now()

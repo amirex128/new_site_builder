@@ -59,7 +59,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 		IsDeleted:  false,
 	}
 
-	err = u.repo.Create(*newTicket)
+	err = u.repo.Create(newTicket)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -72,7 +72,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
 	}
-	err = u.customerCommentRepo.Create(*comment)
+	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -151,7 +151,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
 	}
-	err = u.customerCommentRepo.Create(*comment)
+	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
 		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
 			"error":    err.Error(),
@@ -238,7 +238,7 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
 	}
-	err = u.customerCommentRepo.Create(*comment)
+	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
 		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
 			"error":    err.Error(),

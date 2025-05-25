@@ -69,7 +69,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-			if err := u.basketRepo.Create(newBasket); err != nil {
+			if err := u.basketRepo.Create(&newBasket); err != nil {
 				return nil, resp.NewError(resp.Internal, "خطا در ایجاد سبد خرید")
 			}
 			existingBasket, err = u.basketRepo.GetBasketByCustomerIDAndSiteID(*customerID, siteID)
@@ -90,11 +90,11 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			}
 			if item.BasketItemID != nil && *item.BasketItemID > 0 {
 				basketItem.ID = *item.BasketItemID
-				if err := u.basketItemRepo.Update(basketItem); err != nil {
+				if err := u.basketItemRepo.Update(&basketItem); err != nil {
 					return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی آیتم سبد خرید")
 				}
 			} else {
-				if err := u.basketItemRepo.Create(basketItem); err != nil {
+				if err := u.basketItemRepo.Create(&basketItem); err != nil {
 					return nil, resp.NewError(resp.Internal, "خطا در افزودن آیتم به سبد خرید")
 				}
 			}
@@ -120,7 +120,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				return nil, resp.NewError(resp.NotFound, "محصول یافت نشد")
 			}
 			var variantPrice int64 = 0
-			var variant domain.ProductVariant
+			var variant *domain.ProductVariant
 			if item.ProductVariantID != nil {
 				variant, err = u.productVariantRepo.GetByID(*item.ProductVariantID)
 				if err != nil {
@@ -134,10 +134,10 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				})
 				if err == nil && len(variantsResult.Items) > 0 {
 					variantPrice = variantsResult.Items[0].Price
-					variant = variantsResult.Items[0]
+					variant = &variantsResult.Items[0]
 				}
 			}
-			if variantPrice == 0 {
+			if variant == nil || variantPrice == 0 {
 				return nil, resp.NewError(resp.BadRequest, "قیمت محصول یا تنوع آن یافت نشد")
 			}
 			if variant.Stock < *item.Quantity {
@@ -183,11 +183,12 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				FinalPriceWithCouponDiscount: finalPriceWithCouponDiscount,
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
+				IsDeleted:                    false,
 			}
 			if item.ProductVariantID != nil {
 				basketItem.ProductVariantID = *item.ProductVariantID
 			}
-			if err := u.basketItemRepo.Create(basketItem); err != nil {
+			if err := u.basketItemRepo.Create(&basketItem); err != nil {
 				return nil, resp.NewError(resp.Internal, "خطا در افزودن آیتم به سبد خرید")
 			}
 		}

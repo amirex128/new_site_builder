@@ -60,7 +60,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	}
 
 	// Save ticket to repository
-	err = u.repo.Create(newTicket)
+	err = u.repo.Create(&newTicket)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد تیکت")
 	}
@@ -76,7 +76,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 	}
 
 	// Save comment
-	err = u.commentRepo.Create(comment)
+	err = u.commentRepo.Create(&comment)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد پیام تیکت")
 	}
@@ -95,7 +95,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 		return resp.NewResponseData(resp.Created, resp.Data{"ticket": newTicket}, "تیکت با موفقیت ایجاد شد"), nil
 	}
 
-	return resp.NewResponseData(resp.Created, enhanceTicketResponse(createdTicket), "تیکت با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, enhanceTicketResponse(*createdTicket), "تیکت با موفقیت ایجاد شد"), nil
 }
 
 func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) (*resp.Response, error) {
@@ -138,7 +138,7 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 		UpdatedAt:    time.Now(),
 		IsDeleted:    false,
 	}
-	err = u.commentRepo.Create(comment)
+	err = u.commentRepo.Create(&comment)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد پیام تیکت")
 	}
@@ -152,7 +152,7 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 	if err != nil {
 		return resp.NewResponseData(resp.Updated, resp.Data{"ticket": existingTicket}, "تیکت با موفقیت بروزرسانی شد"), nil
 	}
-	return resp.NewResponseData(resp.Updated, enhanceTicketResponse(updatedTicket), "تیکت با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, enhanceTicketResponse(*updatedTicket), "تیکت با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicketCommand) (*resp.Response, error) {
@@ -195,7 +195,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 		UpdatedAt:    time.Now(),
 		IsDeleted:    false,
 	}
-	err = u.commentRepo.Create(comment)
+	err = u.commentRepo.Create(&comment)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد پیام تیکت")
 	}
@@ -209,7 +209,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 	if err != nil {
 		return resp.NewResponseData(resp.Updated, resp.Data{"ticket": existingTicket}, "تیکت با موفقیت بروزرسانی شد"), nil
 	}
-	return resp.NewResponseData(resp.Updated, enhanceTicketResponse(updatedTicket), "تیکت با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, enhanceTicketResponse(*updatedTicket), "تیکت با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*resp.Response, error) {
@@ -230,7 +230,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*
 			return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این تیکت ندارید")
 		}
 	}
-	return resp.NewResponseData(resp.Retrieved, enhanceTicketResponse(result), "تیکت با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, enhanceTicketResponse(*result), "تیکت با موفقیت دریافت شد"), nil
 }
 
 func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*resp.Response, error) {

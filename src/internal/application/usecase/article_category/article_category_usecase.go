@@ -59,7 +59,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
 	}
-	err = u.categoryRepo.Create(newCategory)
+	err = u.categoryRepo.Create(&newCategory)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد دسته‌بندی")
 	}
@@ -86,7 +86,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-	err = u.CheckAccessUserModel(&existingCategory, userID)
+	err = u.CheckAccessUserModel(existingCategory, userID)
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -137,7 +137,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-	err = u.CheckAccessUserModel(&existingCategory, userID)
+	err = u.CheckAccessUserModel(existingCategory, userID)
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
