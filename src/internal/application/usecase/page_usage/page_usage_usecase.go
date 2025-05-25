@@ -48,272 +48,195 @@ func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 }
 
 func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsageCommand) (*resp.Response, error) {
-	u.Logger.Info("SyncPageUsageCommand called", map[string]interface{}{
-		"pageId":    *params.PageID,
-		"siteId":    *params.SiteID,
-		"type":      params.Type,
-		"entityIds": params.EntityIDs,
-	})
-
-	// Check if page exists
 	page, err := u.pageRepo.GetByIDAndSiteID(*params.PageID, *params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("صفحه مورد نظر یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "صفحه مورد نظر یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Check if site exists
 	_, err = u.siteRepo.GetByID(*params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("سایت مورد نظر یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "سایت مورد نظر یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Get user ID from auth context
 	userID, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
-
-	// Check user access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-
-	if page.UserID != userID && !isAdmin {
-		return nil, errors.New("شما به این صفحه دسترسی ندارید")
+	if page.UserID != *userID && !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "شما به این صفحه دسترسی ندارید")
 	}
-
-	// Handle different types of usages
 	switch params.Type {
 	case enums.PageArticleUsage:
-		// Delete existing usages
 		err = u.pageArticleUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Create new usages
 		if len(params.EntityIDs) > 0 {
-			// Verify articles exist
 			for _, articleID := range params.EntityIDs {
 				_, err = u.articleRepo.GetByID(articleID)
 				if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-					return nil, err
+					return nil, resp.NewError(resp.Internal, err.Error())
 				}
 			}
-
-			// Create usages
 			usages := make([]domain.PageArticleUsage, 0, len(params.EntityIDs))
 			for _, articleID := range params.EntityIDs {
 				usages = append(usages, domain.PageArticleUsage{
 					PageID:    *params.PageID,
 					ArticleID: articleID,
 					SiteID:    *params.SiteID,
-					UserID:    userID,
+					UserID:    *userID,
 				})
 			}
 			err = u.pageArticleUsageRepo.CreateBatch(usages)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 	case enums.PageProductUsage:
-		// Delete existing usages
 		err = u.pageProductUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Create new usages
 		if len(params.EntityIDs) > 0 {
-			// Verify products exist
 			for _, productID := range params.EntityIDs {
 				_, err = u.productRepo.GetByID(productID)
 				if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-					return nil, err
+					return nil, resp.NewError(resp.Internal, err.Error())
 				}
 			}
-
-			// Create usages
 			usages := make([]domain.PageProductUsage, 0, len(params.EntityIDs))
 			for _, productID := range params.EntityIDs {
 				usages = append(usages, domain.PageProductUsage{
 					PageID:    *params.PageID,
 					ProductID: productID,
 					SiteID:    *params.SiteID,
-					UserID:    userID,
+					UserID:    *userID,
 				})
 			}
 			err = u.pageProductUsageRepo.CreateBatch(usages)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 	case enums.PageHeaderFooterUsage:
-		// Delete existing usages
 		err = u.pageHeaderFooterUsageRepo.DeleteByPageIDAndSiteID(*params.PageID, *params.SiteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Create new usages
 		if len(params.EntityIDs) > 0 {
-			// Verify header/footers exist
 			for _, headerFooterID := range params.EntityIDs {
 				_, err = u.headerFooterRepo.GetByID(headerFooterID)
 				if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-					return nil, err
+					return nil, resp.NewError(resp.Internal, err.Error())
 				}
 			}
-
-			// Create usages
 			usages := make([]domain.PageHeaderFooterUsage, 0, len(params.EntityIDs))
 			for _, headerFooterID := range params.EntityIDs {
 				usages = append(usages, domain.PageHeaderFooterUsage{
 					PageID:         *params.PageID,
 					HeaderFooterID: headerFooterID,
 					SiteID:         *params.SiteID,
-					UserID:         userID,
+					UserID:         *userID,
 				})
 			}
 			err = u.pageHeaderFooterUsageRepo.CreateBatch(usages)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 	default:
-		return nil, errors.New("نوع استفاده نامعتبر است")
+		return nil, resp.NewError(resp.BadRequest, "نوع استفاده نامعتبر است")
 	}
-
-	return resp.NewResponseData(
-		resp.Success,
-		resp.Data{
-			"success": true,
-		},
-		"Page usage synchronized successfully",
-	), nil
+	return resp.NewResponseData(resp.Success, resp.Data{"success": true}, "Page usage synchronized successfully"), nil
 }
 
 func (u *PageUsageUsecase) FindPageUsagesQuery(params *page_usage.FindPageUsagesQuery) (*resp.Response, error) {
-	u.Logger.Info("FindPageUsagesQuery called", map[string]interface{}{
-		"entityIds": params.EntityIDs,
-		"siteId":    *params.SiteID,
-		"type":      params.Type,
-	})
-
-	// Check if site exists
 	_, err := u.siteRepo.GetByID(*params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("سایت مورد نظر یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "سایت مورد نظر یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Find usages based on type
 	switch params.Type {
 	case enums.PageArticleUsage:
 		usages, err := u.pageArticleUsageRepo.GetByArticleIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Extract page IDs from usages
 		pageIDMap := make(map[int64]bool)
 		for _, usage := range usages {
 			pageIDMap[usage.PageID] = true
 		}
-
 		pageIDs := make([]int64, 0, len(pageIDMap))
 		for pageID := range pageIDMap {
 			pageIDs = append(pageIDs, pageID)
 		}
-
-		// Get page details
 		var pages []domain.Page
 		if len(pageIDs) > 0 {
 			pages, err = u.pageRepo.GetByIDs(pageIDs, *params.SiteID)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancePageUsageResponse(pages)}, "صفحات با موفقیت دریافت شدند"), nil
-
 	case enums.PageProductUsage:
 		usages, err := u.pageProductUsageRepo.GetByProductIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Extract page IDs from usages
 		pageIDMap := make(map[int64]bool)
 		for _, usage := range usages {
 			pageIDMap[usage.PageID] = true
 		}
-
 		pageIDs := make([]int64, 0, len(pageIDMap))
 		for pageID := range pageIDMap {
 			pageIDs = append(pageIDs, pageID)
 		}
-
-		// Get page details
 		var pages []domain.Page
 		if len(pageIDs) > 0 {
 			pages, err = u.pageRepo.GetByIDs(pageIDs, *params.SiteID)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancePageUsageResponse(pages)}, "صفحات با موفقیت دریافت شدند"), nil
-
 	case enums.PageHeaderFooterUsage:
 		usages, err := u.pageHeaderFooterUsageRepo.GetByHeaderFooterIDsAndSiteID(params.EntityIDs, *params.SiteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Extract page IDs from usages
 		pageIDMap := make(map[int64]bool)
 		for _, usage := range usages {
 			pageIDMap[usage.PageID] = true
 		}
-
 		pageIDs := make([]int64, 0, len(pageIDMap))
 		for pageID := range pageIDMap {
 			pageIDs = append(pageIDs, pageID)
 		}
-
-		// Get page details
 		var pages []domain.Page
 		if len(pageIDs) > 0 {
 			pages, err = u.pageRepo.GetByIDs(pageIDs, *params.SiteID)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancePageUsageResponse(pages)}, "صفحات با موفقیت دریافت شدند"), nil
-
 	default:
-		return nil, errors.New("نوع استفاده نامعتبر است")
+		return nil, resp.NewError(resp.BadRequest, "نوع استفاده نامعتبر است")
 	}
 }
 
-// Helper function to create a standardized response for page usages
 func enhancePageUsageResponse(pages []domain.Page) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(pages))
-
 	for _, page := range pages {
 		pageData := map[string]interface{}{
 			"id":     page.ID,
@@ -323,6 +246,5 @@ func enhancePageUsageResponse(pages []domain.Page) []map[string]interface{} {
 		}
 		result = append(result, pageData)
 	}
-
 	return result
 }

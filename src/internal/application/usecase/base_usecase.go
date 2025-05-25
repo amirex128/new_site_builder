@@ -24,7 +24,14 @@ func (u *BaseUsecase) CheckAccessUserModel(existingModel common.AccessControllab
 	return nil
 }
 func (u *BaseUsecase) CheckAccessCustomerModel(existingModel common.AccessControllable, customerID *int64) error {
-	if existingModel.GetCustomerID() != nil && *existingModel.GetCustomerID() > 0 && existingModel.GetCustomerID != nil && *existingModel.GetCustomerID() != *customerID {
+	if existingModel.GetCustomerID() != nil && *existingModel.GetCustomerID() > 0 && existingModel.GetCustomerID() != nil && *existingModel.GetCustomerID() != *customerID {
+		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
+	}
+	return nil
+}
+
+func (u *BaseUsecase) CheckAccessSiteModel(existingModel common.AccessControllable, siteID *int64) error {
+	if existingModel.GetSiteID() != nil && *existingModel.GetSiteID() > 0 && existingModel.GetSiteID() != nil && *existingModel.GetSiteID() != *siteID {
 		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
 	}
 	return nil

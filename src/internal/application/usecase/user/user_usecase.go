@@ -53,112 +53,79 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 
 func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (*resp.Response, error) {
 	userId, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
+	if err != nil || userId == nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-
-	existingUser, err := u.userRepo.GetByID(userId)
+	existingUser, err := u.userRepo.GetByID(*userId)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
 	if params.FirstName != nil {
 		existingUser.FirstName = *params.FirstName
 	}
-
 	if params.LastName != nil {
 		existingUser.LastName = *params.LastName
 	}
-
 	if params.Email != nil {
 		existingUser.Email = *params.Email
 	}
-
 	if params.Password != nil {
 		hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
 		existingUser.Password = hashedPassword
 		existingUser.Salt = salt
 	}
-
 	if params.NationalCode != nil {
 		existingUser.NationalCode = *params.NationalCode
 	}
-
 	if params.Phone != nil {
 		existingUser.Phone = *params.Phone
 	}
-
 	if params.AiTypeEnum != nil {
 		existingUser.AiTypeEnum = *params.AiTypeEnum
 	}
-
 	if params.UseCustomEmailSmtp != nil {
 		existingUser.UseCustomEmailSmtp = string(*params.UseCustomEmailSmtp)
 	}
-
 	if params.Smtp != nil {
 		existingUser.SmtpHost = params.Smtp.Host
 		existingUser.SmtpPort = &params.Smtp.Port
 		existingUser.SmtpUsername = params.Smtp.Username
 		existingUser.SmtpPassword = params.Smtp.Password
 	}
-
 	existingUser.UpdatedAt = time.Now()
-
 	err = u.userRepo.Update(existingUser)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
 	if len(params.AddressIDs) > 0 {
-		// First, remove all existing addresses
-		err = u.addressRepo.RemoveAllAddressesFromUser(userId)
+		err = u.addressRepo.RemoveAllAddressesFromUser(*userId)
 		if err != nil {
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Then add the new addresses
 		for _, addressID := range params.AddressIDs {
-			err = u.addressRepo.AddAddressToUser(addressID, userId)
+			err = u.addressRepo.AddAddressToUser(addressID, *userId)
 			if err != nil {
 				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
 	}
-
-	return resp.NewResponse(
-		resp.Updated,
-		"User profile updated",
-	), nil
+	return resp.NewResponse(resp.Updated, "User profile updated"), nil
 }
 
 func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*resp.Response, error) {
 	userId, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
+	if err != nil || userId == nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-
-	existingUser, err := u.userRepo.GetByID(userId)
+	existingUser, err := u.userRepo.GetByID(*userId)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	addresses, err := u.addressRepo.GetAllByUserID(userId, common.PaginationRequestDto{
-		Page:     1,
-		PageSize: 100,
-	})
+	addresses, err := u.addressRepo.GetAllByUserID(*userId, common.PaginationRequestDto{Page: 1, PageSize: 100})
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	return resp.NewResponseData(
-		resp.Retrieved,
-		resp.Data{
-			"user":      existingUser,
-			"addresses": addresses,
-		},
-		"user profile successful retrieved",
-	), nil
+	return resp.NewResponseData(resp.Retrieved, resp.Data{"user": existingUser, "addresses": addresses}, "user profile successful retrieved"), nil
 }
 
 func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*resp.Response, error) {
@@ -384,7 +351,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if userID == 0 {
+	if userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
 	}
 
@@ -419,12 +386,12 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	orderID := time.Now().UnixNano() // Use nanoseconds for more uniqueness
 
 	// Additional order data
-	orderData["userId"] = strconv.FormatInt(userID, 10)
+	orderData["userId"] = strconv.FormatInt(*userID, 10)
 	orderData["totalAmount"] = strconv.FormatInt(totalAmount, 10)
 	orderData["finalFrontReturnUrl"] = *params.FinalFrontReturnUrl
 
 	// Request payment from gateway
-	paymentUrl, err := u.paymentRepo.RequestPayment(totalAmount, orderID, userID, string(*params.Gateway), orderData)
+	paymentUrl, err := u.paymentRepo.RequestPayment(totalAmount, orderID, *userID, string(*params.Gateway), orderData)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -445,7 +412,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "error : %s", err.Error())
 	}
-	if userID == 0 {
+	if userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
 	}
 
@@ -477,7 +444,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 
 	// Create order data
 	orderData := make(map[string]string)
-	orderData["userId"] = strconv.FormatInt(userID, 10)
+	orderData["userId"] = strconv.FormatInt(*userID, 10)
 	orderData["planId"] = strconv.FormatInt(*params.PlanID, 10)
 	orderData["originalPrice"] = strconv.FormatInt(plan.Price, 10)
 	orderData["discountAmount"] = strconv.FormatInt(discountAmount, 10)
@@ -488,7 +455,7 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	orderID := time.Now().UnixNano() // Use nanoseconds for more uniqueness
 
 	// Request payment from gateway
-	paymentUrl, err := u.paymentRepo.RequestPayment(finalPrice, orderID, userID, string(*params.Gateway), orderData)
+	paymentUrl, err := u.paymentRepo.RequestPayment(finalPrice, orderID, *userID, string(*params.Gateway), orderData)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

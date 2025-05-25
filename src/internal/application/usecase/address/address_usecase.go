@@ -250,7 +250,7 @@ func (u *AddressUsecase) GetAllCityQuery(params *address.GetAllCityQuery) (*resp
 func (u *AddressUsecase) GetAllProvinceQuery(params *address.GetAllProvinceQuery) (*resp.Response, error) {
 	results, err := u.provinceRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal,"خطا در دریافت استان ها")
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت استان ها")
 	}
 
 	return resp.NewResponseData(resp.Retrieved, results, "استان ها با موفقیت دریافت شدند"), nil

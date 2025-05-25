@@ -11,11 +11,11 @@ import (
 
 // Result represents a standardized API response
 type Result struct {
-	Success       bool           `json:"success"`
-	SystemMessage string         `json:"systemMessage,omitempty"`
-	Message       string         `json:"message,omitempty"`
-	Data          map[string]any `json:"data,omitempty"`
-	StatusCode    int            `json:"statusCode"`
+	Success       bool   `json:"success"`
+	SystemMessage string `json:"systemMessage,omitempty"`
+	Message       string `json:"message,omitempty"`
+	Data          any    `json:"data,omitempty"`
+	StatusCode    int    `json:"statusCode"`
 }
 
 // Standard messages for API responses
@@ -45,14 +45,8 @@ func newResponse(success bool, systemMessage string, message string, statusCode 
 }
 
 // withData adds data to the Result
-func (r *Result) withData(data map[string]any) *Result {
+func (r *Result) withData(data any) *Result {
 	r.Data = data
-	return r
-}
-
-// withErrors adds error messages to the Result
-func (r *Result) withErrors(error string) *Result {
-	r.Message = error
 	return r
 }
 
@@ -64,35 +58,35 @@ func (r *Result) sendAndAbort(c *gin.Context) {
 // Success responses
 
 // Success creates a 200 Success response
-func Success(c *gin.Context, msg string, data map[string]any) {
+func Success(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgSuccess, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // Created creates a 201 Created response
-func Created(c *gin.Context, msg string, data map[string]any) {
+func Created(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgCreated, msg, http.StatusCreated).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // Updated creates a 200 Success response for updates
-func Updated(c *gin.Context, msg string, data map[string]any) {
+func Updated(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgUpdated, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // Deleted creates a 200 Success response for deletions
-func Deleted(c *gin.Context, msg string, data map[string]any) {
+func Deleted(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgDeleted, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // Retrieved creates a 200 Success response for data retrieval
-func Retrieved(c *gin.Context, msg string, data map[string]any) {
+func Retrieved(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgRetrieved, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
@@ -106,7 +100,7 @@ func NoContent(c *gin.Context) {
 // Error responses
 
 // BadRequest creates a 400 Bad Request response
-func BadRequest(c *gin.Context, msg string, data map[string]any) {
+func BadRequest(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgBadRequest, msg, http.StatusBadRequest).
 		withData(data).
 		sendAndAbort(c)
@@ -126,28 +120,28 @@ func ValidationError(c *gin.Context, errors ...ValidationErrorBag) {
 }
 
 // ValidationErrorString creates a 400 Bad Request response for validation errors
-func ValidationErrorString(c *gin.Context, msg string, data map[string]any) {
+func ValidationErrorString(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgValidationError, msg, http.StatusBadRequest).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // Unauthorized creates a 401 Unauthorized response
-func Unauthorized(c *gin.Context, msg string, data map[string]any) {
+func Unauthorized(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgUnauthorized, msg, http.StatusUnauthorized).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // NotFound creates a 404 Not Found response
-func NotFound(c *gin.Context, msg string, data map[string]any) {
+func NotFound(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgNotFound, msg, http.StatusNotFound).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // InternalError creates a 500 Internal Server Error response
-func InternalError(c *gin.Context, msg string, data map[string]any) {
+func InternalError(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgInternalError, msg, http.StatusInternalServerError).
 		withData(data).
 		sendAndAbort(c)

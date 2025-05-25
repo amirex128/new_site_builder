@@ -14,7 +14,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/payment"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -26,7 +25,6 @@ import (
 
 type PaymentUsecase struct {
 	*usecase.BaseUsecase
-	logger      sflogger.Logger
 	paymentRepo repository.IPaymentRepository
 	gatewayRepo repository.IGatewayRepository
 	authContext func(c *gin.Context) service.IAuthService
@@ -48,29 +46,18 @@ func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 }
 
 func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentCommand) (*resp.Response, error) {
-	u.Logger.Info("VerifyPaymentCommand called", map[string]interface{}{
-		"transactionCode": *params.TransactionCode,
-	})
-
-	// Find payment by tracking number or transaction code
 	trackingNumber, err := strconv.ParseInt(*params.TransactionCode, 10, 64)
 	if err != nil {
-		// If not a number, try to find by transaction code
-		return nil, errors.New("invalid tracking number format")
+		return nil, resp.NewError(resp.BadRequest, "invalid tracking number format")
 	}
-
 	paymentRecord, err := u.paymentRepo.GetByTrackingNumber(strconv.FormatInt(trackingNumber, 10))
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("payment not found")
+			return nil, resp.NewError(resp.NotFound, "payment not found")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Process payment state from result
 	isSuccess := *params.Result == "success" || *params.Result == "Success"
-
-	// Update payment status
 	if isSuccess {
 		paymentRecord.PaymentStatusEnum = "Succeed"
 		paymentRecord.Message = "Payment was successful"
@@ -79,109 +66,71 @@ func (u *PaymentUsecase) VerifyPaymentCommand(params *payment.VerifyPaymentComma
 		paymentRecord.PaymentStatusEnum = "Failed"
 		paymentRecord.Message = "Payment failed"
 	}
-
 	paymentRecord.UpdatedAt = time.Now()
-
-	// Save updated payment
 	err = u.paymentRepo.Update(paymentRecord)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Process verification callbacks based on CallVerifyUrl
-	// In a microservice architecture, this would be handled by separate services
-	// In our monolithic approach, we handle different cases here
 	var verifyResult bool
-
 	switch paymentRecord.CallVerifyUrl {
 	case "ChargeCreditVerify":
-		// Implement credit charging logic here
 		verifyResult = u.handleChargeCreditVerify(paymentRecord, isSuccess)
 	case "UpgradePlanVerify":
-		// Implement plan upgrade logic here
 		verifyResult = u.handleUpgradePlanVerify(paymentRecord, isSuccess)
 	case "CreateOrderVerify":
-		// Implement order finalization logic here
 		verifyResult = u.handleCreateOrderVerify(paymentRecord, isSuccess)
 	default:
 		verifyResult = false
 	}
-
-	// Build response
 	responseData := map[string]interface{}{
-		"isSuccess": isSuccess,
-		"message":   paymentRecord.Message,
+		"isSuccess":        isSuccess,
+		"message":          paymentRecord.Message,
+		"serviceIsSuccess": verifyResult,
 	}
-
-	// Add service verification result
-	responseData["serviceIsSuccess"] = verifyResult
-
-	// Redirect info
 	if paymentRecord.ReturnUrl != "" {
 		responseData["redirectUrl"] = paymentRecord.ReturnUrl
 	}
-
 	return resp.NewResponseData(resp.Retrieved, responseData, "وضعیت پرداخت"), nil
 }
 
 func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUpdateGatewayCommand) (*resp.Response, error) {
-	u.Logger.Info("CreateOrUpdateGatewayCommand called", map[string]interface{}{
-		"siteId": *params.SiteID,
-	})
-
-	// Check if a gateway exists for this site
 	existingGateway, err := u.gatewayRepo.GetBySiteID(*params.SiteID)
 	isCreating := false
-
-	// If gateway not found, prepare to create a new one
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			isCreating = true
 		} else {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 	}
-
-	// Get current user ID
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-
-	// Prepare the gateway object
 	gateway := domain.Gateway{
 		SiteID:    *params.SiteID,
-		UserID:    userID,
+		UserID:    *userID,
 		UpdatedAt: time.Now(),
 	}
-
 	if isCreating {
 		gateway.CreatedAt = time.Now()
 	} else {
 		gateway.ID = existingGateway.ID
 		gateway.CreatedAt = existingGateway.CreatedAt
 	}
-
-	// Set all gateway configuration values
 	u.setGatewayValues(&gateway, params)
-
-	// Create or update the gateway in the database
 	if isCreating {
 		err = u.gatewayRepo.Create(gateway)
 	} else {
 		err = u.gatewayRepo.Update(gateway)
 	}
-
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Return the gateway object
 	return resp.NewResponseData(resp.Success, map[string]interface{}{"gateway": gateway}, "درگاه با موفقیت ایجاد یا بروزرسانی شد"), nil
 }
 
 func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payment.CreateOrUpdateGatewayCommand) {
-	// Saman Gateway
 	if params.Saman != nil && params.Saman.MerchantID != nil && params.Saman.Password != nil {
 		gateway.SamanMerchantId = *params.Saman.MerchantID
 		gateway.SamanPassword = *params.Saman.Password
@@ -193,8 +142,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveSaman = "Inactive"
 		}
 	}
-
-	// Mellat Gateway
 	if params.Mellat != nil && params.Mellat.TerminalID != nil && params.Mellat.UserName != nil && params.Mellat.UserPassword != nil {
 		gateway.MellatTerminalId = params.Mellat.TerminalID
 		gateway.MellatUserName = *params.Mellat.UserName
@@ -207,8 +154,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveMellat = "Inactive"
 		}
 	}
-
-	// Parsian Gateway
 	if params.Parsian != nil && params.Parsian.LoginAccount != nil {
 		gateway.ParsianLoginAccount = *params.Parsian.LoginAccount
 	}
@@ -219,8 +164,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveParsian = "Inactive"
 		}
 	}
-
-	// Pasargad Gateway
 	if params.Pasargad != nil && params.Pasargad.MerchantCode != nil && params.Pasargad.TerminalCode != nil && params.Pasargad.PrivateKey != nil {
 		gateway.PasargadMerchantCode = *params.Pasargad.MerchantCode
 		gateway.PasargadTerminalCode = *params.Pasargad.TerminalCode
@@ -233,8 +176,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActivePasargad = "Inactive"
 		}
 	}
-
-	// IranKish Gateway
 	if params.IranKish != nil && params.IranKish.TerminalID != nil && params.IranKish.AcceptorID != nil && params.IranKish.PassPhrase != nil && params.IranKish.PublicKey != nil {
 		gateway.IranKishTerminalId = *params.IranKish.TerminalID
 		gateway.IranKishAcceptorId = *params.IranKish.AcceptorID
@@ -248,8 +189,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveIranKish = "Inactive"
 		}
 	}
-
-	// Melli Gateway
 	if params.Melli != nil && params.Melli.TerminalID != nil && params.Melli.MerchantID != nil && params.Melli.TerminalKey != nil {
 		gateway.MelliTerminalId = *params.Melli.TerminalID
 		gateway.MelliMerchantId = *params.Melli.MerchantID
@@ -262,8 +201,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveMelli = "Inactive"
 		}
 	}
-
-	// AsanPardakht Gateway
 	if params.AsanPardakht != nil && params.AsanPardakht.MerchantConfigurationID != nil && params.AsanPardakht.UserName != nil && params.AsanPardakht.Password != nil && params.AsanPardakht.Key != nil && params.AsanPardakht.IV != nil {
 		gateway.AsanPardakhtMerchantConfigurationId = *params.AsanPardakht.MerchantConfigurationID
 		gateway.AsanPardakhtUserName = *params.AsanPardakht.UserName
@@ -278,8 +215,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveAsanPardakht = "Inactive"
 		}
 	}
-
-	// Sepehr Gateway
 	if params.Sepehr != nil && params.Sepehr.TerminalID != nil {
 		gateway.SepehrTerminalId = params.Sepehr.TerminalID
 	}
@@ -290,8 +225,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveSepehr = "Inactive"
 		}
 	}
-
-	// ZarinPal Gateway
 	if params.ZarinPal != nil && params.ZarinPal.MerchantID != nil {
 		gateway.ZarinPalMerchantId = *params.ZarinPal.MerchantID
 		if params.ZarinPal.AuthorizationToken != nil {
@@ -308,8 +241,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveZarinPal = "Inactive"
 		}
 	}
-
-	// PayIr Gateway
 	if params.PayIr != nil && params.PayIr.API != nil {
 		gateway.PayIrApi = *params.PayIr.API
 		if params.PayIr.IsTestAccount != nil {
@@ -323,8 +254,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActivePayIr = "Inactive"
 		}
 	}
-
-	// IdPay Gateway
 	if params.IdPay != nil && params.IdPay.API != nil {
 		gateway.IdPayApi = *params.IdPay.API
 		if params.IdPay.IsTestAccount != nil {
@@ -338,8 +267,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveIdPay = "Inactive"
 		}
 	}
-
-	// YekPay Gateway
 	if params.YekPay != nil && params.YekPay.MerchantID != nil {
 		gateway.YekPayMerchantId = *params.YekPay.MerchantID
 	}
@@ -350,8 +277,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActiveYekPay = "Inactive"
 		}
 	}
-
-	// PayPing Gateway
 	if params.PayPing != nil && params.PayPing.AccessToken != nil {
 		gateway.PayPingAccessToken = *params.PayPing.AccessToken
 	}
@@ -362,8 +287,6 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 			gateway.IsActivePayPing = "Inactive"
 		}
 	}
-
-	// ParbadVirtual Gateway
 	if params.IsActiveParbadVirtual != nil {
 		if *params.IsActiveParbadVirtual == enums.ActiveStatus {
 			gateway.IsActiveParbadVirtual = "Active"
@@ -374,54 +297,34 @@ func (u *PaymentUsecase) setGatewayValues(gateway *domain.Gateway, params *payme
 }
 
 func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery) (*resp.Response, error) {
-	u.Logger.Info("GetByIdGatewayQuery called", map[string]interface{}{
-		"id": *params.ID,
-	})
-
 	gateway, err := u.gatewayRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("درگاه پرداخت یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "درگاه پرداخت یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Check user access
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-
-	// Assuming site owners should be able to see their gateway
-	// This logic might need adjustment based on your authorization requirements
-	if gateway.UserID != userID {
+	if userID != nil && gateway.UserID != *userID {
 		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 		if err != nil || !isAdmin {
-			return nil, errors.New("شما به این درگاه پرداخت دسترسی ندارید")
+			return nil, resp.NewError(resp.Unauthorized, "شما به این درگاه پرداخت دسترسی ندارید")
 		}
 	}
-
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"gateway": gateway}, "درگاه با موفقیت دریافت شد"), nil
 }
 
 func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (*resp.Response, error) {
-	u.Logger.Info("AdminGetAllGatewayQuery called", map[string]interface{}{
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
-
-	// Verify admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
-	if err != nil {
-		return nil, err
+	if err != nil || !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if !isAdmin {
-		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
-	}
-
 	gatewaysResult, err := u.gatewayRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     gatewaysResult.Items,
@@ -433,33 +336,17 @@ func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGate
 }
 
 func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCommand) (*resp.Response, error) {
-	u.Logger.Info("RequestGatewayCommand called", map[string]interface{}{
-		"siteId":   *params.SiteID,
-		"orderId":  *params.OrderID,
-		"amount":   *params.Amount,
-		"gateway":  *params.Gateway,
-		"userType": *params.UserType,
-		"userId":   *params.UserID,
-	})
-
-	// Check if we have an active gateway for this site and payment method
 	gateway, err := u.gatewayRepo.GetBySiteID(*params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("درگاه پرداخت برای این سایت یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "درگاه پرداخت برای این سایت یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Check if selected gateway is active
 	if !u.isGatewayActive(gateway, *params.Gateway) {
-		return nil, errors.New("درگاه پرداخت انتخاب شده غیرفعال است")
+		return nil, resp.NewError(resp.BadRequest, "درگاه پرداخت انتخاب شده غیرفعال است")
 	}
-
-	// Generate gateway account name
 	gatewayAccountName := fmt.Sprintf("%s-%d", string(*params.Gateway), *params.SiteID)
-
-	// Create payment record
 	paymentData := domain.Payment{
 		SiteID:             *params.SiteID,
 		PaymentStatusEnum:  "Processing",
@@ -475,25 +362,19 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 		CallVerifyUrl:      string(*params.CallVerifyURL),
 		ClientIp:           *params.ClientIP,
 		UserID:             *params.UserID,
-		CustomerID:         0, // Set appropriate customer ID if applicable
+		CustomerID:         0,
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
 	}
-
-	// Serialize order data to JSON string
 	orderDataJSON, err := json.Marshal(params.OrderData)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	paymentData.OrderData = string(orderDataJSON)
-
-	// Set CustomerID if user type is Customer
 	if *params.UserType == enums.CustomerTypeValue {
 		paymentData.CustomerID = *params.UserID
-		paymentData.UserID = 0 // Clear user ID for customers
+		paymentData.UserID = 0
 	}
-
-	// Request payment through payment gateway
 	paymentURL, err := u.paymentRepo.RequestPayment(
 		*params.Amount,
 		*params.OrderID,
@@ -502,10 +383,8 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 		params.OrderData,
 	)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
-	// Create response object
 	responseData := map[string]interface{}{
 		"responseStatus": map[string]interface{}{
 			"isSuccess": true,
@@ -519,28 +398,17 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 		"method":         "GET",
 		"formData":       map[string]string{},
 	}
-
 	return resp.NewResponseData(resp.Retrieved, responseData, "درخواست پرداخت با موفقیت انجام شد"), nil
 }
 
 func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (*resp.Response, error) {
-	u.Logger.Info("AdminGetAllPaymentQuery called", map[string]interface{}{
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
-
-	// Verify admin access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
-	if err != nil {
-		return nil, err
+	if err != nil || !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if !isAdmin {
-		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
-	}
-
 	paymentsResult, err := u.paymentRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     paymentsResult.Items,
@@ -550,8 +418,6 @@ func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaym
 		"totalPage": paymentsResult.TotalPages,
 	}, "لیست پرداخت ها با موفقیت دریافت شد"), nil
 }
-
-// Helper methods
 
 func (u *PaymentUsecase) isGatewayActive(gateway domain.Gateway, gatewayType enums.PaymentGatewaysEnum) bool {
 	switch gatewayType {
@@ -588,55 +454,35 @@ func (u *PaymentUsecase) isGatewayActive(gateway domain.Gateway, gatewayType enu
 	}
 }
 
-// Handler methods for different verification endpoints
-
 func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSuccess bool) bool {
 	if !isSuccess {
 		return false
 	}
-
-	// Parse order data
 	var orderData map[string]string
 	err := json.Unmarshal([]byte(payment.OrderData), &orderData)
 	if err != nil {
 		return false
 	}
-
-	// Get user ID from order data
 	userIDStr, ok := orderData["UserId"]
 	if !ok {
 		return false
 	}
-
-	// Parse user ID
 	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
 		return false
 	}
-
-	// In a microservice architecture, this would call the User service
-	// In our monolithic approach, we need to implement it directly
-
-	// Get user repository from container
-	// This is a simplified implementation - in a real app, you'd inject the repository
 	userRepo := u.container.GetUserRepo()
 	if userRepo == nil {
 		return false
 	}
-
-	// Get the user
 	user, err := userRepo.GetByID(userID)
 	if err != nil {
 		return false
 	}
-
-	// Get unit price repository
 	unitPriceRepo := u.container.GetUnitPriceRepo()
 	if unitPriceRepo == nil {
 		return false
 	}
-
-	// Get all unit prices
 	unitPricesResult, err := unitPriceRepo.GetAll(common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 100,
@@ -644,23 +490,18 @@ func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSucc
 	if err != nil {
 		return false
 	}
-
-	// Update user credits based on order data
 	for _, unitPrice := range unitPricesResult.Items {
 		unitPriceNameKey := fmt.Sprintf("%s_UnitPriceName", unitPrice.Name)
 		unitPriceCountKey := fmt.Sprintf("%s_UnitPriceCount", unitPrice.Name)
-
 		if _, exists := orderData[unitPriceNameKey]; exists {
 			countStr, ok := orderData[unitPriceCountKey]
 			if !ok {
 				continue
 			}
-
 			count, err := strconv.Atoi(countStr)
 			if err != nil {
 				continue
 			}
-
 			switch unitPrice.Name {
 			case "SmsCredits":
 				user.SmsCredits += count
@@ -676,24 +517,19 @@ func (u *PaymentUsecase) handleChargeCreditVerify(payment domain.Payment, isSucc
 				if !ok {
 					continue
 				}
-
 				expireDays, err := strconv.Atoi(expireDayStr)
 				if err != nil {
 					continue
 				}
-
 				user.StorageMbCredits += count
 				expireAt := time.Now().AddDate(0, 0, expireDays)
 				user.StorageMbCreditsExpireAt = &expireAt
 			}
 		}
 	}
-
-	// Update the user
 	if err := userRepo.Update(user); err != nil {
 		return false
 	}
-
 	return true
 }
 
@@ -701,69 +537,51 @@ func (u *PaymentUsecase) handleUpgradePlanVerify(payment domain.Payment, isSucce
 	if !isSuccess {
 		return false
 	}
-
-	// Parse order data
 	var orderData map[string]string
 	err := json.Unmarshal([]byte(payment.OrderData), &orderData)
 	if err != nil {
 		return false
 	}
-
-	// Get required data from order data
 	userIDStr, ok := orderData["UserId"]
 	if !ok {
 		return false
 	}
-
 	planIDStr, ok := orderData["PlanId"]
 	if !ok {
 		return false
 	}
-
 	durationDaysStr, ok := orderData["DurationDays"]
 	if !ok {
 		return false
 	}
-
-	// Parse the values
 	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
 		return false
 	}
-
 	planID, err := strconv.ParseInt(planIDStr, 10, 64)
 	if err != nil {
 		return false
 	}
-
 	durationDays, err := strconv.Atoi(durationDaysStr)
 	if err != nil {
 		return false
 	}
-
-	// Get repositories
 	userRepo := u.container.GetUserRepo()
 	if userRepo == nil {
 		return false
 	}
-
 	planRepo := u.container.GetPlanRepo()
 	if planRepo == nil {
 		return false
 	}
-
-	// Get the user and plan
 	user, err := userRepo.GetByID(userID)
 	if err != nil {
 		return false
 	}
-
 	plan, err := planRepo.GetByID(planID)
 	if err != nil {
 		return false
 	}
-
-	// Update user with plan details
 	user.PlanID = &planID
 	planExpiredAt := time.Now().AddDate(0, 0, durationDays)
 	user.PlanExpiredAt = &planExpiredAt
@@ -771,23 +589,14 @@ func (u *PaymentUsecase) handleUpgradePlanVerify(payment domain.Payment, isSucce
 	user.SmsCredits = plan.SmsCredits
 	user.AiCredits = plan.AiCredits
 	user.AiImageCredits = plan.AiImageCredits
-
-	// Update storage credits if user doesn't have a plan yet
 	if user.PlanID == nil {
 		user.StorageMbCredits = plan.StorageMbCredits
 		storageExpireAt := time.Now().AddDate(0, 0, durationDays)
 		user.StorageMbCreditsExpireAt = &storageExpireAt
 	}
-
-	// Update user roles based on plan roles
-	// This would require additional implementation to handle roles
-	// For now, we'll skip this part
-
-	// Update the user
 	if err := userRepo.Update(user); err != nil {
 		return false
 	}
-
 	return true
 }
 
@@ -795,48 +604,32 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 	if !isSuccess {
 		return false
 	}
-
-	// Parse order data
 	var orderData map[string]string
 	err := json.Unmarshal([]byte(payment.OrderData), &orderData)
 	if err != nil {
 		return false
 	}
-
-	// Get order ID from order data
 	orderIDStr, ok := orderData["OrderId"]
 	if !ok {
 		return false
 	}
-
-	// Parse order ID
 	orderID, err := strconv.ParseInt(orderIDStr, 10, 64)
 	if err != nil {
 		return false
 	}
-
-	// Get order repository
 	orderRepo := u.container.GetOrderRepo()
 	if orderRepo == nil {
 		return false
 	}
-
-	// Get the order with items
 	order, err := orderRepo.GetByID(orderID)
 	if err != nil {
 		return false
 	}
-
-	// Update order status to paid
 	order.OrderStatus = "Paid"
 	order.UpdatedAt = time.Now()
-
-	// Update the order
 	if err := orderRepo.Update(order); err != nil {
 		return false
 	}
-
-	// Get order items
 	orderItemsResult, err := u.container.GetOrderItemRepo().GetAllByOrderID(orderID, common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 1000,
@@ -848,14 +641,11 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 		})
 		return false
 	}
-
-	// 1. Update product stock quantities
 	productVariantRepo := u.container.GetProductVariantRepo()
 	if productVariantRepo == nil {
 		u.Logger.Error("Failed to get product variant repository", nil)
 		return false
 	}
-
 	for _, item := range orderItemsResult.Items {
 		if item.ProductVariantID > 0 {
 			err := productVariantRepo.DecreaseStock(item.ProductVariantID, item.Quantity)
@@ -865,19 +655,13 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 					"productVariantID": item.ProductVariantID,
 					"quantity":         item.Quantity,
 				})
-				// Continue with other items even if one fails
 			}
 		}
 	}
-
-	// 2. Decrease discount quantity if used
 	if order.DiscountID != nil && *order.DiscountID > 0 {
 		discountRepo := u.container.GetDiscountRepo()
 		if discountRepo != nil {
-			// Get customer ID
 			customerID := order.CustomerID
-
-			// Check if customer has already used this discount
 			hasUsed, err := discountRepo.HasCustomerUsedDiscount(*order.DiscountID, customerID)
 			if err != nil {
 				u.Logger.Error("Failed to check if customer used discount", map[string]interface{}{
@@ -886,15 +670,12 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 					"customerID": customerID,
 				})
 			} else if !hasUsed {
-				// Decrease discount quantity
 				if err := discountRepo.DecreaseQuantity(*order.DiscountID); err != nil {
 					u.Logger.Error("Failed to decrease discount quantity", map[string]interface{}{
 						"error":      err.Error(),
 						"discountID": *order.DiscountID,
 					})
 				}
-
-				// Record that this customer has used the discount
 				if err := discountRepo.AddCustomerUsage(*order.DiscountID, customerID); err != nil {
 					u.Logger.Error("Failed to record customer discount usage", map[string]interface{}{
 						"error":      err.Error(),
@@ -905,17 +686,12 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 			}
 		}
 	}
-
-	// 3. Decrease coupon quantity if applicable
-	// First, get products associated with order items to check for coupons
 	for _, item := range orderItemsResult.Items {
 		if item.ProductID > 0 {
-			// Get coupon for this product
 			couponRepo := u.container.GetCouponRepo()
 			if couponRepo != nil {
 				coupon, err := couponRepo.GetByProductID(item.ProductID)
 				if err == nil && coupon.ID > 0 && coupon.ExpiryDate.After(time.Now()) {
-					// Coupon exists and is valid, decrease its quantity
 					if err := couponRepo.DecreaseQuantity(coupon.ID); err != nil {
 						u.Logger.Error("Failed to decrease coupon quantity", map[string]interface{}{
 							"error":    err.Error(),
@@ -926,26 +702,18 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 			}
 		}
 	}
-
-	// 4. send confirmation email/notification
-	// Get customer details
 	customerRepo := u.container.GetCustomerRepo()
 	if customerRepo != nil {
 		customer, err := customerRepo.GetByID(order.CustomerID)
 		if err == nil {
-			// Get site details
 			siteRepo := u.container.GetSiteRepo()
 			if siteRepo != nil {
 				site, err := siteRepo.GetByID(order.SiteID)
 				if err == nil {
-					// Prepare email content
 					emailSubject := fmt.Sprintf("Order Confirmation #%d - %s", order.ID, site.Name)
 					emailBody := fmt.Sprintf("Dear %s,\n\nThank you for your order #%d. Your payment has been successfully processed.\n\nOrder Details:\n",
 						customer.FirstName, order.ID)
-
-					// Add order items to email
 					for _, item := range orderItemsResult.Items {
-						// Get product details
 						productRepo := u.container.GetProductRepo()
 						if productRepo != nil {
 							product, err := productRepo.GetByID(item.ProductID)
@@ -955,12 +723,8 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 							}
 						}
 					}
-
 					emailBody += fmt.Sprintf("\nTotal: %d\n\nThank you for shopping with us!\n\n%s Team",
 						order.TotalFinalPrice, site.Name)
-
-					// In a real implementation, this would send an email
-					// For now, we'll just log it
 					u.Logger.Info("Order confirmation email would be sent", map[string]interface{}{
 						"to":      customer.Email,
 						"subject": emailSubject,
@@ -970,15 +734,10 @@ func (u *PaymentUsecase) handleCreateOrderVerify(payment domain.Payment, isSucce
 			}
 		}
 	}
-
-	// 5. Generate invoice
-	// This would typically create a PDF invoice and store it
-	// For now, we'll just log that an invoice would be generated
 	u.Logger.Info("Invoice would be generated", map[string]interface{}{
 		"orderID": order.ID,
 		"amount":  order.TotalFinalPrice,
 		"date":    time.Now().Format("2006-01-02"),
 	})
-
 	return true
 }

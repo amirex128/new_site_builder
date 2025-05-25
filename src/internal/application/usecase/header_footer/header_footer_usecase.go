@@ -46,25 +46,22 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 		"type":   *params.Type,
 	})
 
-	// Check if site exists
 	_, err := u.siteRepo.GetByID(*params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("سایت مورد نظر یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "سایت مورد نظر یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Get user ID from auth context
 	userID, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
 
-	// Convert body to JSON string
 	bodyJSON, err := json.Marshal(params.Body)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	headerFooter := domain.HeaderFooter{
@@ -73,22 +70,20 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 		IsMain:    *params.IsMain,
 		Body:      string(bodyJSON),
 		Type:      string(*params.Type),
-		UserID:    userID,
+		UserID:    *userID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		IsDeleted: false,
 	}
 
-	// Create in repository
 	err = u.repo.Create(headerFooter)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Get created header/footer with relations
 	createdHeaderFooter, err := u.repo.GetByID(headerFooter.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Created, resp.Data{
@@ -123,7 +118,7 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 		return nil, err
 	}
 
-	if existingHeaderFooter.UserID != userID && !isAdmin {
+	if existingHeaderFooter.UserID != *userID && !isAdmin {
 		return nil, errors.New("شما به این هدر/فوتر دسترسی ندارید")
 	}
 
@@ -197,7 +192,7 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 		return nil, err
 	}
 
-	if existingHeaderFooter.UserID != userID && !isAdmin {
+	if existingHeaderFooter.UserID != *userID && !isAdmin {
 		return nil, errors.New("شما به این هدر/فوتر دسترسی ندارید")
 	}
 

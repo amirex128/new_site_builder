@@ -4,19 +4,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/article_category"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/gin-gonic/gin"
 )
 
 type ArticleCategoryUsecase struct {
 	*usecase.BaseUsecase
 	categoryRepo repository.IArticleCategoryRepository
 	mediaRepo    repository.IMediaRepository
+	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
@@ -26,25 +28,26 @@ func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 		},
 		categoryRepo: c.GetArticleCategoryRepo(),
 		mediaRepo:    c.GetMediaRepo(),
+		authContext:  c.GetAuthTransientService(),
 	}
 }
 
 func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (*resp.Response, error) {
-	// Implementation for creating a category based on .NET CreateCategoryCommand
-	u.Logger.Info("Creating new category", map[string]interface{}{"name": *params.Name})
-
-	// Convert SeoTags slice to string (comma-separated)
+	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+	}
+	if params.Name == nil || params.Slug == nil || params.SiteID == nil || params.Order == nil {
+		return nil, resp.NewError(resp.BadRequest, "اطلاعات اجباری ناقص است")
+	}
 	var seoTags string
 	if params.SeoTags != nil && len(params.SeoTags) > 0 {
 		seoTags = strings.Join(params.SeoTags, ",")
 	}
-
 	var description string
 	if params.Description != nil {
 		description = *params.Description
 	}
-
-	// Create new category
 	newCategory := domain.ArticleCategory{
 		Name:             *params.Name,
 		Slug:             *params.Slug,
@@ -53,232 +56,146 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 		SiteID:           *params.SiteID,
 		Order:            *params.Order,
 		SeoTags:          seoTags,
-		UserID:           1, // Should come from auth context in real impl
+		UserID:           *userID,
 		CreatedAt:        time.Now(),
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
 	}
-
-	// Save the category to get its ID
-	err := u.categoryRepo.Create(newCategory)
+	err = u.categoryRepo.Create(newCategory)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در ایجاد دسته‌بندی")
 	}
-
-	// Handle optional media relationships
 	if params.MediaIDs != nil && len(params.MediaIDs) > 0 {
 		for _, mediaID := range params.MediaIDs {
-			err = u.categoryRepo.AddMediaToCategory(newCategory.ID, mediaID)
-			if err != nil {
-				u.Logger.Errorf("Failed to add media %d to category %d: %v", mediaID, newCategory.ID, err)
-				// Continue with other media instead of failing completely
-			}
+			_ = u.categoryRepo.AddMediaToCategory(newCategory.ID, mediaID)
 		}
 	}
-
-	// Return the created category
-	// Convert domain.ArticleCategory to map for response data
-	categoryMap := map[string]interface{}{
-		"id":               newCategory.ID,
-		"name":             newCategory.Name,
-		"slug":             newCategory.Slug,
-		"description":      newCategory.Description,
-		"parentCategoryId": newCategory.ParentCategoryID,
-		"siteId":           newCategory.SiteID,
-		"order":            newCategory.Order,
-		"seoTags":          newCategory.SeoTags,
-		"userId":           newCategory.UserID,
-		"createdAt":        newCategory.CreatedAt,
-		"updatedAt":        newCategory.UpdatedAt,
-		"isDeleted":        newCategory.IsDeleted,
-	}
-	return resp.NewResponseData(resp.Created, categoryMap, "Article category created successfully"), nil
+	return resp.NewResponseData(resp.Created, newCategory, "دسته‌بندی با موفقیت ایجاد شد"), nil
 }
 
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
-	// Implementation for updating a category based on .NET UpdateCategoryCommand
-	u.Logger.Info("Updating category", map[string]interface{}{"id": *params.ID})
-
-	// Get existing category
+	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+	}
+	if params.ID == nil {
+		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
+	}
 	existingCategory, err := u.categoryRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-
-	// Check if user has access to this category
-	// In a real implementation, check if the current user has rights to edit this category
-	// This is equivalent to the gate.HasUserAccess(entity) call in .NET
-
-	// Update fields if provided
+	err = u.CheckAccessUserModel(&existingCategory, userID)
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+	}
 	if params.Name != nil {
 		existingCategory.Name = *params.Name
 	}
-
 	if params.Description != nil {
 		existingCategory.Description = *params.Description
 	}
-
 	if params.ParentCategoryID != nil {
 		existingCategory.ParentCategoryID = params.ParentCategoryID
 	}
-
 	if params.Slug != nil {
 		existingCategory.Slug = *params.Slug
 	}
-
 	if params.Order != nil {
 		existingCategory.Order = *params.Order
 	}
-
-	// Update SeoTags if provided
 	if params.SeoTags != nil {
 		existingCategory.SeoTags = strings.Join(params.SeoTags, ",")
 	}
-
 	existingCategory.UpdatedAt = time.Now()
-
-	// Save changes
 	err = u.categoryRepo.Update(existingCategory)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در ویرایش دسته‌بندی")
 	}
-
-	// Handle media relationships if provided
 	if params.MediaIDs != nil {
-		// First remove all existing media associations
-		err = u.categoryRepo.RemoveAllMediaFromCategory(existingCategory.ID)
-		if err != nil {
-			u.Logger.Errorf("Failed to remove media from category %d: %v", existingCategory.ID, err)
-		}
-
-		// Then add the new ones
+		_ = u.categoryRepo.RemoveAllMediaFromCategory(existingCategory.ID)
 		for _, mediaID := range params.MediaIDs {
-			err = u.categoryRepo.AddMediaToCategory(existingCategory.ID, mediaID)
-			if err != nil {
-				u.Logger.Errorf("Failed to add media %d to category %d: %v", mediaID, existingCategory.ID, err)
-			}
+			_ = u.categoryRepo.AddMediaToCategory(existingCategory.ID, mediaID)
 		}
 	}
-
-	// Convert domain.ArticleCategory to map for response data
-	categoryMap := map[string]interface{}{
-		"id":               existingCategory.ID,
-		"name":             existingCategory.Name,
-		"slug":             existingCategory.Slug,
-		"description":      existingCategory.Description,
-		"parentCategoryId": existingCategory.ParentCategoryID,
-		"siteId":           existingCategory.SiteID,
-		"order":            existingCategory.Order,
-		"seoTags":          existingCategory.SeoTags,
-		"userId":           existingCategory.UserID,
-		"createdAt":        existingCategory.CreatedAt,
-		"updatedAt":        existingCategory.UpdatedAt,
-		"isDeleted":        existingCategory.IsDeleted,
-	}
-	return resp.NewResponseData(resp.Updated, categoryMap, "Article category updated successfully"), nil
+	return resp.NewResponseData(resp.Updated, existingCategory, "دسته‌بندی با موفقیت ویرایش شد"), nil
 }
 
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
-	// Implementation for deleting a category based on .NET DeleteCategoryCommand
-	u.Logger.Info("Deleting category", map[string]interface{}{"id": *params.ID})
-
-	// Get the category first to ensure it exists
-	_, err := u.categoryRepo.GetByID(*params.ID)
+	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
 	}
-
-	// Check if user has access to this category
-	// In a real implementation, check if the current user has rights to delete this category
-	// This is equivalent to the gate.HasUserAccess(entity) call in .NET
-
-	// Delete the category
+	if params.ID == nil {
+		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
+	}
+	existingCategory, err := u.categoryRepo.GetByID(*params.ID)
+	if err != nil {
+		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
+	}
+	err = u.CheckAccessUserModel(&existingCategory, userID)
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
+	}
 	err = u.categoryRepo.Delete(*params.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در حذف دسته‌بندی")
 	}
-
-	return resp.NewResponse(resp.Deleted, "Article category deleted successfully"), nil
+	return resp.NewResponse(resp.Deleted, "دسته‌بندی با موفقیت حذف شد"), nil
 }
 
 func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.GetByIdCategoryQuery) (*resp.Response, error) {
-	// Implementation to get category by ID based on .NET GetByIdCategoryQuery
-	u.Logger.Info("Getting category by ID", map[string]interface{}{"id": *params.ID})
-
-	// Get the category
+	if params.ID == nil {
+		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
+	}
 	result, err := u.categoryRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-
-	// Check if user has access to this category
-	// In a real implementation, check if the current user has rights to view this category
-	// This is equivalent to the gate.HasUserAccess(entity) call in .NET
-
-	// Get media information
-	mediaItems, err := u.categoryRepo.GetCategoryMedia(result.ID)
-	if err != nil {
-		u.Logger.Errorf("Failed to get media for category %d: %v", result.ID, err)
-	}
-
+	mediaItems, _ := u.categoryRepo.GetCategoryMedia(result.ID)
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"category": result,
 		"media":    mediaItems,
-	}, "Article category retrieved successfully"), nil
+	}, "دسته‌بندی با موفقیت دریافت شد"), nil
 }
 
 func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.GetAllCategoryQuery) (*resp.Response, error) {
-	u.Logger.Info("Getting all categories by site ID", map[string]interface{}{"siteID": *params.SiteID})
-
+	if params.SiteID == nil {
+		return nil, resp.NewError(resp.BadRequest, "شناسه سایت اجباری است")
+	}
 	result, err := u.categoryRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت دسته‌بندی‌ها")
 	}
-
 	categoriesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, category := range result.Items {
-		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
-		if err != nil {
-			u.Logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
-			media = []domain.Media{}
-		}
-
+		media, _ := u.categoryRepo.GetCategoryMedia(category.ID)
 		categoriesWithMedia[i] = map[string]interface{}{
 			"category": category,
 			"media":    media,
 		}
 	}
-
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": categoriesWithMedia,
 		"total": result.TotalCount,
-	}, "Article categories retrieved successfully"), nil
+	}, "دسته‌بندی‌ها با موفقیت دریافت شدند"), nil
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
-	u.Logger.Info("Admin getting all categories", map[string]interface{}{})
-
 	result, err := u.categoryRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت دسته‌بندی‌ها")
 	}
-
 	categoriesWithMedia := make([]map[string]interface{}, len(result.Items))
 	for i, category := range result.Items {
-		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
-		if err != nil {
-			u.Logger.Errorf("Failed to get media for category %d: %v", category.ID, err)
-			media = []domain.Media{}
-		}
-
+		media, _ := u.categoryRepo.GetCategoryMedia(category.ID)
 		categoriesWithMedia[i] = map[string]interface{}{
 			"category": category,
 			"media":    media,
 		}
 	}
-
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": categoriesWithMedia,
 		"total": result.TotalCount,
-	}, "Article categories retrieved successfully (Admin)"), nil
+	}, "دسته‌بندی‌ها با موفقیت دریافت شدند (مدیر)"), nil
 }

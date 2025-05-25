@@ -33,7 +33,8 @@ func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	return &BasketUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
 			Logger: c.GetLogger(),
-		}, basketRepo: c.GetBasketRepo(),
+		},
+		basketRepo:         c.GetBasketRepo(),
 		basketItemRepo:     c.GetBasketItemRepo(),
 		productRepo:        c.GetProductRepo(),
 		productVariantRepo: c.GetProductVariantRepo(),
@@ -43,53 +44,39 @@ func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 }
 
 func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) (*resp.Response, error) {
-	u.Logger.Info("UpdateBasketCommand called", map[string]interface{}{
-		"params": params,
-	})
-
 	if params.BasketItems == nil || len(params.BasketItems) == 0 {
-		return nil, errors.New("آیتم‌های سبد خرید الزامی هستند")
+		return nil, resp.NewError(resp.BadRequest, "آیتم‌های سبد خرید الزامی هستند")
 	}
-
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
 	}
-
 	siteID := *params.SiteID
 
-	// Get or create the customer's basket for this site
-	existingBasket, err := u.basketRepo.GetBasketByCustomerIDAndSiteID(customerID, siteID)
+	existingBasket, err := u.basketRepo.GetBasketByCustomerIDAndSiteID(*customerID, siteID)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت سبد خرید")
 	}
 
-	// Simple add mode just adds/updates the basket items without price calculation
 	if params.SimpleAdd != nil && *params.SimpleAdd {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// Create a new basket
 			newBasket := domain.Basket{
 				SiteID:                       siteID,
-				CustomerID:                   customerID,
+				CustomerID:                   *customerID,
 				TotalRawPrice:                0,
 				TotalCouponDiscount:          0,
 				TotalPriceWithCouponDiscount: 0,
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-
 			if err := u.basketRepo.Create(newBasket); err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, "خطا در ایجاد سبد خرید")
 			}
-
-			// Get the newly created basket
-			existingBasket, err = u.basketRepo.GetBasketByCustomerIDAndSiteID(customerID, siteID)
+			existingBasket, err = u.basketRepo.GetBasketByCustomerIDAndSiteID(*customerID, siteID)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, "خطا در دریافت سبد خرید")
 			}
 		}
-
-		// Handle basket items
 		for _, item := range params.BasketItems {
 			basketItem := domain.BasketItem{
 				BasketID:  existingBasket.ID,
@@ -98,80 +85,49 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}
-
 			if item.ProductVariantID != nil {
 				basketItem.ProductVariantID = *item.ProductVariantID
 			}
-
 			if item.BasketItemID != nil && *item.BasketItemID > 0 {
-				// Update existing item
 				basketItem.ID = *item.BasketItemID
 				if err := u.basketItemRepo.Update(basketItem); err != nil {
-					return nil, err
+					return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی آیتم سبد خرید")
 				}
 			} else {
-				// Create new item
 				if err := u.basketItemRepo.Create(basketItem); err != nil {
-					return nil, err
+					return nil, resp.NewError(resp.Internal, "خطا در افزودن آیتم به سبد خرید")
 				}
 			}
 		}
-
-		// Get the updated basket with items
-		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID)
+		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, siteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, "خطا در دریافت سبد خرید")
 		}
-
-		// Convert domain.Basket to map for response data
-		basketMap := map[string]interface{}{
-			"id":                           updatedBasket.ID,
-			"siteId":                       updatedBasket.SiteID,
-			"customerId":                   updatedBasket.CustomerID,
-			"totalRawPrice":                updatedBasket.TotalRawPrice,
-			"totalCouponDiscount":          updatedBasket.TotalCouponDiscount,
-			"totalPriceWithCouponDiscount": updatedBasket.TotalPriceWithCouponDiscount,
-			"discountId":                   updatedBasket.DiscountID,
-			"createdAt":                    updatedBasket.CreatedAt,
-			"updatedAt":                    updatedBasket.UpdatedAt,
-			"items":                        updatedBasket.Items,
-		}
-		return resp.NewResponseData(resp.Updated, basketMap, "Basket updated successfully"), nil
+		return resp.NewResponseData(resp.Updated, updatedBasket, "سبد خرید با موفقیت بروزرسانی شد"), nil
 	} else {
-		// Complex mode with price calculation
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("سبد خرید وجود ندارد")
+			return nil, resp.NewError(resp.NotFound, "سبد خرید وجود ندارد")
 		}
-
-		// Implement CalculateProductsPrice logic
-		// Delete existing basket items
 		if err := u.basketRepo.DeleteBasketItems(existingBasket.ID); err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, "خطا در حذف آیتم‌های سبد خرید")
 		}
-
 		var totalRawPrice int64 = 0
 		var totalCouponDiscount int64 = 0
 		var totalPriceWithCouponDiscount int64 = 0
-
-		// Process each basket item
 		for _, item := range params.BasketItems {
-			// Get product and variant to calculate prices
 			product, err := u.productRepo.GetByID(*item.ProductID)
 			if err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.NotFound, "محصول یافت نشد")
 			}
-
 			var variantPrice int64 = 0
 			var variant domain.ProductVariant
 			if item.ProductVariantID != nil {
-				// Get the product variant
 				variant, err = u.productVariantRepo.GetByID(*item.ProductVariantID)
 				if err != nil {
-					return nil, err
+					return nil, resp.NewError(resp.NotFound, "تنوع محصول یافت نشد")
 				}
 				variantPrice = variant.Price
 			} else {
-				// If no variant is specified, try to get the first variant for this product
 				variantsResult, err := u.productVariantRepo.GetAllByProductID(product.ID, common.PaginationRequestDto{
 					Page:     1,
 					PageSize: 1,
@@ -181,39 +137,27 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 					variant = variantsResult.Items[0]
 				}
 			}
-
 			if variantPrice == 0 {
-				return nil, errors.New("قیمت محصول یا تنوع آن یافت نشد")
+				return nil, resp.NewError(resp.BadRequest, "قیمت محصول یا تنوع آن یافت نشد")
 			}
-
-			// Check if there's enough stock
 			if variant.Stock < *item.Quantity {
-				return nil, errors.New(fmt.Sprintf("موجودی محصول %s با تنوع %s کافی نیست", product.Name, variant.Name))
+				return nil, resp.NewError(resp.BadRequest, fmt.Sprintf("موجودی محصول %s با تنوع %s کافی نیست", product.Name, variant.Name))
 			}
-
 			rawPrice := variantPrice
 			finalRawPrice := rawPrice * int64(*item.Quantity)
 			totalRawPrice += finalRawPrice
-
-			// Apply discount if available
 			var justCouponPrice int64 = 0
 			var justDiscountPrice int64 = 0
 			var finalPriceWithCouponDiscount int64 = finalRawPrice
-
-			// Apply discount code if provided
 			if params.Code != nil && *params.Code != "" {
-				// Get discount by code
 				discount, err := u.discountRepo.GetByCode(*params.Code)
 				if err == nil && discount.ID > 0 {
-					// Check if discount is valid
 					if discount.ExpiryDate.After(time.Now()) && discount.Quantity > 0 {
-						// Apply discount logic
 						if discount.Type == "percentage" {
 							discountAmount := (finalRawPrice * discount.Value) / 100
 							justDiscountPrice = discountAmount
 							finalPriceWithCouponDiscount = finalRawPrice - discountAmount
 						} else if discount.Type == "fixed" {
-							// Ensure discount doesn't exceed the price
 							if discount.Value > finalRawPrice {
 								justDiscountPrice = finalRawPrice
 								finalPriceWithCouponDiscount = 0
@@ -222,22 +166,12 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 								finalPriceWithCouponDiscount = finalRawPrice - discount.Value
 							}
 						}
-
-						// Set discount ID in the basket
 						existingBasket.DiscountID = &discount.ID
 					}
 				}
 			}
-
-			// Apply product coupon if available
-			// This would require additional implementation to fetch product coupons
-			// For now, we'll skip this part as it's not clear from the current Go code structure
-			// how product coupons are stored and related to products
-
 			totalCouponDiscount += justCouponPrice + justDiscountPrice
 			totalPriceWithCouponDiscount += finalPriceWithCouponDiscount
-
-			// Create the basket item
 			basketItem := domain.BasketItem{
 				BasketID:                     existingBasket.ID,
 				ProductID:                    *item.ProductID,
@@ -250,125 +184,73 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-
 			if item.ProductVariantID != nil {
 				basketItem.ProductVariantID = *item.ProductVariantID
 			}
-
 			if err := u.basketItemRepo.Create(basketItem); err != nil {
-				return nil, err
+				return nil, resp.NewError(resp.Internal, "خطا در افزودن آیتم به سبد خرید")
 			}
 		}
-
-		// Update the basket with calculated values
 		existingBasket.TotalRawPrice = totalRawPrice
 		existingBasket.TotalCouponDiscount = totalCouponDiscount
 		existingBasket.TotalPriceWithCouponDiscount = totalPriceWithCouponDiscount
 		existingBasket.UpdatedAt = time.Now()
-
 		if err := u.basketRepo.Update(existingBasket); err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی سبد خرید")
 		}
-
-		// Get the updated basket with items
-		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID)
+		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, siteID)
 		if err != nil {
-			return nil, err
+			return nil, resp.NewError(resp.Internal, "خطا در دریافت سبد خرید")
 		}
-
-		// Convert domain.Basket to map for response data
-		basketMap := map[string]interface{}{
-			"id":                           updatedBasket.ID,
-			"siteId":                       updatedBasket.SiteID,
-			"customerId":                   updatedBasket.CustomerID,
-			"totalRawPrice":                updatedBasket.TotalRawPrice,
-			"totalCouponDiscount":          updatedBasket.TotalCouponDiscount,
-			"totalPriceWithCouponDiscount": updatedBasket.TotalPriceWithCouponDiscount,
-			"discountId":                   updatedBasket.DiscountID,
-			"createdAt":                    updatedBasket.CreatedAt,
-			"updatedAt":                    updatedBasket.UpdatedAt,
-			"items":                        updatedBasket.Items,
-		}
-		return resp.NewResponseData(resp.Updated, basketMap, "Basket updated successfully"), nil
+		return resp.NewResponseData(resp.Updated, updatedBasket, "سبد خرید با موفقیت بروزرسانی شد"), nil
 	}
 }
 
 func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Response, error) {
-	u.Logger.Info("GetBasketQuery called", map[string]interface{}{
-		"params": params,
-	})
-
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
 	}
-
-	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, *params.SiteID)
+	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, *params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			// Return an empty basket
 			return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 				"id":                           0,
 				"siteId":                       *params.SiteID,
-				"customerId":                   customerID,
+				"customerId":                   *customerID,
 				"totalRawPrice":                0,
 				"totalCouponDiscount":          0,
 				"totalPriceWithCouponDiscount": 0,
 				"items":                        []interface{}{},
-			}, "Empty basket retrieved"), nil
+			}, "سبد خرید خالی دریافت شد"), nil
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت سبد خرید")
 	}
-
-	// Convert domain.Basket to map for response data
-	basketMap := map[string]interface{}{
-		"id":                           basket.ID,
-		"siteId":                       basket.SiteID,
-		"customerId":                   basket.CustomerID,
-		"totalRawPrice":                basket.TotalRawPrice,
-		"totalCouponDiscount":          basket.TotalCouponDiscount,
-		"totalPriceWithCouponDiscount": basket.TotalPriceWithCouponDiscount,
-		"discountId":                   basket.DiscountID,
-		"createdAt":                    basket.CreatedAt,
-		"updatedAt":                    basket.UpdatedAt,
-		"items":                        basket.Items,
-	}
-	return resp.NewResponseData(resp.Retrieved, basketMap, "Basket retrieved successfully"), nil
+	return resp.NewResponseData(resp.Retrieved, basket, "سبد خرید با موفقیت دریافت شد"), nil
 }
 
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (*resp.Response, error) {
-	u.Logger.Info("GetAllBasketUserQuery called", map[string]interface{}{
-		"params": params,
-	})
-
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, "دسترسی غیرمجاز")
 	}
-
-	basketsResult, err := u.basketRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
+	basketsResult, err := u.basketRepo.GetAllByCustomerID(*customerID, params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت سبدهای خرید")
 	}
-
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": basketsResult.Items,
 		"total": basketsResult.TotalCount,
-	}, "Customer baskets retrieved successfully"), nil
+	}, "سبدهای خرید با موفقیت دریافت شدند"), nil
 }
 
 func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (*resp.Response, error) {
-	u.Logger.Info("AdminGetAllBasketUserQuery called", map[string]interface{}{
-		"params": params,
-	})
-
 	result, err := u.basketRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت سبدهای خرید")
 	}
-
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items": result.Items,
 		"total": result.TotalCount,
-	}, "All baskets retrieved successfully (Admin)"), nil
+	}, "سبدهای خرید با موفقیت دریافت شدند (مدیر)"), nil
 }

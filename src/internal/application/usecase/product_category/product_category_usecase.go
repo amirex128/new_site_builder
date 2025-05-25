@@ -11,7 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_category"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
@@ -22,7 +21,6 @@ import (
 
 type ProductCategoryUsecase struct {
 	*usecase.BaseUsecase
-	logger      sflogger.Logger
 	repo        repository.IProductCategoryRepository
 	mediaRepo   repository.IMediaRepository
 	authContext func(c *gin.Context) service.IAuthService
@@ -74,7 +72,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 		Description:      getStringValueOrEmpty(params.Description),
 		SeoTags:          seoTagsStr,
 		Slug:             *params.Slug,
-		UserID:           userID,
+		UserID:           *userID,
 		CreatedAt:        time.Now(),
 		UpdatedAt:        time.Now(),
 		IsDeleted:        false,
@@ -172,7 +170,7 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 	}
 
 	existingCategory.UpdatedAt = time.Now()
-	existingCategory.UserID = userID
+	existingCategory.UserID = *userID
 
 	// Update the category
 	err = u.repo.Update(existingCategory)
@@ -228,7 +226,7 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 		return nil, err
 	}
 
-	if existingCategory.UserID != userID && !isAdmin {
+	if userID != nil && existingCategory.UserID != *userID && !isAdmin {
 		return nil, errors.New("شما به این دسته‌بندی دسترسی ندارید")
 	}
 
@@ -259,10 +257,10 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 
 	// Check user access - anyone can view categories but logging for audit
 	userID, _ := u.authContext(u.Ctx).GetUserID()
-	if userID > 0 {
+	if userID != nil && *userID > 0 {
 		u.Logger.Info("Category accessed by user", map[string]interface{}{
 			"categoryId": category.ID,
-			"userId":     userID,
+			"userId":     *userID,
 		})
 	}
 

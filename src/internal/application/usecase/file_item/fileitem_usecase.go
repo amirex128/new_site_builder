@@ -16,6 +16,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+	"github.com/gin-gonic/gin"
 )
 
 type FileItemUsecase struct {
@@ -23,7 +24,7 @@ type FileItemUsecase struct {
 	FileItemRepo   repository.IFileItemRepository
 	storageRepo    repository.IStorageRepository
 	storageService contractStorage.IStorageService
-	userID         int64
+	authContext    func(c *gin.Context) contractStorage.IAuthService
 }
 
 func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
@@ -34,7 +35,7 @@ func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 		FileItemRepo:   c.GetFileItemRepo(),
 		storageRepo:    c.GetStorageRepo(),
 		storageService: c.GetStorageService(),
-		userID:         1, // Placeholder, should come from the user context
+		authContext:    c.GetAuthTransientService(),
 	}
 }
 
@@ -52,8 +53,11 @@ func toServicePermissionEnum(p enums.FileItemPermissionEnum) contractStorage.Fil
 
 // CreateOrDirectoryItemCommand handles the creation of a new file or directory
 func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOrDirectoryItemCommand) (*resp.Response, error) {
-	// Get or create user storage
-	storage, err := u.storageRepo.GetByUserID(u.userID)
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
+	storage, err := u.storageRepo.GetByUserID(*userID)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving storage: %v", err)
 	}
@@ -89,8 +93,8 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 	}
 
 	// Generate server info
-	bucketName := fmt.Sprintf("user-%d", u.userID)
-	serverKey := fmt.Sprintf("S%d", u.userID%2+1)
+	bucketName := fmt.Sprintf("user-%d", *userID)
+	serverKey := fmt.Sprintf("S%d", *userID%2+1)
 
 	// Create bucket if not exists
 	if err := u.storageService.CreateBucketIfNotExists(serverKey, bucketName); err != nil {
@@ -98,7 +102,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 	}
 
 	var fileItem domain.FileItem
-	fileItem.UserID = u.userID
+	fileItem.UserID = *userID
 	fileItem.ServerKey = serverKey
 	fileItem.BucketName = bucketName
 	fileItem.CreatedAt = time.Now()
@@ -205,6 +209,10 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 
 // DeleteFileItemCommand marks a file item as deleted
 func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -212,7 +220,7 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 	}
 
 	// Check if user has access
-	if fileItem.UserID != u.userID {
+	if fileItem.UserID != *userID {
 		return nil, fmt.Errorf("access denied")
 	}
 
@@ -228,6 +236,10 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 
 // ForceDeleteFileItemCommand permanently deletes a file item
 func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -235,7 +247,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 	}
 
 	// Check if user has access
-	if fileItem.UserID != u.userID {
+	if fileItem.UserID != *userID {
 		return nil, fmt.Errorf("access denied")
 	}
 
@@ -260,7 +272,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 
 	// Decrease storage usage
 	if fileItem.Size > 0 {
-		storage, err := u.storageRepo.GetByUserID(u.userID)
+		storage, err := u.storageRepo.GetByUserID(*userID)
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving storage: %v", err)
 		}
@@ -284,6 +296,10 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 
 // RestoreFileItemCommand restores a deleted file item
 func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Restore the file
 	result := u.FileItemRepo.SetRestore(*params.ID)
 	if result != nil {
@@ -297,6 +313,10 @@ func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileIte
 
 // UpdateFileItemCommand updates file item properties
 func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -304,7 +324,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 	}
 
 	// Check if user has access
-	if fileItem.UserID != u.userID {
+	if fileItem.UserID != *userID {
 		return nil, fmt.Errorf("access denied")
 	}
 
@@ -337,6 +357,10 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 
 // FileOperationCommand handles file operations like copy, move, rename
 func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -344,7 +368,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 	}
 
 	// Check if user has access
-	if fileItem.UserID != u.userID {
+	if fileItem.UserID != *userID {
 		return nil, fmt.Errorf("access denied")
 	}
 
@@ -469,7 +493,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 		}
 
 		// Get storage to check quota
-		storage, err := u.storageRepo.GetByUserID(u.userID)
+		storage, err := u.storageRepo.GetByUserID(*userID)
 		if err != nil {
 			return nil, fmt.Errorf("error retrieving storage: %v", err)
 		}
@@ -563,6 +587,10 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 // GetByIdsQuery retrieves file items by IDs
 func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Extract IDs from the request
 	var ids []int64
 	for _, item := range params.IdsOrder {
@@ -581,7 +609,7 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.R
 	var result []map[string]interface{}
 	for _, fileItem := range fileItems {
 		// Check if user has access
-		if fileItem.UserID != u.userID {
+		if fileItem.UserID != *userID {
 			continue
 		}
 
@@ -645,8 +673,12 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.R
 
 // GetDeletedTreeDirectoryQuery retrieves deleted file items
 func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Get deleted items
-	items, err := u.FileItemRepo.GetDeletedItems(u.userID)
+	items, err := u.FileItemRepo.GetDeletedItems(*userID)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving deleted items: %v", err)
 	}
@@ -658,6 +690,10 @@ func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDelet
 
 // GetDownloadFileItemByIdQuery retrieves a file for download
 func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Check if file exists
 	fileItem, err := u.FileItemRepo.GetByID(*params.ID)
 	if err != nil {
@@ -665,7 +701,7 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 	}
 
 	// Check if user has access
-	if fileItem.UserID != u.userID {
+	if fileItem.UserID != *userID {
 		return nil, fmt.Errorf("access denied")
 	}
 
@@ -691,8 +727,12 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 
 // GetTreeDirectoryQuery retrieves a directory tree
 func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (*resp.Response, error) {
+	userID, err := u.authContext(u.Ctx).GetUserID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	// Get tree
-	items, err := u.FileItemRepo.GetTreeByUserIDAndParentID(u.userID, params.ParentFileItemID)
+	items, err := u.FileItemRepo.GetTreeByUserIDAndParentID(*userID, params.ParentFileItemID)
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving directory tree: %v", err)
 	}

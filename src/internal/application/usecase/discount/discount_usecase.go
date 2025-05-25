@@ -35,30 +35,24 @@ func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 
 func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (*resp.Response, error) {
 	u.Logger.Info("CreateDiscountCommand called", map[string]interface{}{
-		"code":   *params.Code,
-		"siteId": *params.SiteID,
+		"code":   params.Code,
+		"siteId": params.SiteID,
 	})
 
-	// Check for existing discount code in the same site
 	existingDiscount, err := u.discountRepo.GetByCode(*params.Code)
-	if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
-		if err == nil && existingDiscount.SiteID == *params.SiteID {
-			return nil, errors.New("کد تخفیف تکراری است")
-		}
+	if err == nil && existingDiscount.SiteID == *params.SiteID {
+		return nil, resp.NewError(resp.BadRequest, "کد تخفیف تکراری است")
 	}
 
-	// Validate expiry date is in the future
 	if params.ExpiryDate.Before(time.Now()) {
-		return nil, errors.New("تاریخ انقضا باید در آینده باشد")
+		return nil, resp.NewError(resp.BadRequest, "تاریخ انقضا باید در آینده باشد")
 	}
 
-	// Get user ID from auth context
-	userID, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
+	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
 
-	// Create discount entity
 	newDiscount := domain.Discount{
 		Code:       *params.Code,
 		Quantity:   *params.Quantity,
@@ -66,22 +60,20 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 		Value:      *params.Value,
 		ExpiryDate: *params.ExpiryDate,
 		SiteID:     *params.SiteID,
-		UserID:     userID,
+		UserID:     *userID,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 		IsDeleted:  false,
 	}
 
-	// Create the discount in the database
 	err = u.discountRepo.Create(newDiscount)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Fetch the created discount
 	createdDiscount, err := u.discountRepo.GetByID(newDiscount.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Created, map[string]interface{}{"discount": createdDiscount}, "تخفیف با موفقیت ایجاد شد"), nil
@@ -89,80 +81,65 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 
 func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (*resp.Response, error) {
 	u.Logger.Info("UpdateDiscountCommand called", map[string]interface{}{
-		"id": *params.ID,
+		"id": params.ID,
 	})
 
-	// Get existing discount
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("تخفیف یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Check user access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
+	if existingDiscount.UserID != *userID && !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "شما به این تخفیف دسترسی ندارید")
 	}
 
-	userID, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
-	}
-
-	if existingDiscount.UserID != userID && !isAdmin {
-		return nil, errors.New("شما به این تخفیف دسترسی ندارید")
-	}
-
-	// Validate code uniqueness if changed
 	if params.Code != nil && *params.Code != existingDiscount.Code {
 		codeDiscount, err := u.discountRepo.GetByCode(*params.Code)
-		if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
-			if err == nil && codeDiscount.ID != *params.ID {
-				return nil, errors.New("کد تخفیف تکراری است")
-			}
+		if err == nil && codeDiscount.ID != *params.ID {
+			return nil, resp.NewError(resp.BadRequest, "کد تخفیف تکراری است")
 		}
 	}
 
-	// Update fields if provided
 	if params.Code != nil {
 		existingDiscount.Code = *params.Code
 	}
-
 	if params.Quantity != nil {
 		existingDiscount.Quantity = *params.Quantity
 	}
-
 	if params.Type != nil {
 		existingDiscount.Type = *params.Type
 	}
-
 	if params.Value != nil {
 		existingDiscount.Value = *params.Value
 	}
-
 	if params.ExpiryDate != nil {
-		// Validate expiry date is in the future
 		if params.ExpiryDate.Before(time.Now()) {
-			return nil, errors.New("تاریخ انقضا باید در آینده باشد")
+			return nil, resp.NewError(resp.BadRequest, "تاریخ انقضا باید در آینده باشد")
 		}
 		existingDiscount.ExpiryDate = *params.ExpiryDate
 	}
 
 	existingDiscount.UpdatedAt = time.Now()
 
-	// Update the discount
 	err = u.discountRepo.Update(existingDiscount)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Fetch the updated discount
 	updatedDiscount, err := u.discountRepo.GetByID(existingDiscount.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Updated, map[string]interface{}{"discount": updatedDiscount}, "تخفیف با موفقیت بروزرسانی شد"), nil
@@ -170,37 +147,32 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 
 func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (*resp.Response, error) {
 	u.Logger.Info("DeleteDiscountCommand called", map[string]interface{}{
-		"id": *params.ID,
+		"id": params.ID,
 	})
 
-	// Get existing discount
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("تخفیف یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Check user access
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if err != nil || userID == nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
+	if existingDiscount.UserID != *userID && !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "شما به این تخفیف دسترسی ندارید")
 	}
 
-	userID, err := u.authContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
-	}
-
-	if existingDiscount.UserID != userID && !isAdmin {
-		return nil, errors.New("شما به این تخفیف دسترسی ندارید")
-	}
-
-	// Delete the discount
 	err = u.discountRepo.Delete(*params.ID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Deleted, map[string]interface{}{"success": true}, "تخفیف با موفقیت حذف شد"), nil
@@ -208,38 +180,35 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 
 func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQuery) (*resp.Response, error) {
 	u.Logger.Info("GetByIdDiscountQuery called", map[string]interface{}{
-		"id": *params.ID,
+		"id": params.ID,
 	})
 
-	// Get discount by ID
-	discount, err := u.discountRepo.GetByID(*params.ID)
+	discountObj, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("تخفیف یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Check user access - anyone can view discounts but logging for audit
-	userID, _ := u.authContext(u.Ctx).GetUserID()
-	if userID > 0 {
+	userID, _, _, _ := u.authContext(u.Ctx).GetUserOrCustomerID()
+	if userID != nil {
 		u.Logger.Info("Discount accessed by user", map[string]interface{}{
-			"discountId": discount.ID,
-			"userId":     userID,
+			"discountId": discountObj.ID,
+			"userId":     *userID,
 		})
 	}
 
-	// Prepare response
 	response := map[string]interface{}{
-		"id":         discount.ID,
-		"code":       discount.Code,
-		"quantity":   discount.Quantity,
-		"type":       discount.Type,
-		"value":      discount.Value,
-		"expiryDate": discount.ExpiryDate,
-		"siteId":     discount.SiteID,
-		"createdAt":  discount.CreatedAt,
-		"updatedAt":  discount.UpdatedAt,
+		"id":         discountObj.ID,
+		"code":       discountObj.Code,
+		"quantity":   discountObj.Quantity,
+		"type":       discountObj.Type,
+		"value":      discountObj.Value,
+		"expiryDate": discountObj.ExpiryDate,
+		"siteId":     discountObj.SiteID,
+		"createdAt":  discountObj.CreatedAt,
+		"updatedAt":  discountObj.UpdatedAt,
 	}
 
 	return resp.NewResponseData(resp.Retrieved, response, "تخفیف با موفقیت دریافت شد"), nil
@@ -247,28 +216,28 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 
 func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQuery) (*resp.Response, error) {
 	u.Logger.Info("GetAllDiscountQuery called", map[string]interface{}{
-		"siteId":   *params.SiteID,
+		"siteId":   params.SiteID,
 		"page":     params.Page,
 		"pageSize": params.PageSize,
 	})
 
 	results, err := u.discountRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	items := make([]map[string]interface{}, 0, len(results.Items))
-	for _, discount := range results.Items {
+	for _, discountObj := range results.Items {
 		item := map[string]interface{}{
-			"id":         discount.ID,
-			"code":       discount.Code,
-			"quantity":   discount.Quantity,
-			"type":       discount.Type,
-			"value":      discount.Value,
-			"expiryDate": discount.ExpiryDate,
-			"siteId":     discount.SiteID,
-			"createdAt":  discount.CreatedAt,
-			"updatedAt":  discount.UpdatedAt,
+			"id":         discountObj.ID,
+			"code":       discountObj.Code,
+			"quantity":   discountObj.Quantity,
+			"type":       discountObj.Type,
+			"value":      discountObj.Value,
+			"expiryDate": discountObj.ExpiryDate,
+			"siteId":     discountObj.SiteID,
+			"createdAt":  discountObj.CreatedAt,
+			"updatedAt":  discountObj.UpdatedAt,
 		}
 		items = append(items, item)
 	}
@@ -289,30 +258,27 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 	})
 
 	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
-	if err != nil {
-		return nil, err
-	}
-	if !isAdmin {
-		return nil, errors.New("فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
+	if err != nil || !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}
 
 	results, err := u.discountRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	items := make([]map[string]interface{}, 0, len(results.Items))
-	for _, discount := range results.Items {
+	for _, discountObj := range results.Items {
 		item := map[string]interface{}{
-			"id":         discount.ID,
-			"code":       discount.Code,
-			"quantity":   discount.Quantity,
-			"type":       discount.Type,
-			"value":      discount.Value,
-			"expiryDate": discount.ExpiryDate,
-			"siteId":     discount.SiteID,
-			"createdAt":  discount.CreatedAt,
-			"updatedAt":  discount.UpdatedAt,
+			"id":         discountObj.ID,
+			"code":       discountObj.Code,
+			"quantity":   discountObj.Quantity,
+			"type":       discountObj.Type,
+			"value":      discountObj.Value,
+			"expiryDate": discountObj.ExpiryDate,
+			"siteId":     discountObj.SiteID,
+			"createdAt":  discountObj.CreatedAt,
+			"updatedAt":  discountObj.UpdatedAt,
 		}
 		items = append(items, item)
 	}

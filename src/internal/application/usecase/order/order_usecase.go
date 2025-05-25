@@ -2,22 +2,18 @@ package orderusecase
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
-
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
-
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/order"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
+	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -48,44 +44,29 @@ func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
 func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderRequestCommand) (*resp.Response, error) {
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-
-	siteID := *params.SiteID
-
-	// Get the customer's basket
-	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(customerID, siteID)
+	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, *params.SiteID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("سبد خرید وجود ندارد")
+			return nil, resp.NewError(resp.NotFound, "سبد خرید وجود ندارد")
 		}
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
 	if len(basket.Items) == 0 {
-		return nil, errors.New("سبد خرید خالی است")
+		return nil, resp.NewError(resp.BadRequest, "سبد خرید خالی است")
 	}
-
-	// Calculate courier price and total weight
-	var courierPrice int64 = 100000 // Default courier price
-	var totalWeight int = 0
-
-	// Calculate total weight
+	var courierPrice int64 = 100000
+	totalWeight := 0
 	for _, item := range basket.Items {
 		if item.Product != nil {
 			totalWeight += item.Quantity * item.Product.Weight
 		}
 	}
-
 	totalFinalPrice := basket.TotalPriceWithCouponDiscount + courierPrice
-
-	// Check if an order already exists for this basket
-	existingOrder, err := u.orderRepo.GetByID(0) // Need to add method to get by basket ID
-
+	existingOrder, err := u.orderRepo.GetByID(0)
 	var newOrder domain.Order
-
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		// Create a new order
 		newOrder = domain.Order{
 			SiteID:                       basket.SiteID,
 			CustomerID:                   basket.CustomerID,
@@ -103,22 +84,18 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 			CreatedAt:                    time.Now(),
 			UpdatedAt:                    time.Now(),
 		}
-
 		if params.Description != nil {
 			newOrder.Description = *params.Description
 		}
-
 		if params.Courier != nil {
 			newOrder.Courier = string(*params.Courier)
 		} else {
 			newOrder.Courier = "Post"
 		}
-
-		if err := u.orderRepo.Create(newOrder); err != nil {
-			return nil, err
+		err = u.orderRepo.Create(newOrder)
+		if err != nil {
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Create order items
 		for _, basketItem := range basket.Items {
 			orderItem := domain.OrderItem{
 				OrderID:                      newOrder.ID,
@@ -133,15 +110,14 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-
-			if err := u.orderItemRepo.Create(orderItem); err != nil {
-				return nil, err
+			err = u.orderItemRepo.Create(orderItem)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
 	} else if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	} else {
-		// Update existing order
 		existingOrder.TotalRawPrice = basket.TotalRawPrice
 		existingOrder.TotalCouponDiscount = basket.TotalCouponDiscount
 		existingOrder.TotalPriceWithCouponDiscount = basket.TotalPriceWithCouponDiscount
@@ -152,25 +128,20 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 		existingOrder.DiscountID = basket.DiscountID
 		existingOrder.AddressID = *params.AddressID
 		existingOrder.UpdatedAt = time.Now()
-
 		if params.Description != nil {
 			existingOrder.Description = *params.Description
 		}
-
 		if params.Courier != nil {
 			existingOrder.Courier = string(*params.Courier)
 		}
-
-		if err := u.orderRepo.Update(existingOrder); err != nil {
-			return nil, err
+		err = u.orderRepo.Update(existingOrder)
+		if err != nil {
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Delete existing order items and create new ones
-		if err := u.orderItemRepo.DeleteByOrderID(existingOrder.ID); err != nil {
-			return nil, err
+		err = u.orderItemRepo.DeleteByOrderID(existingOrder.ID)
+		if err != nil {
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Create order items
 		for _, basketItem := range basket.Items {
 			orderItem := domain.OrderItem{
 				OrderID:                      existingOrder.ID,
@@ -185,33 +156,26 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 				CreatedAt:                    time.Now(),
 				UpdatedAt:                    time.Now(),
 			}
-
-			if err := u.orderItemRepo.Create(orderItem); err != nil {
-				return nil, err
+			err = u.orderItemRepo.Create(orderItem)
+			if err != nil {
+				return nil, resp.NewError(resp.Internal, err.Error())
 			}
 		}
-
 		newOrder = existingOrder
 	}
-
-	// Create order data for payment
 	orderData := map[string]string{
-		"OrderId": fmt.Sprintf("%d", newOrder.ID),
+		"OrderId": strconv.FormatInt(newOrder.ID, 10),
 	}
-
-	// Request payment gateway
 	paymentURL, err := u.paymentRepo.RequestPayment(
 		newOrder.TotalFinalPrice,
 		newOrder.ID,
-		customerID,
+		*customerID,
 		string(*params.Gateway),
 		orderData,
 	)
-
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
 	return resp.NewResponseData(resp.Success, resp.Data{
 		"success":    true,
 		"paymentUrl": paymentURL,
@@ -219,78 +183,58 @@ func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderReques
 }
 
 func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyCommand) (*resp.Response, error) {
-	// Extract order ID from order data
 	orderIDStr, ok := params.OrderData["OrderId"]
 	if !ok {
-		return nil, errors.New("شناسه سفارش در داده های پرداخت یافت نشد")
+		return nil, resp.NewError(resp.BadRequest, "شناسه سفارش در داده های پرداخت یافت نشد")
 	}
-
 	orderID, err := strconv.ParseInt(orderIDStr, 10, 64)
 	if err != nil {
-		return nil, errors.New("شناسه سفارش نامعتبر است")
+		return nil, resp.NewError(resp.BadRequest, "شناسه سفارش نامعتبر است")
 	}
-
-	// Get order details
 	order, err := u.orderRepo.GetByID(orderID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.NotFound, err.Error())
 	}
-
-	// Check if order is already paid
 	if order.OrderStatus == "Paid" {
-		return nil, errors.New("سفارش قبلا پرداخت شده است")
+		return nil, resp.NewError(resp.BadRequest, "سفارش قبلا پرداخت شده است")
 	}
-
-	// Get latest payment for this order
 	paymentsResult, err := u.paymentRepo.GetAllByOrderID(orderID, common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 1,
 	})
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	if len(paymentsResult.Items) == 0 {
-		return nil, errors.New("پرداختی برای این سفارش یافت نشد")
+		return nil, resp.NewError(resp.NotFound, "پرداختی برای این سفارش یافت نشد")
 	}
 	payment := paymentsResult.Items[0]
-
-	// Verify payment with gateway
-	// In a real application, you would call the payment gateway's API
-	// For now, we'll use a simplified implementation
 	isVerified := *params.IsSuccess
-
 	if isVerified {
-		// Update order status
 		order.OrderStatus = "Paid"
 		order.UpdatedAt = time.Now()
-
-		if err := u.orderRepo.Update(order); err != nil {
-			return nil, err
+		err = u.orderRepo.Update(order)
+		if err != nil {
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
-		// Update payment status
 		payment.PaymentStatusEnum = "Verified"
 		payment.UpdatedAt = time.Now()
-
-		if err := u.paymentRepo.Update(payment); err != nil {
-			return nil, err
+		err = u.paymentRepo.Update(payment)
+		if err != nil {
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-
 		return resp.NewResponseData(resp.Success, map[string]interface{}{
 			"success": true,
 			"message": "پرداخت با موفقیت انجام شد",
 			"order":   order,
 		}, "پرداخت با موفقیت انجام شد"), nil
 	}
-
-	// Payment failed
 	payment.PaymentStatusEnum = "Failed"
 	payment.UpdatedAt = time.Now()
-
-	if err := u.paymentRepo.Update(payment); err != nil {
-		return nil, err
+	err = u.paymentRepo.Update(payment)
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-
 	return resp.NewResponseData(resp.Success, resp.Data{
 		"success": false,
 		"message": "پرداخت ناموفق بود",
@@ -300,11 +244,11 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustomerQuery) (*resp.Response, error) {
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	ordersResult, err := u.orderRepo.GetAllByCustomerID(customerID, params.PaginationRequestDto)
+	ordersResult, err := u.orderRepo.GetAllByCustomerID(*customerID, params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     ordersResult.Items,
@@ -318,14 +262,14 @@ func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustome
 func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustomerDetailsQuery) (*resp.Response, error) {
 	customerID, err := u.authContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	order, err := u.orderRepo.GetByID(*params.OrderID)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.NotFound, err.Error())
 	}
-	if order.CustomerID != customerID {
-		return nil, errors.New("سفارش متعلق به این کاربر نیست")
+	if order.CustomerID != *customerID {
+		return nil, resp.NewError(resp.Unauthorized, "سفارش متعلق به این کاربر نیست")
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"order": order}, "جزئیات سفارش با موفقیت دریافت شد"), nil
 }
@@ -333,7 +277,7 @@ func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustom
 func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) (*resp.Response, error) {
 	ordersResult, err := u.orderRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     ordersResult.Items,
@@ -345,24 +289,24 @@ func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) 
 }
 
 func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetailsQuery) (*resp.Response, error) {
-	order, err := u.orderRepo.GetByID(*params.OrderID)
-	if err != nil {
-		return nil, err
-	}
 	userID, err := u.authContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
+	}
+	order, err := u.orderRepo.GetByID(*params.OrderID)
+	if err != nil {
+		return nil, resp.NewError(resp.NotFound, err.Error())
 	}
 	siteRepo := u.container.GetSiteRepo()
 	if siteRepo == nil {
-		return nil, errors.New("site repository not available")
+		return nil, resp.NewError(resp.Internal, "site repository not available")
 	}
-	userSitesResult, err := siteRepo.GetAllByUserID(userID, common.PaginationRequestDto{
+	userSitesResult, err := siteRepo.GetAllByUserID(*userID, common.PaginationRequestDto{
 		Page:     1,
 		PageSize: 100,
 	})
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	hasAccess := false
 	for _, site := range userSitesResult.Items {
@@ -373,20 +317,21 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 	}
 	if !hasAccess {
 		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
-		if err != nil {
-			return nil, err
-		}
-		if !isAdmin {
-			return nil, errors.New("شما به این سفارش دسترسی ندارید")
+		if err != nil || !isAdmin {
+			return nil, resp.NewError(resp.Unauthorized, "شما به این سفارش دسترسی ندارید")
 		}
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"order": order}, "جزئیات سفارش با موفقیت دریافت شد"), nil
 }
 
 func (u *OrderUsecase) AdminGetAllOrderUserQuery(params *order.AdminGetAllOrderUserQuery) (*resp.Response, error) {
+	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	if err != nil || !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
+	}
 	ordersResult, err := u.orderRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, err
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
 		"items":     ordersResult.Items,
