@@ -35,7 +35,8 @@ type ProductUsecase struct {
 func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 	return &ProductUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		productRepo:          c.GetProductRepo(),
 		productCategoryRepo:  c.GetProductCategoryRepo(),
@@ -44,7 +45,6 @@ func NewProductUsecase(c contract.IContainer) *ProductUsecase {
 		productVariantRepo:   c.GetProductVariantRepo(),
 		productAttributeRepo: c.GetProductAttributeRepo(),
 		couponRepo:           c.GetCouponRepo(),
-		authContext:          c.GetAuthTransientService(),
 	}
 }
 
@@ -55,7 +55,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 			return nil, resp.NewError(resp.BadRequest, "نامک تکراری است")
 		}
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -151,11 +151,11 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -218,11 +218,11 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -436,7 +436,7 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 	}
 
 	// Get the customer ID from context (or token)
-	customerID, err := u.authContext(u.Ctx).GetCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -602,7 +602,7 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 }
 
 func (u *ProductUsecase) AdminGetAllProductQuery(params *product.AdminGetAllProductQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}

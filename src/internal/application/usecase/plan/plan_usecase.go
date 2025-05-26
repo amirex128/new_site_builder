@@ -22,16 +22,16 @@ type PlanUsecase struct {
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {
 	return &PlanUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
-		planRepo:    c.GetPlanRepo(),
-		userRepo:    c.GetUserRepo(),
-		authContext: c.GetAuthTransientService(),
+		planRepo: c.GetPlanRepo(),
+		userRepo: c.GetUserRepo(),
 	}
 }
 
 func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "only admins can create plans")
 	}
@@ -65,7 +65,7 @@ func (u *PlanUsecase) CreatePlanCommand(params *plan.CreatePlanCommand) (*resp.R
 }
 
 func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "only admins can update plans")
 	}
@@ -121,7 +121,7 @@ func (u *PlanUsecase) UpdatePlanCommand(params *plan.UpdatePlanCommand) (*resp.R
 }
 
 func (u *PlanUsecase) DeletePlanCommand(params *plan.DeletePlanCommand) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "only admins can delete plans")
 	}

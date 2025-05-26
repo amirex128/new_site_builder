@@ -24,16 +24,16 @@ type UnitPriceUsecase struct {
 func NewUnitPriceUsecase(c contract.IContainer) *UnitPriceUsecase {
 	return &UnitPriceUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		unitPriceRepo: c.GetUnitPriceRepo(),
 		userRepo:      c.GetUserRepo(),
-		authContext:   c.GetAuthTransientService(),
 	}
 }
 
 func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitPriceCommand) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "only admins can update unit prices")
 	}
@@ -65,7 +65,7 @@ func (u *UnitPriceUsecase) UpdateUnitPriceCommand(params *unit_price.UpdateUnitP
 }
 
 func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateUnitPriceQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
 	}
@@ -144,7 +144,7 @@ func (u *UnitPriceUsecase) CalculateUnitPriceQuery(params *unit_price.CalculateU
 }
 
 func (u *UnitPriceUsecase) GetAllUnitPriceQuery(params *unit_price.GetAllUnitPriceQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "only admins can get all unit prices")
 	}

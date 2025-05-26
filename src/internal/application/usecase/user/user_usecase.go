@@ -12,8 +12,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
@@ -28,7 +26,6 @@ type UserUsecase struct {
 	addressRepo   repository.IAddressRepository
 	paymentRepo   repository.IPaymentRepository
 	identitySvc   service.IIdentityService
-	authContext   func(c *gin.Context) service.IAuthService
 	siteRepo      repository.ISiteRepository
 	messageSvc    service.IMessageService
 	unitPriceRepo repository.IUnitPriceRepository
@@ -37,7 +34,8 @@ type UserUsecase struct {
 func NewUserUsecase(c contract.IContainer) *UserUsecase {
 	return &UserUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		siteRepo:      c.GetSiteRepo(),
 		userRepo:      c.GetUserRepo(),
@@ -45,14 +43,13 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 		addressRepo:   c.GetAddressRepo(),
 		paymentRepo:   c.GetPaymentRepo(),
 		identitySvc:   c.GetIdentityService(),
-		authContext:   c.GetAuthTransientService(),
 		messageSvc:    c.GetMessageService(),
 		unitPriceRepo: c.GetUnitPriceRepo(),
 	}
 }
 
 func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (*resp.Response, error) {
-	userId, err := u.authContext(u.Ctx).GetUserID()
+	userId, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userId == nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -109,11 +106,11 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 			}
 		}
 	}
-	return resp.NewResponse(resp.Updated, "User profile updated"), nil
+	return resp.NewResponse(resp.Updated, "اطلاعات کاربری با موفقیت به روز شد"), nil
 }
 
 func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*resp.Response, error) {
-	userId, err := u.authContext(u.Ctx).GetUserID()
+	userId, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userId == nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -125,7 +122,7 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*re
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	return resp.NewResponseData(resp.Retrieved, resp.Data{"user": existingUser, "addresses": addresses}, "user profile successful retrieved"), nil
+	return resp.NewResponseData(resp.Retrieved, resp.Data{"user": existingUser, "addresses": addresses}, "اطلاعات کاربری با موفقیت دریافت شد"), nil
 }
 
 func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*resp.Response, error) {
@@ -135,7 +132,7 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
-		return nil, resp.NewError(resp.BadRequest, fmt.Sprintf("user with email %s already exists", *params.Email))
+		return nil, resp.NewError(resp.BadRequest, "ایمیل وارد شده قبلا استفاده شده است")
 	}
 
 	hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
@@ -154,11 +151,7 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 
 	err = u.userRepo.Create(&newUser)
 	if err != nil {
-		u.Logger.Error("Error creating user", map[string]interface{}{
-			"error": err.Error(),
-			"email": *params.Email,
-		})
-		return nil, resp.NewError(resp.Internal, fmt.Sprintf("Error creating user: %s", err.Error()))
+		return nil, resp.NewError(resp.Internal, "خطا در ثبت نام کاربر")
 	}
 
 	token := u.identitySvc.TokenForUser(newUser).Make()
@@ -167,37 +160,22 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 		resp.Data{
 			"token": token,
 		},
-		"Registration successful. Please verify your account.",
+		"ثبت نام با موفقیت انجام شد. لطفا حساب خود را فعال کنید.",
 	), nil
 }
 
 func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Response, error) {
-	u.Logger.Info("LoginUserCommand called", map[string]interface{}{
-		"email": *params.Email,
-	})
-
 	existingUser, err := u.userRepo.GetByEmail(*params.Email)
 	if err != nil {
-		u.Logger.Info("Login failed: user not found", map[string]interface{}{
-			"email": *params.Email,
-		})
-		return nil, resp.NewError(resp.Unauthorized, "invalid email or password")
+		return nil, resp.NewError(resp.Unauthorized, "اطلاعات وارد شده صحیح نمی باشد")
 	}
 
 	if existingUser.IsActive == enums.InactiveStatus {
-		u.Logger.Info("Login failed: account not active", map[string]interface{}{
-			"email":  *params.Email,
-			"userId": existingUser.ID,
-		})
-		return nil, resp.NewError(resp.Unauthorized, "account is not active")
+		return nil, resp.NewError(resp.Unauthorized, "حساب کاربری غیرفعال است")
 	}
 
 	if !u.identitySvc.VerifyPassword(*params.Password, existingUser.Password, existingUser.Salt) {
-		u.Logger.Info("Login failed: invalid password", map[string]interface{}{
-			"email":  *params.Email,
-			"userId": existingUser.ID,
-		})
-		return nil, resp.NewError(resp.Unauthorized, "invalid email or password")
+		return nil, resp.NewError(resp.Unauthorized, "اطلاعات وارد شده صحیح نمی باشد")
 	}
 
 	token := u.identitySvc.TokenForUser(*existingUser).Make()
@@ -207,7 +185,7 @@ func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Res
 		resp.Data{
 			"token": token,
 		},
-		"Login successful",
+		"ورود با موفقیت انجام شد",
 	), nil
 }
 
@@ -215,29 +193,26 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 	var existingUser *domain.User
 	var err error
 
-	// Get user by email or phone based on the verification type
 	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) {
 		if params.Email == nil {
-			return nil, resp.NewError(resp.BadRequest, "email is required for email verification")
+			return nil, resp.NewError(resp.BadRequest, "ایمیل الزامی است")
 		}
 		existingUser, err = u.userRepo.GetByEmail(*params.Email)
 	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) {
 		if params.Phone == nil {
-			return nil, resp.NewError(resp.BadRequest, "phone is required for phone verification")
+			return nil, resp.NewError(resp.BadRequest, "شماره تلفن الزامی است")
 		}
 		existingUser, err = u.userRepo.GetByPhone(*params.Phone)
 	} else {
-		return nil, resp.NewError(resp.BadRequest, "invalid verification type")
+		return nil, resp.NewError(resp.BadRequest, "نوع احراز هویت صحیح نمی باشد")
 	}
 
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "user not found")
+		return nil, resp.NewError(resp.NotFound, "کاربر یافت نشد")
 	}
 
-	// Generate verification code
 	verificationCode := utils.GenerateVerificationCode()
 
-	// Store verification code based on type
 	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) {
 		existingUser.VerifyCode = &verificationCode
 	} else if params.Type != nil && (*params.Type == enums.VerifyPhoneType || *params.Type == enums.ForgetPasswordPhoneType) {
@@ -249,7 +224,6 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Send verification code via email or SMS
 	if params.Type != nil && (*params.Type == enums.VerifyEmailType || *params.Type == enums.ForgetPasswordEmailType) && params.Email != nil {
 		msg := struct {
 			To      string
@@ -283,46 +257,43 @@ func (u *UserUsecase) RequestVerifyAndForgetUserCommand(params *user.RequestVeri
 }
 
 func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (*resp.Response, error) {
-	// Get user by email
 	existingUser, err := u.userRepo.GetByEmail(*params.Email)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "user not found")
+		return nil, resp.NewError(resp.NotFound, "کاربر یافت نشد")
 	}
 
-	// Convert code to string for comparison
 	codeStr := strconv.Itoa(*params.Code)
 
 	var resetToken string
 
-	// Check verification code based on type
 	if params.Type != nil && *params.Type == enums.VerifyEmailType {
 		if *existingUser.VerifyCode != codeStr {
-			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
+			return nil, resp.NewError(resp.BadRequest, "کد احراز هویت صحیح نمی باشد")
 		}
 		existingUser.IsActive = enums.ActiveStatus // Activate the user
 		existingUser.VerifyEmail = ""
 	} else if params.Type != nil && *params.Type == enums.VerifyPhoneType {
 		if *existingUser.VerifyCode != codeStr {
-			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
+			return nil, resp.NewError(resp.BadRequest, "کد احراز هویت صحیح نمی باشد")
 		}
 		existingUser.IsActive = enums.ActiveStatus // Activate the user
 		existingUser.VerifyPhone = ""
 	} else if params.Type != nil && *params.Type == enums.ForgetPasswordEmailType {
 		if *existingUser.VerifyCode != codeStr {
-			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
+			return nil, resp.NewError(resp.BadRequest, "کد احراز هویت صحیح نمی باشد")
 		}
 		// Provide a token for password reset
 		resetToken = u.identitySvc.AddClaim("reset_password", "1").AddClaim("user_id", strconv.FormatInt(existingUser.ID, 10)).Make()
 		existingUser.VerifyEmail = ""
 	} else if params.Type != nil && *params.Type == enums.ForgetPasswordPhoneType {
 		if *existingUser.VerifyCode != codeStr {
-			return nil, resp.NewError(resp.BadRequest, "invalid verification code")
+			return nil, resp.NewError(resp.BadRequest, "کد احراز هویت صحیح نمی باشد")
 		}
 		// Provide a token for password reset
 		resetToken = u.identitySvc.AddClaim("reset_password", "1").AddClaim("user_id", strconv.FormatInt(existingUser.ID, 10)).Make()
 		existingUser.VerifyPhone = ""
 	} else {
-		return nil, resp.NewError(resp.BadRequest, "invalid verification type")
+		return nil, resp.NewError(resp.BadRequest, "نوع احراز هویت صحیح نمی باشد")
 	}
 
 	err = u.userRepo.Update(existingUser)
@@ -332,7 +303,7 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (*resp.Respo
 
 	respData := resp.Data{
 		"success": true,
-		"message": "Verification successful.",
+		"message": "احراز هویت با موفقیت انجام شد",
 	}
 	if resetToken != "" {
 		respData["reset_token"] = resetToken
@@ -341,18 +312,15 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (*resp.Respo
 	return resp.NewResponseData(
 		resp.Success,
 		respData,
-		"Verification successful.",
+		"احراز هویت با موفقیت انجام شد",
 	), nil
 }
 
 func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRequestUserCommand) (*resp.Response, error) {
-	// Get the current user ID
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	// Get the  user ID
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
-	}
-	if userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
 	}
 
 	// Calculate total amount
@@ -360,37 +328,30 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	orderData := make(map[string]string)
 
 	for i, unitPrice := range params.UnitPrices {
-		// Fetch actual unit price from database
 		unitPriceObj, err := u.unitPriceRepo.GetByName(string(*unitPrice.UnitPriceName))
 		if err != nil {
-			return nil, resp.NewError(resp.BadRequest, fmt.Sprintf("unit price not found: %s", *unitPrice.UnitPriceName))
+			return nil, resp.NewError(resp.BadRequest, "قیمت واحد یافت نشد")
 		}
 		var itemPrice int64 = unitPriceObj.Price * int64(*unitPrice.UnitPriceCount)
 
-		// For storage, multiply by days if provided
 		if string(*unitPrice.UnitPriceName) == "storage_mb_credits" && unitPrice.UnitPriceDay != nil {
 			itemPrice = itemPrice * int64(*unitPrice.UnitPriceDay)
 		}
 
 		totalAmount += itemPrice
 
-		// Add unit price details to order data
 		orderData[fmt.Sprintf("unitPrice_%d_name", i)] = string(*unitPrice.UnitPriceName)
 		orderData[fmt.Sprintf("unitPrice_%d_count", i)] = strconv.Itoa(*unitPrice.UnitPriceCount)
 		if unitPrice.UnitPriceDay != nil {
 			orderData[fmt.Sprintf("unitPrice_%d_days", i)] = strconv.Itoa(*unitPrice.UnitPriceDay)
 		}
 	}
+	orderID := time.Now().UnixNano()
 
-	// Create a new order in the payment system
-	orderID := time.Now().UnixNano() // Use nanoseconds for more uniqueness
-
-	// Additional order data
 	orderData["userId"] = strconv.FormatInt(*userID, 10)
 	orderData["totalAmount"] = strconv.FormatInt(totalAmount, 10)
 	orderData["finalFrontReturnUrl"] = *params.FinalFrontReturnUrl
 
-	// Request payment from gateway
 	paymentUrl, err := u.paymentRepo.RequestPayment(totalAmount, orderID, *userID, string(*params.Gateway), orderData)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
@@ -402,31 +363,24 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 			"paymentUrl": paymentUrl,
 			"orderId":    orderID,
 		},
-		"Payment URL generated successfully.",
+		"لینک سفارش با موفقیت ایجاد شد",
 	), nil
 }
 
 func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (*resp.Response, error) {
-	// Get the current user ID
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, fmt.Sprintf("error : %s", err.Error()))
-	}
-	if userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "user not authenticated")
+		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 
-	// Get the plan
 	plan, err := u.planRepo.GetByID(*params.PlanID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "پلن یافت نشد")
 	}
 
-	// Calculate final price (consider applying discounts here)
 	var finalPrice int64 = plan.Price
 	var discountAmount int64 = 0
 
-	// Apply discount if available
 	if plan.Discount != nil && *plan.Discount > 0 {
 		if plan.DiscountType == string(enums.FixedDiscountType) {
 			discountAmount = *plan.Discount
@@ -437,12 +391,10 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 		}
 	}
 
-	// Ensure price doesn't go below zero
 	if finalPrice < 0 {
 		finalPrice = 0
 	}
 
-	// Create order data
 	orderData := make(map[string]string)
 	orderData["userId"] = strconv.FormatInt(*userID, 10)
 	orderData["planId"] = strconv.FormatInt(*params.PlanID, 10)
@@ -451,10 +403,8 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 	orderData["finalPrice"] = strconv.FormatInt(finalPrice, 10)
 	orderData["finalFrontReturnUrl"] = *params.FinalFrontReturnUrl
 
-	// Create a new order in the payment system
-	orderID := time.Now().UnixNano() // Use nanoseconds for more uniqueness
+	orderID := time.Now().UnixNano()
 
-	// Request payment from gateway
 	paymentUrl, err := u.paymentRepo.RequestPayment(finalPrice, orderID, *userID, string(*params.Gateway), orderData)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
@@ -467,50 +417,23 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 			"orderId":    orderID,
 			"plan":       plan,
 		},
-		"Plan upgrade payment URL generated successfully.",
+		"لینک سفارش با موفقیت ایجاد شد",
 	), nil
 }
 
 func (u *UserUsecase) AdminGetAllUserQuery(params *user.AdminGetAllUserQuery) (*resp.Response, error) {
-	u.Logger.Info("AdminGetAllUserQuery called", map[string]interface{}{
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
-
-	// Check admin access
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	if !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "Only administrators can access this resource")
+		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
 	}
 
 	result, err := u.userRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		u.Logger.Error("Error getting all users", map[string]interface{}{
-			"error": err.Error(),
-		})
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "خطا در دریافت کاربران")
 	}
 
-	count := result.TotalCount
-
-	// Calculate total pages
-	totalPages := (count + int64(params.PageSize) - 1) / int64(params.PageSize)
-	if totalPages < 1 {
-		totalPages = 1
-	}
-
-	return resp.NewResponseData(
-		resp.Success,
-		resp.Data{
-			"items":     result,
-			"total":     count,
-			"page":      params.Page,
-			"pageSize":  params.PageSize,
-			"totalPage": totalPages,
-		},
-		"All users retrieved successfully.",
-	), nil
+	return resp.NewResponseData(resp.Success, result, "کاربران با موفقیت دریافت شدند"), nil
 }

@@ -29,11 +29,11 @@ type ProductReviewUsecase struct {
 func NewProductReviewUsecase(c contract.IContainer) *ProductReviewUsecase {
 	return &ProductReviewUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		repo:        c.GetProductReviewRepo(),
 		productRepo: c.GetProductRepo(),
-		authContext: c.GetAuthTransientService(),
 	}
 }
 
@@ -45,11 +45,11 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	customerID, _ := u.authContext(u.Ctx).GetCustomerID()
+	customerID, _ := u.AuthContext(u.Ctx).GetCustomerID()
 	if customerID == nil || (customerID != nil && *customerID == 0) {
 		customerID = userID
 	}
@@ -86,11 +86,11 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -136,11 +136,11 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -163,8 +163,8 @@ func (u *ProductReviewUsecase) GetByIdProductReviewQuery(params *product_review.
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	if !review.Approved {
-		userID, _ := u.authContext(u.Ctx).GetUserID()
-		isAdmin, _ := u.authContext(u.Ctx).IsAdmin()
+		userID, _ := u.AuthContext(u.Ctx).GetUserID()
+		isAdmin, _ := u.AuthContext(u.Ctx).IsAdmin()
 		if userID != nil && review.UserID != *userID && !isAdmin {
 			return nil, resp.NewError(resp.Unauthorized, "شما به این نظر دسترسی ندارید")
 		}
@@ -187,7 +187,7 @@ func (u *ProductReviewUsecase) GetAllProductReviewQuery(params *product_review.G
 }
 
 func (u *ProductReviewUsecase) AdminGetAllProductReviewQuery(params *product_review.AdminGetAllProductReviewQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}

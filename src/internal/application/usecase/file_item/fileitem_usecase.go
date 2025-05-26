@@ -30,12 +30,12 @@ type FileItemUsecase struct {
 func NewFileItemUsecase(c contract.IContainer) *FileItemUsecase {
 	return &FileItemUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		FileItemRepo:   c.GetFileItemRepo(),
 		storageRepo:    c.GetStorageRepo(),
 		storageService: c.GetStorageService(),
-		authContext:    c.GetAuthTransientService(),
 	}
 }
 
@@ -53,7 +53,7 @@ func toServicePermissionEnum(p enums.FileItemPermissionEnum) contractStorage.Fil
 
 // CreateOrDirectoryItemCommand handles the creation of a new file or directory
 func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOrDirectoryItemCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -209,7 +209,7 @@ func (u *FileItemUsecase) CreateOrDirectoryItemCommand(params *fileitem.CreateOr
 
 // DeleteFileItemCommand marks a file item as deleted
 func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -236,7 +236,7 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 
 // ForceDeleteFileItemCommand permanently deletes a file item
 func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDeleteFileItemCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -296,7 +296,7 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 
 // RestoreFileItemCommand restores a deleted file item
 func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileItemCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -313,7 +313,7 @@ func (u *FileItemUsecase) RestoreFileItemCommand(params *fileitem.RestoreFileIte
 
 // UpdateFileItemCommand updates file item properties
 func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -357,7 +357,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 
 // FileOperationCommand handles file operations like copy, move, rename
 func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -587,7 +587,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 // GetByIdsQuery retrieves file items by IDs
 func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -673,7 +673,7 @@ func (u *FileItemUsecase) GetByIdsQuery(params *fileitem.GetByIdsQuery) (*resp.R
 
 // GetDeletedTreeDirectoryQuery retrieves deleted file items
 func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDeletedTreeDirectoryQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -690,7 +690,7 @@ func (u *FileItemUsecase) GetDeletedTreeDirectoryQuery(params *fileitem.GetDelet
 
 // GetDownloadFileItemByIdQuery retrieves a file for download
 func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownloadFileItemByIdQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -727,7 +727,7 @@ func (u *FileItemUsecase) GetDownloadFileItemByIdQuery(params *fileitem.GetDownl
 
 // GetTreeDirectoryQuery retrieves a directory tree
 func (u *FileItemUsecase) GetTreeDirectoryQuery(params *fileitem.GetTreeDirectoryQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}

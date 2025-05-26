@@ -32,13 +32,13 @@ type PageUsecase struct {
 func NewPageUsecase(c contract.IContainer) *PageUsecase {
 	return &PageUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		repo:             c.GetPageRepo(),
 		siteRepo:         c.GetSiteRepo(),
 		headerFooterRepo: c.GetHeaderFooterRepo(),
 		mediaRepo:        c.GetMediaRepo(),
-		authContext:      c.GetAuthTransientService(),
 	}
 }
 
@@ -70,7 +70,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.R
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -121,11 +121,11 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.R
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -227,11 +227,11 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.R
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -288,7 +288,7 @@ func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (*resp.Respo
 }
 
 func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}

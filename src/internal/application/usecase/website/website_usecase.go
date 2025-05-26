@@ -24,7 +24,8 @@ type WebsiteUsecase struct {
 func NewWebsiteUsecase(c contract.IContainer) *WebsiteUsecase {
 	return &WebsiteUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		articleRepo:         c.GetArticleRepo(),
 		articleCategoryRepo: c.GetArticleCategoryRepo(),

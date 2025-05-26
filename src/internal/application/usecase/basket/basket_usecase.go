@@ -31,14 +31,14 @@ type BasketUsecase struct {
 func NewBasketUsecase(c contract.IContainer) *BasketUsecase {
 	return &BasketUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		basketRepo:         c.GetBasketRepo(),
 		basketItemRepo:     c.GetBasketItemRepo(),
 		productRepo:        c.GetProductRepo(),
 		productVariantRepo: c.GetProductVariantRepo(),
 		discountRepo:       c.GetDiscountRepo(),
-		authContext:        c.GetAuthTransientService(),
 	}
 }
 
@@ -46,7 +46,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 	if params.BasketItems == nil || len(params.BasketItems) == 0 {
 		return nil, resp.NewError(resp.BadRequest, "آیتم‌های سبد خرید الزامی هستند")
 	}
-	customerID, err := u.authContext(u.Ctx).GetCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -203,7 +203,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 }
 
 func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Response, error) {
-	customerID, err := u.authContext(u.Ctx).GetCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -215,7 +215,7 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Res
 }
 
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (*resp.Response, error) {
-	customerID, err := u.authContext(u.Ctx).GetCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -227,6 +227,14 @@ func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQue
 }
 
 func (u *BasketUsecase) AdminGetAllBasketUserQuery(params *basket.AdminGetAllBasketUserQuery) (*resp.Response, error) {
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+	if !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
+	}
+
 	result, err := u.basketRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت سبدهای خرید")

@@ -9,9 +9,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
-	"github.com/gin-gonic/gin"
 )
 
 type ArticleUsecase struct {
@@ -19,23 +17,22 @@ type ArticleUsecase struct {
 	articleRepo  repository.IArticleRepository
 	categoryRepo repository.IArticleCategoryRepository
 	mediaRepo    repository.IMediaRepository
-	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewArticleUsecase(c contract.IContainer) *ArticleUsecase {
 	return &ArticleUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		articleRepo:  c.GetArticleRepo(),
 		categoryRepo: c.GetArticleCategoryRepo(),
 		mediaRepo:    c.GetMediaRepo(),
-		authContext:  c.GetAuthTransientService(),
 	}
 }
 
 func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleCommand) (*resp.Response, error) {
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -83,7 +80,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 }
 
 func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (*resp.Response, error) {
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -138,7 +135,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 }
 
 func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (*resp.Response, error) {
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -257,6 +254,14 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 }
 
 func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (*resp.Response, error) {
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+	if !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
+	}
+
 	result, err := u.articleRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت مقالات")

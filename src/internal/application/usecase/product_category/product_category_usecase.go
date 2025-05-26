@@ -29,11 +29,11 @@ type ProductCategoryUsecase struct {
 func NewProductCategoryUsecase(c contract.IContainer) *ProductCategoryUsecase {
 	return &ProductCategoryUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
-		repo:        c.GetProductCategoryRepo(),
-		mediaRepo:   c.GetMediaRepo(),
-		authContext: c.GetAuthTransientService(),
+		repo:      c.GetProductCategoryRepo(),
+		mediaRepo: c.GetMediaRepo(),
 	}
 }
 
@@ -52,7 +52,7 @@ func (u *ProductCategoryUsecase) CreateCategoryCommand(params *product_category.
 	}
 
 	// Get user ID from auth context
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -123,13 +123,13 @@ func (u *ProductCategoryUsecase) UpdateCategoryCommand(params *product_category.
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
 	// In our monolithic approach, we check directly
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -216,12 +216,12 @@ func (u *ProductCategoryUsecase) DeleteCategoryCommand(params *product_category.
 	}
 
 	// Check user access
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
@@ -256,7 +256,7 @@ func (u *ProductCategoryUsecase) GetByIdCategoryQuery(params *product_category.G
 	}
 
 	// Check user access - anyone can view categories but logging for audit
-	userID, _ := u.authContext(u.Ctx).GetUserID()
+	userID, _ := u.AuthContext(u.Ctx).GetUserID()
 	if userID != nil && *userID > 0 {
 		u.Logger.Info("Category accessed by user", map[string]interface{}{
 			"categoryId": category.ID,
@@ -374,7 +374,7 @@ func (u *ProductCategoryUsecase) AdminGetAllCategoryQuery(params *product_catego
 	})
 
 	// Check admin access
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}

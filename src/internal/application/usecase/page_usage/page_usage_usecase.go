@@ -33,7 +33,8 @@ type PageUsageUsecase struct {
 func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 	return &PageUsageUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		pageRepo:                  c.GetPageRepo(),
 		pageArticleUsageRepo:      c.GetPageArticleUsageRepo(),
@@ -43,7 +44,6 @@ func NewPageUsageUsecase(c contract.IContainer) *PageUsageUsecase {
 		productRepo:               c.GetProductRepo(),
 		headerFooterRepo:          c.GetHeaderFooterRepo(),
 		siteRepo:                  c.GetSiteRepo(),
-		authContext:               c.GetAuthTransientService(),
 	}
 }
 
@@ -62,11 +62,11 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}

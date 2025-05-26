@@ -31,18 +31,18 @@ type CustomerTicketUsecase struct {
 func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 	return &CustomerTicketUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		repo:                    c.GetCustomerTicketRepo(),
 		customerCommentRepo:     c.GetCustomerCommentRepo(),
 		customerTicketMediaRepo: c.GetCustomerTicketMediaRepo(),
 		mediaRepo:               c.GetMediaRepo(),
-		authContext:             c.GetAuthTransientService(),
 	}
 }
 
 func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (*resp.Response, error) {
-	userID, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -101,7 +101,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 		"content": params.Comment.Content,
 	})
 
-	_, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -188,12 +188,12 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 		"content": params.Comment.Content,
 	})
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این عملیات را ندارید")
 	}
 
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -269,12 +269,12 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 }
 
 func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (*resp.Response, error) {
-	userID, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -302,7 +302,7 @@ func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticke
 		"pageSize": params.PageSize,
 	})
 
-	_, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -334,7 +334,7 @@ func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_
 		"pageSize": params.PageSize,
 	})
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این عملیات را ندارید")
 	}

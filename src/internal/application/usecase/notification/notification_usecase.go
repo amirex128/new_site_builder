@@ -14,7 +14,8 @@ type NotificationUsecase struct {
 func NewNotificationUsecase(c contract.IContainer) *NotificationUsecase {
 	return &NotificationUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 	}
 }

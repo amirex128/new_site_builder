@@ -9,31 +9,28 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
-	"github.com/gin-gonic/gin"
 )
 
 type ArticleCategoryUsecase struct {
 	*usecase.BaseUsecase
 	categoryRepo repository.IArticleCategoryRepository
 	mediaRepo    repository.IMediaRepository
-	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 	return &ArticleCategoryUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		categoryRepo: c.GetArticleCategoryRepo(),
 		mediaRepo:    c.GetMediaRepo(),
-		authContext:  c.GetAuthTransientService(),
 	}
 }
 
 func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (*resp.Response, error) {
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -75,7 +72,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 }
 
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -126,7 +123,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 }
 
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -186,6 +183,14 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	if err != nil {
+		return nil, resp.NewError(resp.Internal, err.Error())
+	}
+	if !isAdmin {
+		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
+	}
+
 	result, err := u.categoryRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت دسته‌بندی‌ها")

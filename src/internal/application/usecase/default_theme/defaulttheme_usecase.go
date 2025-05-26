@@ -27,20 +27,16 @@ type DefaultThemeUsecase struct {
 func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
 	return &DefaultThemeUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		defaultThemeRepo: c.GetDefaultThemeRepo(),
 		mediaRepo:        c.GetMediaRepo(),
-		authContext:      c.GetAuthTransientService(),
 	}
 }
 
 func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.CreateDefaultThemeCommand) (*resp.Response, error) {
-	u.Logger.Info("CreateDefaultThemeCommand called", map[string]interface{}{
-		"name": params.Name,
-	})
-
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به ایجاد قالب پیش‌فرض هستند")
 	}
@@ -91,7 +87,7 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 		"id": params.ID,
 	})
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به ویرایش قالب پیش‌فرض هستند")
 	}
@@ -146,7 +142,7 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 		"id": params.ID,
 	})
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به حذف قالب پیش‌فرض هستند")
 	}

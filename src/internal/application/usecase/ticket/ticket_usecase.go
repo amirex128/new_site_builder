@@ -31,18 +31,18 @@ type TicketUsecase struct {
 func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
 	return &TicketUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		repo:            c.GetTicketRepo(),
 		commentRepo:     c.GetCommentRepo(),
 		ticketMediaRepo: c.GetTicketMediaRepo(),
 		mediaRepo:       c.GetMediaRepo(),
-		authContext:     c.GetAuthTransientService(),
 	}
 }
 
 func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (*resp.Response, error) {
-	userId, err := u.authContext(u.Ctx).GetUserID()
+	userId, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -99,7 +99,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 }
 
 func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -111,7 +111,7 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	if userID != nil && existingTicket.UserID != *userID {
-		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+		isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این تیکت ندارید")
 		}
@@ -156,11 +156,11 @@ func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) 
 }
 
 func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicketCommand) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این عملیات را ندارید")
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -213,7 +213,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 }
 
 func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -225,7 +225,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	if userID != nil && result.UserID != *userID {
-		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+		isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این تیکت ندارید")
 		}
@@ -234,7 +234,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*
 }
 
 func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -256,7 +256,7 @@ func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*re
 }
 
 func (u *TicketUsecase) AdminGetAllTicketQuery(params *ticket.AdminGetAllTicketQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این عملیات را ندارید")
 	}

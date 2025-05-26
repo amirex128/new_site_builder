@@ -8,9 +8,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/address"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
@@ -25,24 +22,23 @@ type AddressUsecase struct {
 	addressRepo  repository.IAddressRepository
 	cityRepo     repository.ICityRepository
 	provinceRepo repository.IProvinceRepository
-	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 	return &AddressUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
 			Logger: c.GetLogger(),
+			AuthContext:  c.GetAuthTransientService(),
 		},
 		addressRepo:  c.GetAddressRepo(),
 		cityRepo:     c.GetCityRepo(),
 		provinceRepo: c.GetProvinceRepo(),
-		authContext:  c.GetAuthTransientService(),
 	}
 }
 
 func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressCommand) (*resp.Response, error) {
 	var err error
-	userID, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -86,7 +82,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 		return nil, resp.NewError(resp.NotFound, "آدرس یافت نشد")
 	}
 
-	userID, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -153,7 +149,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت آدرس")
 	}
 
-	userID, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -182,7 +178,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 		}
 		return nil, err
 	}
-	userID, customerID, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -203,7 +199,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 	var results *common.PaginationResponseDto[domain.Address]
 	var err error
 
-	userID, customerID, userType, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, customerID, userType, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -225,10 +221,6 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 }
 
 func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddressQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
-	}
 
 	results, err := u.addressRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {

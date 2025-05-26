@@ -28,11 +28,11 @@ type SiteUsecase struct {
 func NewSiteUsecase(c contract.IContainer) *SiteUsecase {
 	return &SiteUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		repo:        c.GetSiteRepo(),
 		settingRepo: c.GetSettingRepo(),
-		authContext: c.GetAuthTransientService(),
 	}
 }
 
@@ -43,7 +43,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, resp.NewError(resp.Internal, "خطا در بررسی دامنه")
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -101,11 +101,11 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.R
 		}
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی مدیریت")
 	}
@@ -153,11 +153,11 @@ func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (*resp.R
 		}
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی مدیریت")
 	}
@@ -194,7 +194,7 @@ func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*
 }
 
 func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Response, error) {
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -218,7 +218,7 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Respo
 }
 
 func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}

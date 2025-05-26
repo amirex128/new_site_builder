@@ -35,12 +35,12 @@ type PaymentUsecase struct {
 func NewPaymentUsecase(c contract.IContainer) *PaymentUsecase {
 	return &PaymentUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		siteRepo:    c.GetSiteRepo(),
 		paymentRepo: c.GetPaymentRepo(),
 		gatewayRepo: c.GetGatewayRepo(),
-		authContext: c.GetAuthTransientService(),
 		container:   c,
 	}
 }
@@ -103,7 +103,7 @@ func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUp
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -304,12 +304,12 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
 	if userID != nil && gateway.UserID != *userID {
-		isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+		isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 		if err != nil || !isAdmin {
 			return nil, resp.NewError(resp.Unauthorized, "شما به این درگاه پرداخت دسترسی ندارید")
 		}
@@ -318,7 +318,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 }
 
 func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -402,7 +402,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 }
 
 func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (*resp.Response, error) {
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}

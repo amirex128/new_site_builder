@@ -4,12 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
-
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
+	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
@@ -20,16 +16,15 @@ import (
 type DiscountUsecase struct {
 	*usecase.BaseUsecase
 	discountRepo repository.IDiscountRepository
-	authContext  func(c *gin.Context) service.IAuthService
 }
 
 func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 	return &DiscountUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		discountRepo: c.GetDiscountRepo(),
-		authContext:  c.GetAuthTransientService(),
 	}
 }
 
@@ -46,7 +41,7 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 		return nil, resp.NewError(resp.BadRequest, "تاریخ انقضا باید در آینده باشد")
 	}
 
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -91,11 +86,11 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -157,11 +152,11 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, _, _, err := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -190,7 +185,7 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	userID, _, _, _ := u.authContext(u.Ctx).GetUserOrCustomerID()
+	userID, _, _, _ := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if userID != nil {
 		u.Logger.Info("Discount accessed by user", map[string]interface{}{
 			"discountId": discountObj.ID,
@@ -256,7 +251,7 @@ func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllD
 		"pageSize": params.PageSize,
 	})
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به دسترسی به این بخش هستند")
 	}

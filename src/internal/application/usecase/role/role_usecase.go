@@ -23,7 +23,8 @@ type RoleUsecase struct {
 func NewRoleUsecase(c contract.IContainer) *RoleUsecase {
 	return &RoleUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		roleRepo:     c.GetRoleRepo(),
 		customerRepo: c.GetCustomerRepo(),

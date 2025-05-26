@@ -31,11 +31,11 @@ type HeaderFooterUsecase struct {
 func NewHeaderFooterUsecase(c contract.IContainer) *HeaderFooterUsecase {
 	return &HeaderFooterUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
-		repo:        c.GetHeaderFooterRepo(),
-		siteRepo:    c.GetSiteRepo(),
-		authContext: c.GetAuthTransientService(),
+		repo:     c.GetHeaderFooterRepo(),
+		siteRepo: c.GetSiteRepo(),
 	}
 }
 
@@ -54,7 +54,7 @@ func (u *HeaderFooterUsecase) CreateHeaderFooterCommand(params *header_footer.Cr
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
 		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
@@ -108,12 +108,12 @@ func (u *HeaderFooterUsecase) UpdateHeaderFooterCommand(params *header_footer.Up
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -182,12 +182,12 @@ func (u *HeaderFooterUsecase) DeleteHeaderFooterCommand(params *header_footer.De
 	}
 
 	// Check user access
-	userID, err := u.authContext(u.Ctx).GetUserID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, err
 	}
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +292,7 @@ func (u *HeaderFooterUsecase) AdminGetAllHeaderFooterQuery(params *header_footer
 		"pageSize": params.PageSize,
 	})
 
-	isAdmin, err := u.authContext(u.Ctx).IsAdmin()
+	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
 		return nil, err
 	}
