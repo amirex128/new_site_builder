@@ -37,22 +37,17 @@ func (r *ProductVariantRepo) GetAll(paginationRequestDto common.PaginationReques
 	return buildPaginationResponse(variants, paginationRequestDto, count)
 }
 
-func (r *ProductVariantRepo) GetAllByProductID(productID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.ProductVariant], error) {
+func (r *ProductVariantRepo) GetAllByProductID(productID int64) ([]domain.ProductVariant, error) {
 	var variants []domain.ProductVariant
-	var count int64
 
 	query := r.database.Model(&domain.ProductVariant{}).Where("product_id = ?", productID)
-	query.Count(&count)
 
-	limit := paginationRequestDto.PageSize
-	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
-
-	result := query.Limit(limit).Offset(offset).Find(&variants)
+	result := query.Find(&variants)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	return buildPaginationResponse(variants, paginationRequestDto, count)
+	return variants, nil
 }
 
 func (r *ProductVariantRepo) GetByID(id int64) (*domain.ProductVariant, error) {

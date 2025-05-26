@@ -29,7 +29,7 @@ func NewAuthContextService(c *gin.Context, identity service.IIdentityService) *A
 func (s *AuthContextService) GetRoles() ([]string, error) {
 	rolesStr, err := s.identity.GetClaim(s.ctx, "roles")
 	if err != nil {
-		return nil, errors.New("authorization access exception: roles not found")
+		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	if rolesStr == "" {
@@ -43,7 +43,7 @@ func (s *AuthContextService) GetRoles() ([]string, error) {
 func (s *AuthContextService) GetSiteIDs() ([]int64, error) {
 	siteIDsStr, err := s.identity.GetClaim(s.ctx, "site_id")
 	if err != nil {
-		return nil, errors.New("authorization access exception: site IDs not found")
+		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	if siteIDsStr == "" {
@@ -73,7 +73,7 @@ func parseSiteIDs(siteIDsStr string) ([]int64, error) {
 func (s *AuthContextService) GetUserID() (*int64, error) {
 	userIDStr, err := s.identity.GetClaim(s.ctx, "user_id")
 	if err != nil {
-		return nil, errors.New("authorization access exception: user ID not found")
+		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	id, err := parseID(userIDStr, "user ID")
@@ -93,7 +93,7 @@ func parseID(idStr string, idType string) (int64, error) {
 func (s *AuthContextService) GetCustomerID() (*int64, error) {
 	customerIDStr, err := s.identity.GetClaim(s.ctx, "customer_id")
 	if err != nil {
-		return nil, errors.New("authorization access exception: customer ID not found")
+		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	id, err := parseID(customerIDStr, "customer ID")
@@ -104,7 +104,7 @@ func (s *AuthContextService) GetCustomerID() (*int64, error) {
 func (s *AuthContextService) GetUserType() (*enums.UserTypeEnum, error) {
 	userType, err := s.identity.GetClaim(s.ctx, "type")
 	if err != nil {
-		return nil, errors.New("authorization access exception: user type not found")
+		return nil, errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	s2, err := validateUserType(userType)
@@ -117,7 +117,7 @@ func (s *AuthContextService) GetUserType() (*enums.UserTypeEnum, error) {
 	if s2 == "customer" {
 		return (*enums.UserTypeEnum)(&s2), nil
 	}
-	return nil, errors.New("unknow user type")
+	return nil, errors.New("خطا در بررسی دسترسی کاربر")
 }
 
 // Helper function to validate user type
@@ -137,7 +137,7 @@ func validateUserType(userType string) (string, error) {
 func (s *AuthContextService) GetEmail() (string, error) {
 	email, err := s.identity.GetClaim(s.ctx, "email")
 	if err != nil {
-		return "", errors.New("authorization access exception: email not found")
+		return "", errors.New("خطا در بررسی دسترسی کاربر")
 	}
 
 	return email, nil

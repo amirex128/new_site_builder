@@ -14,7 +14,6 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
@@ -505,15 +504,10 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 		variantID := productVariantMap[productID]
 		var variant domain.ProductVariant
 		var variantFound bool
-		paginationRequest := common.PaginationRequestDto{
-			Page:     1,
-			PageSize: 100,
-		}
-		variantsResult, err := u.productVariantRepo.GetAllByProductID(productID, paginationRequest)
+		variants, err := u.productVariantRepo.GetAllByProductID(productID)
 		if err != nil {
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-		variants := variantsResult.Items
 		for _, v := range variants {
 			if v.ID == variantID {
 				variant = v
