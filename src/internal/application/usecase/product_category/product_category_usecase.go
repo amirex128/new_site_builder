@@ -21,9 +21,8 @@ import (
 
 type ProductCategoryUsecase struct {
 	*usecase.BaseUsecase
-	repo        repository.IProductCategoryRepository
-	mediaRepo   repository.IMediaRepository
-	authContext func(c *gin.Context) service.IAuthService
+	repo      repository.IProductCategoryRepository
+	mediaRepo repository.IMediaRepository
 }
 
 func NewProductCategoryUsecase(c contract.IContainer) *ProductCategoryUsecase {

@@ -27,8 +27,8 @@ type AddressUsecase struct {
 func NewAddressUsecase(c contract.IContainer) *AddressUsecase {
 	return &AddressUsecase{
 		BaseUsecase: &usecase.BaseUsecase{
-			Logger: c.GetLogger(),
-			AuthContext:  c.GetAuthTransientService(),
+			Logger:      c.GetLogger(),
+			AuthContext: c.GetAuthTransientService(),
 		},
 		addressRepo:  c.GetAddressRepo(),
 		cityRepo:     c.GetCityRepo(),
@@ -221,6 +221,10 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 }
 
 func (u *AddressUsecase) AdminGetAllAddressQuery(params *address.AdminGetAllAddressQuery) (*resp.Response, error) {
+	err := u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
+	}
 
 	results, err := u.addressRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {

@@ -23,7 +23,6 @@ type OrderUsecase struct {
 	basketRepo    repository.IBasketRepository
 	orderItemRepo repository.IOrderItemRepository
 	paymentRepo   repository.IPaymentRepository
-	authContext   func(c *gin.Context) service.IAuthService
 	container     contract.IContainer
 }
 

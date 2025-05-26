@@ -254,12 +254,9 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 }
 
 func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArticleQuery) (*resp.Response, error) {
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	err := u.CheckAccessAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-	if !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
+		return nil, err
 	}
 
 	result, err := u.articleRepo.GetAll(params.PaginationRequestDto)

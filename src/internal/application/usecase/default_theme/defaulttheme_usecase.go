@@ -1,27 +1,21 @@
 package defaultthemeusecase
 
 import (
-	"errors"
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/defaulttheme"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
-	"gorm.io/gorm"
 )
 
 type DefaultThemeUsecase struct {
 	*usecase.BaseUsecase
 	defaultThemeRepo repository.IDefaultThemeRepository
 	mediaRepo        repository.IMediaRepository
-	authContext      func(c *gin.Context) service.IAuthService
 }
 
 func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
@@ -36,17 +30,14 @@ func NewDefaultThemeUsecase(c contract.IContainer) *DefaultThemeUsecase {
 }
 
 func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.CreateDefaultThemeCommand) (*resp.Response, error) {
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به ایجاد قالب پیش‌فرض هستند")
+	err := u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
 	}
 
 	_, err = u.mediaRepo.GetByID(int64(*params.MediaID))
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "تصویر مورد نظر یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تصویر مورد نظر یافت نشد")
 	}
 
 	description := ""
@@ -71,33 +62,21 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 
 	err = u.defaultThemeRepo.Create(&theme)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "خطایی در ایجاد قالب پیش‌فرض رخ داده است")
 	}
 
-	createdTheme, err := u.defaultThemeRepo.GetByID(theme.ID)
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-
-	return resp.NewResponseData(resp.Created, map[string]interface{}{"default_theme": createdTheme}, "قالب پیش‌فرض با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, theme, "قالب پیش‌فرض با موفقیت ایجاد شد"), nil
 }
 
 func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.UpdateDefaultThemeCommand) (*resp.Response, error) {
-	u.Logger.Info("UpdateDefaultThemeCommand called", map[string]interface{}{
-		"id": params.ID,
-	})
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به ویرایش قالب پیش‌فرض هستند")
+	err := u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
 	}
 
 	existingTheme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
 	}
 
 	if params.Name != nil {
@@ -112,10 +91,7 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 	if params.MediaID != nil {
 		_, err = u.mediaRepo.GetByID(int64(*params.MediaID))
 		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, resp.NewError(resp.NotFound, "تصویر مورد نظر یافت نشد")
-			}
-			return nil, resp.NewError(resp.Internal, err.Error())
+			return nil, resp.NewError(resp.NotFound, "تصویر مورد نظر یافت نشد")
 		}
 		existingTheme.MediaID = int64(*params.MediaID)
 	}
@@ -126,75 +102,50 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 
 	err = u.defaultThemeRepo.Update(existingTheme)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "خطایی در بروزرسانی قالب پیش‌فرض رخ داده است")
 	}
 
-	updatedTheme, err := u.defaultThemeRepo.GetByID(existingTheme.ID)
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-
-	return resp.NewResponseData(resp.Updated, map[string]interface{}{"default_theme": updatedTheme}, "قالب پیش‌فرض با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, existingTheme, "قالب پیش‌فرض با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.DeleteDefaultThemeCommand) (*resp.Response, error) {
-	u.Logger.Info("DeleteDefaultThemeCommand called", map[string]interface{}{
-		"id": params.ID,
-	})
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط مدیران سیستم مجاز به حذف قالب پیش‌فرض هستند")
+	err := u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
 	}
 
 	existingTheme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
 	}
 
 	err = u.defaultThemeRepo.Delete(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "خطایی در حذف قالب پیش‌فرض رخ داده است")
 	}
 
-	return resp.NewResponseData(resp.Deleted, map[string]interface{}{"default_theme": existingTheme}, "قالب پیش‌فرض با موفقیت حذف شد"), nil
+	return resp.NewResponseData(resp.Deleted, existingTheme, "قالب پیش‌فرض با موفقیت حذف شد"), nil
 }
 
 func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetByIdDefaultThemeQuery) (*resp.Response, error) {
-	u.Logger.Info("GetByIdDefaultThemeQuery called", map[string]interface{}{
-		"id": params.ID,
-	})
-
 	theme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
 	}
 
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"default_theme": theme}, "قالب پیش‌فرض با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, theme, "قالب پیش‌فرض با موفقیت دریافت شد"), nil
 }
 
 func (u *DefaultThemeUsecase) GetAllDefaultThemeQuery(params *defaulttheme.GetAllDefaultThemeQuery) (*resp.Response, error) {
-	u.Logger.Info("GetAllDefaultThemeQuery called", map[string]interface{}{
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
+	err := u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
+	}
 
 	themesResult, err := u.defaultThemeRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "خطایی در دریافت قالب‌های پیش‌فرض رخ داده است")
 	}
 
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"default_theme": themesResult.Items,
-		"total":         themesResult.TotalCount,
-		"page":          themesResult.PageNumber,
-		"pageSize":      params.PageSize,
-		"totalPage":     themesResult.TotalPages,
-	}, "لیست قالب‌های پیش‌فرض با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, themesResult, "لیست قالب‌های پیش‌فرض با موفقیت دریافت شد"), nil
 }

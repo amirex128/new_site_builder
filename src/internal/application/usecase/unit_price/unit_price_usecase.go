@@ -9,16 +9,13 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
-	"github.com/gin-gonic/gin"
 )
 
 type UnitPriceUsecase struct {
 	*usecase.BaseUsecase
 	unitPriceRepo repository.IUnitPriceRepository
 	userRepo      repository.IUserRepository
-	authContext   func(c *gin.Context) service.IAuthService
 }
 
 func NewUnitPriceUsecase(c contract.IContainer) *UnitPriceUsecase {

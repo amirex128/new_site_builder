@@ -23,7 +23,6 @@ type ProductReviewUsecase struct {
 	logger      sflogger.Logger
 	repo        repository.IProductReviewRepository
 	productRepo repository.IProductRepository
-	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewProductReviewUsecase(c contract.IContainer) *ProductReviewUsecase {

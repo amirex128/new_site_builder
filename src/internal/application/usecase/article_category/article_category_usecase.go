@@ -183,14 +183,10 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 }
 
 func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_category.AdminGetAllCategoryQuery) (*resp.Response, error) {
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	err := u.CheckAccessAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, err
 	}
-	if !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
-	}
-
 	result, err := u.categoryRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت دسته‌بندی‌ها")

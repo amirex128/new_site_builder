@@ -278,12 +278,9 @@ func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCus
 }
 
 func (u *CustomerUsecase) AdminGetAllCustomerQuery(params *customer.AdminGetAllCustomerQuery) (*resp.Response, error) {
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	err := u.CheckAccessAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-	if !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
+		return nil, err
 	}
 	customersResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {

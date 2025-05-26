@@ -27,7 +27,6 @@ type PaymentUsecase struct {
 	*usecase.BaseUsecase
 	paymentRepo repository.IPaymentRepository
 	gatewayRepo repository.IGatewayRepository
-	authContext func(c *gin.Context) service.IAuthService
 	container   contract.IContainer
 	siteRepo    repository.ISiteRepository
 }

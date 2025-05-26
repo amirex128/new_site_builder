@@ -6,13 +6,9 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer_ticket"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
-
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer_ticket"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -25,7 +21,6 @@ type CustomerTicketUsecase struct {
 	customerCommentRepo     repository.ICustomerCommentRepository
 	customerTicketMediaRepo repository.ICustomerTicketMediaRepository
 	mediaRepo               repository.IMediaRepository
-	authContext             func(c *gin.Context) service.IAuthService
 }
 
 func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
@@ -42,7 +37,7 @@ func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 }
 
 func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (*resp.Response, error) {
-	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
@@ -53,7 +48,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 		Status:     enums.TicketNewStatus,
 		Category:   *params.Category,
 		Priority:   *params.Priority,
-		UserID:     *userID,
+		UserID:     *params.OwnerUserID,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 		IsDeleted:  false,
@@ -80,45 +75,32 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(newTicket.ID, params.MediaIDs)
 		if err != nil {
-			return nil, resp.NewError(resp.Internal, err.Error())
+			return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن فایل ها به تیکت مشتری")
 		}
 	}
 
 	createdTicket, err := u.repo.GetByIDWithRelations(newTicket.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
 	}
 
-	return resp.NewResponseData(resp.Created, map[string]interface{}{
-		"ticket": createdTicket,
-	}, "تیکت مشتری با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, createdTicket, "تیکت مشتری با موفقیت ایجاد شد"), nil
 }
 
 func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (*resp.Response, error) {
-	u.Logger.Info("ReplayCustomerTicketCommand called", map[string]interface{}{
-		"id":      params.ID,
-		"status":  params.Status,
-		"content": params.Comment.Content,
-	})
-
-	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
-	}
-	if customerID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "شناسه مشتری یافت نشد")
 	}
 
 	existingTicket, err := u.repo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
 	}
 
-	if existingTicket.CustomerID != *customerID {
-		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این تیکت مشتری ندارید")
+	err = u.CheckAccessCustomerModel(existingTicket, customerID)
+	if err != nil {
+		return nil, err
 	}
 
 	existingTicket.Status = *params.Status
@@ -136,10 +118,6 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 
 	err = u.repo.Update(existingTicket)
 	if err != nil {
-		u.Logger.Error("Error updating customer ticket", map[string]interface{}{
-			"error":    err.Error(),
-			"ticketId": existingTicket.ID,
-		})
 		return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی تیکت مشتری")
 	}
 
@@ -153,21 +131,13 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 	}
 	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
-		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
-			"error":    err.Error(),
-			"ticketId": existingTicket.ID,
-		})
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد پیام تیکت مشتری")
 	}
 
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(existingTicket.ID, params.MediaIDs)
 		if err != nil {
-			u.Logger.Error("Error adding media to customer ticket", map[string]interface{}{
-				"error":    err.Error(),
-				"ticketId": existingTicket.ID,
-			})
-			// Continue despite media error
+			return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن فایل ها به تیکت مشتری")
 		}
 	}
 
@@ -176,29 +146,18 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return resp.NewResponseData(resp.Created, map[string]interface{}{
-		"ticket": updatedTicket,
-	}, "پاسخ به تیکت مشتری با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, updatedTicket, "پاسخ به تیکت مشتری با موفقیت ایجاد شد"), nil
 }
 
 func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *customer_ticket.AdminReplayCustomerTicketCommand) (*resp.Response, error) {
-	u.Logger.Info("AdminReplayCustomerTicketCommand called", map[string]interface{}{
-		"id":      params.ID,
-		"status":  params.Status,
-		"content": params.Comment.Content,
-	})
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این عملیات را ندارید")
-	}
-
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
 		return nil, resp.NewError(resp.Unauthorized, err.Error())
 	}
-	if userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "شناسه کاربر یافت نشد")
+
+	err = u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
 	}
 
 	existingTicket, err := u.repo.GetByID(*params.ID)

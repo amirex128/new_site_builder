@@ -6,9 +6,6 @@ import (
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/header_footer"
@@ -22,10 +19,9 @@ import (
 
 type HeaderFooterUsecase struct {
 	*usecase.BaseUsecase
-	logger      sflogger.Logger
-	repo        repository.IHeaderFooterRepository
-	siteRepo    repository.ISiteRepository
-	authContext func(c *gin.Context) service.IAuthService
+	logger   sflogger.Logger
+	repo     repository.IHeaderFooterRepository
+	siteRepo repository.ISiteRepository
 }
 
 func NewHeaderFooterUsecase(c contract.IContainer) *HeaderFooterUsecase {

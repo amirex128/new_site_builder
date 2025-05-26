@@ -22,7 +22,6 @@ type SiteUsecase struct {
 	*usecase.BaseUsecase
 	repo        repository.ISiteRepository
 	settingRepo repository.ISettingRepository
-	authContext func(c *gin.Context) service.IAuthService
 }
 
 func NewSiteUsecase(c contract.IContainer) *SiteUsecase {

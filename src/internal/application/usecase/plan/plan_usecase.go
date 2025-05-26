@@ -6,17 +6,14 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
-	"github.com/gin-gonic/gin"
 )
 
 type PlanUsecase struct {
 	*usecase.BaseUsecase
-	planRepo    repository.IPlanRepository
-	userRepo    repository.IUserRepository
-	authContext func(c *gin.Context) service.IAuthService
+	planRepo repository.IPlanRepository
+	userRepo repository.IUserRepository
 }
 
 func NewPlanUsecase(c contract.IContainer) *PlanUsecase {

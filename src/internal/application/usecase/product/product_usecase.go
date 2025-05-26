@@ -6,13 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
-
-	"github.com/amirex128/new_site_builder/src/internal/application/dto/product"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
@@ -29,7 +25,6 @@ type ProductUsecase struct {
 	productVariantRepo   repository.IProductVariantRepository
 	productAttributeRepo repository.IProductAttributeRepository
 	couponRepo           repository.ICouponRepository
-	authContext          func(c *gin.Context) service.IAuthService
 }
 
 func NewProductUsecase(c contract.IContainer) *ProductUsecase {
