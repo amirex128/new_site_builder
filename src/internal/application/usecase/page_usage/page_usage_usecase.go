@@ -63,7 +63,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if page.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این صفحه دسترسی ندارید")

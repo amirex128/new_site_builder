@@ -104,7 +104,7 @@ func (u *PaymentUsecase) CreateOrUpdateGatewayCommand(params *payment.CreateOrUp
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	gateway := domain.Gateway{
 		SiteID:    *params.SiteID,
@@ -305,7 +305,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if userID != nil && gateway.UserID != *userID {
 		isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
@@ -319,7 +319,7 @@ func (u *PaymentUsecase) GetByIdGatewayQuery(params *payment.GetByIdGatewayQuery
 func (u *PaymentUsecase) AdminGetAllGatewayQuery(params *payment.AdminGetAllGatewayQuery) (*resp.Response, error) {
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	gatewaysResult, err := u.gatewayRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {
@@ -403,7 +403,7 @@ func (u *PaymentUsecase) RequestGatewayCommand(params *payment.RequestGatewayCom
 func (u *PaymentUsecase) AdminGetAllPaymentQuery(params *payment.AdminGetAllPaymentQuery) (*resp.Response, error) {
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	paymentsResult, err := u.paymentRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {

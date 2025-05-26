@@ -40,7 +40,7 @@ func (u *AddressUsecase) CreateAddressCommand(params *address.CreateAddressComma
 	var err error
 	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	_, err = u.cityRepo.GetByID(*params.CityID)
@@ -84,7 +84,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 
 	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	err = u.CheckAccessUserModel(existingAddress, userID)
 	if err != nil {
@@ -151,7 +151,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 
 	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	err = u.CheckAccessUserModel(existingAddress, userID)
 	if err != nil {
@@ -180,7 +180,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 	}
 	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	err = u.CheckAccessUserModel(existingAddress, userID)
 	if err != nil {
@@ -201,7 +201,7 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 
 	userID, customerID, userType, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	if *userType == enums.CustomerTypeValue {

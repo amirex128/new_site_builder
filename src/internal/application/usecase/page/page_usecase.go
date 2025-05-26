@@ -127,7 +127,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.R
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if existingPage.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این صفحه دسترسی ندارید")
@@ -233,7 +233,7 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.R
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if existingPage.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این صفحه دسترسی ندارید")
@@ -290,7 +290,7 @@ func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (*resp.Respo
 func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (*resp.Response, error) {
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	pagesResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {

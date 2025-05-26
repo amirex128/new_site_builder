@@ -39,7 +39,7 @@ func NewCustomerTicketUsecase(c contract.IContainer) *CustomerTicketUsecase {
 func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_ticket.CreateCustomerTicketCommand) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	newTicket := &domain.CustomerTicket{
@@ -90,7 +90,7 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	existingTicket, err := u.repo.GetByID(*params.ID)
@@ -150,12 +150,7 @@ func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_tic
 }
 
 func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *customer_ticket.AdminReplayCustomerTicketCommand) (*resp.Response, error) {
-	userID, err := u.AuthContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
-	}
-
-	err = u.CheckAccessAdmin()
+	err := u.CheckAccessAdmin()
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +170,10 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	existingTicket.UpdatedAt = time.Now()
 
 	if *params.Status == enums.TicketClosedStatus {
+		userID, err := u.AuthContext(u.Ctx).GetUserID()
+		if err != nil {
+			return nil, err
+		}
 		now := time.Now()
 		existingTicket.ClosedBy = userID
 		existingTicket.ClosedAt = &now
@@ -199,118 +198,65 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 	}
 	err = u.customerCommentRepo.Create(comment)
 	if err != nil {
-		u.Logger.Error("Error creating comment for customer ticket", map[string]interface{}{
-			"error":    err.Error(),
-			"ticketId": existingTicket.ID,
-		})
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد پیام تیکت مشتری")
 	}
 
 	if len(params.MediaIDs) > 0 {
 		err = u.customerTicketMediaRepo.AddMediaToCustomerTicket(existingTicket.ID, params.MediaIDs)
 		if err != nil {
-			u.Logger.Error("Error adding media to customer ticket", map[string]interface{}{
-				"error":    err.Error(),
-				"ticketId": existingTicket.ID,
-			})
-			// Continue despite media error
+			return nil, resp.NewError(resp.Internal, "خطا در اضافه کردن فایل ها به تیکت مشتری")
 		}
 	}
 
 	updatedTicket, err := u.repo.GetByIDWithRelations(existingTicket.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
 	}
 
-	return resp.NewResponseData(resp.Created, map[string]interface{}{
-		"ticket": updatedTicket,
-	}, "پاسخ به تیکت مشتری با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, updatedTicket, "پاسخ به تیکت مشتری با موفقیت ایجاد شد"), nil
 }
 
 func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (*resp.Response, error) {
-	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
-	}
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, err
 	}
 
 	result, err := u.repo.GetByIDWithRelations(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
+	}
+	err = u.CheckAccessCustomerModel(result, customerID)
+	if err != nil {
+		return nil, err
 	}
 
-	if (result.UserID != 0 && userID != nil && result.UserID != *userID) && (result.CustomerID != 0 && customerID != nil && result.CustomerID != *customerID) && !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این تیکت مشتری ندارید")
-	}
-
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"ticket": result,
-	}, "تیکت مشتری با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, result, "تیکت مشتری با موفقیت دریافت شد"), nil
 }
 
 func (u *CustomerTicketUsecase) GetAllCustomerTicketQuery(params *customer_ticket.GetAllCustomerTicketQuery) (*resp.Response, error) {
-	u.Logger.Info("GetAllCustomerTicketQuery called", map[string]interface{}{
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
-
-	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
-	}
-	if customerID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "شناسه مشتری یافت نشد")
+		return nil, err
 	}
 
 	results, err := u.repo.GetAllByCustomerID(*customerID, params.PaginationRequestDto)
 	if err != nil {
-		u.Logger.Error("Error getting all tickets for customer", map[string]interface{}{
-			"error":      err.Error(),
-			"customerId": *customerID,
-		})
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت تیکت های مشتری")
 	}
 
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items":     results.Items,
-		"total":     results.TotalCount,
-		"page":      results.PageNumber,
-		"pageSize":  params.PageSize,
-		"totalPage": results.TotalPages,
-	}, "تیکت های مشتری با موفقیت دریافت شدند"), nil
+	return resp.NewResponseData(resp.Retrieved, results, "تیکت های مشتری با موفقیت دریافت شدند"), nil
 }
 
 func (u *CustomerTicketUsecase) AdminGetAllCustomerTicketQuery(params *customer_ticket.AdminGetAllCustomerTicketQuery) (*resp.Response, error) {
-	u.Logger.Info("AdminGetAllCustomerTicketQuery called", map[string]interface{}{
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما دسترسی به این عملیات را ندارید")
+	err := u.CheckAccessAdmin()
+	if err != nil {
+		return nil, err
 	}
-
 	results, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
-		u.Logger.Error("Error getting all customer tickets for admin", map[string]interface{}{
-			"error": err.Error(),
-		})
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت تیکت های مشتری")
 	}
 
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items":     results.Items,
-		"total":     results.TotalCount,
-		"page":      results.PageNumber,
-		"pageSize":  params.PageSize,
-		"totalPage": results.TotalPages,
-	}, "تیکت های مشتری با موفقیت دریافت شدند (ادمین)"), nil
+	return resp.NewResponseData(resp.Retrieved, results, "تیکت های مشتری با موفقیت دریافت شدند (ادمین)"), nil
 }

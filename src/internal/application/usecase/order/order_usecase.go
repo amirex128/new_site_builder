@@ -43,7 +43,7 @@ func NewOrderUsecase(c contract.IContainer) *OrderUsecase {
 func (u *OrderUsecase) CreateOrderRequestCommand(params *order.CreateOrderRequestCommand) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, *params.SiteID)
 	if err != nil {
@@ -244,7 +244,7 @@ func (u *OrderUsecase) CreateOrderVerifyCommand(params *order.CreateOrderVerifyC
 func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustomerQuery) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	ordersResult, err := u.orderRepo.GetAllByCustomerID(*customerID, params.PaginationRequestDto)
 	if err != nil {
@@ -262,7 +262,7 @@ func (u *OrderUsecase) GetAllOrderCustomerQuery(params *order.GetAllOrderCustome
 func (u *OrderUsecase) GetOrderCustomerDetailsQuery(params *order.GetOrderCustomerDetailsQuery) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	order, err := u.orderRepo.GetByID(*params.OrderID)
 	if err != nil {
@@ -291,7 +291,7 @@ func (u *OrderUsecase) GetAllOrderUserQuery(params *order.GetAllOrderUserQuery) 
 func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetailsQuery) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	order, err := u.orderRepo.GetByID(*params.OrderID)
 	if err != nil {
@@ -327,7 +327,7 @@ func (u *OrderUsecase) GetOrderUserDetailsQuery(params *order.GetOrderUserDetail
 func (u *OrderUsecase) AdminGetAllOrderUserQuery(params *order.AdminGetAllOrderUserQuery) (*resp.Response, error) {
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	ordersResult, err := u.orderRepo.GetAll(params.PaginationRequestDto)
 	if err != nil {

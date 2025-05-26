@@ -38,7 +38,21 @@ func (u *BaseUsecase) CheckAccessSiteModel(existingModel common.AccessControllab
 	}
 	return nil
 }
-
+func (u *BaseUsecase) CheckAccessSiteID(siteID *int64) error {
+	siteIDs, err := u.AuthContext(u.Ctx).GetSiteIDs()
+	if err != nil {
+		return resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
+	}
+	if siteID == nil || *siteID <= 0 {
+		return resp.NewError(resp.BadRequest, "شناسه سایت معتبر نیست")
+	}
+	for _, id := range siteIDs {
+		if id == *siteID {
+			return nil
+		}
+	}
+	return resp.NewError(resp.Unauthorized, "شما به این سایت دسترسی ندارید")
+}
 func (u *BaseUsecase) CheckAccessAdmin() error {
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil || !isAdmin {

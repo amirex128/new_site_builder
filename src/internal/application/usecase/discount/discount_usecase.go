@@ -1,7 +1,6 @@
 package discountusecase
 
 import (
-	"errors"
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
@@ -10,7 +9,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
-	"gorm.io/gorm"
 )
 
 type DiscountUsecase struct {
@@ -29,21 +27,22 @@ func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 }
 
 func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (*resp.Response, error) {
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
+	if err != nil {
+		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	}
 	existingDiscount, err := u.discountRepo.GetByCode(*params.Code)
 	if err != nil {
-
+		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
-	if existingDiscount.SiteID == *params.SiteID {
-		return nil, resp.NewError(resp.BadRequest, "کد تخفیف تکراری است")
+
+	err = u.CheckAccessUserModel(existingDiscount, userID)
+	if err != nil {
+		return nil, err
 	}
 
 	if params.ExpiryDate.Before(time.Now()) {
 		return nil, resp.NewError(resp.BadRequest, "تاریخ انقضا باید در آینده باشد")
-	}
-
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
 	}
 
 	newDiscount := domain.Discount{
@@ -62,40 +61,24 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 
 	err = u.discountRepo.Create(&newDiscount)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.Internal, "خطا در ایجاد تخفیف")
 	}
 
-	createdDiscount, err := u.discountRepo.GetByID(newDiscount.ID)
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-
-	return resp.NewResponseData(resp.Created, map[string]interface{}{"discount": createdDiscount}, "تخفیف با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, newDiscount, "تخفیف با موفقیت ایجاد شد"), nil
 }
 
 func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (*resp.Response, error) {
-	u.Logger.Info("UpdateDiscountCommand called", map[string]interface{}{
-		"id": params.ID,
-	})
-
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, err
 	}
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
-	}
-	if existingDiscount.UserID != *userID && !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما به این تخفیف دسترسی ندارید")
+	err = u.CheckAccessUserModel(existingDiscount, userID)
+	if err != nil {
+		return nil, err
 	}
 
 	if params.Code != nil && *params.Code != existingDiscount.Code {
@@ -131,45 +114,28 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	updatedDiscount, err := u.discountRepo.GetByID(existingDiscount.ID)
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-
-	return resp.NewResponseData(resp.Updated, map[string]interface{}{"discount": updatedDiscount}, "تخفیف با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, existingDiscount, "تخفیف با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (*resp.Response, error) {
-	u.Logger.Info("DeleteDiscountCommand called", map[string]interface{}{
-		"id": params.ID,
-	})
-
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
-
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, err
 	}
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+	err = u.CheckAccessUserModel(existingDiscount, userID)
+	if err != nil {
+		return nil, err
 	}
-	if existingDiscount.UserID != *userID && !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما به این تخفیف دسترسی ندارید")
-	}
-
 	err = u.discountRepo.Delete(*params.ID)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	return resp.NewResponseData(resp.Deleted, map[string]interface{}{"success": true}, "تخفیف با موفقیت حذف شد"), nil
+	return resp.NewResponse(resp.Deleted, "تخفیف با موفقیت حذف شد"), nil
 }
 
 func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQuery) (*resp.Response, error) {
@@ -177,72 +143,29 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 		"id": params.ID,
 	})
 
-	discountObj, err := u.discountRepo.GetByID(*params.ID)
+	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
-		}
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+	}
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
+	if err != nil {
+		return nil, err
+	}
+	err = u.CheckAccessUserModel(existingDiscount, userID)
+	if err != nil {
+		return nil, err
 	}
 
-	userID, _, _, _ := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if userID != nil {
-		u.Logger.Info("Discount accessed by user", map[string]interface{}{
-			"discountId": discountObj.ID,
-			"userId":     *userID,
-		})
-	}
-
-	response := map[string]interface{}{
-		"id":         discountObj.ID,
-		"code":       discountObj.Code,
-		"quantity":   discountObj.Quantity,
-		"type":       discountObj.Type,
-		"value":      discountObj.Value,
-		"expiryDate": discountObj.ExpiryDate,
-		"siteId":     discountObj.SiteID,
-		"createdAt":  discountObj.CreatedAt,
-		"updatedAt":  discountObj.UpdatedAt,
-	}
-
-	return resp.NewResponseData(resp.Retrieved, response, "تخفیف با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, existingDiscount, "تخفیف با موفقیت دریافت شد"), nil
 }
 
 func (u *DiscountUsecase) GetAllDiscountQuery(params *discount.GetAllDiscountQuery) (*resp.Response, error) {
-	u.Logger.Info("GetAllDiscountQuery called", map[string]interface{}{
-		"siteId":   params.SiteID,
-		"page":     params.Page,
-		"pageSize": params.PageSize,
-	})
-
 	results, err := u.discountRepo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	items := make([]map[string]interface{}, 0, len(results.Items))
-	for _, discountObj := range results.Items {
-		item := map[string]interface{}{
-			"id":         discountObj.ID,
-			"code":       discountObj.Code,
-			"quantity":   discountObj.Quantity,
-			"type":       discountObj.Type,
-			"value":      discountObj.Value,
-			"expiryDate": discountObj.ExpiryDate,
-			"siteId":     discountObj.SiteID,
-			"createdAt":  discountObj.CreatedAt,
-			"updatedAt":  discountObj.UpdatedAt,
-		}
-		items = append(items, item)
-	}
-
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items":     items,
-		"total":     results.TotalCount,
-		"page":      results.PageNumber,
-		"pageSize":  params.PageSize,
-		"totalPage": results.TotalPages,
-	}, "لیست تخفیف ها با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, results, "لیست تخفیف ها با موفقیت دریافت شد"), nil
 }
 
 func (u *DiscountUsecase) AdminGetAllDiscountQuery(params *discount.AdminGetAllDiscountQuery) (*resp.Response, error) {

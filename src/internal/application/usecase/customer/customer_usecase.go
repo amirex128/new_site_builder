@@ -166,7 +166,7 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdateProfileCustomerCommand) (*resp.Response, error) {
 	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil || customerID == nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	existingCustomer, err := u.repo.GetByID(*customerID)
 	if err != nil {
@@ -264,7 +264,7 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCustomerQuery) (*resp.Response, error) {
 	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil || customerID == nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	existingCustomer, err := u.repo.GetByID(*customerID)
 	if err != nil {

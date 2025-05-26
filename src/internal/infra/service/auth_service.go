@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"strconv"
@@ -29,7 +30,7 @@ func NewAuthContextService(c *gin.Context, identity service.IIdentityService) *A
 func (s *AuthContextService) GetRoles() ([]string, error) {
 	rolesStr, err := s.identity.GetClaim(s.ctx, "roles")
 	if err != nil {
-		return nil, errors.New("خطا در بررسی دسترسی کاربر")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	if rolesStr == "" {
@@ -43,7 +44,7 @@ func (s *AuthContextService) GetRoles() ([]string, error) {
 func (s *AuthContextService) GetSiteIDs() ([]int64, error) {
 	siteIDsStr, err := s.identity.GetClaim(s.ctx, "site_id")
 	if err != nil {
-		return nil, errors.New("خطا در بررسی دسترسی کاربر")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	if siteIDsStr == "" {
@@ -73,7 +74,7 @@ func parseSiteIDs(siteIDsStr string) ([]int64, error) {
 func (s *AuthContextService) GetUserID() (*int64, error) {
 	userIDStr, err := s.identity.GetClaim(s.ctx, "user_id")
 	if err != nil {
-		return nil, errors.New("خطا در بررسی دسترسی کاربر")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	id, err := parseID(userIDStr, "user ID")
@@ -93,7 +94,7 @@ func parseID(idStr string, idType string) (int64, error) {
 func (s *AuthContextService) GetCustomerID() (*int64, error) {
 	customerIDStr, err := s.identity.GetClaim(s.ctx, "customer_id")
 	if err != nil {
-		return nil, errors.New("خطا در بررسی دسترسی کاربر")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	id, err := parseID(customerIDStr, "customer ID")
@@ -104,7 +105,7 @@ func (s *AuthContextService) GetCustomerID() (*int64, error) {
 func (s *AuthContextService) GetUserType() (*enums.UserTypeEnum, error) {
 	userType, err := s.identity.GetClaim(s.ctx, "type")
 	if err != nil {
-		return nil, errors.New("خطا در بررسی دسترسی کاربر")
+		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	s2, err := validateUserType(userType)
@@ -117,7 +118,7 @@ func (s *AuthContextService) GetUserType() (*enums.UserTypeEnum, error) {
 	if s2 == "customer" {
 		return (*enums.UserTypeEnum)(&s2), nil
 	}
-	return nil, errors.New("خطا در بررسی دسترسی کاربر")
+	return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 }
 
 // Helper function to validate user type
@@ -137,7 +138,7 @@ func validateUserType(userType string) (string, error) {
 func (s *AuthContextService) GetEmail() (string, error) {
 	email, err := s.identity.GetClaim(s.ctx, "email")
 	if err != nil {
-		return "", errors.New("خطا در بررسی دسترسی کاربر")
+		return "", resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	return email, nil
@@ -147,15 +148,15 @@ func (s *AuthContextService) GetEmail() (string, error) {
 func (s *AuthContextService) IsAdmin() (bool, error) {
 	isAdminStr, err := s.identity.GetClaim(s.ctx, "is_admin")
 	if err != nil {
-		return false, errors.New("خطا در بررسی دسترسی کاربر")
+		return false, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 	if isAdminStr == "true" {
 		return true, nil
 	}
 	if isAdminStr == "false" {
-		return false, errors.New("خطا در بررسی دسترسی کاربر")
+		return false, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
-	return false, errors.New("خطا در بررسی دسترسی کاربر")
+	return false, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 }
 
 func (s *AuthContextService) GetUserOrCustomerID() (*int64, *int64, *enums.UserTypeEnum, error) {
@@ -164,23 +165,23 @@ func (s *AuthContextService) GetUserOrCustomerID() (*int64, *int64, *enums.UserT
 
 	userType, err := s.GetUserType()
 	if err != nil {
-		return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
+		return nil, nil, nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 	}
 
 	if *userType == enums.CustomerTypeValue {
 		customerID, err = s.GetCustomerID()
 		if err != nil {
-			return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
+			return nil, nil, nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 		}
 		return userID, customerID, userType, nil
 	}
 	if *userType == enums.UserTypeValue {
 		userID, err = s.GetUserID()
 		if err != nil {
-			return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
+			return nil, nil, nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 		}
 		return userID, customerID, userType, nil
 	}
 
-	return nil, nil, nil, errors.New("خطا در احراز هویت کاربر")
+	return nil, nil, nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")
 }

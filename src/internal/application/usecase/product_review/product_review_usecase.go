@@ -46,7 +46,7 @@ func (u *ProductReviewUsecase) CreateProductReviewCommand(params *product_review
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	customerID, _ := u.AuthContext(u.Ctx).GetCustomerID()
 	if customerID == nil || (customerID != nil && *customerID == 0) {
@@ -87,11 +87,11 @@ func (u *ProductReviewUsecase) UpdateProductReviewCommand(params *product_review
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if userID != nil && existingReview.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این نظر دسترسی ندارید")
@@ -137,11 +137,11 @@ func (u *ProductReviewUsecase) DeleteProductReviewCommand(params *product_review
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if userID != nil && existingReview.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این نظر دسترسی ندارید")

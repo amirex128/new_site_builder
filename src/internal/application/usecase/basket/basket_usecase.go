@@ -48,7 +48,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 	}
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	hasBasket := false
 	existingBasket, err := u.basketRepo.GetBasketByCustomerIDAndSiteID(*customerID, *params.SiteID)
@@ -205,7 +205,7 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	basket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, *params.SiteID)
 	if err != nil {
@@ -217,7 +217,7 @@ func (u *BasketUsecase) GetBasketQuery(params *basket.GetBasketQuery) (*resp.Res
 func (u *BasketUsecase) GetAllBasketUserQuery(params *basket.GetAllBasketUserQuery) (*resp.Response, error) {
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	basketsResult, err := u.basketRepo.GetAllByCustomerID(*customerID, params.PaginationRequestDto)
 	if err != nil {

@@ -51,7 +51,7 @@ func NewUserUsecase(c contract.IContainer) *UserUsecase {
 func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCommand) (*resp.Response, error) {
 	userId, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userId == nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	existingUser, err := u.userRepo.GetByID(*userId)
 	if err != nil {
@@ -112,7 +112,7 @@ func (u *UserUsecase) UpdateProfileUserCommand(params *user.UpdateProfileUserCom
 func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*resp.Response, error) {
 	userId, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userId == nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	existingUser, err := u.userRepo.GetByID(*userId)
 	if err != nil {
@@ -320,7 +320,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 	// Get the  user ID
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	// Calculate total amount
@@ -370,7 +370,7 @@ func (u *UserUsecase) ChargeCreditRequestUserCommand(params *user.ChargeCreditRe
 func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequestUserCommand) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	plan, err := u.planRepo.GetByID(*params.PlanID)

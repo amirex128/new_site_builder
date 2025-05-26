@@ -52,7 +52,7 @@ func (u *ProductUsecase) CreateProductCommand(params *product.CreateProductComma
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	var seoTagsStr string
 	if params.SeoTags != nil && len(params.SeoTags) > 0 {
@@ -148,11 +148,11 @@ func (u *ProductUsecase) UpdateProductCommand(params *product.UpdateProductComma
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if userID != nil && existingProduct.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این محصول دسترسی ندارید")
@@ -215,11 +215,11 @@ func (u *ProductUsecase) DeleteProductCommand(params *product.DeleteProductComma
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if userID != nil && existingProduct.UserID != *userID && !isAdmin {
 		return nil, resp.NewError(resp.Unauthorized, "شما به این محصول دسترسی ندارید")
@@ -433,7 +433,7 @@ func (u *ProductUsecase) CalculateProductsPriceQuery(params *product.CalculatePr
 	// Get the customer ID from context (or token)
 	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	var discount *domain.Discount

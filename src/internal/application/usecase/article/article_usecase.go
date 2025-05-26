@@ -34,7 +34,7 @@ func NewArticleUsecase(c contract.IContainer) *ArticleUsecase {
 func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleCommand) (*resp.Response, error) {
 	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	var seoTags string
@@ -82,7 +82,7 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (*resp.Response, error) {
 	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
@@ -91,7 +91,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 	}
 	err = u.CheckAccessUserModel(existingArticle, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if params.Title != nil {
 		existingArticle.Title = *params.Title
@@ -137,7 +137,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (*resp.Response, error) {
 	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
@@ -145,7 +145,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 	}
 	err = u.CheckAccessUserModel(existingArticle, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	err = u.articleRepo.Delete(*params.ID)
 	if err != nil {

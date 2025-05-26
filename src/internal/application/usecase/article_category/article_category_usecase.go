@@ -32,7 +32,7 @@ func NewArticleCategoryUsecase(c contract.IContainer) *ArticleCategoryUsecase {
 func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.CreateCategoryCommand) (*resp.Response, error) {
 	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 
 	var seoTags string
@@ -74,7 +74,7 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
 	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if params.ID == nil {
 		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
@@ -85,7 +85,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	}
 	err = u.CheckAccessUserModel(existingCategory, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if params.Name != nil {
 		existingCategory.Name = *params.Name
@@ -125,7 +125,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
 	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	if params.ID == nil {
 		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
@@ -136,7 +136,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 	}
 	err = u.CheckAccessUserModel(existingCategory, userID)
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, err.Error())
+		return nil, err
 	}
 	err = u.categoryRepo.Delete(*params.ID)
 	if err != nil {
