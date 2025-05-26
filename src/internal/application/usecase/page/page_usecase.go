@@ -72,7 +72,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.R
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	bodyJSON, err := json.Marshal(params.Body)
 	if err != nil {
@@ -123,7 +123,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.R
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -229,7 +229,7 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.R
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {

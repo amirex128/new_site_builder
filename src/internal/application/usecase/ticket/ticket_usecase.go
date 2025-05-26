@@ -39,7 +39,7 @@ func NewTicketUsecase(c contract.IContainer) *TicketUsecase {
 func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) (*resp.Response, error) {
 	userId, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 
 	// Create the ticket
@@ -96,7 +96,7 @@ func (u *TicketUsecase) CreateTicketCommand(params *ticket.CreateTicketCommand) 
 func (u *TicketUsecase) ReplayTicketCommand(params *ticket.ReplayTicketCommand) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	existingTicket, err := u.repo.GetByID(*params.ID)
 	if err != nil {
@@ -157,7 +157,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	existingTicket, err := u.repo.GetByID(*params.ID)
 	if err != nil {
@@ -210,7 +210,7 @@ func (u *TicketUsecase) AdminReplayTicketCommand(params *ticket.AdminReplayTicke
 func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	result, err := u.repo.GetByIDWithRelations(*params.ID)
 	if err != nil {
@@ -231,7 +231,7 @@ func (u *TicketUsecase) GetByIdTicketQuery(params *ticket.GetByIdTicketQuery) (*
 func (u *TicketUsecase) GetAllTicketQuery(params *ticket.GetAllTicketQuery) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	ticketsResult, err := u.repo.GetAllByUserID(*userID, params.PaginationRequestDto)
 	if err != nil {

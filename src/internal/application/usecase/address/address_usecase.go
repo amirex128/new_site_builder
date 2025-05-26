@@ -82,15 +82,11 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address.UpdateAddressComma
 		return nil, resp.NewError(resp.NotFound, "آدرس یافت نشد")
 	}
 
-	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	err = u.CheckAccessUserModel(existingAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = u.CheckAccessUserModel(existingAddress, userID)
-	if err != nil {
-		return nil, err
-	}
-	err = u.CheckAccessCustomerModel(existingAddress, customerID)
+	err = u.CheckAccessCustomerModel(existingAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -149,15 +145,11 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address.DeleteAddressComma
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت آدرس")
 	}
 
-	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	err = u.CheckAccessUserModel(existingAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = u.CheckAccessUserModel(existingAddress, userID)
-	if err != nil {
-		return nil, err
-	}
-	err = u.CheckAccessCustomerModel(existingAddress, customerID)
+	err = u.CheckAccessCustomerModel(existingAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -178,15 +170,12 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 		}
 		return nil, err
 	}
-	userID, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+
+	err = u.CheckAccessUserModel(existingAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = u.CheckAccessUserModel(existingAddress, userID)
-	if err != nil {
-		return nil, err
-	}
-	err = u.CheckAccessCustomerModel(existingAddress, customerID)
+	err = u.CheckAccessCustomerModel(existingAddress)
 	if err != nil {
 		return nil, err
 	}

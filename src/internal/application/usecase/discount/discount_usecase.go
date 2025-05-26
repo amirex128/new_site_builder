@@ -29,14 +29,14 @@ func NewDiscountUsecase(c contract.IContainer) *DiscountUsecase {
 func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountCommand) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	existingDiscount, err := u.discountRepo.GetByCode(*params.Code)
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
 
-	err = u.CheckAccessUserModel(existingDiscount, userID)
+	err = u.CheckAccessUserModel(existingDiscount)
 	if err != nil {
 		return nil, err
 	}
@@ -72,11 +72,7 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
-	userID, err := u.AuthContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
-	}
-	err = u.CheckAccessUserModel(existingDiscount, userID)
+	err = u.CheckAccessUserModel(existingDiscount)
 	if err != nil {
 		return nil, err
 	}
@@ -122,11 +118,7 @@ func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountC
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
-	userID, err := u.AuthContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
-	}
-	err = u.CheckAccessUserModel(existingDiscount, userID)
+	err = u.CheckAccessUserModel(existingDiscount)
 	if err != nil {
 		return nil, err
 	}
@@ -147,11 +139,8 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
 	}
-	userID, err := u.AuthContext(u.Ctx).GetUserID()
-	if err != nil {
-		return nil, err
-	}
-	err = u.CheckAccessUserModel(existingDiscount, userID)
+
+	err = u.CheckAccessUserModel(existingDiscount)
 	if err != nil {
 		return nil, err
 	}

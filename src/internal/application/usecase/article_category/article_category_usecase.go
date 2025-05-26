@@ -72,10 +72,6 @@ func (u *ArticleCategoryUsecase) CreateCategoryCommand(params *article_category.
 }
 
 func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.UpdateCategoryCommand) (*resp.Response, error) {
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil {
-		return nil, err
-	}
 	if params.ID == nil {
 		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
 	}
@@ -83,7 +79,7 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-	err = u.CheckAccessUserModel(existingCategory, userID)
+	err = u.CheckAccessUserModel(existingCategory)
 	if err != nil {
 		return nil, err
 	}
@@ -123,10 +119,6 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 }
 
 func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.DeleteCategoryCommand) (*resp.Response, error) {
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil {
-		return nil, err
-	}
 	if params.ID == nil {
 		return nil, resp.NewError(resp.BadRequest, "شناسه دسته‌بندی اجباری است")
 	}
@@ -134,7 +126,7 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
 	}
-	err = u.CheckAccessUserModel(existingCategory, userID)
+	err = u.CheckAccessUserModel(existingCategory)
 	if err != nil {
 		return nil, err
 	}

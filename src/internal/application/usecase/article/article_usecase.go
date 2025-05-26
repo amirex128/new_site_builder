@@ -89,7 +89,7 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
-	err = u.CheckAccessUserModel(existingArticle, userID)
+	err = u.CheckAccessUserModel(existingArticle)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 	if err != nil {
 		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
 	}
-	err = u.CheckAccessUserModel(existingArticle, userID)
+	err = u.CheckAccessUserModel(existingArticle)
 	if err != nil {
 		return nil, err
 	}

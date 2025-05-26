@@ -59,7 +59,7 @@ func (u *PageUsageUsecase) SyncPageUsageCommand(params *page_usage.SyncPageUsage
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil || userID == nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {

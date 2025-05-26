@@ -44,7 +44,7 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	var domainType enums.DomainTypeEnum
 	var siteType enums.SiteTypeEnum
@@ -102,7 +102,7 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.R
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -154,7 +154,7 @@ func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (*resp.R
 	}
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
 	if err != nil {
@@ -195,7 +195,7 @@ func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*
 func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Response, error) {
 	userID, err := u.AuthContext(u.Ctx).GetUserID()
 	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در احراز هویت کاربر")
+		return nil, err
 	}
 	result, err := u.repo.GetAllByUserID(*userID, params.PaginationRequestDto)
 	if err != nil {

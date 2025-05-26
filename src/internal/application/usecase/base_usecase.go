@@ -19,13 +19,22 @@ func (u *BaseUsecase) SetContext(c *gin.Context) *BaseUsecase {
 	return u
 }
 
-func (u *BaseUsecase) CheckAccessUserModel(existingModel common.AccessControllable, userID *int64) error {
+func (u *BaseUsecase) CheckAccessUserModel(existingModel common.AccessControllable) error {
+	userID, err := u.AuthContext(u.Ctx).GetUserID()
+	if err != nil {
+		return err
+	}
+
 	if existingModel.GetUserID() != nil && *existingModel.GetUserID() > 0 && existingModel.GetUserID() != nil && *existingModel.GetUserID() != *userID {
 		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
 	}
 	return nil
 }
-func (u *BaseUsecase) CheckAccessCustomerModel(existingModel common.AccessControllable, customerID *int64) error {
+func (u *BaseUsecase) CheckAccessCustomerModel(existingModel common.AccessControllable) error {
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
+	if err != nil {
+		return err
+	}
 	if existingModel.GetCustomerID() != nil && *existingModel.GetCustomerID() > 0 && existingModel.GetCustomerID() != nil && *existingModel.GetCustomerID() != *customerID {
 		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
 	}
