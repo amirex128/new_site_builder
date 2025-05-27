@@ -36,7 +36,7 @@ func NewValidationHelper() *ValidationHelper {
 // Returns true if validation passes, false otherwise
 func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindJSON(params); err != nil {
-		ValidationErrorString(c, err.Error(), map[string]any{})
+		validationErrorString(c, err.Error(), map[string]any{})
 		return false
 	}
 
@@ -52,7 +52,7 @@ func (h *ValidationHelper) ValidateCommand(c *gin.Context, params interface{}) b
 // Returns true if validation passes, false otherwise
 func (h *ValidationHelper) ValidateQuery(c *gin.Context, params interface{}) bool {
 	if err := c.ShouldBindQuery(params); err != nil {
-		ValidationErrorString(c, err.Error(), map[string]any{})
+		validationErrorString(c, err.Error(), map[string]any{})
 		return false
 	}
 	errs := ValidateStruct(params)

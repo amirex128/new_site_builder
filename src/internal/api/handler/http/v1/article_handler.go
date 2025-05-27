@@ -26,9 +26,9 @@ func NewArticleHandler(usc *articleusecase.ArticleUsecase) *ArticleHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.CreateArticleCommand  true  "Article information"
-// @Success      201      {object}  utils.Result                   "Created article"
+// @success      201      {object}  utils.Result                   "Created article"
 // @Failure      400      {object}  utils.Result                   "Validation error"
-// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
 // @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /article [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.UpdateArticleCommand  true  "Updated article information"
-// @Success      200      {object}  utils.Result                   "Updated article"
+// @success      200      {object}  utils.Result                   "Updated article"
 // @Failure      400      {object}  utils.Result                   "Validation error"
-// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
 // @Failure      404      {object}  utils.Result                   "Article not found"
 // @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /article [put]
@@ -75,9 +75,9 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.DeleteArticleCommand  true  "Article ID to delete"
-// @Success      200      {object}  utils.Result                   "Deleted article confirmation"
+// @success      200      {object}  utils.Result                   "Deleted article confirmation"
 // @Failure      400      {object}  utils.Result                   "Validation error"
-// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
 // @Failure      404      {object}  utils.Result                   "Article not found"
 // @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /article [delete]
@@ -100,9 +100,9 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     article.GetByIdArticleQuery  true  "Article ID to retrieve"
-// @Success      200      {object}  utils.Result                  "Article details"
+// @success      200      {object}  utils.Result                  "Article details"
 // @Failure      400      {object}  utils.Result                  "Validation error"
-// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      401      {object}  utils.Result                  "unauthorized"
 // @Failure      404      {object}  utils.Result                  "Article not found"
 // @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /article [get]
@@ -125,9 +125,9 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     article.GetAllArticleQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                 "List of articles"
+// @success      200      {object}  utils.Result                 "List of articles"
 // @Failure      400      {object}  utils.Result                 "Validation error"
-// @Failure      401      {object}  utils.Result                 "Unauthorized"
+// @Failure      401      {object}  utils.Result                 "unauthorized"
 // @Failure      500      {object}  utils.Result                 "Internal server error"
 // @Router       /article/all [get]
 // @Security BearerAuth
@@ -149,9 +149,9 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      article.GetByFiltersSortArticleQuery  true  "Filter and sort parameters"
-// @Success      200      {object}  utils.Result                           "Filtered and sorted articles"
+// @success      200      {object}  utils.Result                           "Filtered and sorted articles"
 // @Failure      400      {object}  utils.Result                           "Validation error"
-// @Failure      401      {object}  utils.Result                           "Unauthorized"
+// @Failure      401      {object}  utils.Result                           "unauthorized"
 // @Failure      500      {object}  utils.Result                           "Internal server error"
 // @Router       /article/filters-sort [post]
 // @Security BearerAuth
@@ -173,9 +173,9 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     article.AdminGetAllArticleQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                      "List of all articles"
+// @success      200      {object}  utils.Result                      "List of all articles"
 // @Failure      400      {object}  utils.Result                      "Validation error"
-// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
 // @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /article/admin/all [get]

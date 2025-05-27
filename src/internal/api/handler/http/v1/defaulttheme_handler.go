@@ -26,9 +26,9 @@ func NewDefaultThemeHandler(usc *defaultthemeusecase.DefaultThemeUsecase) *Defau
 // @Accept       json
 // @Produce      json
 // @Param        request  body      defaulttheme.CreateDefaultThemeCommand  true  "Theme information"
-// @Success      201      {object}  utils.Result                             "Created theme"
+// @success      201      {object}  utils.Result                             "Created theme"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /default-theme [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      defaulttheme.UpdateDefaultThemeCommand  true  "Updated theme information"
-// @Success      200      {object}  utils.Result                             "Updated theme"
+// @success      200      {object}  utils.Result                             "Updated theme"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      404      {object}  utils.Result                             "Theme not found"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /default-theme [put]
@@ -75,9 +75,9 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      defaulttheme.DeleteDefaultThemeCommand  true  "Theme ID to delete"
-// @Success      200      {object}  utils.Result                             "Deleted theme confirmation"
+// @success      200      {object}  utils.Result                             "Deleted theme confirmation"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      404      {object}  utils.Result                             "Theme not found"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /default-theme [delete]
@@ -100,9 +100,9 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     defaulttheme.GetByIdDefaultThemeQuery  true  "Theme ID to retrieve"
-// @Success      200      {object}  utils.Result                            "Theme details"
+// @success      200      {object}  utils.Result                            "Theme details"
 // @Failure      400      {object}  utils.Result                            "Validation error"
-// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      401      {object}  utils.Result                            "unauthorized"
 // @Failure      404      {object}  utils.Result                            "Theme not found"
 // @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /default-theme [get]
@@ -125,9 +125,9 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     defaulttheme.GetAllDefaultThemeQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                           "List of themes"
+// @success      200      {object}  utils.Result                           "List of themes"
 // @Failure      400      {object}  utils.Result                           "Validation error"
-// @Failure      401      {object}  utils.Result                           "Unauthorized"
+// @Failure      401      {object}  utils.Result                           "unauthorized"
 // @Failure      500      {object}  utils.Result                           "Internal server error"
 // @Router       /default-theme/all [get]
 // @Security BearerAuth

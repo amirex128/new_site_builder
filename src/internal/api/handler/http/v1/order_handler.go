@@ -26,9 +26,9 @@ func NewOrderHandler(usc *orderusecase.OrderUsecase) *OrderHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      order.CreateOrderRequestCommand  true  "Order request information"
-// @Success      201      {object}  utils.Result                      "Created order request"
+// @success      201      {object}  utils.Result                      "Created order request"
 // @Failure      400      {object}  utils.Result                      "Validation error"
-// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
 // @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /order [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      order.CreateOrderVerifyCommand  true  "Order verification information"
-// @Success      200      {object}  utils.Result                     "Verified order"
+// @success      200      {object}  utils.Result                     "Verified order"
 // @Failure      400      {object}  utils.Result                     "Validation error"
-// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      401      {object}  utils.Result                     "unauthorized"
 // @Failure      404      {object}  utils.Result                     "Order not found"
 // @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /order/verify [post]
@@ -75,9 +75,9 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     order.GetAllOrderCustomerQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                     "List of customer orders"
+// @success      200      {object}  utils.Result                     "List of customer orders"
 // @Failure      400      {object}  utils.Result                     "Validation error"
-// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      401      {object}  utils.Result                     "unauthorized"
 // @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /order/customer/all [get]
 // @Security BearerAuth
@@ -99,9 +99,9 @@ func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     order.GetOrderCustomerDetailsQuery  true  "Order ID to retrieve"
-// @Success      200      {object}  utils.Result                         "Order details"
+// @success      200      {object}  utils.Result                         "Order details"
 // @Failure      400      {object}  utils.Result                         "Validation error"
-// @Failure      401      {object}  utils.Result                         "Unauthorized"
+// @Failure      401      {object}  utils.Result                         "unauthorized"
 // @Failure      404      {object}  utils.Result                         "Order not found"
 // @Failure      500      {object}  utils.Result                         "Internal server error"
 // @Router       /order/customer/details [get]
@@ -124,9 +124,9 @@ func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     order.GetAllOrderUserQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                 "List of user orders"
+// @success      200      {object}  utils.Result                 "List of user orders"
 // @Failure      400      {object}  utils.Result                 "Validation error"
-// @Failure      401      {object}  utils.Result                 "Unauthorized"
+// @Failure      401      {object}  utils.Result                 "unauthorized"
 // @Failure      500      {object}  utils.Result                 "Internal server error"
 // @Router       /order/user/all [get]
 // @Security BearerAuth
@@ -148,9 +148,9 @@ func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     order.GetOrderUserDetailsQuery  true  "Order ID to retrieve"
-// @Success      200      {object}  utils.Result                     "Order details"
+// @success      200      {object}  utils.Result                     "Order details"
 // @Failure      400      {object}  utils.Result                     "Validation error"
-// @Failure      401      {object}  utils.Result                     "Unauthorized"
+// @Failure      401      {object}  utils.Result                     "unauthorized"
 // @Failure      404      {object}  utils.Result                     "Order not found"
 // @Failure      500      {object}  utils.Result                     "Internal server error"
 // @Router       /order/user/details [get]
@@ -173,9 +173,9 @@ func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     order.AdminGetAllOrderUserQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                      "List of all orders"
+// @success      200      {object}  utils.Result                      "List of all orders"
 // @Failure      400      {object}  utils.Result                      "Validation error"
-// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
 // @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /order/admin/all [get]

@@ -26,9 +26,9 @@ func NewPaymentHandler(usc *paymentusecase.PaymentUsecase) *PaymentHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      payment.VerifyPaymentCommand  true  "Payment verification information"
-// @Success      200      {object}  utils.Result                   "Verified payment"
+// @success      200      {object}  utils.Result                   "Verified payment"
 // @Failure      400      {object}  utils.Result                   "Validation error"
-// @Failure      401      {object}  utils.Result                   "Unauthorized"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
 // @Failure      404      {object}  utils.Result                   "Payment not found"
 // @Failure      500      {object}  utils.Result                   "Internal server error"
 // @Router       /payment/verify [post]
@@ -51,9 +51,9 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      payment.RequestGatewayCommand  true  "Payment request information"
-// @Success      200      {object}  utils.Result                    "Payment gateway request result"
+// @success      200      {object}  utils.Result                    "Payment gateway request result"
 // @Failure      400      {object}  utils.Result                    "Validation error"
-// @Failure      401      {object}  utils.Result                    "Unauthorized"
+// @Failure      401      {object}  utils.Result                    "unauthorized"
 // @Failure      500      {object}  utils.Result                    "Internal server error"
 // @Router       /payment/request [post]
 // @Security BearerAuth
@@ -75,9 +75,9 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      payment.CreateOrUpdateGatewayCommand  true  "Gateway information"
-// @Success      200      {object}  utils.Result                           "Created or updated gateway"
+// @success      200      {object}  utils.Result                           "Created or updated gateway"
 // @Failure      400      {object}  utils.Result                           "Validation error"
-// @Failure      401      {object}  utils.Result                           "Unauthorized"
+// @Failure      401      {object}  utils.Result                           "unauthorized"
 // @Failure      500      {object}  utils.Result                           "Internal server error"
 // @Router       /gateway [post]
 // @Security BearerAuth
@@ -99,9 +99,9 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     payment.GetByIdGatewayQuery  true  "Gateway ID to retrieve"
-// @Success      200      {object}  utils.Result                  "Gateway details"
+// @success      200      {object}  utils.Result                  "Gateway details"
 // @Failure      400      {object}  utils.Result                  "Validation error"
-// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      401      {object}  utils.Result                  "unauthorized"
 // @Failure      404      {object}  utils.Result                  "Gateway not found"
 // @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /gateway [get]
@@ -124,9 +124,9 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     payment.AdminGetAllGatewayQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                      "List of all gateways"
+// @success      200      {object}  utils.Result                      "List of all gateways"
 // @Failure      400      {object}  utils.Result                      "Validation error"
-// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
 // @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /gateway/admin/all [get]
@@ -149,9 +149,9 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     payment.AdminGetAllPaymentQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                      "List of all payments"
+// @success      200      {object}  utils.Result                      "List of all payments"
 // @Failure      400      {object}  utils.Result                      "Validation error"
-// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
 // @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /payment/admin/all [get]

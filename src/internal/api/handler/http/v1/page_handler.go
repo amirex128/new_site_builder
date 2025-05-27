@@ -26,9 +26,9 @@ func NewPageHandler(usc *pageusecase.PageUsecase) *PageHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      page.CreatePageCommand  true  "Page information"
-// @Success      201      {object}  utils.Result            "Created page"
+// @success      201      {object}  utils.Result            "Created page"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /page [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      page.UpdatePageCommand  true  "Updated page information"
-// @Success      200      {object}  utils.Result            "Updated page"
+// @success      200      {object}  utils.Result            "Updated page"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      404      {object}  utils.Result            "Page not found"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /page [put]
@@ -75,9 +75,9 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      page.DeletePageCommand  true  "Page ID to delete"
-// @Success      200      {object}  utils.Result            "Deleted page confirmation"
+// @success      200      {object}  utils.Result            "Deleted page confirmation"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      404      {object}  utils.Result            "Page not found"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /page [delete]
@@ -100,9 +100,9 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     page.GetByIdPageQuery  true  "Page ID to retrieve"
-// @Success      200      {object}  utils.Result           "Page details"
+// @success      200      {object}  utils.Result           "Page details"
 // @Failure      400      {object}  utils.Result           "Validation error"
-// @Failure      401      {object}  utils.Result           "Unauthorized"
+// @Failure      401      {object}  utils.Result           "unauthorized"
 // @Failure      404      {object}  utils.Result           "Page not found"
 // @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /page [get]
@@ -125,9 +125,9 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     page.GetAllPageQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result          "List of pages"
+// @success      200      {object}  utils.Result          "List of pages"
 // @Failure      400      {object}  utils.Result          "Validation error"
-// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      401      {object}  utils.Result          "unauthorized"
 // @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /page/all [get]
 // @Security BearerAuth
@@ -149,9 +149,9 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     page.AdminGetAllPageQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result               "List of all pages"
+// @success      200      {object}  utils.Result               "List of all pages"
 // @Failure      400      {object}  utils.Result               "Validation error"
-// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      401      {object}  utils.Result               "unauthorized"
 // @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /page/admin/all [get]

@@ -16,6 +16,8 @@ func HttpServerBootstrap(ctx *context.Context) *Container {
 
 	serviceprovider.MongoProvider(cfg, logger)
 
+	serviceprovider.ElasticProvider(cfg, logger)
+
 	serviceprovider.RedisProvider(cfg, logger)
 
 	serviceprovider.MysqlProvider(cfg, logger)

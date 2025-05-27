@@ -26,9 +26,9 @@ func NewPlanHandler(usc *planusecase.PlanUsecase) *PlanHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      plan.CreatePlanCommand  true  "Plan information"
-// @Success      201      {object}  utils.Result            "Created plan"
+// @success      201      {object}  utils.Result            "Created plan"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /plan [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *PlanHandler) CreatePlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      plan.UpdatePlanCommand  true  "Updated plan information"
-// @Success      200      {object}  utils.Result            "Updated plan"
+// @success      200      {object}  utils.Result            "Updated plan"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      404      {object}  utils.Result            "Plan not found"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /plan [put]
@@ -75,9 +75,9 @@ func (h *PlanHandler) UpdatePlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      plan.DeletePlanCommand  true  "Plan ID to delete"
-// @Success      200      {object}  utils.Result            "Deleted plan confirmation"
+// @success      200      {object}  utils.Result            "Deleted plan confirmation"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      404      {object}  utils.Result            "Plan not found"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /plan [delete]
@@ -100,9 +100,9 @@ func (h *PlanHandler) DeletePlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     plan.GetByIDPlanQuery  true  "Plan ID to retrieve"
-// @Success      200      {object}  utils.Result           "Plan details"
+// @success      200      {object}  utils.Result           "Plan details"
 // @Failure      400      {object}  utils.Result           "Validation error"
-// @Failure      401      {object}  utils.Result           "Unauthorized"
+// @Failure      401      {object}  utils.Result           "unauthorized"
 // @Failure      404      {object}  utils.Result           "Plan not found"
 // @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /plan [get]
@@ -125,9 +125,9 @@ func (h *PlanHandler) GetByIdPlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     plan.GetAllPlanQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result          "List of plans"
+// @success      200      {object}  utils.Result          "List of plans"
 // @Failure      400      {object}  utils.Result          "Validation error"
-// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      401      {object}  utils.Result          "unauthorized"
 // @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /plan/all [get]
 // @Security BearerAuth
@@ -149,9 +149,9 @@ func (h *PlanHandler) GetAllPlan(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     plan.CalculatePlanPriceQuery  true  "Plan calculation parameters"
-// @Success      200      {object}  utils.Result                  "Calculated plan price"
+// @success      200      {object}  utils.Result                  "Calculated plan price"
 // @Failure      400      {object}  utils.Result                  "Validation error"
-// @Failure      401      {object}  utils.Result                  "Unauthorized"
+// @Failure      401      {object}  utils.Result                  "unauthorized"
 // @Failure      500      {object}  utils.Result                  "Internal server error"
 // @Router       /plan/calculate [get]
 // @Security BearerAuth

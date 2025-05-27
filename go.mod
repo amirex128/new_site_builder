@@ -4,6 +4,7 @@ go 1.24.2
 
 require (
 	git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.7
+	git.snappfood.ir/backend/go/packages/sf-elasticsearch-client v0.0.10
 	git.snappfood.ir/backend/go/packages/sf-logger v0.0.27
 	git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3
 	git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3
@@ -11,6 +12,7 @@ require (
 	git.snappfood.ir/backend/go/packages/sf-rabbitmq v0.0.5
 	git.snappfood.ir/backend/go/packages/sf-redis v0.0.7
 	git.snappfood.ir/backend/go/packages/sf-routing v0.0.11
+	github.com/elastic/go-elasticsearch/v8 v8.18.0
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-zookeeper/zk v1.0.4
 	github.com/golang-jwt/jwt/v5 v5.2.2
@@ -42,7 +44,6 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.7.0 // indirect
-	github.com/elastic/go-elasticsearch/v8 v8.18.0 // indirect
 	github.com/elastic/go-sysinfo v1.15.3 // indirect
 	github.com/elastic/go-windows v1.0.2 // indirect
 	github.com/fatih/color v1.18.0 // indirect
@@ -132,9 +133,9 @@ require (
 	go.etcd.io/etcd/api/v3 v3.6.0 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/otel v1.34.0 // indirect
-	go.opentelemetry.io/otel/metric v1.34.0 // indirect
-	go.opentelemetry.io/otel/trace v1.34.0 // indirect
+	go.opentelemetry.io/otel v1.35.0 // indirect
+	go.opentelemetry.io/otel/metric v1.35.0 // indirect
+	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.17.0 // indirect

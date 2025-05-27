@@ -26,9 +26,9 @@ func NewSiteHandler(usc *siteusecase.SiteUsecase) *SiteHandler {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      site.CreateSiteCommand  true  "Site information"
-// @Success      201      {object}  utils.Result            "Created site"
+// @success      201      {object}  utils.Result            "Created site"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /site [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *SiteHandler) CreateSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      site.UpdateSiteCommand  true  "Updated site information"
-// @Success      200      {object}  utils.Result            "Updated site"
+// @success      200      {object}  utils.Result            "Updated site"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      404      {object}  utils.Result            "Site not found"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /site [put]
@@ -75,9 +75,9 @@ func (h *SiteHandler) UpdateSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      site.DeleteSiteCommand  true  "Site ID to delete"
-// @Success      200      {object}  utils.Result            "Deleted site confirmation"
+// @success      200      {object}  utils.Result            "Deleted site confirmation"
 // @Failure      400      {object}  utils.Result            "Validation error"
-// @Failure      401      {object}  utils.Result            "Unauthorized"
+// @Failure      401      {object}  utils.Result            "unauthorized"
 // @Failure      404      {object}  utils.Result            "Site not found"
 // @Failure      500      {object}  utils.Result            "Internal server error"
 // @Router       /site [delete]
@@ -100,9 +100,9 @@ func (h *SiteHandler) DeleteSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     site.GetByIdSiteQuery  true  "Site ID to retrieve"
-// @Success      200      {object}  utils.Result           "Site details"
+// @success      200      {object}  utils.Result           "Site details"
 // @Failure      400      {object}  utils.Result           "Validation error"
-// @Failure      401      {object}  utils.Result           "Unauthorized"
+// @Failure      401      {object}  utils.Result           "unauthorized"
 // @Failure      404      {object}  utils.Result           "Site not found"
 // @Failure      500      {object}  utils.Result           "Internal server error"
 // @Router       /site [get]
@@ -125,9 +125,9 @@ func (h *SiteHandler) GetByIdSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     site.GetAllSiteQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result          "List of sites"
+// @success      200      {object}  utils.Result          "List of sites"
 // @Failure      400      {object}  utils.Result          "Validation error"
-// @Failure      401      {object}  utils.Result          "Unauthorized"
+// @Failure      401      {object}  utils.Result          "unauthorized"
 // @Failure      500      {object}  utils.Result          "Internal server error"
 // @Router       /site/all [get]
 // @Security BearerAuth
@@ -149,9 +149,9 @@ func (h *SiteHandler) GetAllSite(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     site.AdminGetAllSiteQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result               "List of all sites"
+// @success      200      {object}  utils.Result               "List of all sites"
 // @Failure      400      {object}  utils.Result               "Validation error"
-// @Failure      401      {object}  utils.Result               "Unauthorized"
+// @Failure      401      {object}  utils.Result               "unauthorized"
 // @Failure      403      {object}  utils.Result               "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result               "Internal server error"
 // @Router       /site/admin/all [get]

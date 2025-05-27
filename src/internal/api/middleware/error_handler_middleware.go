@@ -28,7 +28,7 @@ func ErrorHandlerMiddleware(logger sflogger.Logger) gin.HandlerFunc {
 
 				// Return error response
 				if !c.Writer.Written() {
-					utils.InternalError(c, fmt.Sprintf("%v", err), map[string]any{})
+					utils.internalError(c, fmt.Sprintf("%v", err), map[string]any{})
 				}
 			}
 		}()

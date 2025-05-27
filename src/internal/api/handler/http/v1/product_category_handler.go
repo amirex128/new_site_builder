@@ -26,9 +26,9 @@ func NewProductCategoryHandler(usc *productcategoryusecase.ProductCategoryUsecas
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_category.CreateCategoryCommand  true  "Category information"
-// @Success      201      {object}  utils.Result                             "Created category"
+// @success      201      {object}  utils.Result                             "Created category"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /product-category [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_category.UpdateCategoryCommand  true  "Updated category information"
-// @Success      200      {object}  utils.Result                             "Updated category"
+// @success      200      {object}  utils.Result                             "Updated category"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      404      {object}  utils.Result                             "Category not found"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /product-category [put]
@@ -75,9 +75,9 @@ func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      product_category.DeleteCategoryCommand  true  "Category ID to delete"
-// @Success      200      {object}  utils.Result                             "Deleted category confirmation"
+// @success      200      {object}  utils.Result                             "Deleted category confirmation"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      404      {object}  utils.Result                             "Category not found"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /product-category [delete]
@@ -100,9 +100,9 @@ func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     product_category.GetByIdCategoryQuery  true  "Category ID to retrieve"
-// @Success      200      {object}  utils.Result                            "Category details"
+// @success      200      {object}  utils.Result                            "Category details"
 // @Failure      400      {object}  utils.Result                            "Validation error"
-// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      401      {object}  utils.Result                            "unauthorized"
 // @Failure      404      {object}  utils.Result                            "Category not found"
 // @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /product-category [get]
@@ -125,9 +125,9 @@ func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     product_category.GetAllCategoryQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                           "List of categories"
+// @success      200      {object}  utils.Result                           "List of categories"
 // @Failure      400      {object}  utils.Result                           "Validation error"
-// @Failure      401      {object}  utils.Result                           "Unauthorized"
+// @Failure      401      {object}  utils.Result                           "unauthorized"
 // @Failure      500      {object}  utils.Result                           "Internal server error"
 // @Router       /product-category/all [get]
 // @Security BearerAuth
@@ -149,9 +149,9 @@ func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     product_category.AdminGetAllCategoryQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                                "List of all categories"
+// @success      200      {object}  utils.Result                                "List of all categories"
 // @Failure      400      {object}  utils.Result                                "Validation error"
-// @Failure      401      {object}  utils.Result                                "Unauthorized"
+// @Failure      401      {object}  utils.Result                                "unauthorized"
 // @Failure      403      {object}  utils.Result                                "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result                                "Internal server error"
 // @Router       /product-category/admin/all [get]

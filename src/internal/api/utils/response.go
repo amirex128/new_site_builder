@@ -55,52 +55,52 @@ func (r *Result) sendAndAbort(c *gin.Context) {
 	c.AbortWithStatusJSON(r.StatusCode, r)
 }
 
-// Success responses
+// success responses
 
-// Success creates a 200 Success response
-func Success(c *gin.Context, msg string, data any) {
+// success creates a 200 success response
+func success(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgSuccess, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // Created creates a 201 Created response
-func Created(c *gin.Context, msg string, data any) {
+func created(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgCreated, msg, http.StatusCreated).
 		withData(data).
 		sendAndAbort(c)
 }
 
-// Updated creates a 200 Success response for updates
-func Updated(c *gin.Context, msg string, data any) {
+// Updated creates a 200 success response for updates
+func updated(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgUpdated, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
-// Deleted creates a 200 Success response for deletions
-func Deleted(c *gin.Context, msg string, data any) {
+// Deleted creates a 200 success response for deletions
+func deleted(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgDeleted, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
-// Retrieved creates a 200 Success response for data retrieval
-func Retrieved(c *gin.Context, msg string, data any) {
+// Retrieved creates a 200 success response for data retrieval
+func retrieved(c *gin.Context, msg string, data any) {
 	newResponse(true, MsgRetrieved, msg, http.StatusOK).
 		withData(data).
 		sendAndAbort(c)
 }
 
 // NoContent creates a 204 No Content response
-func NoContent(c *gin.Context) {
+func noContent(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
 // Error responses
 
-// BadRequest creates a 400 Bad Request response
-func BadRequest(c *gin.Context, msg string, data any) {
+// badRequest creates a 400 Bad Request response
+func badRequest(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgBadRequest, msg, http.StatusBadRequest).
 		withData(data).
 		sendAndAbort(c)
@@ -119,29 +119,29 @@ func ValidationError(c *gin.Context, errors ...ValidationErrorBag) {
 		sendAndAbort(c)
 }
 
-// ValidationErrorString creates a 400 Bad Request response for validation errors
-func ValidationErrorString(c *gin.Context, msg string, data any) {
+// validationErrorString creates a 400 Bad Request response for validation errors
+func validationErrorString(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgValidationError, msg, http.StatusBadRequest).
 		withData(data).
 		sendAndAbort(c)
 }
 
-// Unauthorized creates a 401 Unauthorized response
-func Unauthorized(c *gin.Context, msg string, data any) {
+// unauthorized creates a 401 unauthorized response
+func unauthorized(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgUnauthorized, msg, http.StatusUnauthorized).
 		withData(data).
 		sendAndAbort(c)
 }
 
-// NotFound creates a 404 Not Found response
-func NotFound(c *gin.Context, msg string, data any) {
+// notFound creates a 404 Not Found response
+func notFound(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgNotFound, msg, http.StatusNotFound).
 		withData(data).
 		sendAndAbort(c)
 }
 
-// InternalError creates a 500 Internal Server Error response
-func InternalError(c *gin.Context, msg string, data any) {
+// internalError creates a 500 Internal Server Error response
+func internalError(c *gin.Context, msg string, data any) {
 	newResponse(false, MsgInternalError, msg, http.StatusInternalServerError).
 		withData(data).
 		sendAndAbort(c)
@@ -159,42 +159,42 @@ func HandleError(c *gin.Context, err error) {
 	if errors.As(err, &nerr) {
 		switch nerr.Type {
 		case resp.NotFound:
-			NotFound(c, nerr.Message, nerr.Data)
+			notFound(c, nerr.Message, nerr.Data)
 		case resp.Unauthorized:
-			Unauthorized(c, nerr.Message, nerr.Data)
+			unauthorized(c, nerr.Message, nerr.Data)
 		case resp.Validation:
-			ValidationErrorString(c, nerr.Message, nerr.Data)
+			validationErrorString(c, nerr.Message, nerr.Data)
 		case resp.BadRequest:
-			BadRequest(c, nerr.Message, nerr.Data)
+			badRequest(c, nerr.Message, nerr.Data)
 		case resp.Internal:
-			InternalError(c, nerr.Message, nerr.Data)
+			internalError(c, nerr.Message, nerr.Data)
 		default:
-			InternalError(c, nerr.Message, nerr.Data)
+			internalError(c, nerr.Message, nerr.Data)
 		}
 		return
 	}
 
 	// fallback for generic errors
-	InternalError(c, err.Error(), nil)
+	internalError(c, err.Error(), nil)
 }
 
 // HandleResponse is a convenience function to handle response with appropriate responses
 func HandleResponse(c *gin.Context, response *resp.Response) {
 	switch response.Type {
 	case resp.Success:
-		Success(c, response.Message, response.Data)
+		success(c, response.Message, response.Data)
 	case resp.Created:
-		Created(c, response.Message, response.Data)
+		created(c, response.Message, response.Data)
 	case resp.Updated:
-		Updated(c, response.Message, response.Data)
+		updated(c, response.Message, response.Data)
 	case resp.Deleted:
-		Deleted(c, response.Message, response.Data)
+		deleted(c, response.Message, response.Data)
 	case resp.Retrieved:
-		Retrieved(c, response.Message, response.Data)
+		retrieved(c, response.Message, response.Data)
 	case resp.NoContent:
-		NoContent(c)
+		noContent(c)
 	default:
-		NoContent(c)
+		noContent(c)
 	}
 	return
 }

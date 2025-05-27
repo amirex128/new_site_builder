@@ -26,9 +26,9 @@ func NewHeaderFooterHandler(usc *headerfooterusecase.HeaderFooterUsecase) *Heade
 // @Accept       json
 // @Produce      json
 // @Param        request  body      header_footer.CreateHeaderFooterCommand  true  "Header/footer information"
-// @Success      201      {object}  utils.Result                              "Created header/footer"
+// @success      201      {object}  utils.Result                              "Created header/footer"
 // @Failure      400      {object}  utils.Result                              "Validation error"
-// @Failure      401      {object}  utils.Result                              "Unauthorized"
+// @Failure      401      {object}  utils.Result                              "unauthorized"
 // @Failure      500      {object}  utils.Result                              "Internal server error"
 // @Router       /header-footer [post]
 // @Security BearerAuth
@@ -50,9 +50,9 @@ func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      header_footer.UpdateHeaderFooterCommand  true  "Updated header/footer information"
-// @Success      200      {object}  utils.Result                              "Updated header/footer"
+// @success      200      {object}  utils.Result                              "Updated header/footer"
 // @Failure      400      {object}  utils.Result                              "Validation error"
-// @Failure      401      {object}  utils.Result                              "Unauthorized"
+// @Failure      401      {object}  utils.Result                              "unauthorized"
 // @Failure      404      {object}  utils.Result                              "Header/footer not found"
 // @Failure      500      {object}  utils.Result                              "Internal server error"
 // @Router       /header-footer [put]
@@ -75,9 +75,9 @@ func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      header_footer.DeleteHeaderFooterCommand  true  "Header/footer ID to delete"
-// @Success      200      {object}  utils.Result                              "Deleted header/footer confirmation"
+// @success      200      {object}  utils.Result                              "Deleted header/footer confirmation"
 // @Failure      400      {object}  utils.Result                              "Validation error"
-// @Failure      401      {object}  utils.Result                              "Unauthorized"
+// @Failure      401      {object}  utils.Result                              "unauthorized"
 // @Failure      404      {object}  utils.Result                              "Header/footer not found"
 // @Failure      500      {object}  utils.Result                              "Internal server error"
 // @Router       /header-footer [delete]
@@ -100,9 +100,9 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     header_footer.GetByIdHeaderFooterQuery  true  "Header/footer ID to retrieve"
-// @Success      200      {object}  utils.Result                             "Header/footer details"
+// @success      200      {object}  utils.Result                             "Header/footer details"
 // @Failure      400      {object}  utils.Result                             "Validation error"
-// @Failure      401      {object}  utils.Result                             "Unauthorized"
+// @Failure      401      {object}  utils.Result                             "unauthorized"
 // @Failure      404      {object}  utils.Result                             "Header/footer not found"
 // @Failure      500      {object}  utils.Result                             "Internal server error"
 // @Router       /header-footer [get]
@@ -125,9 +125,9 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     header_footer.GetAllHeaderFooterQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                            "List of header/footers"
+// @success      200      {object}  utils.Result                            "List of header/footers"
 // @Failure      400      {object}  utils.Result                            "Validation error"
-// @Failure      401      {object}  utils.Result                            "Unauthorized"
+// @Failure      401      {object}  utils.Result                            "unauthorized"
 // @Failure      500      {object}  utils.Result                            "Internal server error"
 // @Router       /header-footer/all [get]
 // @Security BearerAuth
@@ -149,9 +149,9 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     header_footer.AdminGetAllHeaderFooterQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                                 "List of all header/footers"
+// @success      200      {object}  utils.Result                                 "List of all header/footers"
 // @Failure      400      {object}  utils.Result                                 "Validation error"
-// @Failure      401      {object}  utils.Result                                 "Unauthorized"
+// @Failure      401      {object}  utils.Result                                 "unauthorized"
 // @Failure      403      {object}  utils.Result                                 "Forbidden - Admin access required"
 // @Failure      500      {object}  utils.Result                                 "Internal server error"
 // @Router       /header-footer/admin/all [get]

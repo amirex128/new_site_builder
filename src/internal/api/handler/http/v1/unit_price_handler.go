@@ -26,9 +26,9 @@ func NewUnitPriceHandler(usc *unitpriceusecase.UnitPriceUsecase) *UnitPriceHandl
 // @Accept       json
 // @Produce      json
 // @Param        request  body      unit_price.UpdateUnitPriceCommand  true  "Unit price update information"
-// @Success      200      {object}  utils.Result                        "Updated unit price"
+// @success      200      {object}  utils.Result                        "Updated unit price"
 // @Failure      400      {object}  utils.Result                        "Validation error"
-// @Failure      401      {object}  utils.Result                        "Unauthorized"
+// @Failure      401      {object}  utils.Result                        "unauthorized"
 // @Failure      404      {object}  utils.Result                        "Unit price not found"
 // @Failure      500      {object}  utils.Result                        "Internal server error"
 // @Router       /unit-price [put]
@@ -51,9 +51,9 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     unit_price.CalculateUnitPriceQuery  true  "Parameters for price calculation"
-// @Success      200      {object}  utils.Result                         "Calculated unit price"
+// @success      200      {object}  utils.Result                         "Calculated unit price"
 // @Failure      400      {object}  utils.Result                         "Validation error"
-// @Failure      401      {object}  utils.Result                         "Unauthorized"
+// @Failure      401      {object}  utils.Result                         "unauthorized"
 // @Failure      500      {object}  utils.Result                         "Internal server error"
 // @Router       /unit-price/calculate [get]
 // @Security BearerAuth
@@ -75,9 +75,9 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  query     unit_price.GetAllUnitPriceQuery  true  "Query parameters"
-// @Success      200      {object}  utils.Result                      "List of unit prices"
+// @success      200      {object}  utils.Result                      "List of unit prices"
 // @Failure      400      {object}  utils.Result                      "Validation error"
-// @Failure      401      {object}  utils.Result                      "Unauthorized"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
 // @Failure      500      {object}  utils.Result                      "Internal server error"
 // @Router       /unit-price/all [get]
 // @Security BearerAuth
