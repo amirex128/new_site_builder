@@ -152,7 +152,7 @@ func (u *HeaderFooterUsecase) GetAllHeaderFooterQuery(params *header_footer.GetA
 		return nil, err
 	}
 
-	err = u.CheckAccessSiteID(params.SiteID)
+	err = u.CheckAccessSiteModel(params.SiteID)
 	if err != nil {
 		return nil, err
 	}

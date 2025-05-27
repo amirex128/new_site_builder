@@ -38,25 +38,6 @@ services:
     networks:
       - appnet
 
-  vault:
-    image: bitnami/vault:1.19.3
-    container_name: vault
-    restart: always
-    environment:
-      - VAULT_ADDR=http://0.0.0.0:8200
-      - VAULT_API_ADDR=http://0.0.0.0:8200
-    ports:
-      - "8200:8200"
-    volumes:
-      - vault_data:/vault/data
-      - ./vault/config:/vault/config
-    cap_add:
-      - IPC_LOCK
-    command: server -config=/vault/config/vault.hcl
-    user: root
-    networks:
-      - appnet
-
   mysql:
     image: bitnami/mysql:8.4.5
     container_name: mysql
@@ -133,54 +114,10 @@ services:
     networks:
       - appnet
 
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: n8n
-    restart: unless-stopped
-    ports:
-      - "5678:5678"
-    environment:
-      # Web server port
-      - N8N_PORT=5678
-
-      # Use Redis for queue management (replace with your Redis password)
-      - QUEUE_BULL_REDIS_HOST=redis
-      - QUEUE_BULL_REDIS_PORT=6379
-      - QUEUE_BULL_REDIS_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
-
-      # Use MongoDB for n8n database
-      - DB_TYPE=mongodb
-      - DB_MONGODB_CONNECTION_URL=mongodb://amirex128:mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV@mongodb:27017/new_site_builder
-
-      # Basic authentication for UI (set your own strong password)
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=amirex128
-      - N8N_BASIC_AUTH_PASSWORD=mI6G5jd3qNlJQinBOnA2z5SVEawLn4WV
-
-      # Optional: Enable saving executions to DB (to view past runs)
-      - EXECUTIONS_PROCESS=main
-      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=all
-      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all
-      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
-
-      # Timezone (set your timezone)
-      - TZ=UTC
-
-    volumes:
-      - n8n_data:/home/node/.n8n
-    depends_on:
-      - redis
-      - mongodb
-    networks:
-      - appnet
-
-
 volumes:
   redis_data:
     driver: local
   mongodb_data:
-    driver: local
-  vault_data:
     driver: local
   mysql_data:
     driver: local
@@ -194,9 +131,6 @@ volumes:
     driver: local
   rabbitmq_data:
     driver: local
-  n8n_data:
-    driver: local
-
 networks:
   appnet:
     driver: bridge

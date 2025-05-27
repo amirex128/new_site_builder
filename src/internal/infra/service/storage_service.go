@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	contractStorage "github.com/amirex128/new_site_builder/src/internal/contract/service"
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"io"
 	"path/filepath"
 	"strings"
@@ -65,7 +65,7 @@ func (s *StorageService) getClient(key string) (*StorageClient, error) {
 }
 
 // CreateFileOrDirectoryIfNotExists creates a file or directory if it doesn't exist
-func (s *StorageService) CreateFileOrDirectoryIfNotExists(serverKey, bucketName, key string, permission contractStorage.FileItemPermissionEnum, fileStream ...io.Reader) (string, error) {
+func (s *StorageService) CreateFileOrDirectoryIfNotExists(serverKey, bucketName, key string, permission enums.FileItemPermissionEnum, fileStream ...io.Reader) (string, error) {
 	client, err := s.getClient(serverKey)
 	if err != nil {
 		return "", err
@@ -244,7 +244,7 @@ func (s *StorageService) GenerateUrl(serverKey, bucketName, key string) string {
 }
 
 // RenameOrMoveFileOrDirectory renames or moves a file or directory
-func (s *StorageService) RenameOrMoveFileOrDirectory(serverKey, bucketName, oldKey, newKey string, currentPolicy contractStorage.FileItemPermissionEnum) (string, error) {
+func (s *StorageService) RenameOrMoveFileOrDirectory(serverKey, bucketName, oldKey, newKey string, currentPolicy enums.FileItemPermissionEnum) (string, error) {
 	client, err := s.getClient(serverKey)
 	if err != nil {
 		return "", err
@@ -345,7 +345,7 @@ func (s *StorageService) RenameOrMoveFileOrDirectory(serverKey, bucketName, oldK
 }
 
 // CopyFileOrDirectory copies a file or directory
-func (s *StorageService) CopyFileOrDirectory(serverKey, bucketName, sourceKey, destinationDirectory string, currentPolicy contractStorage.FileItemPermissionEnum) (bool, error) {
+func (s *StorageService) CopyFileOrDirectory(serverKey, bucketName, sourceKey, destinationDirectory string, currentPolicy enums.FileItemPermissionEnum) (bool, error) {
 	client, err := s.getClient(serverKey)
 	if err != nil {
 		return false, err
@@ -433,7 +433,7 @@ func (s *StorageService) CopyFileOrDirectory(serverKey, bucketName, sourceKey, d
 }
 
 // AddOrRemoveOrChangePermission adds, removes, or changes permissions on a file or directory
-func (s *StorageService) AddOrRemoveOrChangePermission(serverKey, bucketName, key string, permission contractStorage.FileItemPermissionEnum, justRemove bool) error {
+func (s *StorageService) AddOrRemoveOrChangePermission(serverKey, bucketName, key string, permission enums.FileItemPermissionEnum, justRemove bool) error {
 	client, err := s.getClient(serverKey)
 	if err != nil {
 		return err
@@ -541,7 +541,7 @@ func (s *StorageService) AddOrRemoveOrChangePermission(serverKey, bucketName, ke
 		}
 	} else {
 		// Add to appropriate list based on permission
-		if permission == contractStorage.Public {
+		if permission == enums.FileItemPublicPermission {
 			// Add to public, remove from private
 
 			// Create public statement if it doesn't exist

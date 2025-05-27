@@ -2,20 +2,22 @@ package siteusecase
 
 import (
 	"errors"
-	"time"
-
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
+	"regexp"
+	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/site"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 	"gorm.io/gorm"
+)
+
+var (
+	allowedBaseDomains = []string{"squidweb.ir"}
 )
 
 type SiteUsecase struct {
@@ -46,24 +48,37 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 	if err != nil {
 		return nil, err
 	}
-	var domainType enums.DomainTypeEnum
-	var siteType enums.SiteTypeEnum
-	var status enums.StatusEnum
-	if params.DomainType != nil {
-		domainType = *params.DomainType
+	domainInput := *params.Domain
+	domainType := *params.DomainType
+
+	if domainType == enums.DomainType {
+		matched, _ := regexp.MatchString(`^([a-zA-Z0-9-]+\.)+(ir|com|net|org)$`, domainInput)
+		if !matched {
+			return nil, resp.NewError(resp.BadRequest, "دامنه اصلی باید با فرمت معتبر باشد (مثال: example.com)")
+		}
+	} else if domainType == enums.SubdomainType {
+		validSubdomain := false
+
+		for _, baseDomain := range allowedBaseDomains {
+			pattern := `^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.` + regexp.QuoteMeta(baseDomain) + `$`
+			matched, _ := regexp.MatchString(pattern, domainInput)
+			if matched {
+				validSubdomain = true
+				break
+			}
+		}
+
+		if !validSubdomain {
+			return nil, resp.NewError(resp.BadRequest, "ساب دامنه باید با یکی از دامنه های مجاز باشد (مثال: shop.squidweb.ir)")
+		}
 	}
-	if params.SiteType != nil {
-		siteType = *params.SiteType
-	}
-	if params.Status != nil {
-		status = *params.Status
-	}
+
 	site := domain.Site{
 		Domain:     *params.Domain,
-		DomainType: domainType,
+		DomainType: *params.DomainType,
 		Name:       *params.Name,
-		Status:     status,
-		SiteType:   siteType,
+		Status:     *params.Status,
+		SiteType:   *params.SiteType,
 		UserID:     *userID,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
@@ -74,22 +89,17 @@ func (u *SiteUsecase) CreateSiteCommand(params *site.CreateSiteCommand) (*resp.R
 		return nil, resp.NewError(resp.Internal, "خطا در ایجاد سایت")
 	}
 	setting := domain.Setting{
-		SiteID:     site.ID,
-		UserID:     *userID,
-		CustomerID: 0,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-		IsDeleted:  false,
+		SiteID:    site.ID,
+		UserID:    *userID,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		IsDeleted: false,
 	}
 	err = u.settingRepo.Create(&setting)
 	if err != nil {
-		// continue
+		return nil, resp.NewError(resp.Internal, "خطا در ایجاد تنظیمات")
 	}
-	createdSite, err := u.repo.GetByID(site.ID)
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
-	}
-	return resp.NewResponseData(resp.Created, enhanceSiteResponse(*createdSite), "سایت با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, site, "سایت با موفقیت ایجاد شد"), nil
 }
 
 func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.Response, error) {
@@ -98,19 +108,13 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.R
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, resp.NewError(resp.NotFound, "سایت مورد نظر یافت نشد")
 		}
-		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.AuthContext(u.Ctx).GetUserID()
+	err = u.CheckAccessUserModel(existingSite)
 	if err != nil {
 		return nil, err
 	}
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil {
-		return nil, resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی مدیریت")
-	}
-	if userID != nil && existingSite.UserID != *userID && !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما به این سایت دسترسی ندارید")
-	}
+
 	if params.Domain != nil && *params.Domain != existingSite.Domain {
 		existingDomainSite, err := u.repo.GetByDomain(*params.Domain)
 		if err == nil && existingDomainSite.ID != existingSite.ID {
@@ -118,6 +122,32 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.R
 		} else if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, resp.NewError(resp.Internal, "خطا در بررسی دامنه")
 		}
+
+		domainInput := *params.Domain
+		domainType := *params.DomainType
+
+		if domainType == enums.DomainType {
+			matched, _ := regexp.MatchString(`^([a-zA-Z0-9-]+\.)+(ir|com|net|org)$`, domainInput)
+			if !matched {
+				return nil, resp.NewError(resp.BadRequest, "دامنه اصلی باید با فرمت معتبر باشد (مثال: example.com)")
+			}
+		} else if domainType == enums.SubdomainType {
+			validSubdomain := false
+
+			for _, baseDomain := range allowedBaseDomains {
+				pattern := `^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.` + regexp.QuoteMeta(baseDomain) + `$`
+				matched, _ := regexp.MatchString(pattern, domainInput)
+				if matched {
+					validSubdomain = true
+					break
+				}
+			}
+
+			if !validSubdomain {
+				return nil, resp.NewError(resp.BadRequest, "ساب دامنه باید با یکی از دامنه های مجاز باشد (مثال: shop.squidweb.ir)")
+			}
+		}
+
 		existingSite.Domain = *params.Domain
 	}
 	if params.DomainType != nil {
@@ -137,11 +167,8 @@ func (u *SiteUsecase) UpdateSiteCommand(params *site.UpdateSiteCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در بروزرسانی سایت")
 	}
-	updatedSite, err := u.repo.GetByID(existingSite.ID)
-	if err != nil {
-		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
-	}
-	return resp.NewResponseData(resp.Updated, enhanceSiteResponse(*updatedSite), "سایت با موفقیت بروزرسانی شد"), nil
+
+	return resp.NewResponseData(resp.Updated, existingSite, "سایت با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *SiteUsecase) DeleteSiteCommand(params *site.DeleteSiteCommand) (*resp.Response, error) {
@@ -178,7 +205,7 @@ func (u *SiteUsecase) GetByIdSiteQuery(params *site.GetByIdSiteQuery) (*resp.Res
 		}
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	return resp.NewResponseData(resp.Retrieved, enhanceSiteResponse(*site), "اطلاعات سایت با موفقیت بازیابی شد"), nil
+	return resp.NewResponseData(resp.Retrieved, site, "اطلاعات سایت با موفقیت بازیابی شد"), nil
 }
 
 func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*resp.Response, error) {
@@ -189,7 +216,7 @@ func (u *SiteUsecase) GetByDomainSiteQuery(params *site.GetByDomainSiteQuery) (*
 		}
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی اطلاعات سایت")
 	}
-	return resp.NewResponseData(resp.Retrieved, enhanceSiteResponse(*site), "اطلاعات سایت با موفقیت بازیابی شد"), nil
+	return resp.NewResponseData(resp.Retrieved, site, "اطلاعات سایت با موفقیت بازیابی شد"), nil
 }
 
 func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Response, error) {
@@ -201,19 +228,8 @@ func (u *SiteUsecase) GetAllSiteQuery(params *site.GetAllSiteQuery) (*resp.Respo
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی لیست سایت ها")
 	}
-	sites := result.Items
-	count := result.TotalCount
-	enhancedSites := make([]map[string]interface{}, 0, len(sites))
-	for _, s := range sites {
-		enhancedSites = append(enhancedSites, enhanceSiteResponse(s))
-	}
-	return resp.NewResponseData(resp.Retrieved, resp.Data{
-		"items":     enhancedSites,
-		"total":     count,
-		"page":      params.Page,
-		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, "لیست سایت ها با موفقیت بازیابی شد"), nil
+
+	return resp.NewResponseData(resp.Retrieved, result, "لیست سایت ها با موفقیت بازیابی شد"), nil
 }
 
 func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (*resp.Response, error) {
@@ -225,40 +241,6 @@ func (u *SiteUsecase) AdminGetAllSiteQuery(params *site.AdminGetAllSiteQuery) (*
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, "خطا در بازیابی لیست سایت ها")
 	}
-	sites := result.Items
-	count := result.TotalCount
-	enhancedSites := make([]map[string]interface{}, 0, len(sites))
-	for _, s := range sites {
-		enhancedSites = append(enhancedSites, enhanceSiteResponse(s))
-	}
-	return resp.NewResponseData(resp.Retrieved, resp.Data{
-		"items":     enhancedSites,
-		"total":     count,
-		"page":      params.Page,
-		"pageSize":  params.PageSize,
-		"totalPage": (count + int64(params.PageSize) - 1) / int64(params.PageSize),
-	}, "لیست سایت ها با موفقیت بازیابی شد"), nil
-}
 
-func enhanceSiteResponse(site domain.Site) resp.Data {
-	response := resp.Data{
-		"id":         site.ID,
-		"domain":     site.Domain,
-		"domainType": site.DomainType,
-		"name":       site.Name,
-		"status":     site.Status,
-		"siteType":   site.SiteType,
-		"userId":     site.UserID,
-		"createdAt":  site.CreatedAt,
-		"updatedAt":  site.UpdatedAt,
-	}
-	if site.Setting != nil {
-		response["setting"] = resp.Data{
-			"id":         site.Setting.ID,
-			"siteId":     site.Setting.SiteID,
-			"userId":     site.Setting.UserID,
-			"customerId": site.Setting.CustomerID,
-		}
-	}
-	return response
+	return resp.NewResponseData(resp.Retrieved, result, "لیست سایت ها با موفقیت بازیابی شد"), nil
 }

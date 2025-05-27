@@ -41,13 +41,7 @@ func (u *BaseUsecase) CheckAccessCustomerModel(existingModel common.AccessContro
 	return nil
 }
 
-func (u *BaseUsecase) CheckAccessSiteModel(existingModel common.AccessControllable, siteID *int64) error {
-	if existingModel.GetSiteID() != nil && *existingModel.GetSiteID() > 0 && existingModel.GetSiteID() != nil && *existingModel.GetSiteID() != *siteID {
-		return resp.NewError(resp.Unauthorized, "شما اجازه ویرایش را ندارید")
-	}
-	return nil
-}
-func (u *BaseUsecase) CheckAccessSiteID(siteID *int64) error {
+func (u *BaseUsecase) CheckAccessSiteModel(siteID *int64) error {
 	siteIDs, err := u.AuthContext(u.Ctx).GetSiteIDs()
 	if err != nil {
 		return resp.NewError(resp.Unauthorized, "خطا در بررسی دسترسی کاربر")

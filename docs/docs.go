@@ -11463,6 +11463,9 @@ const docTemplate = `{
                 "expiryDate": {
                     "type": "string"
                 },
+                "maxUsagePerUser": {
+                    "type": "integer"
+                },
                 "quantity": {
                     "type": "integer",
                     "maximum": 1000
@@ -11502,6 +11505,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "maxUsagePerUser": {
                     "type": "integer"
                 },
                 "quantity": {

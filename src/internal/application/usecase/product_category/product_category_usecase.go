@@ -7,9 +7,6 @@ import (
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
-	"github.com/amirex128/new_site_builder/src/internal/contract/service"
-
-	"github.com/gin-gonic/gin"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/product_category"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"

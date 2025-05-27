@@ -441,6 +441,8 @@ definitions:
         type: string
       expiryDate:
         type: string
+      maxUsagePerUser:
+        type: integer
       quantity:
         maximum: 1000
         type: integer
@@ -471,6 +473,8 @@ definitions:
       expiryDate:
         type: string
       id:
+        type: integer
+      maxUsagePerUser:
         type: integer
       quantity:
         type: integer

@@ -258,7 +258,7 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Res
 }
 
 func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (*resp.Response, error) {
-	err := u.CheckAccessSiteID(params.SiteID)
+	err := u.CheckAccessSiteModel(params.SiteID)
 	if err != nil {
 		return nil, err
 	}
