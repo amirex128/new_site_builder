@@ -2,18 +2,25 @@ package serviceprovider
 
 import (
 	"fmt"
-	elastic "git.snappfood.ir/backend/go/packages/sf-elasticsearch-client/v8"
+	sfelastic "git.snappfood.ir/backend/go/packages/sf-elasticsearch-client/v8"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/config"
 	"github.com/elastic/go-elasticsearch/v8"
+	"time"
 )
 
 func ElasticProvider(cfg *config.Config, logger sflogger.Logger) {
-	err := elastic.RegisterConnection(
-		elastic.WithLogger(logger),
-		elastic.WithGlobalOptions(func(client *elasticsearch.Client) {
+	err := sfelastic.RegisterConnection(
+		sfelastic.WithLogger(logger),
+		sfelastic.WithGlobalOptions(func(client *elasticsearch.Client) {
 		}),
-		elastic.WithConnectionDetails("main", elasticsearch.Config{
+		sfelastic.WithRetryOptions(&sfelastic.RetryOptions{
+			MaxRetries:     5,                // Maximum number of retry attempts
+			InitialBackoff: time.Second,      // Initial waiting time between retries
+			MaxBackoff:     15 * time.Second, // Maximum waiting time between retries
+			BackoffFactor:  1.5,              // Exponential backoff multiplier
+		}),
+		sfelastic.WithConnectionDetails("main", elasticsearch.Config{
 			Addresses: []string{fmt.Sprintf("%s:%s", cfg.ElasticSearchHost, cfg.ElasticSearchPort)},
 			Username:  cfg.ElasticSearchUsername,
 			Password:  cfg.ElasticSearchPassword,

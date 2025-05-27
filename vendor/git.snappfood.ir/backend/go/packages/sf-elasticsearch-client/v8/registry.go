@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"gorm.io/gorm"
 )
 
 // =============================================================================
@@ -37,7 +36,6 @@ type Connection struct {
 	options      []ClientOption
 	connecting   bool
 	retryOptions *RetryOptions // Add per-connection retry options
-	db           *gorm.DB
 }
 
 // Global registry instance
@@ -131,7 +129,7 @@ func connectWithRetry(name string) error {
 		globalRegistry.mu.RLock()
 		conn, exists := globalRegistry.connections[name]
 		globalRegistry.mu.RUnlock()
-		if !exists || conn.db != nil {
+		if !exists || conn.client != nil {
 			return nil // Already connected or removed
 		}
 		// Mark that we're connecting
@@ -142,12 +140,12 @@ func connectWithRetry(name string) error {
 		}
 		globalRegistry.mu.Unlock()
 
-		db, err := initializeConnection(name)
-		if err == nil && db != nil {
+		client, err := initializeConnection(name)
+		if err == nil && client != nil {
 			globalRegistry.mu.Lock()
 			conn, stillExists := globalRegistry.connections[name]
 			if stillExists {
-				conn.db = db
+				conn.client = client
 				conn.connecting = false
 				globalRegistry.connections[name] = conn
 			}
@@ -156,7 +154,7 @@ func connectWithRetry(name string) error {
 				extras := map[string]interface{}{
 					ExtraKey.Database.Table: name,
 				}
-				globalRegistry.logger.InfoWithCategory(Category.Database.Database, SubCategory.Status.Success, "Successfully connected to database", extras)
+				globalRegistry.logger.InfoWithCategory(Category.Database.Database, SubCategory.Status.Success, "Successfully connected to Elasticsearch", extras)
 			}
 			return nil
 		}
@@ -213,8 +211,8 @@ func initializeConnection(name string) (*elasticsearch.Client, error) {
 // Public API
 // =============================================================================
 
-// GetConnection returns a DB instance for the named connection
-func GetConnection(name string) (*gorm.DB, error) {
+// GetConnection returns an Elasticsearch client instance for the named connection
+func GetConnection(name string) (*elasticsearch.Client, error) {
 	globalRegistry.mu.RLock()
 	conn, exists := globalRegistry.connections[name]
 	globalRegistry.mu.RUnlock()
@@ -223,12 +221,12 @@ func GetConnection(name string) (*gorm.DB, error) {
 		return nil, fmt.Errorf("connection with name '%s' not registered", name)
 	}
 
-	// If DB is already initialized, return it
-	if conn.db != nil {
-		return conn.db, nil
+	// If client is already initialized, return it
+	if conn.client != nil {
+		return conn.client, nil
 	}
 
-	// If DB is not initialized yet, wait for connection
+	// If client is not initialized yet, wait for connection
 	for {
 		globalRegistry.mu.RLock()
 		conn, exists = globalRegistry.connections[name]
@@ -238,10 +236,10 @@ func GetConnection(name string) (*gorm.DB, error) {
 			return nil, fmt.Errorf("connection with name '%s' not registered", name)
 		}
 
-		if conn.db != nil {
-			db := conn.db
+		if conn.client != nil {
+			client := conn.client
 			globalRegistry.mu.RUnlock()
-			return db, nil
+			return client, nil
 		}
 
 		// If not connecting yet, start connecting

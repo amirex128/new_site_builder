@@ -9,7 +9,6 @@ import (
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 )
 
-// ConfigProvider provides configuration from various sources with fallback
 func ConfigProvider(logger sflogger.Logger) *config.Config {
 	cfg := &config.Config{}
 	result, err := sfconfigmanager.RegisterConnection(

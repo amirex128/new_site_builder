@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
@@ -28,7 +29,8 @@ func ErrorHandlerMiddleware(logger sflogger.Logger) gin.HandlerFunc {
 
 				// Return error response
 				if !c.Writer.Written() {
-					utils.internalError(c, fmt.Sprintf("%v", err), map[string]any{})
+					utils.HandleError(c, resp.NewError(resp.Internal, "خطا در سرور"))
+
 				}
 			}
 		}()

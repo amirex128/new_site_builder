@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/amirex128/new_site_builder/src/internal/api/utils"
+	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
 	"strings"
 
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
@@ -38,14 +39,14 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			utils.unauthorized(c, err.Error(), map[string]any{})
+			utils.HandleError(c, resp.NewError(resp.Unauthorized, "سطرح دسترسی کافی نیست"))
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			utils.unauthorized(c, err.Error(), map[string]any{})
+			utils.HandleError(c, resp.NewError(resp.Unauthorized, "سطرح دسترسی کافی نیست"))
 			return
 		}
 
@@ -66,7 +67,7 @@ func (a *Authenticator) MustRole(roles ...string) gin.HandlerFunc {
 				}
 			}
 			if !hasRole {
-				utils.unauthorized(c, "Insufficient permissions for role: "+requiredRole, map[string]any{})
+				utils.HandleError(c, resp.NewError(resp.Unauthorized, "سطرح دسترسی کافی نیست"))
 				return
 			}
 		}
@@ -85,14 +86,14 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := a.identityService.VerifyTokenContext(c)
 		if err != nil {
-			utils.unauthorized(c, err.Error(), map[string]any{})
+			utils.HandleError(c, resp.NewError(resp.Unauthorized, "Unauthorized"))
 			return
 		}
 
 		authService := a.authTransientService(c)
 		userRoles, err := authService.GetRoles()
 		if err != nil {
-			utils.unauthorized(c, err.Error(), map[string]any{})
+			utils.HandleError(c, resp.NewError(resp.Unauthorized, "سطرح دسترسی کافی نیست"))
 			return
 		}
 
@@ -119,7 +120,7 @@ func (a *Authenticator) ShouldRole(roles ...string) gin.HandlerFunc {
 			}
 
 			if !hasAnyRole {
-				utils.unauthorized(c, "Insufficient permissions, requires one of: "+strings.Join(roles, ", "), map[string]any{})
+				utils.HandleError(c, resp.NewError(resp.Unauthorized, "سطح دسترسی کافی نیست و یکی از نقش های زیر را نیاز دارید : "+strings.Join(roles, ", ")))
 				return
 			}
 		}
