@@ -3,7 +3,6 @@ package pageusecase
 import (
 	"encoding/json"
 	"errors"
-	"strconv"
 	"strings"
 	"time"
 
@@ -110,7 +109,7 @@ func (u *PageUsecase) CreatePageCommand(params *page.CreatePageCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	return resp.NewResponseData(resp.Created, enhancePageResponse(*createdPage), "صفحه با موفقیت ایجاد شد"), nil
+	return resp.NewResponseData(resp.Created, createdPage, "صفحه با موفقیت ایجاد شد"), nil
 }
 
 func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.Response, error) {
@@ -216,7 +215,7 @@ func (u *PageUsecase) UpdatePageCommand(params *page.UpdatePageCommand) (*resp.R
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	return resp.NewResponseData(resp.Updated, enhancePageResponse(*updatedPage), "صفحه با موفقیت بروزرسانی شد"), nil
+	return resp.NewResponseData(resp.Updated, updatedPage, "صفحه با موفقیت بروزرسانی شد"), nil
 }
 
 func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.Response, error) {
@@ -227,16 +226,9 @@ func (u *PageUsecase) DeletePageCommand(params *page.DeletePageCommand) (*resp.R
 		}
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	userID, err := u.AuthContext(u.Ctx).GetUserID()
-	if err != nil || userID == nil {
-		return nil, err
-	}
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	err = u.CheckAccessUserModel(existingPage)
 	if err != nil {
 		return nil, err
-	}
-	if existingPage.UserID != *userID && !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "شما به این صفحه دسترسی ندارید")
 	}
 	err = u.repo.Delete(*params.ID)
 	if err != nil {
@@ -254,59 +246,40 @@ func (u *PageUsecase) GetByIdPageQuery(params *page.GetByIdPageQuery) (*resp.Res
 			}
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-		return resp.NewResponseData(resp.Retrieved, enhancePageResponse(*pageItem), "صفحه با موفقیت دریافت شد"), nil
+		return resp.NewResponseData(resp.Retrieved, pageItem, "صفحه با موفقیت دریافت شد"), nil
 	} else if params.IDs != nil && len(params.IDs) > 0 {
 		pages, err := u.repo.GetByIDs(params.IDs, *params.SiteID)
 		if err != nil {
 			return nil, resp.NewError(resp.Internal, err.Error())
 		}
-		enhancedPages := make([]map[string]interface{}, 0, len(pages))
-		for _, p := range pages {
-			enhancedPages = append(enhancedPages, enhancePageResponse(p))
-		}
-		return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancedPages}, "صفحات با موفقیت دریافت شدند"), nil
+		return resp.NewResponseData(resp.Retrieved, pages, "صفحات با موفقیت دریافت شدند"), nil
 	}
 	return nil, resp.NewError(resp.BadRequest, "شناسه صفحه یا صفحات الزامی است")
 }
 
 func (u *PageUsecase) GetAllPageQuery(params *page.GetAllPageQuery) (*resp.Response, error) {
+	err := u.CheckAccessSiteID(params.SiteID)
+	if err != nil {
+		return nil, err
+	}
 	pagesResult, err := u.repo.GetAllBySiteID(*params.SiteID, params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	enhancedPages := make([]map[string]interface{}, 0, len(pagesResult.Items))
-	for _, p := range pagesResult.Items {
-		enhancedPages = append(enhancedPages, enhancePageResponse(p))
-	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items":     enhancedPages,
-		"total":     pagesResult.TotalCount,
-		"page":      pagesResult.PageNumber,
-		"pageSize":  params.PageSize,
-		"totalPage": pagesResult.TotalPages,
-	}, "لیست صفحات با موفقیت دریافت شد"), nil
+
+	return resp.NewResponseData(resp.Retrieved, pagesResult, "لیست صفحات با موفقیت دریافت شد"), nil
 }
 
 func (u *PageUsecase) AdminGetAllPageQuery(params *page.AdminGetAllPageQuery) (*resp.Response, error) {
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
-	if err != nil || !isAdmin {
+	err := u.CheckAccessAdmin()
+	if err != nil {
 		return nil, err
 	}
 	pagesResult, err := u.repo.GetAll(params.PaginationRequestDto)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	enhancedPages := make([]map[string]interface{}, 0, len(pagesResult.Items))
-	for _, p := range pagesResult.Items {
-		enhancedPages = append(enhancedPages, enhancePageResponse(p))
-	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{
-		"items":     enhancedPages,
-		"total":     pagesResult.TotalCount,
-		"page":      pagesResult.PageNumber,
-		"pageSize":  params.PageSize,
-		"totalPage": pagesResult.TotalPages,
-	}, "لیست صفحات ادمین با موفقیت دریافت شد"), nil
+	return resp.NewResponseData(resp.Retrieved, pagesResult, "لیست صفحات ادمین با موفقیت دریافت شد"), nil
 }
 
 func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (*resp.Response, error) {
@@ -314,51 +287,7 @@ func (u *PageUsecase) GetByPathPageQuery(params *page.GetByPathPageQuery) (*resp
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	enhancedPages := make([]map[string]interface{}, 0, len(pages))
-	for _, p := range pages {
-		enhancedPages = append(enhancedPages, enhancePageResponse(p))
-	}
-	return resp.NewResponseData(resp.Retrieved, map[string]interface{}{"items": enhancedPages}, "صفحات با موفقیت دریافت شدند"), nil
-}
-
-func enhancePageResponse(page domain.Page) map[string]interface{} {
-	response := map[string]interface{}{
-		"id":          page.ID,
-		"siteId":      page.SiteID,
-		"headerId":    page.HeaderID,
-		"footerId":    page.FooterID,
-		"slug":        page.Slug,
-		"title":       page.Title,
-		"description": page.Description,
-		"createdAt":   page.CreatedAt,
-		"updatedAt":   page.UpdatedAt,
-	}
-	if page.Body != "" {
-		var bodyObj interface{}
-		if err := json.Unmarshal([]byte(page.Body), &bodyObj); err == nil {
-			response["body"] = bodyObj
-		} else {
-			response["body"] = page.Body
-		}
-	}
-	if page.SeoTags != "" {
-		response["seoTags"] = strings.Split(page.SeoTags, ",")
-	} else {
-		response["seoTags"] = []string{}
-	}
-	if page.Media != nil && len(page.Media) > 0 {
-		mediaItems := make([]map[string]interface{}, 0, len(page.Media))
-		for _, media := range page.Media {
-			mediaItems = append(mediaItems, map[string]interface{}{
-				"id":  media.ID,
-				"url": "/api/media/" + strconv.FormatInt(media.ID, 10),
-			})
-		}
-		response["media"] = mediaItems
-	} else {
-		response["media"] = []map[string]interface{}{}
-	}
-	return response
+	return resp.NewResponseData(resp.Retrieved, pages, "صفحات با موفقیت دریافت شدند"), nil
 }
 
 func getStringValueOrEmpty(value *string) string {

@@ -1,6 +1,8 @@
 package articleusecase
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"strings"
 	"time"
 
@@ -80,14 +82,12 @@ func (u *ArticleUsecase) CreateArticleCommand(params *article.CreateArticleComma
 }
 
 func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleCommand) (*resp.Response, error) {
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil {
-		return nil, err
-	}
-
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	err = u.CheckAccessUserModel(existingArticle)
 	if err != nil {
@@ -135,13 +135,12 @@ func (u *ArticleUsecase) UpdateArticleCommand(params *article.UpdateArticleComma
 }
 
 func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleCommand) (*resp.Response, error) {
-	userID, _, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
-	if err != nil {
-		return nil, err
-	}
 	existingArticle, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	err = u.CheckAccessUserModel(existingArticle)
 	if err != nil {
@@ -157,11 +156,18 @@ func (u *ArticleUsecase) DeleteArticleCommand(params *article.DeleteArticleComma
 func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery) (*resp.Response, error) {
 	result, err := u.articleRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
+
 	mediaItems, err := u.articleRepo.GetArticleMedia(result.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"article": result,
@@ -172,11 +178,17 @@ func (u *ArticleUsecase) GetByIdArticleQuery(params *article.GetByIdArticleQuery
 func (u *ArticleUsecase) GetSingleArticleQuery(params *article.GetSingleArticleQuery) (*resp.Response, error) {
 	result, err := u.articleRepo.GetBySlugAndSiteID(*params.Slug, *params.SiteID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "مقاله یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	mediaItems, err := u.articleRepo.GetArticleMedia(result.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"article": result,
@@ -193,7 +205,10 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
@@ -206,7 +221,10 @@ func (u *ArticleUsecase) GetAllArticleQuery(params *article.GetAllArticleQuery) 
 func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByCategoryQuery) (*resp.Response, error) {
 	category, err := u.categoryRepo.GetBySlugAndSiteID(*params.Slug, *params.SiteID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "دسته بندی یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	result, err := u.articleRepo.GetAllByCategoryID(category.ID, params.PaginationRequestDto)
 	if err != nil {
@@ -216,7 +234,10 @@ func (u *ArticleUsecase) GetArticleByCategoryQuery(params *article.GetArticleByC
 	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
@@ -243,7 +264,10 @@ func (u *ArticleUsecase) GetByFiltersSortArticleQuery(params *article.GetByFilte
 	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,
@@ -267,7 +291,10 @@ func (u *ArticleUsecase) AdminGetAllArticleQuery(params *article.AdminGetAllArti
 	for i, article := range result.Items {
 		media, err := u.articleRepo.GetArticleMedia(article.ID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		articlesWithMedia[i] = map[string]interface{}{
 			"article": article,

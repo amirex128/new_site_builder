@@ -81,24 +81,25 @@ func (u *CustomerTicketUsecase) CreateCustomerTicketCommand(params *customer_tic
 
 	createdTicket, err := u.repo.GetByIDWithRelations(newTicket.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تیکت یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Created, createdTicket, "تیکت مشتری با موفقیت ایجاد شد"), nil
 }
 
 func (u *CustomerTicketUsecase) ReplayCustomerTicketCommand(params *customer_ticket.ReplayCustomerTicketCommand) (*resp.Response, error) {
-	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
-	if err != nil {
-		return nil, err
-	}
-
 	existingTicket, err := u.repo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تیکت یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	err = u.CheckAccessCustomerModel(existingTicket, customerID)
+	err = u.CheckAccessCustomerModel(existingTicket)
 	if err != nil {
 		return nil, err
 	}
@@ -210,23 +211,24 @@ func (u *CustomerTicketUsecase) AdminReplayCustomerTicketCommand(params *custome
 
 	updatedTicket, err := u.repo.GetByIDWithRelations(existingTicket.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تیکت یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Created, updatedTicket, "پاسخ به تیکت مشتری با موفقیت ایجاد شد"), nil
 }
 
 func (u *CustomerTicketUsecase) GetByIdCustomerTicketQuery(params *customer_ticket.GetByIdCustomerTicketQuery) (*resp.Response, error) {
-	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
-	if err != nil {
-		return nil, err
-	}
-
 	result, err := u.repo.GetByIDWithRelations(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تیکت مشتری مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تیکت یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
-	err = u.CheckAccessCustomerModel(result, customerID)
+	err = u.CheckAccessCustomerModel(result)
 	if err != nil {
 		return nil, err
 	}

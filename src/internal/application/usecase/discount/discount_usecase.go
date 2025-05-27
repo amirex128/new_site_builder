@@ -1,6 +1,8 @@
 package discountusecase
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/discount"
@@ -33,7 +35,10 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 	}
 	existingDiscount, err := u.discountRepo.GetByCode(*params.Code)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	err = u.CheckAccessUserModel(existingDiscount)
@@ -70,7 +75,10 @@ func (u *DiscountUsecase) CreateDiscountCommand(params *discount.CreateDiscountC
 func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountCommand) (*resp.Response, error) {
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	err = u.CheckAccessUserModel(existingDiscount)
 	if err != nil {
@@ -116,7 +124,10 @@ func (u *DiscountUsecase) UpdateDiscountCommand(params *discount.UpdateDiscountC
 func (u *DiscountUsecase) DeleteDiscountCommand(params *discount.DeleteDiscountCommand) (*resp.Response, error) {
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	err = u.CheckAccessUserModel(existingDiscount)
 	if err != nil {
@@ -137,7 +148,10 @@ func (u *DiscountUsecase) GetByIdDiscountQuery(params *discount.GetByIdDiscountQ
 
 	existingDiscount, err := u.discountRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "تخفیف یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	err = u.CheckAccessUserModel(existingDiscount)

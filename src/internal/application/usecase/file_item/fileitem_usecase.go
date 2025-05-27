@@ -1,7 +1,9 @@
 package fileitemusecase
 
 import (
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -202,7 +204,10 @@ func (u *FileItemUsecase) DeleteFileItemCommand(params *fileitem.DeleteFileItemC
 	// Check if file exists
 	fileItem, err := u.fileItemRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, fmt.Errorf("file not found: %v", err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "فایل یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Check if user has access
@@ -229,7 +234,10 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 	// Check if file exists
 	fileItem, err := u.fileItemRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, fmt.Errorf("file not found: %v", err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "فایل یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	// Check if user has access
@@ -245,33 +253,33 @@ func (u *FileItemUsecase) ForceDeleteFileItemCommand(params *fileitem.ForceDelet
 	}
 
 	if !success {
-		u.Logger.Warn("File not found in storage but will be removed from database", map[string]interface{}{
-			"fileId": fileItem.ID,
-			"path":   fullPath,
-		})
+		return nil, resp.NewError(resp.NotFound, "فایل یافت نشد")
 	}
 
 	// Delete from database (this will also recursively delete children if it's a directory)
 	if err := u.fileItemRepo.ForceDelete(*params.ID); err != nil {
-		return nil, fmt.Errorf("error permanently deleting file: %v", err)
+		return nil, resp.NewError(resp.Internal, "خطا در حذف فایل")
 	}
 
 	// Decrease storage usage
 	if fileItem.Size > 0 {
 		storage, err := u.storageRepo.GetByUserID(*userID)
 		if err != nil {
-			return nil, fmt.Errorf("error retrieving storage: %v", err)
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "فایل یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 
 		if err := u.storageRepo.SetIncreaseUsedSpaceKb(storage.ID, -fileItem.Size); err != nil {
-			return nil, fmt.Errorf("error updating storage usage: %v", err)
+			return nil, resp.NewError(resp.Internal, "خطا در افزودن مقدار به محدوده")
 		}
 	}
 
 	// Update parent directory size if applicable
 	if fileItem.ParentID != nil && *fileItem.ParentID > 0 {
 		if err := u.fileItemRepo.UpdateSize(*fileItem.ParentID, -fileItem.Size); err != nil {
-			return nil, fmt.Errorf("error updating parent directory size: %v", err)
+			return nil, resp.NewError(resp.Internal, "خطا در افزودن مقدار به محدوده")
 		}
 	}
 
@@ -306,12 +314,15 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 	// Check if file exists
 	fileItem, err := u.fileItemRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, fmt.Errorf("file not found: %v", err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "فایل یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Check if user has access
-	if fileItem.UserID != *userID {
-		return nil, fmt.Errorf("access denied")
+	err = u.CheckAccessUserModel(fileItem)
+	if err != nil {
+		return nil, err
 	}
 
 	// Update permission if requested
@@ -327,7 +338,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 			fullPath,
 			*params.Permission,
 			false); err != nil {
-			return nil, fmt.Errorf("error updating permission in storage: %v", err)
+			return nil, resp.NewError(resp.Internal, "خطا در بروز رسانی دسترسی")
 		}
 	}
 
@@ -336,9 +347,7 @@ func (u *FileItemUsecase) UpdateFileItemCommand(params *fileitem.UpdateFileItemC
 		return nil, fmt.Errorf("error updating file: %v", err)
 	}
 
-	return resp.NewResponseData(resp.Success, resp.Data{
-		"fileItem": fileItem,
-	}, ""), nil
+	return resp.NewResponseData(resp.Success, fileItem, ""), nil
 }
 
 // FileOperationCommand handles file operations like copy, move, rename
@@ -350,12 +359,15 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 	// Check if file exists
 	fileItem, err := u.fileItemRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, fmt.Errorf("file not found: %v", err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "فایل یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
-	// Check if user has access
-	if fileItem.UserID != *userID {
-		return nil, fmt.Errorf("access denied")
+	err = u.CheckAccessUserModel(fileItem)
+	if err != nil {
+		return nil, err
 	}
 
 	// Get source path
@@ -364,9 +376,6 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 	switch params.OperationType {
 	case enums.FileItemRenameOperation:
-		if params.NewName == nil {
-			return nil, fmt.Errorf("new name is required for rename operation")
-		}
 
 		// Get new name with proper formatting
 		newName := *params.NewName
@@ -386,13 +395,13 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 			newFullPath,
 			enums.FileItemPermissionEnum(permission))
 		if err != nil {
-			return nil, fmt.Errorf("error renaming in storage: %v", err)
+			return nil, resp.NewError(resp.Internal, "خطا در تغییر نام")
 		}
 
 		// Update in database
 		fileItem.Name = newName
 		if err := u.fileItemRepo.Update(fileItem); err != nil {
-			return nil, fmt.Errorf("error updating file name: %v", err)
+			return nil, resp.NewError(resp.Internal, "خطا در تغییر نام")
 		}
 
 		// If it's a directory, update all children paths
@@ -403,7 +412,7 @@ func (u *FileItemUsecase) FileOperationCommand(params *fileitem.FileOperationCom
 
 	case enums.FileItemMoveOperation:
 		if params.NewParentID == nil {
-			return nil, fmt.Errorf("new parent ID is required for move operation")
+			return nil, resp.NewError(resp.Internal, "شناسه دایرکتوری مقصد الزامی میباشد برای انتقال")
 		}
 
 		// Get the parent directory

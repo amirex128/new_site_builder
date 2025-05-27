@@ -1,6 +1,8 @@
 package articlecategoryusecase
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"strings"
 	"time"
 
@@ -77,7 +79,10 @@ func (u *ArticleCategoryUsecase) UpdateCategoryCommand(params *article_category.
 	}
 	existingCategory, err := u.categoryRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "دسته بندی یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	err = u.CheckAccessUserModel(existingCategory)
 	if err != nil {
@@ -124,7 +129,10 @@ func (u *ArticleCategoryUsecase) DeleteCategoryCommand(params *article_category.
 	}
 	existingCategory, err := u.categoryRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "دسته بندی یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	err = u.CheckAccessUserModel(existingCategory)
 	if err != nil {
@@ -143,11 +151,17 @@ func (u *ArticleCategoryUsecase) GetByIdCategoryQuery(params *article_category.G
 	}
 	result, err := u.categoryRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "دسته‌بندی یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "دسته بندی یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	mediaItems, err := u.categoryRepo.GetCategoryMedia(result.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 	return resp.NewResponseData(resp.Retrieved, resp.Data{
 		"category": result,
@@ -164,7 +178,10 @@ func (u *ArticleCategoryUsecase) GetAllCategoryQuery(params *article_category.Ge
 	for i, category := range result.Items {
 		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		categoriesWithMedia[i] = map[string]interface{}{
 			"category": category,
@@ -187,7 +204,10 @@ func (u *ArticleCategoryUsecase) AdminGetAllCategoryQuery(params *article_catego
 	for i, category := range result.Items {
 		media, err := u.categoryRepo.GetCategoryMedia(category.ID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "رسانه‌ها یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		categoriesWithMedia[i] = map[string]interface{}{
 			"category": category,

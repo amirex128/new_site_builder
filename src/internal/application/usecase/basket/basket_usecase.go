@@ -122,7 +122,10 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 			if item.ProductVariantID != nil {
 				variant, err = u.productVariantRepo.GetByID(*item.ProductVariantID)
 				if err != nil {
-					return nil, resp.NewError(resp.NotFound, "تنوع محصول یافت نشد")
+					if errors.Is(err, gorm.ErrRecordNotFound) {
+						return nil, resp.NewError(resp.NotFound, "تنوع محصول یافت نشد")
+					}
+					return nil, resp.NewError(resp.Internal, err.Error())
 				}
 				variantPrice = variant.Price
 			} else {
@@ -196,7 +199,10 @@ func (u *BasketUsecase) UpdateBasketCommand(params *basket.UpdateBasketCommand) 
 		}
 		updatedBasket, err := u.basketRepo.GetBasketWithItemsByCustomerIDAndSiteID(*customerID, *params.SiteID)
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "خطا در دریافت سبد خرید")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "سبد خرید یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		return resp.NewResponseData(resp.Updated, updatedBasket, "سبد خرید با موفقیت بروزرسانی شد"), nil
 	}

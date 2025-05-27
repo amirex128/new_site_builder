@@ -1,6 +1,8 @@
 package defaultthemeusecase
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
@@ -37,7 +39,10 @@ func (u *DefaultThemeUsecase) CreateDefaultThemeCommand(params *defaulttheme.Cre
 
 	_, err = u.mediaRepo.GetByID(int64(*params.MediaID))
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "تصویر مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	description := ""
@@ -76,7 +81,10 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 
 	existingTheme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "فالب یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	if params.Name != nil {
@@ -91,7 +99,10 @@ func (u *DefaultThemeUsecase) UpdateDefaultThemeCommand(params *defaulttheme.Upd
 	if params.MediaID != nil {
 		_, err = u.mediaRepo.GetByID(int64(*params.MediaID))
 		if err != nil {
-			return nil, resp.NewError(resp.NotFound, "تصویر مورد نظر یافت نشد")
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, resp.NewError(resp.NotFound, "رسانه یافت نشد")
+			}
+			return nil, resp.NewError(resp.Internal, err.Error())
 		}
 		existingTheme.MediaID = int64(*params.MediaID)
 	}
@@ -116,7 +127,10 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 
 	existingTheme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "فالب یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	err = u.defaultThemeRepo.Delete(*params.ID)
@@ -130,7 +144,10 @@ func (u *DefaultThemeUsecase) DeleteDefaultThemeCommand(params *defaulttheme.Del
 func (u *DefaultThemeUsecase) GetByIdDefaultThemeQuery(params *defaulttheme.GetByIdDefaultThemeQuery) (*resp.Response, error) {
 	theme, err := u.defaultThemeRepo.GetByID(*params.ID)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "قالب پیش‌فرض مورد نظر یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "قالب یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	return resp.NewResponseData(resp.Retrieved, theme, "قالب پیش‌فرض با موفقیت دریافت شد"), nil

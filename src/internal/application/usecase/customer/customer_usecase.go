@@ -1,7 +1,9 @@
 package customerusecase
 
 import (
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"strconv"
 	"time"
 
@@ -122,7 +124,10 @@ func (u *CustomerUsecase) RequestVerifyAndForgetCustomerCommand(params *customer
 	}
 
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "مشتری یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "مشتری یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	verificationCode := utils.GenerateVerificationCode()
@@ -215,7 +220,10 @@ func (u *CustomerUsecase) UpdateProfileCustomerCommand(params *customer.UpdatePr
 func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQuery) (*resp.Response, error) {
 	existingCustomer, err := u.repo.GetByEmail(*params.Email)
 	if err != nil {
-		return nil, resp.NewError(resp.NotFound, "مشتری یافت نشد")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, resp.NewError(resp.NotFound, "مشتری یافت نشد")
+		}
+		return nil, resp.NewError(resp.Internal, err.Error())
 	}
 
 	codeStr := *params.Code
