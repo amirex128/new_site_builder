@@ -5,8 +5,8 @@ git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.7 h1:eRcLRw8N723Zroh
 git.snappfood.ir/backend/go/packages/sf-config-manager v0.0.7/go.mod h1:OXrJWsyroQnbTcqbc8D5G5ejrMuhCUIYkl3fG12PRbA=
 git.snappfood.ir/backend/go/packages/sf-elasticsearch-client v0.0.11 h1:zeOyydO5TDhQMuSQ14Z6d+6XAgZEz4BlfAcBWmoiqYc=
 git.snappfood.ir/backend/go/packages/sf-elasticsearch-client v0.0.11/go.mod h1:ixr7MhVfaGerJD8H8Ea2QTvEyq2GtmnSiahp23KVqH4=
-git.snappfood.ir/backend/go/packages/sf-logger v0.0.27 h1:HCSRy8iJWZX/VdQYFTX5x0Rqdv3m7O0glNc1b0bGfP0=
-git.snappfood.ir/backend/go/packages/sf-logger v0.0.27/go.mod h1:fpLWcK13pFyi+PuSl1Pn/VHvalALpmhO8kSnRqG1WYw=
+git.snappfood.ir/backend/go/packages/sf-logger v0.0.28 h1:uOkOE96rXl218ZVCB/Mus3Vl6sjikunjyT+or+qOu9Q=
+git.snappfood.ir/backend/go/packages/sf-logger v0.0.28/go.mod h1:fpLWcK13pFyi+PuSl1Pn/VHvalALpmhO8kSnRqG1WYw=
 git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3 h1:F7jC58Dp/jteo8kuzIBivSEchVRsidAwFOOg7mBQoO4=
 git.snappfood.ir/backend/go/packages/sf-memory-loader v0.0.3/go.mod h1:R7kg0w0q3IrsM/fPwVvdGaG/0TAlZTQwRP+Iuu9En2s=
 git.snappfood.ir/backend/go/packages/sf-mongo v0.0.3 h1:Q0etYSZItDHM5sZ+SI0LrKg021nntJJ1gXu/c8xUG7A=
