@@ -64,7 +64,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -125,7 +125,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -186,7 +186,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -241,7 +241,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -342,7 +342,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -443,7 +443,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -538,7 +538,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -633,7 +633,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -687,7 +687,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -748,7 +748,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -809,7 +809,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -864,7 +864,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -924,7 +924,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -985,7 +985,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1046,7 +1046,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1101,7 +1101,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1202,7 +1202,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1309,7 +1309,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1404,7 +1404,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1511,7 +1511,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1568,7 +1568,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1622,7 +1622,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1683,7 +1683,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1778,7 +1778,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1885,7 +1885,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -1939,7 +1939,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2000,7 +2000,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2061,7 +2061,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2118,7 +2118,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2225,7 +2225,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2326,7 +2326,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2421,7 +2421,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2530,7 +2530,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2591,7 +2591,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2682,7 +2682,7 @@ const docTemplate = `{
                 "summary": "Verify customer email",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "name": "code",
                         "in": "query",
                         "required": true
@@ -2837,7 +2837,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2898,7 +2898,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -2959,7 +2959,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3014,7 +3014,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3115,7 +3115,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3169,7 +3169,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3230,7 +3230,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3291,7 +3291,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3346,7 +3346,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3447,7 +3447,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3554,7 +3554,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3611,7 +3611,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3672,7 +3672,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3727,7 +3727,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3790,7 +3790,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3853,7 +3853,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3918,7 +3918,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -3981,7 +3981,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4044,7 +4044,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4107,7 +4107,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4153,7 +4153,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4207,7 +4207,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4268,7 +4268,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4363,7 +4363,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4450,7 +4450,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4511,7 +4511,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4572,7 +4572,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4627,7 +4627,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4728,7 +4728,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4848,7 +4848,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -4905,7 +4905,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5000,7 +5000,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5101,7 +5101,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5155,7 +5155,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5262,7 +5262,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5316,7 +5316,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5379,7 +5379,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5453,7 +5453,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5514,7 +5514,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5575,7 +5575,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5630,7 +5630,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5731,7 +5731,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5838,7 +5838,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5933,7 +5933,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -5996,7 +5996,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6053,7 +6053,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6113,7 +6113,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6174,7 +6174,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6235,7 +6235,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6290,7 +6290,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6391,7 +6391,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6445,7 +6445,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6499,7 +6499,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6560,7 +6560,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6621,7 +6621,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6676,7 +6676,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6736,7 +6736,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6797,7 +6797,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6858,7 +6858,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -6913,7 +6913,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7014,7 +7014,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7121,7 +7121,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7178,7 +7178,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7239,7 +7239,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7300,7 +7300,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7355,7 +7355,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7418,7 +7418,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7481,7 +7481,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7576,7 +7576,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7683,7 +7683,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7740,7 +7740,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7797,7 +7797,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7864,7 +7864,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -7965,7 +7965,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8022,7 +8022,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8129,7 +8129,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8230,7 +8230,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8293,7 +8293,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8362,7 +8362,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8428,7 +8428,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8489,7 +8489,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8550,7 +8550,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8605,7 +8605,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8706,7 +8706,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8807,7 +8807,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8861,7 +8861,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -8922,7 +8922,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9017,7 +9017,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9080,7 +9080,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9187,7 +9187,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9244,7 +9244,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9307,7 +9307,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9408,7 +9408,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9454,7 +9454,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9549,7 +9549,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9612,7 +9612,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9721,7 +9721,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9775,7 +9775,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }
@@ -9836,7 +9836,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "unauthorized",
                         "schema": {
                             "$ref": "#/definitions/utils.Result"
                         }

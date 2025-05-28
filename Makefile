@@ -1,4 +1,4 @@
-.PHONY: docs build run clean docker-build docker-run docker-compose-up docker-compose-down docker-compose-stage-up docker-compose-stage-down
+.PHONY: docs build run clean docker-build docker-run docker-compose-up docker-compose-down docker-compose-stage-up docker-compose-stage-down deploy
 
 # Go related variables
 BINARY_NAME=server
@@ -17,10 +17,6 @@ docs:
 build:
 	go build -o $(BINARY_NAME) $(MAIN_PATH)
 
-# Run the application
-run:
-	go run $(MAIN_PATH)
-
 # Clean build files
 clean:
 	rm -f $(BINARY_NAME)
@@ -30,25 +26,13 @@ clean:
 docker-build:
 	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) -f ./docker/Dockerfile .
 
-# Docker run
-docker-run:
-	docker run -p 9595:8585 $(DOCKER_IMAGE):$(DOCKER_TAG)
-
 # Docker compose up for development
 docker-compose-up:
-	docker-compose -f ./docker/docker-compose.yml up -d
+	docker-compose -f ./docker/docker-compose.yml up -d --force-recreate --build --remove-orphans
 
 # Docker compose down for development
 docker-compose-down:
 	docker-compose -f ./docker/docker-compose.yml down
-
-# Docker compose up for staging environment
-docker-compose-stage-up:
-	docker-compose -f ./docker/docker-compose.stage.yml up -d
-
-# Docker compose down for staging environment
-docker-compose-stage-down:
-	docker-compose -f ./docker/docker-compose.stage.yml down
 
 move-all-vendor:
 	@echo "📦 Moving all vendor packages to GOPATH/src..."
@@ -60,3 +44,10 @@ move-all-vendor:
 		cp -r $$dir/* "$$dest/" 2>/dev/null || true; \
 	done
 	@echo "✅ All vendor packages moved."
+
+deploy:
+	git pull
+	$(MAKE) move-all-vendor
+	$(MAKE) clean
+	$(MAKE) docs
+	$(MAKE) docker-compose-up

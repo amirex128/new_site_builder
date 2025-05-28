@@ -2025,7 +2025,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2062,7 +2062,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2101,7 +2101,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2136,7 +2136,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2202,7 +2202,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -2268,7 +2268,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2330,7 +2330,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2392,7 +2392,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2428,7 +2428,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2465,7 +2465,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2504,7 +2504,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2539,7 +2539,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2579,7 +2579,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2616,7 +2616,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2655,7 +2655,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2690,7 +2690,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -2757,7 +2757,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -2827,7 +2827,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2889,7 +2889,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -2959,7 +2959,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -2995,7 +2995,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3029,7 +3029,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3068,7 +3068,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3130,7 +3130,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -3200,7 +3200,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3234,7 +3234,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3273,7 +3273,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3308,7 +3308,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3348,7 +3348,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -3419,7 +3419,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -3485,7 +3485,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3547,7 +3547,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -3616,7 +3616,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3655,7 +3655,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3712,7 +3712,7 @@ paths:
       - in: query
         name: code
         required: true
-        type: string
+        type: integer
       - in: query
         name: email
         required: true
@@ -3816,7 +3816,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3853,7 +3853,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3892,7 +3892,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -3927,7 +3927,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -3993,7 +3993,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4029,7 +4029,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4066,7 +4066,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4105,7 +4105,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4140,7 +4140,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4207,7 +4207,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -4277,7 +4277,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4313,7 +4313,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4352,7 +4352,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4387,7 +4387,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4427,7 +4427,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4467,7 +4467,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4508,7 +4508,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4548,7 +4548,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4588,7 +4588,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4628,7 +4628,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4657,7 +4657,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4691,7 +4691,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4730,7 +4730,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4792,7 +4792,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -4832,7 +4832,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4887,7 +4887,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -4926,7 +4926,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -4961,7 +4961,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5028,7 +5028,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -5107,7 +5107,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5143,7 +5143,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5205,7 +5205,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -5271,7 +5271,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5305,7 +5305,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5375,7 +5375,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5409,7 +5409,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5449,7 +5449,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5489,7 +5489,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5535,7 +5535,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5574,7 +5574,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5609,7 +5609,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5675,7 +5675,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -5745,7 +5745,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5807,7 +5807,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -5847,7 +5847,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -5884,7 +5884,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5924,7 +5924,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -5961,7 +5961,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6000,7 +6000,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6035,7 +6035,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6101,7 +6101,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6136,7 +6136,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6172,7 +6172,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6209,7 +6209,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6248,7 +6248,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6283,7 +6283,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6323,7 +6323,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6360,7 +6360,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6399,7 +6399,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6434,7 +6434,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6501,7 +6501,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -6571,7 +6571,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6607,7 +6607,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6646,7 +6646,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6685,7 +6685,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6720,7 +6720,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -6761,7 +6761,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -6801,7 +6801,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6863,7 +6863,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -6933,7 +6933,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -6969,7 +6969,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7005,7 +7005,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7044,7 +7044,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7114,7 +7114,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7150,7 +7150,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7220,7 +7220,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7286,7 +7286,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -7326,7 +7326,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7370,7 +7370,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7414,7 +7414,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -7451,7 +7451,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -7490,7 +7490,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7525,7 +7525,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -7591,7 +7591,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7657,7 +7657,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7691,7 +7691,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -7730,7 +7730,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7792,7 +7792,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7832,7 +7832,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -7902,7 +7902,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -7938,7 +7938,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -7978,7 +7978,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -8044,7 +8044,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -8073,7 +8073,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -8135,7 +8135,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "403":
@@ -8175,7 +8175,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -8245,7 +8245,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":
@@ -8279,7 +8279,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "404":
@@ -8318,7 +8318,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Result'
         "401":
-          description: Unauthorized
+          description: unauthorized
           schema:
             $ref: '#/definitions/utils.Result'
         "500":

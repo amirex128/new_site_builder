@@ -32,6 +32,7 @@ COPY --from=builder /app/bin/server /app/server
 
 # Copy docs directory (don't regenerate)
 COPY --from=builder /app/docs /app/docs
+COPY --from=builder /app/src/config/files /app/src/config/files
 
 # Set environment variables
 ENV GIN_MODE=release
