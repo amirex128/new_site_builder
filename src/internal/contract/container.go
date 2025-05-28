@@ -11,7 +11,7 @@ import (
 
 // IContainer provides methods to access all dependencies
 type IContainer interface {
-	GetCtx() *context.Context
+	GetCtx() context.Context
 	GetLogger() sflogger.Logger
 
 	// Services
