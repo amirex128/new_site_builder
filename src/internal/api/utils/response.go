@@ -180,6 +180,9 @@ func HandleError(c *gin.Context, err error) {
 
 // HandleResponse is a convenience function to handle response with appropriate responses
 func HandleResponse(c *gin.Context, response *resp.Response) {
+	if response == nil {
+		return
+	}
 	switch response.Type {
 	case resp.Success:
 		success(c, response.Message, response.Data)

@@ -126,10 +126,6 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*re
 }
 
 func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*resp.Response, error) {
-	u.Logger.Info("RegisterUserCommand called", map[string]interface{}{
-		"email": *params.Email,
-	})
-
 	_, err := u.userRepo.GetByEmail(*params.Email)
 	if err == nil {
 		return nil, resp.NewError(resp.BadRequest, "ایمیل وارد شده قبلا استفاده شده است")

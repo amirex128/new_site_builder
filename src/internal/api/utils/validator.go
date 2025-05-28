@@ -279,17 +279,79 @@ func defaultErrorMessage(field, tag, param string) string {
 	return "Validation failed for " + field + " with rule " + tag + " (" + param + ")"
 }
 
-// --- Custom validator helpers below ---
+// --- Helper functions to safely extract string and bool from reflect.Value ---
+
+func getStringFromValue(value reflect.Value) (string, bool) {
+	if !value.IsValid() {
+		return "", false
+	}
+	for value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface {
+		if value.IsNil() {
+			return "", false
+		}
+		value = value.Elem()
+	}
+	if value.Kind() != reflect.String {
+		return "", false
+	}
+	return value.String(), true
+}
+
+func getBoolFromValue(value reflect.Value) (bool, bool) {
+	if !value.IsValid() {
+		return false, false
+	}
+	for value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface {
+		if value.IsNil() {
+			return false, false
+		}
+		value = value.Elem()
+	}
+	if value.Kind() != reflect.Bool {
+		return false, false
+	}
+	return value.Bool(), true
+}
+
+// Helper to unwrap numeric types from pointers/interfaces safely for numeric comparisons
+func getFloatFromValue(value reflect.Value) (float64, bool) {
+	if !value.IsValid() {
+		return 0, false
+	}
+	for value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface {
+		if value.IsNil() {
+			return 0, false
+		}
+		value = value.Elem()
+	}
+	switch value.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return float64(value.Int()), true
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return float64(value.Uint()), true
+	case reflect.Float32, reflect.Float64:
+		return value.Float(), true
+	default:
+		return 0, false
+	}
+}
+
+// --- Validators below ---
 
 func RequiredValidatorValue(value reflect.Value) bool {
 	if !value.IsValid() {
 		return false
 	}
+	for value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface {
+		if value.IsNil() {
+			return false
+		}
+		value = value.Elem()
+	}
+
 	switch value.Kind() {
 	case reflect.String:
 		return value.String() != ""
-	case reflect.Ptr, reflect.Interface:
-		return !value.IsNil()
 	case reflect.Slice, reflect.Array, reflect.Map:
 		return value.Len() > 0
 	default:
@@ -303,17 +365,19 @@ func MinValidatorValue(value reflect.Value, param string) bool {
 	if err != nil {
 		return true // ignore invalid param
 	}
-	switch value.Kind() {
-	case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
-		return float64(value.Len()) >= min
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return float64(value.Int()) >= min
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return float64(value.Uint()) >= min
-	case reflect.Float32, reflect.Float64:
-		return value.Float() >= min
+
+	v, ok := getFloatFromValue(value)
+	if !ok {
+		// for string, slice etc, use Len()
+		switch value.Kind() {
+		case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
+			return float64(value.Len()) >= min
+		default:
+			return true
+		}
 	}
-	return true
+
+	return v >= min
 }
 
 func MaxValidatorValue(value reflect.Value, param string) bool {
@@ -321,17 +385,18 @@ func MaxValidatorValue(value reflect.Value, param string) bool {
 	if err != nil {
 		return true
 	}
-	switch value.Kind() {
-	case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
-		return float64(value.Len()) <= max
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return float64(value.Int()) <= max
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return float64(value.Uint()) <= max
-	case reflect.Float32, reflect.Float64:
-		return value.Float() <= max
+
+	v, ok := getFloatFromValue(value)
+	if !ok {
+		switch value.Kind() {
+		case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
+			return float64(value.Len()) <= max
+		default:
+			return true
+		}
 	}
-	return true
+
+	return v <= max
 }
 
 func LenValidatorValue(value reflect.Value, param string) bool {
@@ -339,6 +404,13 @@ func LenValidatorValue(value reflect.Value, param string) bool {
 	if err != nil {
 		return true
 	}
+	for value.Kind() == reflect.Ptr || value.Kind() == reflect.Interface {
+		if value.IsNil() {
+			return false
+		}
+		value = value.Elem()
+	}
+
 	switch value.Kind() {
 	case reflect.String, reflect.Slice, reflect.Array, reflect.Map:
 		return value.Len() == l
@@ -347,7 +419,7 @@ func LenValidatorValue(value reflect.Value, param string) bool {
 }
 
 func EmailValidatorValue(value reflect.Value) bool {
-	s, ok := value.Interface().(string)
+	s, ok := getStringFromValue(value)
 	if !ok || s == "" {
 		return false
 	}
@@ -356,7 +428,10 @@ func EmailValidatorValue(value reflect.Value) bool {
 }
 
 func OneOfValidatorValue(value reflect.Value, param string) bool {
-	s := value.String()
+	s, ok := getStringFromValue(value)
+	if !ok {
+		return false
+	}
 	options := strings.Fields(param)
 	for _, opt := range options {
 		if s == opt {
@@ -395,15 +470,8 @@ func compareNumeric(value reflect.Value, param string, op string) bool {
 	if err != nil {
 		return true
 	}
-	var v float64
-	switch value.Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		v = float64(value.Int())
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		v = float64(value.Uint())
-	case reflect.Float32, reflect.Float64:
-		v = value.Float()
-	default:
+	v, ok := getFloatFromValue(value)
+	if !ok {
 		return true
 	}
 	switch op {
@@ -424,7 +492,7 @@ func compareNumeric(value reflect.Value, param string, op string) bool {
 }
 
 func URLValidatorValue(value reflect.Value) bool {
-	s, ok := value.Interface().(string)
+	s, ok := getStringFromValue(value)
 	if !ok || s == "" {
 		return false
 	}
@@ -433,7 +501,7 @@ func URLValidatorValue(value reflect.Value) bool {
 }
 
 func UUIDValidatorValue(value reflect.Value) bool {
-	s, ok := value.Interface().(string)
+	s, ok := getStringFromValue(value)
 	if !ok || s == "" {
 		return false
 	}
@@ -442,7 +510,7 @@ func UUIDValidatorValue(value reflect.Value) bool {
 }
 
 func RequiredTextValidatorValue(value reflect.Value, param string) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return false
 	}
@@ -464,7 +532,7 @@ func RequiredTextValidatorValue(value reflect.Value, param string) bool {
 }
 
 func OptionalTextValidatorValue(value reflect.Value, param string) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return true
 	}
@@ -486,12 +554,12 @@ func OptionalTextValidatorValue(value reflect.Value, param string) bool {
 }
 
 func RequiredBoolValidatorValue(value reflect.Value) bool {
-	_, ok := value.Interface().(bool)
+	_, ok := getBoolFromValue(value)
 	return ok
 }
 
 func RequiredDomainValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return false
 	}
@@ -502,7 +570,7 @@ func RequiredDomainValidatorValue(value reflect.Value) bool {
 }
 
 func OptionalDomainValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return true
 	}
@@ -513,7 +581,7 @@ func OptionalDomainValidatorValue(value reflect.Value) bool {
 }
 
 func RequiredSlugValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return false
 	}
@@ -524,7 +592,7 @@ func RequiredSlugValidatorValue(value reflect.Value) bool {
 }
 
 func OptionalSlugValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return true
 	}
@@ -535,7 +603,7 @@ func OptionalSlugValidatorValue(value reflect.Value) bool {
 }
 
 func RequiredCommaSeparatedNumbersValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return false
 	}
@@ -546,7 +614,7 @@ func RequiredCommaSeparatedNumbersValidatorValue(value reflect.Value) bool {
 }
 
 func OptionalCommaSeparatedNumbersValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return true
 	}
@@ -557,7 +625,7 @@ func OptionalCommaSeparatedNumbersValidatorValue(value reflect.Value) bool {
 }
 
 func RequiredPatternValidatorValue(value reflect.Value, param string) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return false
 	}
@@ -576,7 +644,7 @@ func RequiredPatternValidatorValue(value reflect.Value, param string) bool {
 }
 
 func OptionalPatternValidatorValue(value reflect.Value, param string) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return true
 	}
@@ -840,7 +908,7 @@ func OptionalEnumStringMapValidatorValue(value reflect.Value) bool {
 }
 
 func IranianMobileNumberValidatorValue(value reflect.Value) bool {
-	v, ok := value.Interface().(string)
+	v, ok := getStringFromValue(value)
 	if !ok {
 		return false
 	}
