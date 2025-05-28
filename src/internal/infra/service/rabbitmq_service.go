@@ -12,7 +12,7 @@ type RabbitMqService struct {
 	logger sflogger.Logger
 }
 
-func NewRabbitMqService(ctx *context.Context, logger sflogger.Logger) *RabbitMqService {
+func NewRabbitMqService(ctx context.Context, logger sflogger.Logger) *RabbitMqService {
 	return &RabbitMqService{
 		ctx:    ctx,
 		logger: logger,

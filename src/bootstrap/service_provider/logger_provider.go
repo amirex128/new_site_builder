@@ -22,6 +22,7 @@ func LoggerProvider() sflogger.Logger {
 		),
 	)
 
-	logger.Info("Hello, world!", map[string]interface{}{"foo": "bar"})
+	logger.InfoWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, "Logger initialized successfully", nil)
+
 	return logger
 }

@@ -9,7 +9,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	container := bootstrap.ConsumerServerBootstrap(&ctx)
+	container := bootstrap.ConsumerServerBootstrap(ctx)
 
 	handlers := bootstrap.ConsumerHandlerBootstrap(container)
 

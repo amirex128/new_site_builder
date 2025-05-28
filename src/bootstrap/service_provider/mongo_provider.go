@@ -24,7 +24,8 @@ func MongoProvider(cfg *config.Config, logger sflogger.Logger) {
 		}),
 	)
 	if err != nil {
-		logger.Errorf("Failed to register mongo database connection: %v", err)
+		logger.Errorf("Failed to register mongo MongoDB connection: %v", err)
 	}
+	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded Mongodb", nil)
 
 }

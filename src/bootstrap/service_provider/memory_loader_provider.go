@@ -29,5 +29,6 @@ func MemoryLoaderProvider(logger sflogger.Logger) {
 			},
 		},
 	).Start()
+	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded Memory Loader", nil)
 
 }

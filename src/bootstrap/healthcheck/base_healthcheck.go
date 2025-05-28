@@ -2,7 +2,6 @@ package healthcheck
 
 import (
 	"context"
-	sfelastic "git.snappfood.ir/backend/go/packages/sf-elasticsearch-client/v8"
 	sfmongo "git.snappfood.ir/backend/go/packages/sf-mongo"
 	sform "git.snappfood.ir/backend/go/packages/sf-orm"
 	sfrabbitmq "git.snappfood.ir/backend/go/packages/sf-rabbitmq"
@@ -15,10 +14,6 @@ type BaseHealthCheck struct {
 func (BaseHealthCheck) Health(ctx context.Context) error {
 
 	err := sfredis.Health(ctx)
-	if err != nil {
-		return err
-	}
-	err = sfelastic.Health(ctx)
 	if err != nil {
 		return err
 	}

@@ -11,13 +11,18 @@ import (
 // MessageHandler is a function for processing messages
 type MessageHandler func(ctx context.Context, msg *Message) error
 
-// Consume consumes messages from a queue with retry support
+// Consume consumes messages from a queue with retry support and worker pool
 func Consume(ctx context.Context, connName, queueName string, handler MessageHandler, config *ConsumeConfig) error {
+	if config.WorkerCount <= 0 {
+		config.WorkerCount = 1 // Default to 1 worker if not specified
+	}
+
 	if globalRegistry.logger != nil {
 		extras := make(map[string]interface{})
 		extras["connection_name"] = connName
 		extras["queue_name"] = queueName
 		extras["consumer_name"] = config.ConsumerName
+		extras["worker_count"] = config.WorkerCount
 		globalRegistry.logger.InfoWithCategory(Category.API.Messaging, SubCategory.Operation.Initialization, "Starting to consume messages", extras)
 	}
 
@@ -66,14 +71,108 @@ func Consume(ctx context.Context, connName, queueName string, handler MessageHan
 		return fmt.Errorf("failed to consume: %w", err)
 	}
 
-	for {
-		if globalRegistry.logger != nil {
-			extras := make(map[string]interface{})
-			extras["connection_name"] = connName
-			extras["queue_name"] = queueName
-			globalRegistry.logger.DebugWithCategory(Category.API.Messaging, SubCategory.Status.Debug, "Waiting for message", extras)
-		}
+	// Create a channel to distribute messages to workers
+	msgChan := make(chan amqp.Delivery, config.WorkerCount*2)
 
+	// Create error channel to collect worker errors
+	errChan := make(chan error, config.WorkerCount)
+
+	// Start workers
+	for i := 0; i < config.WorkerCount; i++ {
+		go func(workerID int) {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case d, ok := <-msgChan:
+					if !ok {
+						return
+					}
+
+					if globalRegistry.logger != nil {
+						extras := make(map[string]interface{})
+						extras["connection_name"] = connName
+						extras["queue_name"] = queueName
+						extras["message_id"] = d.MessageId
+						extras["worker_id"] = workerID
+						globalRegistry.logger.DebugWithCategory(Category.API.Messaging, SubCategory.Status.Debug, "Received messag", extras)
+					}
+
+					// Process with retry support
+					var processErr error
+					retries := 0
+
+					for retries <= config.MaxRetries {
+						if retries > 0 && globalRegistry.logger != nil {
+							extras := make(map[string]interface{})
+							extras["connection_name"] = connName
+							extras["queue_name"] = queueName
+							extras["message_id"] = d.MessageId
+							extras["worker_id"] = workerID
+							extras["retry_count"] = retries
+							extras["max_retries"] = config.MaxRetries
+							globalRegistry.logger.WarnWithCategory(Category.Error.Retry, SubCategory.Status.Retry, "Retrying message processing", extras)
+						}
+
+						processErr = handler(ctx, FromAMQP(d))
+						if processErr == nil {
+							break
+						}
+
+						retries++
+						if retries <= config.MaxRetries {
+							time.Sleep(config.RetryInterval)
+						}
+					}
+
+					if !config.AutoAck {
+						if processErr == nil {
+							if err := d.Ack(false); err != nil {
+								if globalRegistry.logger != nil {
+									extras := make(map[string]interface{})
+									extras["connection_name"] = connName
+									extras["queue_name"] = queueName
+									extras["message_id"] = d.MessageId
+									extras["worker_id"] = workerID
+									extras[ExtraKey.Error.ErrorMessage] = err.Error()
+									globalRegistry.logger.ErrorWithCategory(Category.Infrastructure.Network, SubCategory.Status.Error, "Failed to ack message", extras)
+								}
+								errChan <- fmt.Errorf("failed to ack message: %w", err)
+								return
+							}
+
+							if globalRegistry.logger != nil {
+								extras := make(map[string]interface{})
+								extras["connection_name"] = connName
+								extras["queue_name"] = queueName
+								extras["message_id"] = d.MessageId
+								extras["worker_id"] = workerID
+								globalRegistry.logger.InfoWithCategory(Category.API.Messaging, SubCategory.Status.Success, "Successfully processed message", extras)
+							}
+						} else {
+							// Max retries reached, reject the message
+							if globalRegistry.logger != nil {
+								extras := make(map[string]interface{})
+								extras["connection_name"] = connName
+								extras["queue_name"] = queueName
+								extras["message_id"] = d.MessageId
+								extras["worker_id"] = workerID
+								extras["retry_count"] = retries
+								extras["max_retries"] = config.MaxRetries
+								extras[ExtraKey.Error.ErrorMessage] = processErr.Error()
+								globalRegistry.logger.ErrorWithCategory(Category.Error.Error, SubCategory.Status.Error, "Failed to process message after max retries", extras)
+							}
+							errChan <- processErr
+							return
+						}
+					}
+				}
+			}
+		}(i)
+	}
+
+	// Main message distribution loop
+	for {
 		select {
 		case <-ctx.Done():
 			if globalRegistry.logger != nil {
@@ -82,7 +181,10 @@ func Consume(ctx context.Context, connName, queueName string, handler MessageHan
 				extras["queue_name"] = queueName
 				globalRegistry.logger.InfoWithCategory(Category.API.Messaging, SubCategory.Operation.Shutdown, "Consumer context cancelled", extras)
 			}
+			close(msgChan)
 			return nil
+		case err := <-errChan:
+			return err
 		case d, ok := <-deliveries:
 			if !ok {
 				if globalRegistry.logger != nil {
@@ -94,76 +196,11 @@ func Consume(ctx context.Context, connName, queueName string, handler MessageHan
 				return fmt.Errorf("delivery channel closed")
 			}
 
-			if globalRegistry.logger != nil {
-				extras := make(map[string]interface{})
-				extras["connection_name"] = connName
-				extras["queue_name"] = queueName
-				extras["message_id"] = d.MessageId
-				globalRegistry.logger.DebugWithCategory(Category.API.Messaging, SubCategory.Status.Debug, "Received message", extras)
-			}
-
-			// Process with retry support
-			var processErr error
-			retries := 0
-
-			for retries <= config.MaxRetries {
-				if retries > 0 && globalRegistry.logger != nil {
-					extras := make(map[string]interface{})
-					extras["connection_name"] = connName
-					extras["queue_name"] = queueName
-					extras["message_id"] = d.MessageId
-					extras["retry_count"] = retries
-					extras["max_retries"] = config.MaxRetries
-					globalRegistry.logger.WarnWithCategory(Category.Error.Retry, SubCategory.Status.Retry, "Retrying message processing", extras)
-				}
-
-				processErr = handler(ctx, FromAMQP(d))
-				if processErr == nil {
-					break
-				}
-
-				retries++
-				if retries <= config.MaxRetries {
-					time.Sleep(config.RetryInterval)
-				}
-			}
-
-			if !config.AutoAck {
-				if processErr == nil {
-					if err := d.Ack(false); err != nil {
-						if globalRegistry.logger != nil {
-							extras := make(map[string]interface{})
-							extras["connection_name"] = connName
-							extras["queue_name"] = queueName
-							extras["message_id"] = d.MessageId
-							extras[ExtraKey.Error.ErrorMessage] = err.Error()
-							globalRegistry.logger.ErrorWithCategory(Category.Infrastructure.Network, SubCategory.Status.Error, "Failed to ack message", extras)
-						}
-						return fmt.Errorf("failed to ack message: %w", err)
-					}
-
-					if globalRegistry.logger != nil {
-						extras := make(map[string]interface{})
-						extras["connection_name"] = connName
-						extras["queue_name"] = queueName
-						extras["message_id"] = d.MessageId
-						globalRegistry.logger.InfoWithCategory(Category.API.Messaging, SubCategory.Status.Success, "Successfully processed message", extras)
-					}
-				} else {
-					// Max retries reached, reject the message
-					if globalRegistry.logger != nil {
-						extras := make(map[string]interface{})
-						extras["connection_name"] = connName
-						extras["queue_name"] = queueName
-						extras["message_id"] = d.MessageId
-						extras["retry_count"] = retries
-						extras["max_retries"] = config.MaxRetries
-						extras[ExtraKey.Error.ErrorMessage] = processErr.Error()
-						globalRegistry.logger.ErrorWithCategory(Category.Error.Error, SubCategory.Status.Error, "Failed to process message after max retries", extras)
-					}
-
-					return processErr
-				}
+			select {
+			case msgChan <- d:
+				// Message distributed to worker
+			case <-ctx.Done():
+				return nil
 			}
 		}
 	}

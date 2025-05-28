@@ -1,6 +1,7 @@
 package serviceprovider
 
 import (
+	"fmt"
 	"github.com/amirex128/new_site_builder/src/config"
 	"os"
 	"time"
@@ -31,21 +32,18 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 	)
 
 	if err != nil {
-		extraMap := map[string]interface{}{
-			sflogger.ExtraKey.Error.ErrorMessage: err.Error(),
-		}
-		logger.ErrorWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Failed to load configuration from any source", extraMap)
+		logger.ErrorWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, fmt.Sprintf("Failed to load configuration from any source : %v", err), nil)
 		return nil
 	}
 
-	config, ok := result.(*config.Config)
+	cfg, ok := result.(*config.Config)
 	if !ok {
 		logger.ErrorWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Failed to cast configuration result to config.Config", nil)
 		return nil
 	}
 
 	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded configuration", nil)
-	return config
+	return cfg
 }
 
 func getConfigPath(env string) string {

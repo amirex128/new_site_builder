@@ -1,6 +1,7 @@
 package serviceprovider
 
 import (
+	"fmt"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfrouting "git.snappfood.ir/backend/go/packages/sf-routing"
 	"github.com/amirex128/new_site_builder/src/bootstrap/exporter"
@@ -9,7 +10,6 @@ import (
 )
 
 func RouterProvider(logger sflogger.Logger) {
-	// Configure the server
 	err := sfrouting.RegisterConnection(
 		sfrouting.WithLogger(logger),
 		sfrouting.WithHealthChecks(&healthcheck.BaseHealthCheck{}),
@@ -36,7 +36,8 @@ func RouterProvider(logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		logger.Errorf("Failed to register Routers: %v", err)
+		logger.ErrorWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, fmt.Sprintf("Failed to register routers: %v", err), nil)
 	}
+	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded Router", nil)
 
 }

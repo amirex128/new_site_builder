@@ -1,6 +1,7 @@
 package serviceprovider
 
 import (
+	"fmt"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	sfrabbitmq "git.snappfood.ir/backend/go/packages/sf-rabbitmq"
 	"github.com/amirex128/new_site_builder/src/config"
@@ -40,7 +41,8 @@ func RabbitProvider(cfg *config.Config, logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		logger.Errorf("Failed to register rabbit connection: %v", err)
+		logger.ErrorWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, fmt.Sprintf("Failed to register rabbit connection: %v", err), nil)
 	}
+	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded RabbitMQ", nil)
 
 }

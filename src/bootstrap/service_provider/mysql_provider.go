@@ -1,6 +1,7 @@
 package serviceprovider
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -12,8 +13,6 @@ import (
 )
 
 func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
-	// Create MySQL configuration directly as a struct
-	// Register your database connections with meaningful names and options
 	err := sform.RegisterConnection(
 		sform.WithLogger(logger),
 		sform.WithRetryOptions(&sform.RetryOptions{
@@ -103,7 +102,8 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 	)
 
 	if err != nil {
-		logger.Errorf("Failed to register database connection: %v", err)
+		logger.ErrorWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, fmt.Sprintf("Failed to register database connection: %v", err), nil)
 	}
+	logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded Mysql", nil)
 
 }

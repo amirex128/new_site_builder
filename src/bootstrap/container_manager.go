@@ -15,7 +15,7 @@ import (
 	"github.com/amirex128/new_site_builder/src/config"
 )
 
-func ContainerProvider(ctx *context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
+func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.Logger) *Container {
 	mainDB := sform.MustDB("main")
 
 	paymentRepo := repository.NewPaymentRepository(mainDB)
@@ -27,7 +27,7 @@ func ContainerProvider(ctx *context.Context, cfg *config.Config, logger sflogger
 		Config: cfg,
 		Logger: logger,
 
-		MainCache:       service2.NewRedis(sfredis.MustClient(*ctx, "cache")),
+		MainCache:       service2.NewRedis(sfredis.MustClient(ctx, "cache")),
 		IdentityService: identityService,
 		StorageService: service2.NewStorageService(
 			service2.NewStorageClient(cfg.StorageS1Host, cfg.StorageS1AccessKey, cfg.StorageS1SecretKey),
@@ -41,7 +41,7 @@ func ContainerProvider(ctx *context.Context, cfg *config.Config, logger sflogger
 			return service2.NewAuthContextService(c, identityService)
 		},
 		stockCacheTransient: func() service.ICacheService {
-			return service2.NewRedis(sfredis.MustClient(*ctx, "stock"))
+			return service2.NewRedis(sfredis.MustClient(ctx, "stock"))
 		},
 
 		// Repositories

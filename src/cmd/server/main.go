@@ -30,7 +30,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	container := bootstrap.HttpServerBootstrap(&ctx)
+	container := bootstrap.HttpServerBootstrap(ctx)
 
 	handlers := bootstrap.HttpHandlerBootstrap(container)
 

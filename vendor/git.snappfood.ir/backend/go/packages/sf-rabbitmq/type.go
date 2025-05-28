@@ -96,6 +96,7 @@ type ConsumeConfig struct {
 	Args          amqp.Table
 	MaxRetries    int           // Maximum number of retries for failed messages
 	RetryInterval time.Duration // Time between retries
+	WorkerCount   int           // Number of workers to process messages
 }
 
 // BatchConsumeConfig represents configuration for batch message consumption

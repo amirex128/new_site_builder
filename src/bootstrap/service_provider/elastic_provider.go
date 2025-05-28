@@ -24,6 +24,8 @@ func ElasticProvider(cfg *config.Config, logger sflogger.Logger) {
 	//)
 	//
 	//if err != nil {
-	//	logger.Errorf("Failed to register elasticsearch connection: %v", err)
+	//logger.ErrorWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, fmt.Sprintf("Failed to register elasticsearch connection: %v", err), nil)
 	//}
+	//logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded Elastic Search", nil)
+
 }

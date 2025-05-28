@@ -24,6 +24,8 @@ func GrpcRequestProvider(logger sflogger.Logger) {
 	//	grpco.WithLogger(logger),
 	//)
 	//if err != nil {
-	//	logger.Errorf("Failed to register gRPC connection : %s", "error", err.Error())
+	//logger.ErrorWithCategory(sflogger.Category.System.Startup, sflogger.SubCategory.Operation.Initialization, fmt.Sprintf("Failed to register gRPC connection : %v", err), nil)
 	//}
+	//logger.InfoWithCategory(sflogger.Category.System.General, sflogger.SubCategory.Operation.Startup, "Successfully loaded Grpc", nil)
+
 }

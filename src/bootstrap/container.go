@@ -13,7 +13,7 @@ import (
 
 // Container
 type Container struct {
-	Ctx                  *context.Context
+	Ctx                  context.Context
 	Config               contract.IConfig
 	MemoryLoader         service.IMemoryLoaderService
 	MainCache            service.ICacheService
@@ -72,7 +72,7 @@ type Container struct {
 	PageHeaderFooterUsageRepo repository.IPageHeaderFooterUsageRepository
 }
 
-func (c *Container) GetCtx() *context.Context {
+func (c *Container) GetCtx() context.Context {
 	return c.Ctx
 }
 func (c *Container) GetCommentRepo() repository.ICommentRepository {
