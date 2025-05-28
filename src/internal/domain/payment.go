@@ -10,8 +10,8 @@ import (
 type Payment struct {
 	ID                  int64              `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	SiteID              int64              `json:"site_id" gorm:"column:site_id;type:bigint;not null"`
-	PaymentStatusEnum   enums.StatusEnum   `json:"payment_status_enum" gorm:"column:payment_status_enum;type:longtext;not null"`
-	UserType            enums.UserTypeEnum `json:"user_type" gorm:"column:user_type;type:longtext;null"`
+	PaymentStatusEnum   enums.StatusEnum   `json:"payment_status_enum" gorm:"column:payment_status_enum;type:ENUM('inactive','active','pending');default:'inactive';not null"`
+	UserType            enums.UserTypeEnum `json:"user_type" gorm:"column:user_type;type:ENUM('user','customer','guest');default:'user';null"`
 	TrackingNumber      int64              `json:"tracking_number" gorm:"column:tracking_number;type:bigint;not null"`
 	Gateway             string             `json:"gateway" gorm:"column:gateway;type:longtext;not null"`
 	GatewayAccountName  string             `json:"gateway_account_name" gorm:"column:gateway_account_name;type:longtext;not null"`

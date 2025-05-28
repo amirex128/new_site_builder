@@ -13,19 +13,19 @@ type User struct {
 	LastName                 string             `json:"last_name" gorm:"column:last_name;type:longtext;null"`
 	Email                    string             `json:"email" gorm:"column:email;type:varchar(255);not null;uniqueIndex"`
 	AvatarID                 *int64             `json:"avatar_id" gorm:"column:avatar_id;type:bigint;null"`
-	VerifyEmail              enums.StatusEnum   `json:"verify_email" gorm:"column:verify_email;type:longtext;null"`
+	VerifyEmail              enums.StatusEnum   `json:"verify_email" gorm:"column:verify_email;type:ENUM('inactive','active','pending');default:'inactive';null"`
 	Password                 string             `json:"password" gorm:"column:password;type:longtext;not null"`
 	Salt                     string             `json:"salt" gorm:"column:salt;type:longtext;not null"`
 	NationalCode             string             `json:"national_code" gorm:"column:national_code;type:longtext;null"`
 	Phone                    string             `json:"phone" gorm:"column:phone;type:longtext;null"`
-	VerifyPhone              enums.StatusEnum   `json:"verify_phone" gorm:"column:verify_phone;type:longtext;null"`
-	IsActive                 enums.StatusEnum   `json:"is_active" gorm:"column:is_active;type:longtext;not null"`
-	AiTypeEnum               enums.AiTypeEnum   `json:"ai_type_enum" gorm:"column:ai_type_enum;type:longtext;not null"`
-	UserTypeEnum             enums.UserTypeEnum `json:"user_type_enum" gorm:"column:user_type_enum;type:longtext;not null"`
+	VerifyPhone              enums.StatusEnum   `json:"verify_phone" gorm:"column:verify_phone;type:ENUM('inactive','active','pending');default:'inactive';null"`
+	IsActive                 enums.StatusEnum   `json:"is_active" gorm:"column:is_active;type:ENUM('inactive','active','pending');default:'inactive';not null"`
+	AiTypeEnum               enums.AiTypeEnum   `json:"ai_type_enum" gorm:"column:ai_type_enum;type:ENUM('gpt35','gpt4','claude');default:'gpt35';not null"`
+	UserTypeEnum             enums.UserTypeEnum `json:"user_type_enum" gorm:"column:user_type_enum;type:ENUM('user','customer','guest');default:'user';not null"`
 	PlanID                   *int64             `json:"plan_id" gorm:"column:plan_id;type:bigint;null"`
 	PlanStartedAt            *time.Time         `json:"plan_started_at" gorm:"column:plan_started_at;type:datetime(6);null"`
 	PlanExpiredAt            *time.Time         `json:"plan_expired_at" gorm:"column:plan_expired_at;type:datetime(6);null"`
-	VerifyCode               *string            `json:"verify_code" gorm:"column:verify_code;type:int;null"`
+	VerifyCode               *int               `json:"verify_code" gorm:"column:verify_code;type:int;null"`
 	ExpireVerifyCodeAt       *time.Time         `json:"expire_verify_code_at" gorm:"column:expire_verify_code_at;type:datetime(6);null"`
 	AiCredits                int                `json:"ai_credits" gorm:"column:ai_credits;type:int;not null"`
 	AiImageCredits           int                `json:"ai_image_credits" gorm:"column:ai_image_credits;type:int;not null"`

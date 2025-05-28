@@ -8,7 +8,7 @@ type UnitPrice struct {
 	Name         string                 `json:"name" gorm:"column:name;type:longtext;not null"`
 	HasDay       bool                   `json:"has_day" gorm:"column:has_day;type:tinyint(1);not null"`
 	Price        int64                  `json:"price" gorm:"column:price;type:bigint;not null"`
-	DiscountType enums.DiscountTypeEnum `json:"discount_type" gorm:"column:discount_type;type:longtext;null"`
+	DiscountType enums.DiscountTypeEnum `json:"discount_type" gorm:"column:discount_type;type:ENUM('fixed','percentage');default:'fixed';null"`
 	Discount     *int64                 `json:"discount" gorm:"column:discount;type:bigint;null"`
 }
 

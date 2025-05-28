@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // Discount represents Product.Discounts table
@@ -10,7 +11,7 @@ type Discount struct {
 	ID              int64                  `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	Code            string                 `json:"code" gorm:"column:code;type:longtext;not null"`
 	Quantity        int                    `json:"quantity" gorm:"column:quantity;type:int;not null"`
-	Type            enums.DiscountTypeEnum `json:"type" gorm:"column:type;type:longtext;not null"`
+	Type            enums.DiscountTypeEnum `json:"type" gorm:"column:type;type:ENUM('fixed','percentage');default:'fixed';not null"`
 	Value           int64                  `json:"value" gorm:"column:value;type:bigint;not null"`
 	ExpiryDate      *time.Time             `json:"expiry_date" gorm:"column:expiry_date;type:datetime(6);not null"`
 	MaxUsagePerUser *int                   `json:"max_usage_per_user" gorm:"column:max_usage_per_user;type:int;not null"`

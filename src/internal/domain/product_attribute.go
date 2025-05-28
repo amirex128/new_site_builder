@@ -10,7 +10,7 @@ import (
 type ProductAttribute struct {
 	ID        int64                          `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	ProductID int64                          `json:"product_id" gorm:"column:product_id;type:bigint;not null;index"`
-	Type      enums.ProductAttributeTypeEnum `json:"type" gorm:"column:type;type:longtext;not null"`
+	Type      enums.ProductAttributeTypeEnum `json:"type" gorm:"column:type;type:ENUM('public','technical','other');default:'public';not null"`
 	Name      string                         `json:"name" gorm:"column:name;type:longtext;not null"`
 	Value     string                         `json:"value" gorm:"column:value;type:longtext;not null"`
 	CreatedAt time.Time                      `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`

@@ -11,7 +11,7 @@ type Product struct {
 	ID              int64            `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	Name            string           `json:"name" gorm:"column:name;type:longtext;not null"`
 	Description     string           `json:"description" gorm:"column:description;type:longtext;null"`
-	Status          enums.StatusEnum `json:"status" gorm:"column:status;type:longtext;not null"`
+	Status          enums.StatusEnum `json:"status" gorm:"column:status;type:ENUM('inactive','active','pending');default:'inactive';not null"`
 	Weight          int              `json:"weight" gorm:"column:weight;type:int;not null"`
 	SellingCount    int              `json:"selling_count" gorm:"column:selling_count;type:int;not null"`
 	VisitedCount    int              `json:"visited_count" gorm:"column:visited_count;type:int;not null"`

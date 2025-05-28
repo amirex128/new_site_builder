@@ -7,7 +7,7 @@ type Province struct {
 	ID     int64            `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	Name   string           `json:"name" gorm:"column:name;type:longtext;not null"`
 	Slug   string           `json:"slug" gorm:"column:slug;type:longtext;not null"`
-	Status enums.StatusEnum `json:"status" gorm:"column:status;type:longtext;not null"`
+	Status enums.StatusEnum `json:"status" gorm:"column:status;type:ENUM('inactive','active','pending');default:'inactive';not null"`
 
 	// Relations
 	Cities    []City    `json:"cities" gorm:"foreignKey:ProvinceID"`

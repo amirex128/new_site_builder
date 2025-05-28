@@ -134,12 +134,16 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 	hashedPassword, salt := u.identitySvc.HashPassword(*params.Password)
 
 	newUser := domain.User{
-		Email:     *params.Email,
-		Password:  hashedPassword,
-		Salt:      salt,
-		IsActive:  enums.InactiveStatus,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Email:        *params.Email,
+		Password:     hashedPassword,
+		Salt:         salt,
+		VerifyEmail:  enums.InactiveStatus,
+		VerifyPhone:  enums.InactiveStatus,
+		IsActive:     enums.ActiveStatus,
+		AiTypeEnum:   enums.GPT35Type,
+		UserTypeEnum: enums.UserTypeValue,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 
 	verificationCode := utils.GenerateVerificationCode()
@@ -258,7 +262,7 @@ func (u *UserUsecase) VerifyUserQuery(params *user.VerifyUserQuery) (*resp.Respo
 		return nil, resp.NewError(resp.NotFound, "کاربر یافت نشد")
 	}
 
-	codeStr := strconv.Itoa(*params.Code)
+	codeStr := *params.Code
 
 	var resetToken string
 

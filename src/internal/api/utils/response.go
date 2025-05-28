@@ -18,18 +18,18 @@ type Result struct {
 	StatusCode    int    `json:"statusCode"`
 }
 
-// Standard messages for API responses
+// پیام‌های استاندارد برای پاسخ‌های API
 const (
-	MsgSuccess         = "Operation completed successfully"
-	MsgCreated         = "Resource created successfully"
-	MsgUpdated         = "Resource updated successfully"
-	MsgDeleted         = "Resource deleted successfully"
-	MsgRetrieved       = "Data retrieved successfully"
-	MsgValidationError = "Validation error"
-	MsgInternalError   = "Internal server error"
-	MsgNotFound        = "Resource not found"
-	MsgUnauthorized    = "Authentication required"
-	MsgBadRequest      = "Invalid request"
+	MsgSuccess         = "عملیات با موفقیت انجام شد"
+	MsgCreated         = "منبع با موفقیت ایجاد شد"
+	MsgUpdated         = "با موفقیت بروزرسانی شد"
+	MsgDeleted         = "با موفقیت حذف شد"
+	MsgRetrieved       = "داده‌ها با موفقیت دریافت شدند"
+	MsgValidationError = "خطای اعتبارسنجی"
+	MsgInternalError   = "خطای داخلی سرور"
+	MsgNotFound        = "منبع یافت نشد"
+	MsgUnauthorized    = "نیاز به احراز هویت"
+	MsgBadRequest      = "درخواست نامعتبر"
 )
 
 // Response builders

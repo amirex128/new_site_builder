@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
+
+	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 )
 
 // FileItem represents Drive.FileItems table
@@ -16,7 +17,7 @@ type FileItem struct {
 	Size        int64                        `json:"size" gorm:"column:size;type:bigint;not null"`
 	MimeType    string                       `json:"mime_type" gorm:"column:mime_type;type:longtext;not null"`
 	ParentID    *int64                       `json:"parent_id" gorm:"column:parent_id;type:bigint;null;index"`
-	Permission  enums.FileItemPermissionEnum `json:"permission" gorm:"column:permission;type:longtext;not null"`
+	Permission  enums.FileItemPermissionEnum `json:"permission" gorm:"column:permission;type:ENUM('private','public');default:'private';not null"`
 	UserID      int64                        `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
 	CreatedAt   time.Time                    `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
 	UpdatedAt   time.Time                    `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`

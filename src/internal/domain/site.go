@@ -10,10 +10,10 @@ import (
 type Site struct {
 	ID         int64                `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	Domain     string               `json:"domain" gorm:"column:domain;type:longtext;not null"`
-	DomainType enums.DomainTypeEnum `json:"domain_type" gorm:"column:domain_type;type:longtext;not null"`
+	DomainType enums.DomainTypeEnum `json:"domain_type" gorm:"column:domain_type;type:ENUM('domain','subdomain');default:'domain';not null"`
 	Name       string               `json:"name" gorm:"column:name;type:longtext;not null"`
-	Status     enums.StatusEnum     `json:"status" gorm:"column:status;type:longtext;not null"`
-	SiteType   enums.SiteTypeEnum   `json:"site_type" gorm:"column:site_type;type:longtext;not null"`
+	Status     enums.StatusEnum     `json:"status" gorm:"column:status;type:ENUM('inactive','active','pending');default:'inactive';not null"`
+	SiteType   enums.SiteTypeEnum   `json:"site_type" gorm:"column:site_type;type:ENUM('shop','blog','business');default:'shop';not null"`
 	UserID     int64                `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
 	CreatedAt  time.Time            `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
 	UpdatedAt  time.Time            `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`

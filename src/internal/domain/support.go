@@ -10,12 +10,12 @@ import (
 type Ticket struct {
 	ID         int64                    `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	Title      string                   `json:"title" gorm:"column:title;type:longtext;not null"`
-	Status     enums.TicketStatusEnum   `json:"status" gorm:"column:status;type:longtext;not null"`
-	Category   enums.TicketCategoryEnum `json:"product_category" gorm:"column:product_category;type:longtext;not null"`
+	Status     enums.TicketStatusEnum   `json:"status" gorm:"column:status;type:ENUM('new','in_progress','closed');default:'new';not null"`
+	Category   enums.TicketCategoryEnum `json:"product_category" gorm:"column:product_category;type:ENUM('bug','enhancement','feature_request','question','documentation','financial');default:'bug';not null"`
 	AssignedTo *int64                   `json:"assigned_to" gorm:"column:assigned_to;type:bigint;null"`
 	ClosedBy   *int64                   `json:"closed_by" gorm:"column:closed_by;type:bigint;null"`
 	ClosedAt   *time.Time               `json:"closed_at" gorm:"column:closed_at;type:datetime(6);null"`
-	Priority   enums.TicketPriorityEnum `json:"priority" gorm:"column:priority;type:longtext;not null"`
+	Priority   enums.TicketPriorityEnum `json:"priority" gorm:"column:priority;type:ENUM('low','medium','high','critical');default:'low';not null"`
 	UserID     int64                    `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
 	CreatedAt  time.Time                `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
 	UpdatedAt  time.Time                `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
@@ -98,12 +98,12 @@ func (TicketMedia) TableName() string {
 type CustomerTicket struct {
 	ID         int64                    `json:"id" gorm:"column:id;primaryKey;autoIncrement;type:bigint"`
 	Title      string                   `json:"title" gorm:"column:title;type:longtext;not null"`
-	Status     enums.TicketStatusEnum   `json:"status" gorm:"column:status;type:longtext;not null"`
-	Category   enums.TicketCategoryEnum `json:"product_category" gorm:"column:product_category;type:longtext;not null"`
+	Status     enums.TicketStatusEnum   `json:"status" gorm:"column:status;type:ENUM('new','in_progress','closed');default:'new';not null"`
+	Category   enums.TicketCategoryEnum `json:"product_category" gorm:"column:product_category;type:ENUM('bug','enhancement','feature_request','question','documentation','financial');default:'bug';not null"`
 	AssignedTo *int64                   `json:"assigned_to" gorm:"column:assigned_to;type:bigint;null"`
 	ClosedBy   *int64                   `json:"closed_by" gorm:"column:closed_by;type:bigint;null"`
 	ClosedAt   *time.Time               `json:"closed_at" gorm:"column:closed_at;type:datetime(6);null"`
-	Priority   enums.TicketPriorityEnum `json:"priority" gorm:"column:priority;type:longtext;not null"`
+	Priority   enums.TicketPriorityEnum `json:"priority" gorm:"column:priority;type:ENUM('low','medium','high','critical');default:'low';not null"`
 	UserID     int64                    `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
 	CustomerID int64                    `json:"customer_id" gorm:"column:customer_id;type:bigint;not null"`
 	CreatedAt  time.Time                `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
