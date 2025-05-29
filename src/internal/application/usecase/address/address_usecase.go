@@ -164,7 +164,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 	existingAddress, err := u.addressRepo.GetByID(*params.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("آدرس مورد نظر یافت نشد")
+			return nil, resp.NewError(resp.NotFound, "آدرس مورد نظر یافت نشد")
 		}
 		return nil, err
 	}

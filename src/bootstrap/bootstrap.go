@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"github.com/amirex128/new_site_builder/src/bootstrap/seeder"
 	"github.com/amirex128/new_site_builder/src/bootstrap/service_provider"
 )
 
@@ -33,6 +34,8 @@ func HttpServerBootstrap(ctx context.Context) *Container {
 
 	serviceprovider.MemoryLoaderProvider(logger)
 
+	seeder.InitializeSeeder(container)
+
 	return container
 }
 
@@ -61,6 +64,8 @@ func ConsumerServerBootstrap(ctx context.Context) *Container {
 	serviceprovider.GrpcRequestProvider(logger)
 
 	serviceprovider.MemoryLoaderProvider(logger)
+
+	seeder.InitializeSeeder(container)
 
 	return container
 }

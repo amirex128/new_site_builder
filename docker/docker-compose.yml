@@ -122,23 +122,6 @@ services:
     networks:
       - appnet
 
-  openresty:
-    image: bitnami/openresty:1.27.1-2
-    container_name: openresty
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-      - "8443:8443"
-    volumes:
-      - openresty_conf:/opt/bitnami/openresty/conf
-      - openresty_logs:/opt/bitnami/openresty/logs
-      - openresty_html:/app
-    environment:
-      - OPENRESTY_HTTP_PORT_NUMBER=8080
-      - OPENRESTY_HTTPS_PORT_NUMBER=8443
-    networks:
-      - appnet
-
 volumes:
   redis_data:
     driver: local
@@ -147,12 +130,6 @@ volumes:
   mysql_data:
     driver: local
   minio_data:
-    driver: local
-  openresty_conf:
-    driver: local
-  openresty_logs:
-    driver: local
-  openresty_html:
     driver: local
   rabbitmq_data:
     driver: local

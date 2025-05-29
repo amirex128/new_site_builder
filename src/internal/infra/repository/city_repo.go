@@ -3,6 +3,7 @@ package repository
 import (
 	common "github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -57,7 +58,16 @@ func (r *CityRepo) Create(city *domain.City) error {
 	result := r.database.Create(city)
 	return result.Error
 }
-
+func (r *CityRepo) CreateMany(cities []domain.City) error {
+	result := r.database.Create(&cities)
+	if result.Error != nil {
+		if strings.Contains(result.Error.Error(), "Duplicate entry") {
+			return nil
+		}
+		return result.Error
+	}
+	return nil
+}
 func (r *CityRepo) Update(city *domain.City) error {
 	result := r.database.Save(city)
 	return result.Error

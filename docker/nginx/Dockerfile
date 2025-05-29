@@ -1,5 +1,5 @@
 ﻿# Use the official OpenResty base image
-FROM openresty/openresty:alpine-fat
+FROM bitnami/openresty:1.27.1-2
 
 # Install required dependencies: Certbot, OpenSSL, and Certbot plugins
 RUN apk add --no-cache openssl certbot certbot-nginx
