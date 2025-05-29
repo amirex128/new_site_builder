@@ -72,4 +72,5 @@ type IContainer interface {
 	GetProvinceRepo() repository.IProvinceRepository
 	GetParbadPaymentRepo() repository.IParbadPaymentRepository
 	GetParbadTransactionRepo() repository.IParbadTransactionRepository
+	GetConfigurationRepo() repository.IConfigurationRepository
 }

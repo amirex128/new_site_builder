@@ -80,5 +80,9 @@ func ContainerProvider(ctx context.Context, cfg *config.Config, logger sflogger.
 		PageArticleUsageRepo:      repository.NewPageArticleUsageRepository(mainDB),
 		PageProductUsageRepo:      repository.NewPageProductUsageRepository(mainDB),
 		PageHeaderFooterUsageRepo: repository.NewPageHeaderFooterUsageRepository(mainDB),
+		DefaultThemeRepo:          repository.NewDefaultThemeRepository(mainDB),
+		FileItemRepo:              repository.NewFileItemRepository(mainDB),
+		GatewayRepo:               repository.NewGatewayRepository(mainDB),
+		ConfigurationRepo:         repository.NewConfigurationRepository(mainDB),
 	}
 }

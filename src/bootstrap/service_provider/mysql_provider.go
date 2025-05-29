@@ -24,6 +24,7 @@ func MysqlProvider(cfg *config.Config, logger sflogger.Logger) {
 		sform.WithGlobalOptions(func(db *gorm.DB) {
 			db.Debug()
 			err := db.AutoMigrate(
+				&domain.Configuration{},
 				&domain.Address{},
 				&domain.AddressCustomer{},
 				&domain.AddressUser{},

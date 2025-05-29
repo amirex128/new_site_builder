@@ -1,8 +1,11 @@
 package seeder
 
 import (
+	"errors"
 	sflogger "git.snappfood.ir/backend/go/packages/sf-logger"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
+	"github.com/amirex128/new_site_builder/src/internal/domain"
+	"gorm.io/gorm"
 	"os"
 )
 
@@ -32,8 +35,30 @@ func InitializeSeeder(c contract.IContainer) {
 			seed := &seeder{
 				container: c,
 			}
-			seed.AddSeeder()
-			seed.Seed()
+			configuration, err := c.GetConfigurationRepo().GetByKey("seed_executed")
+			if err != nil {
+				if !errors.Is(err, gorm.ErrRecordNotFound) {
+					c.GetLogger().ErrorWithCategory(sflogger.Category.Database.Database, sflogger.SubCategory.Database.Migration, "failed to get seed_executed configuration", map[string]interface{}{
+						"error": err.Error(),
+					})
+					return
+				}
+				configuration = &domain.Configuration{
+					Key:   "seed_executed",
+					Value: "false",
+				}
+			}
+			if configuration.Value == "false" {
+				seed.AddSeeder()
+				seed.Seed()
+			}
+			if err := c.GetConfigurationRepo().SetKey("seed_executed", "true"); err != nil {
+				c.GetLogger().ErrorWithCategory(sflogger.Category.Database.Database, sflogger.SubCategory.Database.Migration, "failed to update seed_executed configuration", map[string]interface{}{
+					"error": err.Error(),
+				})
+				return
+			}
+
 			break
 		}
 	}

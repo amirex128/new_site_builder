@@ -70,6 +70,7 @@ type Container struct {
 	PageArticleUsageRepo      repository.IPageArticleUsageRepository
 	PageProductUsageRepo      repository.IPageProductUsageRepository
 	PageHeaderFooterUsageRepo repository.IPageHeaderFooterUsageRepository
+	ConfigurationRepo         repository.IConfigurationRepository
 }
 
 func (c *Container) GetCtx() context.Context {
@@ -293,4 +294,8 @@ func (c *Container) GetPaymentService() service.IPaymentService {
 
 func (c *Container) GetMessageService() service.IMessageService {
 	return c.MessageService
+}
+
+func (c *Container) GetConfigurationRepo() repository.IConfigurationRepository {
+	return c.ConfigurationRepo
 }

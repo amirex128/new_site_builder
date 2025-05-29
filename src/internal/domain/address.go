@@ -14,8 +14,8 @@ type Address struct {
 	PostalCode  string    `json:"postal_code" gorm:"column:postal_code;type:longtext;not null"`
 	CityID      int64     `json:"city_id" gorm:"column:city_id;type:bigint;not null;index"`
 	ProvinceID  int64     `json:"province_id" gorm:"column:province_id;type:bigint;not null;index"`
-	UserID      *int64    `json:"user_id" gorm:"column:user_id;type:bigint;not null"`
-	CustomerID  *int64    `json:"customer_id" gorm:"column:customer_id;type:bigint;not null"`
+	UserID      *int64    `json:"user_id" gorm:"column:user_id;type:bigint;null"`
+	CustomerID  *int64    `json:"customer_id" gorm:"column:customer_id;type:bigint;null"`
 	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at;type:datetime(6);not null"`
 	UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at;type:datetime(6);not null"`
 
