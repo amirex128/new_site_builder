@@ -2223,39 +2223,6 @@ paths:
       consumes:
       - application/json
       description: Retrieves all addresses for the authenticated user
-      parameters:
-      - in: query
-        minimum: 1
-        name: page
-        required: true
-        type: integer
-      - in: query
-        maximum: 100
-        minimum: 1
-        name: pageSize
-        required: true
-        type: integer
-      - in: query
-        name: search
-        type: string
-      - enum:
-        - title
-        - description
-        in: query
-        name: searchBy
-        type: string
-      - enum:
-        - asc
-        - desc
-        in: query
-        name: sort
-        type: string
-      - enum:
-        - title
-        - description
-        in: query
-        name: sortBy
-        type: string
       produces:
       - application/json
       responses:

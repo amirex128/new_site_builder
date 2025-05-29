@@ -3,12 +3,10 @@ version: "3.8"
 services:
   nginx:
     build:
-      context: docker/nginx
-      dockerfile: nginx/Dockerfile
+      context: nginx
+      dockerfile: Dockerfile
     restart: unless-stopped
     container_name: nginx
-    volumes:
-      - wordpress:/var/www/html:ro
     ports:
       - "80:80"
       - "443:443"
