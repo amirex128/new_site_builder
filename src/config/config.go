@@ -43,13 +43,9 @@ type Config struct {
 	StorageS3AccessKey string `env:"STORAGE_S3_ACCESS_KEY"`
 	StorageS3SecretKey string `env:"STORAGE_S3_SECRET_KEY"`
 
-	JwtSecretToken        string `env:"JWT_SECRET_TOKEN"`
-	JwtIssuer             string `env:"JWT_ISSUER"`
-	JwtAudience           string `env:"JWT_AUDIENCE"`
-	ElasticSearchHost     string `env:"ELASTICSEARCH_HOST"`
-	ElasticSearchPort     string `env:"ELASTICSEARCH_PORT"`
-	ElasticSearchUsername string `env:"ELASTICSEARCH_USERNAME"`
-	ElasticSearchPassword string `env:"ELASTICSEARCH_PASSWORD"`
+	JwtSecretToken string `env:"JWT_SECRET_TOKEN"`
+	JwtIssuer      string `env:"JWT_ISSUER"`
+	JwtAudience    string `env:"JWT_AUDIENCE"`
 }
 
 func (c Config) GetString(key string) string {
