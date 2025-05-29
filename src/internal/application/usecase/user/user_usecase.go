@@ -14,7 +14,6 @@ import (
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/user"
 	"github.com/amirex128/new_site_builder/src/internal/contract"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/repository"
 	"github.com/amirex128/new_site_builder/src/internal/domain"
 )
@@ -116,9 +115,9 @@ func (u *UserUsecase) GetProfileUserQuery(params *user.GetProfileUserQuery) (*re
 	}
 	existingUser, err := u.userRepo.GetByID(*userId)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "کاربر یافت نشد")
 	}
-	addresses, err := u.addressRepo.GetAllByUserID(*userId, common.PaginationRequestDto{Page: 1, PageSize: 100})
+	addresses, err := u.addressRepo.GetAllByUserID(*userId)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}
@@ -158,7 +157,7 @@ func (u *UserUsecase) RegisterUserCommand(params *user.RegisterUserCommand) (*re
 	return resp.NewResponseData(
 		resp.Created,
 		resp.Data{
-			"token": token,
+			"token": "Bearer " + token,
 		},
 		"ثبت نام با موفقیت انجام شد. لطفا حساب خود را فعال کنید.",
 	), nil
@@ -183,7 +182,7 @@ func (u *UserUsecase) LoginUserCommand(params *user.LoginUserCommand) (*resp.Res
 	return resp.NewResponseData(
 		resp.Created,
 		resp.Data{
-			"token": token,
+			"token": "Bearer " + token,
 		},
 		"ورود با موفقیت انجام شد",
 	), nil
@@ -422,12 +421,9 @@ func (u *UserUsecase) UpgradePlanRequestUserCommand(params *user.UpgradePlanRequ
 }
 
 func (u *UserUsecase) AdminGetAllUserQuery(params *user.AdminGetAllUserQuery) (*resp.Response, error) {
-	isAdmin, err := u.AuthContext(u.Ctx).IsAdmin()
+	err := u.CheckAccessAdmin()
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
-	}
-	if !isAdmin {
-		return nil, resp.NewError(resp.Unauthorized, "فقط ادمین ها میتوانند به این منور دسترسی داشته باشند")
+		return nil, err
 	}
 
 	result, err := u.userRepo.GetAll(params.PaginationRequestDto)

@@ -37,7 +37,7 @@ func (h *OrderHandler) CreateOrderRequest(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateOrderRequestCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *OrderHandler) CreateOrderVerify(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateOrderVerifyCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +86,7 @@ func (h *OrderHandler) GetAllOrderCustomer(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllOrderCustomerQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -111,7 +111,7 @@ func (h *OrderHandler) GetOrderCustomerDetails(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetOrderCustomerDetailsQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -135,7 +135,7 @@ func (h *OrderHandler) GetAllOrderUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllOrderUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -160,7 +160,7 @@ func (h *OrderHandler) GetOrderUserDetails(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetOrderUserDetailsQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -185,7 +185,7 @@ func (h *OrderHandler) AdminGetAllOrderUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllOrderUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

@@ -37,7 +37,7 @@ func (h *DefaultThemeHandler) CreateDefaultTheme(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateDefaultThemeCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *DefaultThemeHandler) UpdateDefaultTheme(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateDefaultThemeCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -87,7 +87,7 @@ func (h *DefaultThemeHandler) DeleteDefaultTheme(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeleteDefaultThemeCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -112,7 +112,7 @@ func (h *DefaultThemeHandler) GetByIdDefaultTheme(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdDefaultThemeQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -136,7 +136,7 @@ func (h *DefaultThemeHandler) GetAllDefaultTheme(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllDefaultThemeQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

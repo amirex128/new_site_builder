@@ -9753,14 +9753,6 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Get user profile",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "name": "userId",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "User profile details",

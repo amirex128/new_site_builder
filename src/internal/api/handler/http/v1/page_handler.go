@@ -37,7 +37,7 @@ func (h *PageHandler) CreatePage(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreatePageCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *PageHandler) UpdatePage(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdatePageCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -87,7 +87,7 @@ func (h *PageHandler) DeletePage(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeletePageCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -112,7 +112,7 @@ func (h *PageHandler) GetByIdPage(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdPageQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -136,7 +136,7 @@ func (h *PageHandler) GetAllPage(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllPageQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -161,7 +161,7 @@ func (h *PageHandler) AdminGetAllPage(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllPageQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

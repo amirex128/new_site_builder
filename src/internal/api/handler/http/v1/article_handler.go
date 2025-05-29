@@ -37,7 +37,7 @@ func (h *ArticleHandler) ArticleCreate(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateArticleCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *ArticleHandler) ArticleUpdate(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateArticleCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -87,7 +87,7 @@ func (h *ArticleHandler) ArticleDelete(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeleteArticleCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -112,7 +112,7 @@ func (h *ArticleHandler) ArticleGet(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdArticleQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -136,7 +136,7 @@ func (h *ArticleHandler) ArticleGetAll(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllArticleQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -160,7 +160,7 @@ func (h *ArticleHandler) ArticleGetByFiltersSort(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByFiltersSortArticleQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -185,7 +185,7 @@ func (h *ArticleHandler) AdminArticleGetAll(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllArticleQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

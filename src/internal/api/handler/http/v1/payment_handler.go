@@ -38,7 +38,7 @@ func (h *PaymentHandler) VerifyPayment(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.VerifyPaymentCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *PaymentHandler) RequestGateway(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.RequestGatewayCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +86,7 @@ func (h *PaymentHandler) CreateOrUpdateGateway(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateOrUpdateGatewayCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -111,7 +111,7 @@ func (h *PaymentHandler) GetByIdGateway(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdGatewayQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -136,7 +136,7 @@ func (h *PaymentHandler) AdminGetAllGateway(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllGatewayQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -161,7 +161,7 @@ func (h *PaymentHandler) AdminGetAllPayment(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllPaymentQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

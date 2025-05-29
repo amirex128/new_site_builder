@@ -11,7 +11,6 @@ type GetByIdAddressQuery struct {
 
 // GetAllAddressQuery represents a query to get all addresses with pagination
 type GetAllAddressQuery struct {
-	common.PaginationRequestDto
 }
 
 // AdminGetAllAddressQuery represents a query for admin to get all addresses with pagination

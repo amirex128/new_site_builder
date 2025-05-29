@@ -8262,11 +8262,6 @@ paths:
       consumes:
       - application/json
       description: Retrieves the profile information for the authenticated user
-      parameters:
-      - in: query
-        name: userId
-        required: true
-        type: integer
       produces:
       - application/json
       responses:

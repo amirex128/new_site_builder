@@ -37,7 +37,7 @@ func (h *FileItemHandler) CreateOrDirectoryItem(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateOrDirectoryItemCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *FileItemHandler) DeleteFileItem(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeleteFileItemCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -87,7 +87,7 @@ func (h *FileItemHandler) ForceDeleteFileItem(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.ForceDeleteFileItemCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -112,7 +112,7 @@ func (h *FileItemHandler) UpdateFileItem(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateFileItemCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -137,7 +137,7 @@ func (h *FileItemHandler) FileOperation(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.FileOperationCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -162,7 +162,7 @@ func (h *FileItemHandler) RestoreFileItem(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.RestoreFileItemCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -187,7 +187,7 @@ func (h *FileItemHandler) GetByIds(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdsQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -211,7 +211,7 @@ func (h *FileItemHandler) GetDeletedTreeDirectory(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetDeletedTreeDirectoryQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -236,7 +236,7 @@ func (h *FileItemHandler) GetDownloadFileItemById(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetDownloadFileItemByIdQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -260,7 +260,7 @@ func (h *FileItemHandler) GetTreeDirectory(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetTreeDirectoryQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

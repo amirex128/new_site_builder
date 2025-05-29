@@ -37,7 +37,7 @@ func (h *ProductCategoryHandler) CreateCategory(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateCategoryCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *ProductCategoryHandler) UpdateCategory(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateCategoryCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -87,7 +87,7 @@ func (h *ProductCategoryHandler) DeleteCategory(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeleteCategoryCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -112,7 +112,7 @@ func (h *ProductCategoryHandler) GetByIdCategory(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdCategoryQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -136,7 +136,7 @@ func (h *ProductCategoryHandler) GetAllCategory(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllCategoryQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -161,7 +161,7 @@ func (h *ProductCategoryHandler) AdminGetAllCategory(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllCategoryQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

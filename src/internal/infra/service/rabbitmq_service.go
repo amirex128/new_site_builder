@@ -8,7 +8,7 @@ import (
 )
 
 type RabbitMqService struct {
-	ctx    *context.Context
+	ctx    context.Context
 	logger sflogger.Logger
 }
 
@@ -26,7 +26,7 @@ func (s *RabbitMqService) SendSms(msg any) error {
 		return err
 	}
 
-	err = sfrabbitmq.Publish(*s.ctx, "order-connection", "order_exchange", "order_routing_key",
+	err = sfrabbitmq.Publish(s.ctx, "order-connection", "order_exchange", "order_routing_key",
 		&sfrabbitmq.Message{
 			ContentType: "application/json",
 			Body:        body,
@@ -46,7 +46,7 @@ func (s *RabbitMqService) SendEmail(msg any) error {
 		return err
 	}
 
-	err = sfrabbitmq.Publish(*s.ctx, "order-connection", "order_exchange", "order_routing_key",
+	err = sfrabbitmq.Publish(s.ctx, "order-connection", "order_exchange", "order_routing_key",
 		&sfrabbitmq.Message{
 			ContentType: "application/json",
 			Body:        body,

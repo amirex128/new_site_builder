@@ -5,8 +5,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/domain/enums"
 	"time"
 
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
-
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/address"
@@ -185,7 +183,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address.GetByIdAddressQuery
 
 func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) (*resp.Response, error) {
 
-	var results *common.PaginationResponseDto[domain.Address]
+	var results []domain.Address
 	var err error
 
 	userID, customerID, userType, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
@@ -194,13 +192,13 @@ func (u *AddressUsecase) GetAllAddressQuery(params *address.GetAllAddressQuery) 
 	}
 
 	if *userType == enums.CustomerTypeValue {
-		results, err = u.addressRepo.GetAllByCustomerID(*customerID, params.PaginationRequestDto)
+		results, err = u.addressRepo.GetAllByCustomerID(*customerID)
 		if err != nil {
 			return nil, errors.New("خطا در دریافت آدرس ها")
 		}
 	}
 	if *userType == enums.UserTypeValue {
-		results, err = u.addressRepo.GetAllByUserID(*userID, params.PaginationRequestDto)
+		results, err = u.addressRepo.GetAllByUserID(*userID)
 		if err != nil {
 			return nil, errors.New("خطا در دریافت آدرس ها")
 		}

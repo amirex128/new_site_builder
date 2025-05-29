@@ -36,7 +36,7 @@ func (h *WebsiteHandler) GetByDomainPage(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByDomainPageQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -59,7 +59,7 @@ func (h *WebsiteHandler) GetByDomainHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByDomainHeaderFooterQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -81,7 +81,7 @@ func (h *WebsiteHandler) ProductSearchList(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.ProductSearchListQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -103,7 +103,7 @@ func (h *WebsiteHandler) GetFiltersSortArticle(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetFiltersSortArticleQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -125,7 +125,7 @@ func (h *WebsiteHandler) GetFiltersSortProduct(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetFiltersSortProductQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -148,7 +148,7 @@ func (h *WebsiteHandler) GetArticlesByCategorySlug(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetArticlesByCategorySlugQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -171,7 +171,7 @@ func (h *WebsiteHandler) GetProductsByCategorySlug(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetProductsByCategorySlugQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -194,7 +194,7 @@ func (h *WebsiteHandler) GetSingleArticleBySlug(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetSingleArticleBySlugQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -217,7 +217,7 @@ func (h *WebsiteHandler) GetSingleProductBySlug(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetSingleProductBySlugQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

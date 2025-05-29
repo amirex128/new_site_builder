@@ -17,7 +17,6 @@ type CalculatePlanPriceQuery struct {
 
 // GetProfileUserQuery represents a query to get user profile
 type GetProfileUserQuery struct {
-	UserID *int64 `json:"userId" form:"userId" validate:"required,gt=0" nameFa:"شناسه کاربر"`
 }
 
 // VerifyUserQuery represents a query to verify user

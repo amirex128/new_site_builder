@@ -37,7 +37,7 @@ func (h *HeaderFooterHandler) CreateHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateHeaderFooterCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *HeaderFooterHandler) UpdateHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateHeaderFooterCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -87,7 +87,7 @@ func (h *HeaderFooterHandler) DeleteHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeleteHeaderFooterCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -112,7 +112,7 @@ func (h *HeaderFooterHandler) GetByIdHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdHeaderFooterQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -136,7 +136,7 @@ func (h *HeaderFooterHandler) GetAllHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllHeaderFooterQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -161,7 +161,7 @@ func (h *HeaderFooterHandler) AdminGetAllHeaderFooter(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllHeaderFooterQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

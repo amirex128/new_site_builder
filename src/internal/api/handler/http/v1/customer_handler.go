@@ -37,7 +37,7 @@ func (h *CustomerHandler) UpdateProfileCustomer(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateProfileCustomerCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *CustomerHandler) GetProfileCustomer(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetProfileCustomerQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +86,7 @@ func (h *CustomerHandler) RegisterCustomer(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.RegisterCustomerCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -110,7 +110,7 @@ func (h *CustomerHandler) LoginCustomer(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.LoginCustomerCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -134,7 +134,7 @@ func (h *CustomerHandler) RequestVerifyAndForgetCustomer(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.RequestVerifyAndForgetCustomerCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -158,7 +158,7 @@ func (h *CustomerHandler) VerifyCustomer(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.VerifyCustomerQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -183,7 +183,7 @@ func (h *CustomerHandler) AdminGetAllCustomer(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllCustomerQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

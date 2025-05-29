@@ -37,7 +37,7 @@ func (h *UserHandler) UpdateProfileUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateProfileUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *UserHandler) GetProfileUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetProfileUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +86,7 @@ func (h *UserHandler) ChargeCreditRequestUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.ChargeCreditRequestUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -110,7 +110,7 @@ func (h *UserHandler) UpgradePlanRequestUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpgradePlanRequestUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -132,7 +132,7 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.RegisterUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -155,7 +155,7 @@ func (h *UserHandler) LoginUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.LoginUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -178,7 +178,7 @@ func (h *UserHandler) RequestVerifyAndForgetUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.RequestVerifyAndForgetUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -201,7 +201,7 @@ func (h *UserHandler) VerifyUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.VerifyUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -226,7 +226,7 @@ func (h *UserHandler) AdminGetAllUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

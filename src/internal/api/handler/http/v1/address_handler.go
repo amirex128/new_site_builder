@@ -37,6 +37,7 @@ func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateAddressCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -61,7 +62,7 @@ func (h *AddressHandler) UpdateAddress(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateAddressCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +87,7 @@ func (h *AddressHandler) DeleteAddress(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.DeleteAddressCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -111,7 +112,7 @@ func (h *AddressHandler) GetByIdAddress(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdAddressQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -135,7 +136,7 @@ func (h *AddressHandler) GetAllAddress(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllAddressQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -159,7 +160,7 @@ func (h *AddressHandler) GetAllCity(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllCityQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -183,7 +184,7 @@ func (h *AddressHandler) GetAllProvince(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllProvinceQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -208,7 +209,7 @@ func (h *AddressHandler) AdminGetAllAddress(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllAddressQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

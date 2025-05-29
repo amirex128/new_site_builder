@@ -37,7 +37,7 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateTicketCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *TicketHandler) ReplayTicket(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.ReplayTicketCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -88,7 +88,7 @@ func (h *TicketHandler) AdminReplayTicket(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminReplayTicketCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -113,7 +113,7 @@ func (h *TicketHandler) GetByIdTicket(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetByIdTicketQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -137,7 +137,7 @@ func (h *TicketHandler) GetAllTicket(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllTicketQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -162,7 +162,7 @@ func (h *TicketHandler) AdminGetAllTicket(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllTicketQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

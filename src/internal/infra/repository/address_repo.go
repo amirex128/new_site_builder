@@ -35,40 +35,34 @@ func (r *AddressRepo) GetAll(paginationRequestDto common.PaginationRequestDto) (
 	return buildPaginationResponse(addresses, paginationRequestDto, count)
 }
 
-func (r *AddressRepo) GetAllByUserID(userID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error) {
+func (r *AddressRepo) GetAllByUserID(userID int64) ([]domain.Address, error) {
 	var addresses []domain.Address
 	var count int64
 
 	query := r.database.Where("user_id = ?", userID).Model(&domain.Address{})
 	query.Count(&count)
 
-	limit := paginationRequestDto.PageSize
-	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
-
-	result := query.Limit(limit).Offset(offset).Find(&addresses)
+	result := query.Find(&addresses)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	return buildPaginationResponse(addresses, paginationRequestDto, count)
+	return addresses, nil
 }
 
-func (r *AddressRepo) GetAllByCustomerID(customerID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Address], error) {
+func (r *AddressRepo) GetAllByCustomerID(customerID int64) ([]domain.Address, error) {
 	var addresses []domain.Address
 	var count int64
 
 	query := r.database.Where("customer_id = ?", customerID).Model(&domain.Address{})
 	query.Count(&count)
 
-	limit := paginationRequestDto.PageSize
-	offset := (paginationRequestDto.Page - 1) * paginationRequestDto.PageSize
-
-	result := query.Limit(limit).Offset(offset).Find(&addresses)
+	result := query.Find(&addresses)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	return buildPaginationResponse(addresses, paginationRequestDto, count)
+	return addresses, nil
 }
 
 func (r *AddressRepo) GetByID(id int64) (*domain.Address, error) {

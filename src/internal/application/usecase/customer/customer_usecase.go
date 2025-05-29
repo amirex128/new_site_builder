@@ -12,7 +12,6 @@ import (
 	"github.com/amirex128/new_site_builder/src/internal/application/usecase"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils"
 	"github.com/amirex128/new_site_builder/src/internal/application/utils/resp"
-	"github.com/amirex128/new_site_builder/src/internal/contract/common"
 	"github.com/amirex128/new_site_builder/src/internal/contract/service"
 
 	"github.com/amirex128/new_site_builder/src/internal/application/dto/customer"
@@ -65,7 +64,7 @@ func (u *CustomerUsecase) LoginCustomerCommand(params *customer.LoginCustomerCom
 	return resp.NewResponseData(
 		resp.Created,
 		resp.Data{
-			"token": token,
+			"token": "Bearer " + token,
 		},
 		"ورود با موفقیت انجام شد",
 	), nil
@@ -99,7 +98,7 @@ func (u *CustomerUsecase) RegisterCustomerCommand(params *customer.RegisterCusto
 	return resp.NewResponseData(
 		resp.Created,
 		map[string]interface{}{
-			"token": token,
+			"token": "Bearer " + token,
 		},
 		"ثبت نام با موفقیت انجام شد. لطفا حساب خود را فعال کنید.",
 	), nil
@@ -270,15 +269,15 @@ func (u *CustomerUsecase) VerifyCustomerQuery(params *customer.VerifyCustomerQue
 }
 
 func (u *CustomerUsecase) GetProfileCustomerQuery(params *customer.GetProfileCustomerQuery) (*resp.Response, error) {
-	_, customerID, _, err := u.AuthContext(u.Ctx).GetUserOrCustomerID()
+	customerID, err := u.AuthContext(u.Ctx).GetCustomerID()
 	if err != nil || customerID == nil {
 		return nil, err
 	}
 	existingCustomer, err := u.repo.GetByID(*customerID)
 	if err != nil {
-		return nil, resp.NewError(resp.Internal, err.Error())
+		return nil, resp.NewError(resp.NotFound, "خطا در دریافت کاربر")
 	}
-	addresses, err := u.addressRepo.GetAllByCustomerID(*customerID, common.PaginationRequestDto{Page: 1, PageSize: 100})
+	addresses, err := u.addressRepo.GetAllByCustomerID(*customerID)
 	if err != nil {
 		return nil, resp.NewError(resp.Internal, err.Error())
 	}

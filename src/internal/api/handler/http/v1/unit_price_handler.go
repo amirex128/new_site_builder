@@ -38,7 +38,7 @@ func (h *UnitPriceHandler) UpdateUnitPrice(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateUnitPriceCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *UnitPriceHandler) CalculateUnitPrice(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CalculateUnitPriceQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +86,7 @@ func (h *UnitPriceHandler) GetAllUnitPrice(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllUnitPriceQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

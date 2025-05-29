@@ -37,7 +37,7 @@ func (h *BasketHandler) UpdateBasket(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateBasketCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -62,7 +62,7 @@ func (h *BasketHandler) GetBasket(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetBasketQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -86,7 +86,7 @@ func (h *BasketHandler) GetAllBasketUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllBasketUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -111,7 +111,7 @@ func (h *BasketHandler) AdminGetAllBasketUser(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.AdminGetAllBasketUserQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)

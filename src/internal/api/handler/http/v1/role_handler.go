@@ -38,7 +38,7 @@ func (h *RoleHandler) CreateRole(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.CreateRoleCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -64,7 +64,7 @@ func (h *RoleHandler) UpdateRole(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.UpdateRoleCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -90,7 +90,7 @@ func (h *RoleHandler) SetRoleToCustomer(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.SetRoleToCustomerCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -116,7 +116,7 @@ func (h *RoleHandler) SetRoleToUser(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.SetRoleToUserCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -142,7 +142,7 @@ func (h *RoleHandler) SetRoleToPlan(c *gin.Context) {
 	if !h.validator.ValidateCommand(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.SetRoleToPlanCommand(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -166,7 +166,7 @@ func (h *RoleHandler) GetAllPermission(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllPermissionQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -190,7 +190,7 @@ func (h *RoleHandler) GetAllRole(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetAllRoleQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
@@ -215,7 +215,7 @@ func (h *RoleHandler) GetRolePermissions(c *gin.Context) {
 	if !h.validator.ValidateQuery(c, &params) {
 		return
 	}
-
+	h.usecase.SetContext(c)
 	result, err := h.usecase.GetRolePermissionsQuery(&params)
 	utils.HandleError(c, err)
 	utils.HandleResponse(c, result)
