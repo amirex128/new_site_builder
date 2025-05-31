@@ -11,6 +11,7 @@ vet:
 	go vet ./...
 # Generate API documentation
 docs:
+	@command -v swag >/dev/null 2>&1 || go install github.com/swaggo/swag/cmd/swag@latest
 	swag init -g src/cmd/server/main.go -o ./docs
 
 # Build the application
