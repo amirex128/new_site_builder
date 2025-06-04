@@ -1,17 +1,6 @@
 version: "3.8"
 
 services:
-  nginx:
-    build:
-      context: nginx
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - appnet
   app:
     build:
       context: ..
