@@ -12,7 +12,7 @@ vet:
 # Generate API documentation
 init:
 	@command -v swag >/dev/null 2>&1 || go install github.com/swaggo/swag/cmd/swag@latest
-	@command -v air >/dev/null 2>&1 || go install github.com/cosmtrek/air@latest
+	@command -v air >/dev/null 2>&1 || go install github.com/air-verse/air@latest
 
 docs:
 	swag init -g cmd/server/main.go -o ./docs
