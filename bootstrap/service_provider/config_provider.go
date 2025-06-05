@@ -48,11 +48,11 @@ func ConfigProvider(logger sflogger.Logger) *config.Config {
 
 func getConfigPath(env string) string {
 	if env == "local" {
-		return "src/config/files/config-local.json"
+		return "config/files/config-local.json"
 	} else if env == "stage" {
-		return "src/config/files/config-stage.json"
+		return "config/files/config-stage.json"
 	} else if env == "production" {
 		return "src/config/files/config-production.json"
 	}
-	return "src/config/files/config-local.json"
+	return "config/files/config-local.json"
 }

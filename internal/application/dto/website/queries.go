@@ -2,7 +2,7 @@ package website
 
 import (
 	"github.com/amirex128/new_site_builder/internal/contract/common"
-	enums2 "github.com/amirex128/new_site_builder/internal/domain/enums"
+	"github.com/amirex128/new_site_builder/internal/domain/enums"
 )
 
 // GetArticlesByCategorySlugQuery for retrieving articles by product_category slug
@@ -29,19 +29,19 @@ type GetByDomainPageQuery struct {
 // GetFiltersSortArticleQuery for retrieving articles with filtering and sorting
 type GetFiltersSortArticleQuery struct {
 	common.PaginationRequestDto
-	SelectedFilters map[enums2.ArticleFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional" nameFa:"فیلترهای انتخاب شده"`
-	SelectedSort    *enums2.ArticleSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional" nameFa:"مرتب سازی انتخاب شده"`
-	SiteID          *int64                                `json:"siteId,omitempty" form:"siteId" validate:"omitempty" nameFa:"شناسه سایت"`
-	Domain          *string                               `json:"domain" form:"domain" validate:"required,domain" nameFa:"دامنه"`
+	SelectedFilters map[enums.ArticleFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional" nameFa:"فیلترهای انتخاب شده"`
+	SelectedSort    *enums.ArticleSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional" nameFa:"مرتب سازی انتخاب شده"`
+	SiteID          *int64                               `json:"siteId,omitempty" form:"siteId" validate:"omitempty" nameFa:"شناسه سایت"`
+	Domain          *string                              `json:"domain" form:"domain" validate:"required,domain" nameFa:"دامنه"`
 }
 
 // GetFiltersSortProductQuery for retrieving products with filtering and sorting
 type GetFiltersSortProductQuery struct {
 	common.PaginationRequestDto
-	SelectedFilters map[enums2.ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional" nameFa:"فیلترهای انتخاب شده"`
-	SelectedSort    *enums2.ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional" nameFa:"مرتب سازی انتخاب شده"`
-	SiteID          *int64                                `json:"siteId,omitempty" form:"siteId" validate:"omitempty" nameFa:"شناسه سایت"`
-	Domain          *string                               `json:"domain" form:"domain" validate:"required,domain" nameFa:"دامنه"`
+	SelectedFilters map[enums.ProductFilterEnum][]string `json:"selectedFilters,omitempty" form:"selectedFilters" validate:"enum_string_map_optional" nameFa:"فیلترهای انتخاب شده"`
+	SelectedSort    *enums.ProductSortEnum               `json:"selectedSort,omitempty" form:"selectedSort" validate:"enum_optional" nameFa:"مرتب سازی انتخاب شده"`
+	SiteID          *int64                               `json:"siteId,omitempty" form:"siteId" validate:"omitempty" nameFa:"شناسه سایت"`
+	Domain          *string                              `json:"domain" form:"domain" validate:"required,domain" nameFa:"دامنه"`
 }
 
 // GetProductsByCategorySlugQuery for retrieving products by product_category slug

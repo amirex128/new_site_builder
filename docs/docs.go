@@ -10886,62 +10886,7 @@ const docTemplate = `{
             }
         },
         "article.GetByFiltersSortArticleQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "selectedFilters": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "selectedSort": {
-                    "$ref": "#/definitions/enums.ArticleSortEnum"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
+            "type": "object"
         },
         "article.UpdateArticleCommand": {
             "type": "object",
@@ -11211,124 +11156,13 @@ const docTemplate = `{
             }
         },
         "customer_ticket.AdminReplayCustomerTicketCommand": {
-            "type": "object",
-            "required": [
-                "assignedTo",
-                "comment",
-                "id",
-                "priority",
-                "product_category",
-                "status"
-            ],
-            "properties": {
-                "assignedTo": {
-                    "type": "integer"
-                },
-                "comment": {
-                    "$ref": "#/definitions/customer_ticket.CustomerCommentCommand"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "priority": {
-                    "$ref": "#/definitions/enums.TicketPriorityEnum"
-                },
-                "product_category": {
-                    "$ref": "#/definitions/enums.TicketCategoryEnum"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.TicketStatusEnum"
-                }
-            }
+            "type": "object"
         },
         "customer_ticket.CreateCustomerTicketCommand": {
-            "type": "object",
-            "required": [
-                "comment",
-                "ownerUserId",
-                "priority",
-                "product_category"
-            ],
-            "properties": {
-                "comment": {
-                    "$ref": "#/definitions/customer_ticket.CustomerCommentCommand"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "ownerUserId": {
-                    "type": "integer"
-                },
-                "priority": {
-                    "$ref": "#/definitions/enums.TicketPriorityEnum"
-                },
-                "product_category": {
-                    "$ref": "#/definitions/enums.TicketCategoryEnum"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "customer_ticket.CustomerCommentCommand": {
-            "type": "object",
-            "required": [
-                "respondentId"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "respondentId": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "customer_ticket.ReplayCustomerTicketCommand": {
-            "type": "object",
-            "required": [
-                "assignedTo",
-                "comment",
-                "id",
-                "priority",
-                "product_category",
-                "status"
-            ],
-            "properties": {
-                "assignedTo": {
-                    "type": "integer"
-                },
-                "comment": {
-                    "$ref": "#/definitions/customer_ticket.CustomerCommentCommand"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "priority": {
-                    "$ref": "#/definitions/enums.TicketPriorityEnum"
-                },
-                "product_category": {
-                    "$ref": "#/definitions/enums.TicketCategoryEnum"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.TicketStatusEnum"
-                }
-            }
+            "type": "object"
         },
         "defaulttheme.CreateDefaultThemeCommand": {
             "type": "object",
@@ -11464,19 +11298,6 @@ const docTemplate = `{
                 }
             }
         },
-        "enums.AiTypeEnum": {
-            "type": "string",
-            "enum": [
-                "gpt35",
-                "gpt4",
-                "claude"
-            ],
-            "x-enum-varnames": [
-                "GPT35Type",
-                "GPT4Type",
-                "ClaudeType"
-            ]
-        },
         "enums.ArticleSortEnum": {
             "type": "string",
             "enum": [
@@ -11504,17 +11325,6 @@ const docTemplate = `{
                 "ArticleLeastReviewedSort"
             ]
         },
-        "enums.CourierEnum": {
-            "type": "string",
-            "enum": [
-                "post",
-                "tipax"
-            ],
-            "x-enum-varnames": [
-                "PostCourier",
-                "TipaxCourier"
-            ]
-        },
         "enums.DiscountTypeEnum": {
             "type": "string",
             "enum": [
@@ -11524,91 +11334,6 @@ const docTemplate = `{
             "x-enum-varnames": [
                 "FixedDiscountType",
                 "PercentageDiscountType"
-            ]
-        },
-        "enums.DomainTypeEnum": {
-            "type": "string",
-            "enum": [
-                "domain",
-                "subdomain"
-            ],
-            "x-enum-varnames": [
-                "DomainType",
-                "SubdomainType"
-            ]
-        },
-        "enums.FileItemPermissionEnum": {
-            "type": "string",
-            "enum": [
-                "private",
-                "public"
-            ],
-            "x-enum-varnames": [
-                "FileItemPrivatePermission",
-                "FileItemPublicPermission"
-            ]
-        },
-        "enums.OperationType": {
-            "type": "string",
-            "enum": [
-                "copy",
-                "move",
-                "rename"
-            ],
-            "x-enum-varnames": [
-                "FileItemCopyOperation",
-                "FileItemMoveOperation",
-                "FileItemRenameOperation"
-            ]
-        },
-        "enums.PaymentGatewaysEnum": {
-            "type": "string",
-            "enum": [
-                "saman",
-                "mellat",
-                "parsian",
-                "pasargad",
-                "irankish",
-                "melli",
-                "asanpardakht",
-                "sepehr",
-                "zarinpal",
-                "payir",
-                "idpay",
-                "yekpay",
-                "payping",
-                "parbadvirtual",
-                "nextpay"
-            ],
-            "x-enum-varnames": [
-                "SamanGatewayEnum",
-                "MellatGatewayEnum",
-                "ParsianGatewayEnum",
-                "PasargadGatewayEnum",
-                "IranKishGatewayEnum",
-                "MelliGatewayEnum",
-                "AsanPardakhtGatewayEnum",
-                "SepehrGatewayEnum",
-                "ZarinPalGatewayEnum",
-                "PayIrGatewayEnum",
-                "IdPayGatewayEnum",
-                "YekPayGatewayEnum",
-                "PayPingGatewayEnum",
-                "ParbadVirtualGatewayEnum",
-                "NextPayGateway"
-            ]
-        },
-        "enums.ProductAttributeTypeEnum": {
-            "type": "string",
-            "enum": [
-                "public",
-                "technical",
-                "other"
-            ],
-            "x-enum-varnames": [
-                "PublicProductAttributeType",
-                "TechnicalProductAttributeType",
-                "OtherProductAttributeType"
             ]
         },
         "enums.ProductSortEnum": {
@@ -11646,19 +11371,6 @@ const docTemplate = `{
                 "ProductLeastReviewedSort"
             ]
         },
-        "enums.SiteTypeEnum": {
-            "type": "string",
-            "enum": [
-                "shop",
-                "blog",
-                "business"
-            ],
-            "x-enum-varnames": [
-                "ShopType",
-                "BlogType",
-                "BusinessType"
-            ]
-        },
         "enums.StatusEnum": {
             "type": "string",
             "enum": [
@@ -11670,53 +11382,6 @@ const docTemplate = `{
                 "InactiveStatus",
                 "ActiveStatus",
                 "PendingStatus"
-            ]
-        },
-        "enums.TicketCategoryEnum": {
-            "type": "string",
-            "enum": [
-                "bug",
-                "enhancement",
-                "feature_request",
-                "question",
-                "documentation",
-                "financial"
-            ],
-            "x-enum-varnames": [
-                "TicketBugCategory",
-                "TicketEnhancementCategory",
-                "TicketFeatureRequestCategory",
-                "TicketQuestionCategory",
-                "TicketDocumentationCategory",
-                "TicketFinancialCategory"
-            ]
-        },
-        "enums.TicketPriorityEnum": {
-            "type": "string",
-            "enum": [
-                "low",
-                "medium",
-                "high",
-                "critical"
-            ],
-            "x-enum-varnames": [
-                "TicketLowPriority",
-                "TicketMediumPriority",
-                "TicketHighPriority",
-                "TicketCriticalPriority"
-            ]
-        },
-        "enums.TicketStatusEnum": {
-            "type": "string",
-            "enum": [
-                "new",
-                "in_progress",
-                "closed"
-            ],
-            "x-enum-varnames": [
-                "TicketNewStatus",
-                "TicketInProgressStatus",
-                "TicketClosedStatus"
             ]
         },
         "enums.UnitPriceNameEnum": {
@@ -11740,32 +11405,6 @@ const docTemplate = `{
                 "EmailCreditsName",
                 "AiCreditsName",
                 "AiImageCreditsName"
-            ]
-        },
-        "enums.UserTypeEnum": {
-            "type": "string",
-            "enum": [
-                "user",
-                "customer",
-                "guest"
-            ],
-            "x-enum-varnames": [
-                "UserTypeValue",
-                "CustomerTypeValue",
-                "GuestTypeValue"
-            ]
-        },
-        "enums.VerifyPaymentEndpointEnum": {
-            "type": "string",
-            "enum": [
-                "charge_credit_verify",
-                "upgrade_plan_verify",
-                "create_order_verify"
-            ],
-            "x-enum-varnames": [
-                "ChargeCreditVerifyEndpoint",
-                "UpgradePlanVerifyEndpoint",
-                "CreateOrderVerifyEndpoint"
             ]
         },
         "enums.VerifyTypeEnum": {
@@ -11798,25 +11437,7 @@ const docTemplate = `{
             }
         },
         "fileitem.FileOperationCommand": {
-            "type": "object",
-            "required": [
-                "id",
-                "operationType"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "newName": {
-                    "type": "string"
-                },
-                "newParentId": {
-                    "type": "integer"
-                },
-                "operationType": {
-                    "$ref": "#/definitions/enums.OperationType"
-                }
-            }
+            "type": "object"
         },
         "fileitem.ForceDeleteFileItemCommand": {
             "type": "object",
@@ -11875,21 +11496,7 @@ const docTemplate = `{
             }
         },
         "fileitem.UpdateFileItemCommand": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "isChangePermission": {
-                    "type": "boolean"
-                },
-                "permission": {
-                    "$ref": "#/definitions/enums.FileItemPermissionEnum"
-                }
-            }
+            "type": "object"
         },
         "header_footer.CreateHeaderFooterCommand": {
             "type": "object"
@@ -11948,32 +11555,7 @@ const docTemplate = `{
             }
         },
         "order.CreateOrderRequestCommand": {
-            "type": "object",
-            "required": [
-                "addressId",
-                "gateway",
-                "siteId"
-            ],
-            "properties": {
-                "addressId": {
-                    "type": "integer"
-                },
-                "courier": {
-                    "$ref": "#/definitions/enums.CourierEnum"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "finalFrontReturnUrl": {
-                    "type": "string"
-                },
-                "gateway": {
-                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
-                },
-                "siteId": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "order.CreateOrderVerifyCommand": {
             "type": "object",
@@ -12059,274 +11641,11 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.AsanPardakhtGateway": {
-            "type": "object",
-            "properties": {
-                "iv": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "merchantConfigurationId": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "userName": {
-                    "type": "string"
-                }
-            }
-        },
         "payment.CreateOrUpdateGatewayCommand": {
-            "type": "object",
-            "required": [
-                "siteId"
-            ],
-            "properties": {
-                "asanPardakht": {
-                    "$ref": "#/definitions/payment.AsanPardakhtGateway"
-                },
-                "idPay": {
-                    "$ref": "#/definitions/payment.IdPayGateway"
-                },
-                "iranKish": {
-                    "$ref": "#/definitions/payment.IranKishGateway"
-                },
-                "isActiveAsanPardakht": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveIdPay": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveIranKish": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveMellat": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveMelli": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveParbadVirtual": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveParsian": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActivePasargad": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActivePayIr": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActivePayPing": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveSaman": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveSepehr": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveYekPay": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "isActiveZarinPal": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "mellat": {
-                    "$ref": "#/definitions/payment.MellatGateway"
-                },
-                "melli": {
-                    "$ref": "#/definitions/payment.MelliGateway"
-                },
-                "parsian": {
-                    "$ref": "#/definitions/payment.ParsianGateway"
-                },
-                "pasargad": {
-                    "$ref": "#/definitions/payment.PasargadGateway"
-                },
-                "payIr": {
-                    "$ref": "#/definitions/payment.PayIrGateway"
-                },
-                "payPing": {
-                    "$ref": "#/definitions/payment.PayPingGateway"
-                },
-                "saman": {
-                    "$ref": "#/definitions/payment.SamanGateway"
-                },
-                "sepehr": {
-                    "$ref": "#/definitions/payment.SepehrGateway"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "yekPay": {
-                    "$ref": "#/definitions/payment.YekPayGateway"
-                },
-                "zarinPal": {
-                    "$ref": "#/definitions/payment.ZarinPalGateway"
-                }
-            }
-        },
-        "payment.IdPayGateway": {
-            "type": "object",
-            "required": [
-                "isTestAccount"
-            ],
-            "properties": {
-                "api": {
-                    "type": "string"
-                },
-                "isTestAccount": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "payment.IranKishGateway": {
-            "type": "object",
-            "properties": {
-                "acceptorId": {
-                    "type": "string"
-                },
-                "passPhrase": {
-                    "type": "string"
-                },
-                "publicKey": {
-                    "type": "string"
-                },
-                "terminalId": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.MellatGateway": {
-            "type": "object",
-            "required": [
-                "terminalId"
-            ],
-            "properties": {
-                "terminalId": {
-                    "type": "integer"
-                },
-                "userName": {
-                    "type": "string"
-                },
-                "userPassword": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.MelliGateway": {
-            "type": "object",
-            "properties": {
-                "merchantId": {
-                    "type": "string"
-                },
-                "terminalId": {
-                    "type": "string"
-                },
-                "terminalKey": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.ParsianGateway": {
-            "type": "object",
-            "properties": {
-                "loginAccount": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.PasargadGateway": {
-            "type": "object",
-            "properties": {
-                "merchantCode": {
-                    "type": "string"
-                },
-                "privateKey": {
-                    "type": "string"
-                },
-                "terminalCode": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.PayIrGateway": {
-            "type": "object",
-            "properties": {
-                "api": {
-                    "type": "string"
-                },
-                "isTestAccount": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "payment.PayPingGateway": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "payment.RequestGatewayCommand": {
-            "type": "object",
-            "required": [
-                "amount",
-                "callVerifyUrl",
-                "gateway",
-                "orderData",
-                "orderId",
-                "siteId",
-                "userId",
-                "userType"
-            ],
-            "properties": {
-                "amount": {
-                    "type": "integer"
-                },
-                "callVerifyUrl": {
-                    "$ref": "#/definitions/enums.VerifyPaymentEndpointEnum"
-                },
-                "clientIp": {
-                    "type": "string"
-                },
-                "gateway": {
-                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
-                },
-                "orderData": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "orderId": {
-                    "type": "integer"
-                },
-                "returnUrl": {
-                    "type": "string"
-                },
-                "serviceAction": {
-                    "type": "string"
-                },
-                "serviceName": {
-                    "type": "string"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "userType": {
-                    "$ref": "#/definitions/enums.UserTypeEnum"
-                }
-            }
+            "type": "object"
         },
         "payment.SamanGateway": {
             "type": "object",
@@ -12336,17 +11655,6 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
-                }
-            }
-        },
-        "payment.SepehrGateway": {
-            "type": "object",
-            "required": [
-                "terminalId"
-            ],
-            "properties": {
-                "terminalId": {
-                    "type": "integer"
                 }
             }
         },
@@ -12360,28 +11668,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "transactionCode": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.YekPayGateway": {
-            "type": "object",
-            "properties": {
-                "merchantId": {
-                    "type": "string"
-                }
-            }
-        },
-        "payment.ZarinPalGateway": {
-            "type": "object",
-            "properties": {
-                "authorizationToken": {
-                    "type": "string"
-                },
-                "isSandbox": {
-                    "type": "boolean"
-                },
-                "merchantId": {
                     "type": "string"
                 }
             }
@@ -12518,105 +11804,8 @@ const docTemplate = `{
                 }
             }
         },
-        "product.CouponCommand": {
-            "type": "object",
-            "required": [
-                "expiryDate",
-                "quantity",
-                "type",
-                "value"
-            ],
-            "properties": {
-                "expiryDate": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/enums.DiscountTypeEnum"
-                },
-                "value": {
-                    "type": "integer"
-                }
-            }
-        },
         "product.CreateProductCommand": {
-            "type": "object",
-            "required": [
-                "productVariants",
-                "siteId",
-                "slug",
-                "status",
-                "weight"
-            ],
-            "properties": {
-                "categoryIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "coupon": {
-                    "$ref": "#/definitions/product.CouponCommand"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "discountIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "freeSend": {
-                    "type": "boolean"
-                },
-                "longDescription": {
-                    "type": "string"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "productAttributes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/product.ProductAttributeCommand"
-                    }
-                },
-                "productVariants": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "$ref": "#/definitions/product.ProductVariantCommand"
-                    }
-                },
-                "seoTags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "weight": {
-                    "type": "integer",
-                    "maximum": 1000
-                }
-            }
+            "type": "object"
         },
         "product.DeleteProductCommand": {
             "type": "object",
@@ -12630,82 +11819,7 @@ const docTemplate = `{
             }
         },
         "product.GetByFiltersSortProductQuery": {
-            "type": "object",
-            "required": [
-                "page",
-                "pageSize",
-                "siteId"
-            ],
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "pageSize": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "search": {
-                    "type": "string"
-                },
-                "searchBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                },
-                "selectedFilters": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "selectedSort": {
-                    "$ref": "#/definitions/enums.ProductSortEnum"
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": [
-                        "asc",
-                        "desc"
-                    ]
-                },
-                "sortBy": {
-                    "type": "string",
-                    "enum": [
-                        "title",
-                        "description"
-                    ]
-                }
-            }
-        },
-        "product.ProductAttributeCommand": {
-            "type": "object",
-            "required": [
-                "type"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/enums.ProductAttributeTypeEnum"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "product.ProductVariantCommand": {
             "type": "object",
@@ -12729,79 +11843,7 @@ const docTemplate = `{
             }
         },
         "product.UpdateProductCommand": {
-            "type": "object",
-            "required": [
-                "id",
-                "siteId"
-            ],
-            "properties": {
-                "categoryIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "coupon": {
-                    "$ref": "#/definitions/product.CouponCommand"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "discountIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "freeSend": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "longDescription": {
-                    "type": "string"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "productAttributes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/product.ProductAttributeCommand"
-                    }
-                },
-                "productVariants": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/product.ProductVariantCommand"
-                    }
-                },
-                "seoTags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "siteId": {
-                    "type": "integer"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                },
-                "weight": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "product_category.CreateCategoryCommand": {
             "type": "object",
@@ -13171,30 +12213,7 @@ const docTemplate = `{
             }
         },
         "site.CreateSiteCommand": {
-            "type": "object",
-            "required": [
-                "domain",
-                "domainType",
-                "siteType",
-                "status"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "domainType": {
-                    "$ref": "#/definitions/enums.DomainTypeEnum"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "siteType": {
-                    "$ref": "#/definitions/enums.SiteTypeEnum"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                }
-            }
+            "type": "object"
         },
         "site.DeleteSiteCommand": {
             "type": "object",
@@ -13208,149 +12227,16 @@ const docTemplate = `{
             }
         },
         "site.UpdateSiteCommand": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "domainType": {
-                    "$ref": "#/definitions/enums.DomainTypeEnum"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "siteType": {
-                    "$ref": "#/definitions/enums.SiteTypeEnum"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                }
-            }
+            "type": "object"
         },
         "ticket.AdminReplayTicketCommand": {
-            "type": "object",
-            "required": [
-                "comment",
-                "id",
-                "priority",
-                "product_category",
-                "status"
-            ],
-            "properties": {
-                "assignedTo": {
-                    "type": "integer"
-                },
-                "comment": {
-                    "$ref": "#/definitions/ticket.CommentCommand"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "priority": {
-                    "$ref": "#/definitions/enums.TicketPriorityEnum"
-                },
-                "product_category": {
-                    "$ref": "#/definitions/enums.TicketCategoryEnum"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.TicketStatusEnum"
-                }
-            }
-        },
-        "ticket.CommentCommand": {
-            "type": "object",
-            "required": [
-                "respondentId"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "media": {
-                    "type": "array",
-                    "items": {}
-                },
-                "respondentId": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "ticket.CreateTicketCommand": {
-            "type": "object",
-            "required": [
-                "comment",
-                "priority",
-                "product_category"
-            ],
-            "properties": {
-                "comment": {
-                    "$ref": "#/definitions/ticket.CommentCommand"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "priority": {
-                    "$ref": "#/definitions/enums.TicketPriorityEnum"
-                },
-                "product_category": {
-                    "$ref": "#/definitions/enums.TicketCategoryEnum"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "ticket.ReplayTicketCommand": {
-            "type": "object",
-            "required": [
-                "assignedTo",
-                "comment",
-                "id",
-                "priority",
-                "product_category",
-                "status"
-            ],
-            "properties": {
-                "assignedTo": {
-                    "type": "integer"
-                },
-                "comment": {
-                    "$ref": "#/definitions/ticket.CommentCommand"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "mediaIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "priority": {
-                    "$ref": "#/definitions/enums.TicketPriorityEnum"
-                },
-                "product_category": {
-                    "$ref": "#/definitions/enums.TicketCategoryEnum"
-                },
-                "status": {
-                    "$ref": "#/definitions/enums.TicketStatusEnum"
-                }
-            }
+            "type": "object"
         },
         "unit_price.CalculateUnitPriceUnitPriceQuery": {
             "type": "object",
@@ -13399,26 +12285,7 @@ const docTemplate = `{
             }
         },
         "user.ChargeCreditRequestUserCommand": {
-            "type": "object",
-            "required": [
-                "gateway",
-                "unitPrices"
-            ],
-            "properties": {
-                "finalFrontReturnUrl": {
-                    "type": "string"
-                },
-                "gateway": {
-                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
-                },
-                "unitPrices": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "$ref": "#/definitions/user.UnitPriceQuery"
-                    }
-                }
-            }
+            "type": "object"
         },
         "user.LoginUserCommand": {
             "type": "object",
@@ -13449,122 +12316,13 @@ const docTemplate = `{
             }
         },
         "user.RequestVerifyAndForgetUserCommand": {
-            "type": "object",
-            "required": [
-                "type"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/enums.VerifyTypeEnum"
-                }
-            }
-        },
-        "user.SmptSettings": {
-            "type": "object",
-            "required": [
-                "port"
-            ],
-            "properties": {
-                "host": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "integer",
-                    "maximum": 65535,
-                    "minimum": 1
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "user.UnitPriceQuery": {
-            "type": "object",
-            "required": [
-                "unitPriceCount",
-                "unitPriceName"
-            ],
-            "properties": {
-                "unitPriceCount": {
-                    "type": "integer",
-                    "maximum": 1000,
-                    "minimum": 1
-                },
-                "unitPriceDay": {
-                    "type": "integer"
-                },
-                "unitPriceName": {
-                    "$ref": "#/definitions/enums.UnitPriceNameEnum"
-                }
-            }
+            "type": "object"
         },
         "user.UpdateProfileUserCommand": {
-            "type": "object",
-            "required": [
-                "phone"
-            ],
-            "properties": {
-                "addressIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "aiTypeEnum": {
-                    "$ref": "#/definitions/enums.AiTypeEnum"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "firstName": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "nationalCode": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "smtp": {
-                    "$ref": "#/definitions/user.SmptSettings"
-                },
-                "useCustomEmailSmtp": {
-                    "$ref": "#/definitions/enums.StatusEnum"
-                }
-            }
+            "type": "object"
         },
         "user.UpgradePlanRequestUserCommand": {
-            "type": "object",
-            "required": [
-                "gateway",
-                "planId"
-            ],
-            "properties": {
-                "finalFrontReturnUrl": {
-                    "type": "string"
-                },
-                "gateway": {
-                    "$ref": "#/definitions/enums.PaymentGatewaysEnum"
-                },
-                "planId": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "utils.Result": {
             "type": "object",

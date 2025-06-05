@@ -95,45 +95,6 @@ definitions:
     - id
     type: object
   article.GetByFiltersSortArticleQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      selectedFilters:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
-      selectedSort:
-        $ref: '#/definitions/enums.ArticleSortEnum'
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
     type: object
   article.UpdateArticleCommand:
     properties:
@@ -314,87 +275,10 @@ definitions:
     - phone
     type: object
   customer_ticket.AdminReplayCustomerTicketCommand:
-    properties:
-      assignedTo:
-        type: integer
-      comment:
-        $ref: '#/definitions/customer_ticket.CustomerCommentCommand'
-      id:
-        type: integer
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      priority:
-        $ref: '#/definitions/enums.TicketPriorityEnum'
-      product_category:
-        $ref: '#/definitions/enums.TicketCategoryEnum'
-      status:
-        $ref: '#/definitions/enums.TicketStatusEnum'
-    required:
-    - assignedTo
-    - comment
-    - id
-    - priority
-    - product_category
-    - status
     type: object
   customer_ticket.CreateCustomerTicketCommand:
-    properties:
-      comment:
-        $ref: '#/definitions/customer_ticket.CustomerCommentCommand'
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      ownerUserId:
-        type: integer
-      priority:
-        $ref: '#/definitions/enums.TicketPriorityEnum'
-      product_category:
-        $ref: '#/definitions/enums.TicketCategoryEnum'
-      title:
-        type: string
-    required:
-    - comment
-    - ownerUserId
-    - priority
-    - product_category
-    type: object
-  customer_ticket.CustomerCommentCommand:
-    properties:
-      content:
-        type: string
-      respondentId:
-        type: integer
-    required:
-    - respondentId
     type: object
   customer_ticket.ReplayCustomerTicketCommand:
-    properties:
-      assignedTo:
-        type: integer
-      comment:
-        $ref: '#/definitions/customer_ticket.CustomerCommentCommand'
-      id:
-        type: integer
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      priority:
-        $ref: '#/definitions/enums.TicketPriorityEnum'
-      product_category:
-        $ref: '#/definitions/enums.TicketCategoryEnum'
-      status:
-        $ref: '#/definitions/enums.TicketStatusEnum'
-    required:
-    - assignedTo
-    - comment
-    - id
-    - priority
-    - product_category
-    - status
     type: object
   defaulttheme.CreateDefaultThemeCommand:
     properties:
@@ -485,16 +369,6 @@ definitions:
     required:
     - id
     type: object
-  enums.AiTypeEnum:
-    enum:
-    - gpt35
-    - gpt4
-    - claude
-    type: string
-    x-enum-varnames:
-    - GPT35Type
-    - GPT4Type
-    - ClaudeType
   enums.ArticleSortEnum:
     enum:
     - title_a_z
@@ -519,14 +393,6 @@ definitions:
     - ArticleLeastRatedSort
     - ArticleMostReviewedSort
     - ArticleLeastReviewedSort
-  enums.CourierEnum:
-    enum:
-    - post
-    - tipax
-    type: string
-    x-enum-varnames:
-    - PostCourier
-    - TipaxCourier
   enums.DiscountTypeEnum:
     enum:
     - fixed
@@ -535,76 +401,6 @@ definitions:
     x-enum-varnames:
     - FixedDiscountType
     - PercentageDiscountType
-  enums.DomainTypeEnum:
-    enum:
-    - domain
-    - subdomain
-    type: string
-    x-enum-varnames:
-    - DomainType
-    - SubdomainType
-  enums.FileItemPermissionEnum:
-    enum:
-    - private
-    - public
-    type: string
-    x-enum-varnames:
-    - FileItemPrivatePermission
-    - FileItemPublicPermission
-  enums.OperationType:
-    enum:
-    - copy
-    - move
-    - rename
-    type: string
-    x-enum-varnames:
-    - FileItemCopyOperation
-    - FileItemMoveOperation
-    - FileItemRenameOperation
-  enums.PaymentGatewaysEnum:
-    enum:
-    - saman
-    - mellat
-    - parsian
-    - pasargad
-    - irankish
-    - melli
-    - asanpardakht
-    - sepehr
-    - zarinpal
-    - payir
-    - idpay
-    - yekpay
-    - payping
-    - parbadvirtual
-    - nextpay
-    type: string
-    x-enum-varnames:
-    - SamanGatewayEnum
-    - MellatGatewayEnum
-    - ParsianGatewayEnum
-    - PasargadGatewayEnum
-    - IranKishGatewayEnum
-    - MelliGatewayEnum
-    - AsanPardakhtGatewayEnum
-    - SepehrGatewayEnum
-    - ZarinPalGatewayEnum
-    - PayIrGatewayEnum
-    - IdPayGatewayEnum
-    - YekPayGatewayEnum
-    - PayPingGatewayEnum
-    - ParbadVirtualGatewayEnum
-    - NextPayGateway
-  enums.ProductAttributeTypeEnum:
-    enum:
-    - public
-    - technical
-    - other
-    type: string
-    x-enum-varnames:
-    - PublicProductAttributeType
-    - TechnicalProductAttributeType
-    - OtherProductAttributeType
   enums.ProductSortEnum:
     enum:
     - price_low_to_high
@@ -637,16 +433,6 @@ definitions:
     - ProductLeastVisitedSort
     - ProductLeastRatedSort
     - ProductLeastReviewedSort
-  enums.SiteTypeEnum:
-    enum:
-    - shop
-    - blog
-    - business
-    type: string
-    x-enum-varnames:
-    - ShopType
-    - BlogType
-    - BusinessType
   enums.StatusEnum:
     enum:
     - inactive
@@ -657,44 +443,6 @@ definitions:
     - InactiveStatus
     - ActiveStatus
     - PendingStatus
-  enums.TicketCategoryEnum:
-    enum:
-    - bug
-    - enhancement
-    - feature_request
-    - question
-    - documentation
-    - financial
-    type: string
-    x-enum-varnames:
-    - TicketBugCategory
-    - TicketEnhancementCategory
-    - TicketFeatureRequestCategory
-    - TicketQuestionCategory
-    - TicketDocumentationCategory
-    - TicketFinancialCategory
-  enums.TicketPriorityEnum:
-    enum:
-    - low
-    - medium
-    - high
-    - critical
-    type: string
-    x-enum-varnames:
-    - TicketLowPriority
-    - TicketMediumPriority
-    - TicketHighPriority
-    - TicketCriticalPriority
-  enums.TicketStatusEnum:
-    enum:
-    - new
-    - in_progress
-    - closed
-    type: string
-    x-enum-varnames:
-    - TicketNewStatus
-    - TicketInProgressStatus
-    - TicketClosedStatus
   enums.UnitPriceNameEnum:
     enum:
     - storage_mb_credits
@@ -715,26 +463,6 @@ definitions:
     - EmailCreditsName
     - AiCreditsName
     - AiImageCreditsName
-  enums.UserTypeEnum:
-    enum:
-    - user
-    - customer
-    - guest
-    type: string
-    x-enum-varnames:
-    - UserTypeValue
-    - CustomerTypeValue
-    - GuestTypeValue
-  enums.VerifyPaymentEndpointEnum:
-    enum:
-    - charge_credit_verify
-    - upgrade_plan_verify
-    - create_order_verify
-    type: string
-    x-enum-varnames:
-    - ChargeCreditVerifyEndpoint
-    - UpgradePlanVerifyEndpoint
-    - CreateOrderVerifyEndpoint
   enums.VerifyTypeEnum:
     enum:
     - verify_email
@@ -757,18 +485,6 @@ definitions:
     - id
     type: object
   fileitem.FileOperationCommand:
-    properties:
-      id:
-        type: integer
-      newName:
-        type: string
-      newParentId:
-        type: integer
-      operationType:
-        $ref: '#/definitions/enums.OperationType'
-    required:
-    - id
-    - operationType
     type: object
   fileitem.ForceDeleteFileItemCommand:
     properties:
@@ -807,15 +523,6 @@ definitions:
     - id
     type: object
   fileitem.UpdateFileItemCommand:
-    properties:
-      id:
-        type: integer
-      isChangePermission:
-        type: boolean
-      permission:
-        $ref: '#/definitions/enums.FileItemPermissionEnum'
-    required:
-    - id
     type: object
   header_footer.CreateHeaderFooterCommand:
     type: object
@@ -856,23 +563,6 @@ definitions:
     - type
     type: object
   order.CreateOrderRequestCommand:
-    properties:
-      addressId:
-        type: integer
-      courier:
-        $ref: '#/definitions/enums.CourierEnum'
-      description:
-        type: string
-      finalFrontReturnUrl:
-        type: string
-      gateway:
-        $ref: '#/definitions/enums.PaymentGatewaysEnum'
-      siteId:
-        type: integer
-    required:
-    - addressId
-    - gateway
-    - siteId
     type: object
   order.CreateOrderVerifyCommand:
     properties:
@@ -929,183 +619,9 @@ definitions:
     required:
     - id
     type: object
-  payment.AsanPardakhtGateway:
-    properties:
-      iv:
-        type: string
-      key:
-        type: string
-      merchantConfigurationId:
-        type: string
-      password:
-        type: string
-      userName:
-        type: string
-    type: object
   payment.CreateOrUpdateGatewayCommand:
-    properties:
-      asanPardakht:
-        $ref: '#/definitions/payment.AsanPardakhtGateway'
-      idPay:
-        $ref: '#/definitions/payment.IdPayGateway'
-      iranKish:
-        $ref: '#/definitions/payment.IranKishGateway'
-      isActiveAsanPardakht:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveIdPay:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveIranKish:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveMellat:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveMelli:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveParbadVirtual:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveParsian:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActivePasargad:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActivePayIr:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActivePayPing:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveSaman:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveSepehr:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveYekPay:
-        $ref: '#/definitions/enums.StatusEnum'
-      isActiveZarinPal:
-        $ref: '#/definitions/enums.StatusEnum'
-      mellat:
-        $ref: '#/definitions/payment.MellatGateway'
-      melli:
-        $ref: '#/definitions/payment.MelliGateway'
-      parsian:
-        $ref: '#/definitions/payment.ParsianGateway'
-      pasargad:
-        $ref: '#/definitions/payment.PasargadGateway'
-      payIr:
-        $ref: '#/definitions/payment.PayIrGateway'
-      payPing:
-        $ref: '#/definitions/payment.PayPingGateway'
-      saman:
-        $ref: '#/definitions/payment.SamanGateway'
-      sepehr:
-        $ref: '#/definitions/payment.SepehrGateway'
-      siteId:
-        type: integer
-      yekPay:
-        $ref: '#/definitions/payment.YekPayGateway'
-      zarinPal:
-        $ref: '#/definitions/payment.ZarinPalGateway'
-    required:
-    - siteId
-    type: object
-  payment.IdPayGateway:
-    properties:
-      api:
-        type: string
-      isTestAccount:
-        type: boolean
-    required:
-    - isTestAccount
-    type: object
-  payment.IranKishGateway:
-    properties:
-      acceptorId:
-        type: string
-      passPhrase:
-        type: string
-      publicKey:
-        type: string
-      terminalId:
-        type: string
-    type: object
-  payment.MellatGateway:
-    properties:
-      terminalId:
-        type: integer
-      userName:
-        type: string
-      userPassword:
-        type: string
-    required:
-    - terminalId
-    type: object
-  payment.MelliGateway:
-    properties:
-      merchantId:
-        type: string
-      terminalId:
-        type: string
-      terminalKey:
-        type: string
-    type: object
-  payment.ParsianGateway:
-    properties:
-      loginAccount:
-        type: string
-    type: object
-  payment.PasargadGateway:
-    properties:
-      merchantCode:
-        type: string
-      privateKey:
-        type: string
-      terminalCode:
-        type: string
-    type: object
-  payment.PayIrGateway:
-    properties:
-      api:
-        type: string
-      isTestAccount:
-        type: boolean
-    type: object
-  payment.PayPingGateway:
-    properties:
-      accessToken:
-        type: string
     type: object
   payment.RequestGatewayCommand:
-    properties:
-      amount:
-        type: integer
-      callVerifyUrl:
-        $ref: '#/definitions/enums.VerifyPaymentEndpointEnum'
-      clientIp:
-        type: string
-      gateway:
-        $ref: '#/definitions/enums.PaymentGatewaysEnum'
-      orderData:
-        additionalProperties:
-          type: string
-        type: object
-      orderId:
-        type: integer
-      returnUrl:
-        type: string
-      serviceAction:
-        type: string
-      serviceName:
-        type: string
-      siteId:
-        type: integer
-      userId:
-        type: integer
-      userType:
-        $ref: '#/definitions/enums.UserTypeEnum'
-    required:
-    - amount
-    - callVerifyUrl
-    - gateway
-    - orderData
-    - orderId
-    - siteId
-    - userId
-    - userType
     type: object
   payment.SamanGateway:
     properties:
@@ -1114,13 +630,6 @@ definitions:
       password:
         type: string
     type: object
-  payment.SepehrGateway:
-    properties:
-      terminalId:
-        type: integer
-    required:
-    - terminalId
-    type: object
   payment.VerifyPaymentCommand:
     properties:
       paymentToken:
@@ -1128,20 +637,6 @@ definitions:
       result:
         type: string
       transactionCode:
-        type: string
-    type: object
-  payment.YekPayGateway:
-    properties:
-      merchantId:
-        type: string
-    type: object
-  payment.ZarinPalGateway:
-    properties:
-      authorizationToken:
-        type: string
-      isSandbox:
-        type: boolean
-      merchantId:
         type: string
     type: object
   plan.CreatePlanCommand:
@@ -1239,74 +734,7 @@ definitions:
     required:
     - id
     type: object
-  product.CouponCommand:
-    properties:
-      expiryDate:
-        type: string
-      quantity:
-        type: integer
-      type:
-        $ref: '#/definitions/enums.DiscountTypeEnum'
-      value:
-        type: integer
-    required:
-    - expiryDate
-    - quantity
-    - type
-    - value
-    type: object
   product.CreateProductCommand:
-    properties:
-      categoryIds:
-        items:
-          type: integer
-        type: array
-      coupon:
-        $ref: '#/definitions/product.CouponCommand'
-      description:
-        type: string
-      discountIds:
-        items:
-          type: integer
-        type: array
-      freeSend:
-        type: boolean
-      longDescription:
-        type: string
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      name:
-        type: string
-      productAttributes:
-        items:
-          $ref: '#/definitions/product.ProductAttributeCommand'
-        type: array
-      productVariants:
-        items:
-          $ref: '#/definitions/product.ProductVariantCommand'
-        minItems: 1
-        type: array
-      seoTags:
-        items:
-          type: string
-        type: array
-      siteId:
-        type: integer
-      slug:
-        type: string
-      status:
-        $ref: '#/definitions/enums.StatusEnum'
-      weight:
-        maximum: 1000
-        type: integer
-    required:
-    - productVariants
-    - siteId
-    - slug
-    - status
-    - weight
     type: object
   product.DeleteProductCommand:
     properties:
@@ -1316,58 +744,6 @@ definitions:
     - id
     type: object
   product.GetByFiltersSortProductQuery:
-    properties:
-      page:
-        minimum: 1
-        type: integer
-      pageSize:
-        maximum: 100
-        minimum: 1
-        type: integer
-      search:
-        type: string
-      searchBy:
-        enum:
-        - title
-        - description
-        type: string
-      selectedFilters:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
-      selectedSort:
-        $ref: '#/definitions/enums.ProductSortEnum'
-      siteId:
-        type: integer
-      sort:
-        enum:
-        - asc
-        - desc
-        type: string
-      sortBy:
-        enum:
-        - title
-        - description
-        type: string
-    required:
-    - page
-    - pageSize
-    - siteId
-    type: object
-  product.ProductAttributeCommand:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      type:
-        $ref: '#/definitions/enums.ProductAttributeTypeEnum'
-      value:
-        type: string
-    required:
-    - type
     type: object
   product.ProductVariantCommand:
     properties:
@@ -1384,54 +760,6 @@ definitions:
     - stock
     type: object
   product.UpdateProductCommand:
-    properties:
-      categoryIds:
-        items:
-          type: integer
-        type: array
-      coupon:
-        $ref: '#/definitions/product.CouponCommand'
-      description:
-        type: string
-      discountIds:
-        items:
-          type: integer
-        type: array
-      freeSend:
-        type: boolean
-      id:
-        type: integer
-      longDescription:
-        type: string
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      name:
-        type: string
-      productAttributes:
-        items:
-          $ref: '#/definitions/product.ProductAttributeCommand'
-        type: array
-      productVariants:
-        items:
-          $ref: '#/definitions/product.ProductVariantCommand'
-        type: array
-      seoTags:
-        items:
-          type: string
-        type: array
-      siteId:
-        type: integer
-      slug:
-        type: string
-      status:
-        $ref: '#/definitions/enums.StatusEnum'
-      weight:
-        type: integer
-    required:
-    - id
-    - siteId
     type: object
   product_category.CreateCategoryCommand:
     properties:
@@ -1685,22 +1013,6 @@ definitions:
     - id
     type: object
   site.CreateSiteCommand:
-    properties:
-      domain:
-        type: string
-      domainType:
-        $ref: '#/definitions/enums.DomainTypeEnum'
-      name:
-        type: string
-      siteType:
-        $ref: '#/definitions/enums.SiteTypeEnum'
-      status:
-        $ref: '#/definitions/enums.StatusEnum'
-    required:
-    - domain
-    - domainType
-    - siteType
-    - status
     type: object
   site.DeleteSiteCommand:
     properties:
@@ -1710,103 +1022,12 @@ definitions:
     - id
     type: object
   site.UpdateSiteCommand:
-    properties:
-      domain:
-        type: string
-      domainType:
-        $ref: '#/definitions/enums.DomainTypeEnum'
-      id:
-        type: integer
-      name:
-        type: string
-      siteType:
-        $ref: '#/definitions/enums.SiteTypeEnum'
-      status:
-        $ref: '#/definitions/enums.StatusEnum'
-    required:
-    - id
     type: object
   ticket.AdminReplayTicketCommand:
-    properties:
-      assignedTo:
-        type: integer
-      comment:
-        $ref: '#/definitions/ticket.CommentCommand'
-      id:
-        type: integer
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      priority:
-        $ref: '#/definitions/enums.TicketPriorityEnum'
-      product_category:
-        $ref: '#/definitions/enums.TicketCategoryEnum'
-      status:
-        $ref: '#/definitions/enums.TicketStatusEnum'
-    required:
-    - comment
-    - id
-    - priority
-    - product_category
-    - status
-    type: object
-  ticket.CommentCommand:
-    properties:
-      content:
-        type: string
-      media:
-        items: {}
-        type: array
-      respondentId:
-        type: integer
-    required:
-    - respondentId
     type: object
   ticket.CreateTicketCommand:
-    properties:
-      comment:
-        $ref: '#/definitions/ticket.CommentCommand'
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      priority:
-        $ref: '#/definitions/enums.TicketPriorityEnum'
-      product_category:
-        $ref: '#/definitions/enums.TicketCategoryEnum'
-      title:
-        type: string
-    required:
-    - comment
-    - priority
-    - product_category
     type: object
   ticket.ReplayTicketCommand:
-    properties:
-      assignedTo:
-        type: integer
-      comment:
-        $ref: '#/definitions/ticket.CommentCommand'
-      id:
-        type: integer
-      mediaIds:
-        items:
-          type: integer
-        type: array
-      priority:
-        $ref: '#/definitions/enums.TicketPriorityEnum'
-      product_category:
-        $ref: '#/definitions/enums.TicketCategoryEnum'
-      status:
-        $ref: '#/definitions/enums.TicketStatusEnum'
-    required:
-    - assignedTo
-    - comment
-    - id
-    - priority
-    - product_category
-    - status
     type: object
   unit_price.CalculateUnitPriceUnitPriceQuery:
     properties:
@@ -1840,19 +1061,6 @@ definitions:
     - id
     type: object
   user.ChargeCreditRequestUserCommand:
-    properties:
-      finalFrontReturnUrl:
-        type: string
-      gateway:
-        $ref: '#/definitions/enums.PaymentGatewaysEnum'
-      unitPrices:
-        items:
-          $ref: '#/definitions/user.UnitPriceQuery'
-        minItems: 1
-        type: array
-    required:
-    - gateway
-    - unitPrices
     type: object
   user.LoginUserCommand:
     properties:
@@ -1873,83 +1081,10 @@ definitions:
     - email
     type: object
   user.RequestVerifyAndForgetUserCommand:
-    properties:
-      email:
-        type: string
-      phone:
-        type: string
-      type:
-        $ref: '#/definitions/enums.VerifyTypeEnum'
-    required:
-    - type
-    type: object
-  user.SmptSettings:
-    properties:
-      host:
-        type: string
-      password:
-        type: string
-      port:
-        maximum: 65535
-        minimum: 1
-        type: integer
-      username:
-        type: string
-    required:
-    - port
-    type: object
-  user.UnitPriceQuery:
-    properties:
-      unitPriceCount:
-        maximum: 1000
-        minimum: 1
-        type: integer
-      unitPriceDay:
-        type: integer
-      unitPriceName:
-        $ref: '#/definitions/enums.UnitPriceNameEnum'
-    required:
-    - unitPriceCount
-    - unitPriceName
     type: object
   user.UpdateProfileUserCommand:
-    properties:
-      addressIds:
-        items:
-          type: integer
-        type: array
-      aiTypeEnum:
-        $ref: '#/definitions/enums.AiTypeEnum'
-      email:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      nationalCode:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      smtp:
-        $ref: '#/definitions/user.SmptSettings'
-      useCustomEmailSmtp:
-        $ref: '#/definitions/enums.StatusEnum'
-    required:
-    - phone
     type: object
   user.UpgradePlanRequestUserCommand:
-    properties:
-      finalFrontReturnUrl:
-        type: string
-      gateway:
-        $ref: '#/definitions/enums.PaymentGatewaysEnum'
-      planId:
-        type: integer
-    required:
-    - gateway
-    - planId
     type: object
   utils.Result:
     properties:
