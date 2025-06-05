@@ -88,7 +88,7 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address2.UpdateAddressComm
 		if err != nil {
 			return nil, err
 		}
-	}else if *userType == enums.CustomerTypeValue{
+	} else if *userType == enums.CustomerTypeValue {
 		err = u.CheckAccessCustomerModel(existingAddress)
 		if err != nil {
 			return nil, err
@@ -158,7 +158,7 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address2.DeleteAddressComm
 		if err != nil {
 			return nil, err
 		}
-	}else if *userType == enums.CustomerTypeValue{
+	} else if *userType == enums.CustomerTypeValue {
 		err = u.CheckAccessCustomerModel(existingAddress)
 		if err != nil {
 			return nil, err
@@ -190,7 +190,7 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address2.GetByIdAddressQuer
 		if err != nil {
 			return nil, err
 		}
-	}else if *userType == enums.CustomerTypeValue{
+	} else if *userType == enums.CustomerTypeValue {
 		err = u.CheckAccessCustomerModel(existingAddress)
 		if err != nil {
 			return nil, err
