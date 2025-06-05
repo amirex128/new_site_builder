@@ -25,9 +25,9 @@ go.work
 *.log
 *.log.gz
 __debug_bin
-*/cmd/uploads
+cmd/uploads
 
 
-src/config/config-development.yml
-src/config/config-production.yml
+config/config-development.yml
+config/config-production.yml
 logs

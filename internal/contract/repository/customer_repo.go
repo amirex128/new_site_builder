@@ -1,0 +1,17 @@
+package repository
+
+import (
+	"github.com/amirex128/new_site_builder/internal/contract/common"
+	"github.com/amirex128/new_site_builder/internal/domain"
+)
+
+type ICustomerRepository interface {
+	GetAll(paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Customer], error)
+	GetAllBySiteID(siteID int64, paginationRequestDto common.PaginationRequestDto) (*common.PaginationResponseDto[domain.Customer], error)
+	GetByID(id int64) (*domain.Customer, error)
+	GetByEmail(email string) (*domain.Customer, error)
+	GetByPhone(phone string) (*domain.Customer, error)
+	Create(customer *domain.Customer) error
+	Update(customer *domain.Customer) error
+	Delete(id int64) error
+}

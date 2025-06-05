@@ -1,0 +1,192 @@
+package v1
+
+import (
+	utils2 "github.com/amirex128/new_site_builder/internal/api/utils"
+	product2 "github.com/amirex128/new_site_builder/internal/application/dto/product"
+	"github.com/amirex128/new_site_builder/internal/application/usecase/product"
+	"github.com/gin-gonic/gin"
+)
+
+type ProductHandler struct {
+	usecase   *productusecase.ProductUsecase
+	validator *utils2.ValidationHelper
+}
+
+func NewProductHandler(usc *productusecase.ProductUsecase) *ProductHandler {
+	return &ProductHandler{
+		usecase:   usc,
+		validator: utils2.NewValidationHelper(),
+	}
+}
+
+// CreateProduct godoc
+// @Summary      Create a new product
+// @Description  Creates a new product with the provided information
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product.CreateProductCommand  true  "Product information"
+// @success      201      {object}  utils.Result                   "Created product"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
+// @Router       /product [post]
+// @Security BearerAuth
+func (h *ProductHandler) CreateProduct(c *gin.Context) {
+	var params product2.CreateProductCommand
+	if !h.validator.ValidateCommand(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.CreateProductCommand(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
+
+// UpdateProduct godoc
+// @Summary      Update a product
+// @Description  Updates an existing product with the provided information
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product.UpdateProductCommand  true  "Updated product information"
+// @success      200      {object}  utils.Result                   "Updated product"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
+// @Failure      404      {object}  utils.Result                   "Product not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
+// @Router       /product [put]
+// @Security BearerAuth
+func (h *ProductHandler) UpdateProduct(c *gin.Context) {
+	var params product2.UpdateProductCommand
+	if !h.validator.ValidateCommand(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.UpdateProductCommand(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
+
+// DeleteProduct godoc
+// @Summary      Delete a product
+// @Description  Deletes an existing product by its ID
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product.DeleteProductCommand  true  "Product ID to delete"
+// @success      200      {object}  utils.Result                   "Deleted product confirmation"
+// @Failure      400      {object}  utils.Result                   "Validation error"
+// @Failure      401      {object}  utils.Result                   "unauthorized"
+// @Failure      404      {object}  utils.Result                   "Product not found"
+// @Failure      500      {object}  utils.Result                   "Internal server error"
+// @Router       /product [delete]
+// @Security BearerAuth
+func (h *ProductHandler) DeleteProduct(c *gin.Context) {
+	var params product2.DeleteProductCommand
+	if !h.validator.ValidateCommand(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.DeleteProductCommand(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
+
+// GetByIdProduct godoc
+// @Summary      Get product by ID
+// @Description  Retrieves a specific product by its ID
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  query     product.GetByIdProductQuery  true  "Product ID to retrieve"
+// @success      200      {object}  utils.Result                  "Product details"
+// @Failure      400      {object}  utils.Result                  "Validation error"
+// @Failure      401      {object}  utils.Result                  "unauthorized"
+// @Failure      404      {object}  utils.Result                  "Product not found"
+// @Failure      500      {object}  utils.Result                  "Internal server error"
+// @Router       /product [get]
+// @Security BearerAuth
+func (h *ProductHandler) GetByIdProduct(c *gin.Context) {
+	var params product2.GetByIdProductQuery
+	if !h.validator.ValidateQuery(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.GetByIdProductQuery(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
+
+// GetAllProduct godoc
+// @Summary      Get all products
+// @Description  Retrieves all products with optional filtering
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  query     product.GetAllProductQuery  true  "Query parameters"
+// @success      200      {object}  utils.Result                 "List of products"
+// @Failure      400      {object}  utils.Result                 "Validation error"
+// @Failure      401      {object}  utils.Result                 "unauthorized"
+// @Failure      500      {object}  utils.Result                 "Internal server error"
+// @Router       /product/all [get]
+// @Security BearerAuth
+func (h *ProductHandler) GetAllProduct(c *gin.Context) {
+	var params product2.GetAllProductQuery
+	if !h.validator.ValidateQuery(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.GetAllProductQuery(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
+
+// GetByFiltersSortProduct godoc
+// @Summary      Get products by filters and sorting
+// @Description  Retrieves products based on specified filters and sorting criteria
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  body      product.GetByFiltersSortProductQuery  true  "Filter and sort parameters"
+// @success      200      {object}  utils.Result                           "Filtered and sorted products"
+// @Failure      400      {object}  utils.Result                           "Validation error"
+// @Failure      401      {object}  utils.Result                           "unauthorized"
+// @Failure      500      {object}  utils.Result                           "Internal server error"
+// @Router       /product/filters-sort [post]
+// @Security BearerAuth
+func (h *ProductHandler) GetByFiltersSortProduct(c *gin.Context) {
+	var params product2.GetByFiltersSortProductQuery
+	if !h.validator.ValidateCommand(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.GetByFiltersSortProductQuery(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
+
+// AdminGetAllProduct godoc
+// @Summary      Admin: Get all products
+// @Description  Admin endpoint to retrieve all products with additional information
+// @Tags         product
+// @Accept       json
+// @Produce      json
+// @Param        request  query     product.AdminGetAllProductQuery  true  "Query parameters"
+// @success      200      {object}  utils.Result                      "List of all products"
+// @Failure      400      {object}  utils.Result                      "Validation error"
+// @Failure      401      {object}  utils.Result                      "unauthorized"
+// @Failure      403      {object}  utils.Result                      "Forbidden - Admin access required"
+// @Failure      500      {object}  utils.Result                      "Internal server error"
+// @Router       /product/admin/all [get]
+// @Security BearerAuth
+func (h *ProductHandler) AdminGetAllProduct(c *gin.Context) {
+	var params product2.AdminGetAllProductQuery
+	if !h.validator.ValidateQuery(c, &params) {
+		return
+	}
+	h.usecase.SetContext(c)
+	result, err := h.usecase.AdminGetAllProductQuery(&params)
+	utils2.HandleError(c, err)
+	utils2.HandleResponse(c, result)
+}
