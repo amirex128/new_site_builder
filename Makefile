@@ -43,7 +43,7 @@ stage-down:
 
 move-all-vendor:
 	@echo "📦 Moving all vendor packages to GOPATH/src..."
-	@find vendor -type d -name '.git' -prune -o -type d -print | tail -n +2 | while read dir; do \
+	@sudo find vendor -type d -name '.git' -prune -o -type d -print | tail -n +2 | while read dir; do \
 		relpath=$${dir#vendor/}; \
 		dest="$(GOPATH)/$$relpath"; \
 		echo "➡️  Moving $$dir to $$dest"; \
