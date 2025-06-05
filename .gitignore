@@ -27,7 +27,7 @@ go.work
 __debug_bin
 cmd/uploads
 
-
+tmp
 config/config-development.yml
 config/config-production.yml
 logs
