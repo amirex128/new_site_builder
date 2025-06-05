@@ -79,13 +79,20 @@ func (u *AddressUsecase) UpdateAddressCommand(params *address2.UpdateAddressComm
 		return nil, resp.NewError(resp.NotFound, "آدرس یافت نشد")
 	}
 
-	err = u.CheckAccessUserModel(existingAddress)
+	userType, err := u.AuthContext(u.Ctx).GetUserType()
 	if err != nil {
 		return nil, err
 	}
-	err = u.CheckAccessCustomerModel(existingAddress)
-	if err != nil {
-		return nil, err
+	if *userType == enums.UserTypeValue {
+		err = u.CheckAccessUserModel(existingAddress)
+		if err != nil {
+			return nil, err
+		}
+	} else if *userType == enums.CustomerTypeValue {
+		err = u.CheckAccessCustomerModel(existingAddress)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	_, err = u.cityRepo.GetByID(*params.CityID)
@@ -142,13 +149,20 @@ func (u *AddressUsecase) DeleteAddressCommand(params *address2.DeleteAddressComm
 		return nil, resp.NewError(resp.Internal, "خطا در دریافت آدرس")
 	}
 
-	err = u.CheckAccessUserModel(existingAddress)
+	userType, err := u.AuthContext(u.Ctx).GetUserType()
 	if err != nil {
 		return nil, err
 	}
-	err = u.CheckAccessCustomerModel(existingAddress)
-	if err != nil {
-		return nil, err
+	if *userType == enums.UserTypeValue {
+		err = u.CheckAccessUserModel(existingAddress)
+		if err != nil {
+			return nil, err
+		}
+	} else if *userType == enums.CustomerTypeValue {
+		err = u.CheckAccessCustomerModel(existingAddress)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = u.addressRepo.Delete(*params.ID)
@@ -167,14 +181,20 @@ func (u *AddressUsecase) GetByIdAddressQuery(params *address2.GetByIdAddressQuer
 		}
 		return nil, err
 	}
-
-	err = u.CheckAccessUserModel(existingAddress)
+	userType, err := u.AuthContext(u.Ctx).GetUserType()
 	if err != nil {
 		return nil, err
 	}
-	err = u.CheckAccessCustomerModel(existingAddress)
-	if err != nil {
-		return nil, err
+	if *userType == enums.UserTypeValue {
+		err = u.CheckAccessUserModel(existingAddress)
+		if err != nil {
+			return nil, err
+		}
+	} else if *userType == enums.CustomerTypeValue {
+		err = u.CheckAccessCustomerModel(existingAddress)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return resp.NewResponseData(resp.Retrieved, existingAddress, "آدرس با موفقیت دریافت شد"), nil
